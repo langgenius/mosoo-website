@@ -1,7 +1,21 @@
 {
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "pkgs/*"
+  ],
   "scripts": {
+    "blog:build": "npm run build --workspace @mosoo/blog",
+    "blog:dev": "npm run dev --workspace @mosoo/blog",
+    "blog:preview": "npm run preview --workspace @mosoo/blog",
+    "landing:build": "npm run build --workspace @mosoo/landing",
+    "landing:dev": "npm run dev --workspace @mosoo/landing",
+    "landing:preview": "npm run preview --workspace @mosoo/landing",
     "openapi:check": "node scripts/sync-openapi-specs.mjs check",
     "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
+    "site:build": "npm run landing:build && npm run blog:build",
+    "site:dev": "node scripts/dev-site-gateway.mjs",
     "validate": "mint validate"
   }
 }

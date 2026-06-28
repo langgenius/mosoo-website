@@ -1,0 +1,11 @@
+{
+  "name": "@mosoo/design-tokens",
+  "private": true,
+  "files": [
+    "mosoo.css"
+  ],
+  "type": "module",
+  "exports": {
+    "./mosoo.css": "./mosoo.css"
+  }
+}

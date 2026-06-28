@@ -1,14 +1,13 @@
-# Mosoo Docs
+# Mosoo Website
 
-Documentation source for the Mosoo API docs site.
+Website and documentation source for Mosoo.
 
 - Live docs: [mosoo.ai/docs](https://mosoo.ai/docs)
-- Landing page and blog source: [langgenius/mosoo](https://github.com/langgenius/mosoo)
 - Mosoo repository: [langgenius/mosoo](https://github.com/langgenius/mosoo)
 
 ## About
 
-This repository contains the Mintlify documentation for calling published Mosoo Agents. The API Reference is generated from localized OpenAPI snapshots:
+This repository contains the Mosoo landing page, blog, and Mintlify documentation for calling published Mosoo Agents. Mosoo's main repository remains the source of truth for product behavior and API contracts. The API Reference is generated from localized OpenAPI snapshots:
 
 ```text
 mosoo-openapi.en.generated.json
@@ -25,17 +24,32 @@ Install the Mintlify CLI:
 npm i -g mint
 ```
 
-Run the docs locally:
+Install dependencies:
 
 ```bash
-mint dev
+npm install
 ```
 
-The preview runs at `http://localhost:3000`.
+Run the whole site locally through one gateway:
+
+```bash
+npm run site:dev
+```
+
+The gateway prints the single local URL. It routes `/` to the landing page, `/blog` to the blog, and `/docs` to the API docs.
+
+Build the copied landing and blog apps:
+
+```bash
+npm run site:build
+```
 
 ## Project Structure
 
 - `docs.json` configures the Mintlify site, navigation, theme, and API reference.
+- `apps/landing/` contains the copied Mosoo landing page source from `langgenius/mosoo`.
+- `apps/blog/` contains the copied Mosoo Astro blog source from `langgenius/mosoo`.
+- `pkgs/design-tokens/` contains the copied design tokens used by the blog.
 - `*.mdx` contains the English documentation pages.
 - `zh-Hans/` contains the Simplified Chinese documentation pages.
 - `mosoo-openapi.en.generated.json` is the English OpenAPI snapshot used by the English API Reference.

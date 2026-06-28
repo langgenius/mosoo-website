@@ -11,6 +11,14 @@
     "dark": "/images/brand/logo-api-ondark.svg"
   },
   "favicon": "/images/brand/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Back to Mosoo",
+        "href": "https://mosoo.ai"
+      }
+    ]
+  },
   "api": {
     "examples": {
       "prefill": true
