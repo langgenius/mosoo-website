@@ -4,15 +4,15 @@
 
 ## Start here
 
-- [Coding agent guide](https://mosoo.ai/docs/coding-agents.md): Machine-oriented guide with API flow, authentication, error handling, examples, implementation guardrails, and the generated API contract.
-- [Human quickstart](https://mosoo.ai/docs/quickstart.md): Human-oriented walkthrough for creating a Thread, sending events, and reading responses.
-- [Authentication and access](https://mosoo.ai/docs/auth-and-access.md): API token usage and access requirements for published Agents.
+- [Coding agent guide](https://mosoo.ai/coding-agents.md): Machine-oriented guide with API flow, authentication, error handling, examples, implementation guardrails, and the generated API contract.
+- [Human quickstart](https://mosoo.ai/quickstart.md): Human-oriented walkthrough for creating a Thread, sending events, and reading responses.
+- [Authentication and access](https://mosoo.ai/auth-and-access.md): API token usage and access requirements for published Agents.
 
 ## API specifications
 
-- [English OpenAPI JSON](https://mosoo.ai/docs/mosoo-openapi.en.generated.json): Raw OpenAPI contract for client generation and strict request or response validation.
-- [Simplified Chinese OpenAPI JSON](https://mosoo.ai/docs/mosoo-openapi.zh-Hans.generated.json): Localized OpenAPI contract for Simplified Chinese API reference pages.
-- [Compatibility OpenAPI JSON](https://mosoo.ai/docs/mosoo-openapi.generated.json): English compatibility copy for older links and tooling.
+- [English OpenAPI JSON](https://mosoo.ai/mosoo-openapi.en.generated.json): Raw OpenAPI contract for client generation and strict request or response validation.
+- [Simplified Chinese OpenAPI JSON](https://mosoo.ai/mosoo-openapi.zh-Hans.generated.json): Localized OpenAPI contract for Simplified Chinese API reference pages.
+- [Compatibility OpenAPI JSON](https://mosoo.ai/mosoo-openapi.generated.json): English compatibility copy for older links and tooling.
 
 ## Public API endpoints
 

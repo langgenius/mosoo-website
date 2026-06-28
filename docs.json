@@ -23,16 +23,6 @@
         "default": true,
         "tabs": [
           {
-            "tab": "Blog",
-            "icon": "newspaper",
-            "groups": [
-              {
-                "group": "Blog",
-                "pages": ["blog/index", "blog/the-journey-begins-with-an-imagine-if"]
-              }
-            ]
-          },
-          {
             "tab": "API",
             "icon": "code",
             "groups": [
@@ -61,16 +51,6 @@
       {
         "language": "zh-Hans",
         "tabs": [
-          {
-            "tab": "Blog",
-            "icon": "newspaper",
-            "groups": [
-              {
-                "group": "Blog",
-                "pages": ["blog/zh", "blog/zh/the-journey-begins-with-an-imagine-if"]
-              }
-            ]
-          },
           {
             "tab": "API",
             "icon": "code",

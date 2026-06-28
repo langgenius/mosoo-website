@@ -93,4 +93,4 @@ Secrets used by the sync workflow:
 - `MOSOO_REPO_TOKEN`: optional token for checking out a private Mosoo source repo.
 - `MINTLIFY_API_KEY` and `MINTLIFY_PROJECT_ID`: optional; triggers Mintlify's deployment API after a generated commit.
 
-The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `langgenius/mosoo-website`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.
+The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `KurosawaGeeker/mosoo-docs`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.

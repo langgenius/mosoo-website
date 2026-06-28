@@ -2570,7 +2570,7 @@
   ],
   "servers": [
     {
-      "url": "https://mosoo.ai/api/v1"
+      "url": "https://mosoo.ai/docs/api/v1"
     }
   ]
 }
