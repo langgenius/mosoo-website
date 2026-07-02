@@ -8,14 +8,23 @@
   },
   "logo": {
     "light": "/images/brand/logo-api-onlight.svg",
-    "dark": "/images/brand/logo-api-ondark.svg"
+    "dark": "/images/brand/logo-api-ondark.svg",
+    "href": "https://mosoo.ai"
   },
   "favicon": "/images/brand/favicon.svg",
   "navbar": {
     "links": [
       {
-        "label": "Back to Mosoo",
+        "label": "Home",
         "href": "https://mosoo.ai"
+      },
+      {
+        "label": "Blog",
+        "href": "https://mosoo.ai/blog"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/langgenius/mosoo"
       }
     ]
   },

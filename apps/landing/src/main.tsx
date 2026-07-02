@@ -12,7 +12,7 @@ if (!container) {
 }
 
 const openAuth = (): void => {
-  window.location.href = "/login";
+  window.location.href = "https://try.mosoo.ai/login";
 };
 
 createRoot(container).render(
