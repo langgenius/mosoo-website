@@ -19,32 +19,25 @@ const dateLabel = date.toLocaleDateString("en-US", {
 });
 ---
 
-<a
-  href={href}
-  class="group flex flex-col overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--border)] bg-[color:var(--surface)] shadow-[var(--shadow-xs)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]"
->
-  <CardVisual slug={slug} heroImage={heroImage} heroAlt={heroAlt} ratio="16/9" />
-  <div class="flex flex-1 flex-col gap-3 p-5">
-    <div class="flex items-center gap-2.5 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)]">
-      <span>{dateLabel}</span>
-      <span class="text-[color:var(--ink-200)]">·</span>
-      <span class="inline-flex items-center gap-1.5 text-[color:var(--accent-text)]">
-        <span class="block h-1.5 w-1.5 rounded-full bg-[color:var(--green-500)]" />
-        {category}
-      </span>
+<a href={href} class="group flex flex-col gap-4">
+  <div class="overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--border)]">
+    <CardVisual slug={slug} heroImage={heroImage} heroAlt={heroAlt} ratio="16/9" />
+  </div>
+  <div class="flex min-w-0 flex-1 flex-col gap-2">
+    <div class="flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
+      <span class="font-semibold text-[color:var(--accent-text)]">{category}</span>
+      <span aria-hidden="true">·</span>
+      <time datetime={date.toISOString()}>{dateLabel}</time>
     </div>
-    <h3 class="font-display text-[20px] font-medium leading-[1.2] tracking-[-0.015em] text-[color:var(--ink-950)] transition-colors group-hover:text-[color:var(--accent-press)]">
+    <h3 class="font-display text-[19px] font-medium leading-[1.3] tracking-[-0.015em] text-[color:var(--ink-950)] underline decoration-transparent decoration-2 underline-offset-4 transition-[text-decoration-color] duration-200 group-hover:decoration-[color:var(--green-500)]">
       {title}
     </h3>
     {
       description && (
-        <p class="text-[14px] leading-[1.55] text-[color:var(--fg-secondary)] line-clamp-2">
+        <p class="text-[14px] leading-[1.6] text-[color:var(--fg-secondary)] line-clamp-2">
           {description}
         </p>
       )
     }
-    <div class="mt-auto pt-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)]">
-      Read post →
-    </div>
   </div>
 </a>

@@ -18,10 +18,10 @@ const languageSwitch = getAlternateLocaleHref(Astro.url.pathname, base);
       </span>
     </a>
     <nav class="flex items-center gap-6 text-[14px] text-[color:var(--fg-secondary)]">
-      <a href="/" class="font-medium hover:text-[color:var(--fg)] transition-colors">Back to Mosoo</a>
+      <a href="/" class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline">Back to Mosoo</a>
       <a
         href={`${base}/rss.xml`}
-        class="font-medium hover:text-[color:var(--fg)] transition-colors"
+        class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline"
         title="Subscribe via RSS"
         >RSS</a
       >

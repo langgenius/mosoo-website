@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { MOTION_VARIANT } from "../lib/motion";
 
 interface Props {
   title: string;
@@ -29,7 +30,7 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", Astro.site).href;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-motion={MOTION_VARIANT}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -66,11 +67,47 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", Astro.site).href;
       )
     }
     {type === "article" && author && <meta property="article:author" content={author} />}
+    <script is:inline>
+      // Runs before first paint: mark JS as available (entrance-motion CSS is
+      // gated on html.js so content is never hidden without a script to
+      // reveal it) and honor a `?motion=` preview override.
+      document.documentElement.classList.add("js");
+      var m = new URLSearchParams(location.search).get("motion");
+      if (m === "none" || m === "fade" || m === "rise") {
+        document.documentElement.dataset.motion = m;
+      }
+    </script>
     <slot name="head" />
   </head>
   <body class="min-h-screen bg-[color:var(--paper)] text-[color:var(--ink-900)]">
     <Header />
     <slot />
     <Footer />
+    <script>
+      // "rise" variant: reveal [data-reveal] blocks as they enter the
+      // viewport. Everything above the fold reveals immediately (with the
+      // per-element stagger from --reveal-i); below-fold blocks animate in
+      // on scroll. Other variants — and reduced motion — reveal everything
+      // at once so no content stays hidden.
+      const root = document.documentElement;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const targets = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      if (root.dataset.motion === "rise" && !reduced && "IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-revealed");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+        );
+        targets.forEach((el) => io.observe(el));
+      } else {
+        targets.forEach((el) => el.classList.add("is-revealed"));
+      }
+    </script>
   </body>
 </html>
