@@ -21,17 +21,28 @@ const categories = CATEGORIES.filter((category) =>
 );
 ---
 
-<main>
+<main data-page>
   <section class="culm-band border-b border-[color:var(--border)]">
-    <div class="mx-auto w-full max-w-[1180px] px-7 py-20 md:py-28">
-      <div class="inline-flex items-center gap-2 font-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)]">
-        <span class="inline-block h-[7px] w-[7px] rounded-full bg-[color:var(--green-500)]"></span>
+    <div class="mx-auto w-full max-w-[1180px] px-7 pt-14 pb-12 md:pt-20 md:pb-16">
+      <p
+        class="text-[13px] font-semibold tracking-[-0.01em] text-[color:var(--accent-text)]"
+        data-reveal
+        style="--reveal-i: 0"
+      >
         {eyebrow}
-      </div>
-      <h1 class="mt-5 max-w-3xl font-display text-[52px] font-medium leading-[1.04] tracking-[-0.025em] text-[color:var(--ink-950)] md:text-[72px]">
+      </p>
+      <h1
+        class="mt-3 max-w-3xl font-display text-[40px] font-medium leading-[1.06] tracking-[-0.022em] text-[color:var(--ink-950)] md:text-[56px]"
+        data-reveal
+        style="--reveal-i: 1"
+      >
         {title}
       </h1>
-      <p class="mt-7 max-w-xl text-[18px] leading-[1.55] text-[color:var(--fg-secondary)]">
+      <p
+        class="mt-4 max-w-xl text-[17px] leading-[1.6] text-[color:var(--fg-secondary)]"
+        data-reveal
+        style="--reveal-i: 2"
+      >
         {description}
       </p>
     </div>
@@ -40,7 +51,11 @@ const categories = CATEGORIES.filter((category) =>
   {
     featured && (
       <section class="border-b border-[color:var(--border)]">
-        <div class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-16">
+        <div
+          class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-16"
+          data-reveal
+          style="--reveal-i: 3"
+        >
           <Hero featured={featured} base={base} />
         </div>
       </section>
@@ -48,22 +63,27 @@ const categories = CATEGORIES.filter((category) =>
   }
 
   <section>
-    <div class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-16">
-      <div class="mb-8 flex items-end justify-between gap-4">
-        <h2 class="font-display text-[28px] font-medium tracking-[-0.02em] text-[color:var(--ink-950)] md:text-[32px]">
+    <div class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-14">
+      <div class="mb-7 flex items-baseline justify-between gap-4">
+        <h2 class="font-display text-[24px] font-medium tracking-[-0.015em] text-[color:var(--ink-950)] md:text-[28px]">
           All posts
         </h2>
-        <span class="font-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)]">
-          {posts.length} {posts.length === 1 ? "entry" : "entries"}
+        <span class="text-[13px] tabular-nums text-[color:var(--fg-muted)]">
+          {posts.length} {posts.length === 1 ? "post" : "posts"}
         </span>
       </div>
 
       <CategoryTabs categories={categories} />
 
-      <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
         {
-          posts.map((post) => (
-            <div data-card data-category={post.data.category}>
+          posts.map((post, i) => (
+            <div
+              data-card
+              data-category={post.data.category}
+              data-reveal
+              style={`--reveal-i: ${i % 3}`}
+            >
               <Card
                 href={getPostHref(post, base)}
                 title={post.data.title}

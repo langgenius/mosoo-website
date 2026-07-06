@@ -30,9 +30,9 @@ const lang = locale === "zh" ? "zh-CN" : "en";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const indexHref = getIndexHref(locale, base);
 const copy = {
-  back: locale === "zh" ? "← 返回全部文章" : "← Back to all posts",
+  back: locale === "zh" ? "← 返回全部文章" : "← All posts",
   by: locale === "zh" ? "By" : "By",
-  more: locale === "zh" ? "← More posts" : "← More posts",
+  more: locale === "zh" ? "← 更多文章" : "← More posts",
   learnMore: "Learn More →",
 };
 const dateLabel = date.toLocaleDateString(locale === "zh" ? "zh-CN" : "en-US", {
@@ -76,49 +76,52 @@ const jsonLd = {
     slot="head"
   />
 
-  <article class="mx-auto w-full max-w-[760px] px-6 py-14 md:py-20">
-    <a
-      href={indexHref}
-      class="mb-10 inline-flex items-center gap-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)] transition-colors hover:text-[color:var(--fg)]"
+  <article class="mx-auto w-full max-w-[760px] px-6 py-14 md:py-20" data-page>
+    <header data-reveal style="--reveal-i: 0">
+      <a
+        href={indexHref}
+        class="mb-10 inline-block text-[13px] font-medium text-[color:var(--fg-muted)] transition-colors duration-150 hover:text-[color:var(--fg)]"
+      >
+        {copy.back}
+      </a>
+
+      <div class="mb-4 flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
+        <span class="font-semibold text-[color:var(--accent-text)]">{category}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={date.toISOString()}>{dateLabel}</time>
+      </div>
+
+      <h1 class="mb-8 font-display text-[40px] font-medium leading-[1.08] tracking-[-0.022em] text-[color:var(--ink-950)] md:text-[52px]">
+        {
+          hasTitleAccent && titleAccent ? (
+            <>
+              {titleBefore}<span class="text-[color:var(--accent-text)]">{titleAccent}</span>{titleAfter}
+            </>
+          ) : (
+            title
+          )
+        }
+      </h1>
+
+      <div class="mb-12 flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)]">
+        <span class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[color:var(--border)] bg-white shadow-[var(--shadow-xs)]">
+          <img
+            src="/blog/favicon.svg"
+            alt=""
+            width="28"
+            height="28"
+            class="h-7 w-7"
+          />
+        </span>
+        <span>{copy.by} {author}</span>
+      </div>
+    </header>
+
+    <div
+      class="mb-14 overflow-hidden rounded-[var(--r-xl)] border border-[color:var(--border)]"
+      data-reveal
+      style="--reveal-i: 1"
     >
-      {copy.back}
-    </a>
-
-    <div class="mb-4 flex items-center gap-3 font-mono text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--fg-muted)]">
-      <span>{dateLabel}</span>
-      <span class="text-[color:var(--ink-300)]">·</span>
-      <span class="inline-flex items-center gap-1.5 text-[color:var(--accent-text)]">
-        <span class="block h-1.5 w-1.5 rounded-full bg-[color:var(--green-500)]" />
-        {category}
-      </span>
-    </div>
-
-    <h1 class="mb-8 font-display text-[42px] font-medium leading-[1.05] tracking-[-0.025em] text-[color:var(--ink-950)] md:text-[56px]">
-      {
-        hasTitleAccent && titleAccent ? (
-          <>
-            {titleBefore}<span class="text-[#0033ff]">{titleAccent}</span>{titleAfter}
-          </>
-        ) : (
-          title
-        )
-      }
-    </h1>
-
-    <div class="mb-12 flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)]">
-      <span class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[color:var(--border)] bg-white shadow-[var(--shadow-xs)]">
-        <img
-          src="/blog/favicon.svg"
-          alt=""
-          width="28"
-          height="28"
-          class="h-7 w-7"
-        />
-      </span>
-      <span>{copy.by} {author}</span>
-    </div>
-
-    <div class="mb-14 overflow-hidden rounded-[var(--r-xl)] border border-[color:var(--border)] shadow-[var(--shadow-sm)]">
       <CardVisual
         slug={post.id}
         heroImage={heroImage}
@@ -127,21 +130,21 @@ const jsonLd = {
       />
     </div>
 
-    <div class="prose-mosoo">
+    <div class="prose-mosoo" data-reveal style="--reveal-i: 2">
       <slot />
     </div>
 
     <hr class="my-16 border-[color:var(--border)]" />
 
-    <div class="flex items-center justify-between text-[13px] text-[color:var(--fg-secondary)]">
+    <div class="flex items-center justify-between text-[14px]">
       <a
         href={indexHref}
-        class="font-mono font-semibold uppercase tracking-[0.08em] hover:text-[color:var(--fg)]"
+        class="font-medium text-[color:var(--fg-secondary)] transition-colors duration-150 hover:text-[color:var(--fg)]"
         >{copy.more}</a
       >
       <a
         href="https://github.com/langgenius/mosoo-agent-driver"
-        class="inline-flex items-center gap-2 rounded-[var(--r-md)] bg-[color:var(--green-500)] px-3.5 py-2 font-semibold text-[color:var(--fg-on-accent)] transition-colors hover:bg-[color:var(--green-600)]"
+        class="inline-flex items-center gap-2 rounded-[var(--r-md)] bg-[color:var(--green-500)] px-3.5 py-2 font-semibold text-[color:var(--fg-on-accent)] transition-colors duration-150 hover:bg-[color:var(--green-600)]"
         >{copy.learnMore}</a
       >
     </div>

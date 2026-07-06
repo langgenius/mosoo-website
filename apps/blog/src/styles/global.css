@@ -12,6 +12,68 @@
   );
 }
 
+/* ============================================================================
+   Motion — three variants, switched by data-motion on <html>:
+
+     none  · no entrance motion; hover micro-transitions only
+     fade  · the page fades in once as a unit (opacity, 480ms)
+     rise  · masthead/featured/cards fade in and rise 12px with a short
+             stagger; below-fold cards reveal as they scroll into view
+
+   Entrance styles only apply once JS has confirmed itself (html.js), so
+   content is never hidden without a script to reveal it. Only opacity and
+   transform are animated, and prefers-reduced-motion disables everything.
+   ========================================================================== */
+@keyframes motion-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html.js[data-motion="fade"] [data-page] {
+  animation: motion-fade 480ms var(--ease-out) both;
+}
+
+html.js[data-motion="rise"] [data-reveal] {
+  opacity: 0;
+}
+html.js[data-motion="rise"] [data-reveal].is-revealed {
+  animation: motion-rise 560ms var(--ease-out) both;
+  animation-delay: calc(var(--reveal-i, 0) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-page],
+  html.js [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Headings keep their rag balanced; body copy avoids one-word orphans. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
 /* Reading view — calm paper, Hanken Grotesk body, generous line-height. The
    article body sets its own type scale so prose stays consistent regardless of
    the parent layout. */
