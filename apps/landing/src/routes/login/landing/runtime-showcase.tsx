@@ -1,4 +1,4 @@
-import { Check, Clock } from "lucide-react";
+import { Check } from "lucide-react";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import type { ReactElement } from "react";
@@ -13,8 +13,7 @@ import { sectionHeadingStyle } from "./typography";
 type Runtime = {
   runtimeId: string;
   label: string;
-  provider: string;
-  available: boolean;
+  providerLabel: string;
 };
 
 // The agent drivers (harnesses) a Mosoo agent can run on — runtime ids match the
@@ -23,16 +22,10 @@ const RUNTIMES: readonly Runtime[] = [
   {
     runtimeId: "claude-agent-sdk",
     label: "Claude Agent SDK",
-    provider: "Anthropic",
-    available: true,
+    providerLabel: "Anthropic",
   },
-  { runtimeId: "openai-runtime", label: "OpenAI", provider: "OpenAI", available: true },
-  { runtimeId: "opencode", label: "OpenCode", provider: "sst", available: false },
-  { runtimeId: "openclaw", label: "OpenClaw", provider: "OpenClaw", available: false },
-  { runtimeId: "hermes", label: "Hermes", provider: "Hermes", available: false },
-  { runtimeId: "gemini", label: "Gemini", provider: "Google", available: false },
-  { runtimeId: "pi", label: "Pi", provider: "Inflection AI", available: false },
-  { runtimeId: "cursor-agent", label: "Cursor Agent", provider: "Cursor", available: false },
+  { runtimeId: "openai-runtime", label: "OpenAI", providerLabel: "OpenAI" },
+  { runtimeId: "acp-fallback", label: "OpenCode", providerLabel: "OpenCode" },
 ];
 
 // Mosoo normalises every harness to the same interface — so the capability set is
@@ -61,19 +54,12 @@ function RuntimeCard({ runtime }: { runtime: Runtime }): ReactElement {
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-fg-1 text-[15px] font-semibold tracking-[-0.01em]">{runtime.label}</p>
-          <p className="text-fg-3 text-[12.5px]">{runtime.provider}</p>
+          <p className="text-fg-3 text-[12.5px]">{runtime.providerLabel}</p>
         </div>
-        {runtime.available ? (
-          <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-50 px-2 py-1 text-[11px] font-semibold text-green-800">
-            <span className="size-1.5 rounded-full bg-green-600" />
-            Available
-          </span>
-        ) : (
-          <span className="bg-bg-sunken text-fg-3 inline-flex items-center gap-1.5 rounded-[6px] px-2 py-1 text-[11px] font-semibold">
-            <Clock className="size-3" />
-            Coming soon
-          </span>
-        )}
+        <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-50 px-2 py-1 text-[11px] font-semibold text-green-800">
+          <span className="size-1.5 rounded-full bg-green-600" />
+          Available
+        </span>
       </div>
 
       <div className="border-border-soft text-fg-2 mt-4 flex items-center gap-2 border-t pt-4 text-[13px]">

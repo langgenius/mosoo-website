@@ -18,11 +18,8 @@ mosoo-openapi.zh-Hans.generated.json
 
 ## Local Development
 
-Install the Mintlify CLI:
-
-```bash
-npm i -g mint
-```
+Use Node 24 or another Node version supported by the pinned Mintlify CLI
+(`>=20 <25`). Node 25 is not supported by Mintlify 4.2.651.
 
 Install dependencies:
 
@@ -43,6 +40,15 @@ Build the copied landing and blog apps:
 ```bash
 npm run site:build
 ```
+
+Deploy the production Worker:
+
+```bash
+npm run deploy
+```
+
+The production Worker serves `/`, `/blog`, and `/docs` from one static asset
+bundle. `/login` redirects to `https://try.mosoo.ai/login`.
 
 ## Project Structure
 
@@ -107,4 +113,4 @@ Secrets used by the sync workflow:
 - `MOSOO_REPO_TOKEN`: optional token for checking out a private Mosoo source repo.
 - `MINTLIFY_API_KEY` and `MINTLIFY_PROJECT_ID`: optional; triggers Mintlify's deployment API after a generated commit.
 
-The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `KurosawaGeeker/mosoo-docs`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.
+The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `langgenius/mosoo-website`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.
