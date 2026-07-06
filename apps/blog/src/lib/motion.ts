@@ -12,4 +12,4 @@
 export const MOTION_VARIANTS = ["none", "fade", "rise"] as const;
 export type MotionVariant = (typeof MOTION_VARIANTS)[number];
 
-export const MOTION_VARIANT: MotionVariant = "fade";
+export const MOTION_VARIANT: MotionVariant = "rise";
