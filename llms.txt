@@ -16,9 +16,10 @@
 
 ## Public API endpoints
 
-- `POST /api/v1/files/{fileId}/complete`: Complete Thread file upload
+- `POST /api/v1/agents/{agentId}/files`: Upload an Agent file
 - `GET /api/v1/files/{fileId}/content`: Download Thread file content
-- `PUT /api/v1/files/{fileId}/content`: Upload Thread file content
+- `GET /api/v1/files/{fileId}`: Retrieve file metadata
+- `DELETE /api/v1/files/{fileId}`: Delete a file
 - `GET /api/v1/agents/{agentId}/threads`: List Threads for an Agent API Endpoint
 - `POST /api/v1/agents/{agentId}/threads`: Create a Thread for an Agent API Endpoint
 - `GET /api/v1/threads/{threadId}`: Retrieve Thread summary
@@ -28,8 +29,6 @@
 - `POST /api/v1/threads/{threadId}/events`: Send user messages, permission decisions, or interrupts to a Thread
 - `GET /api/v1/threads/{threadId}/events/stream`: Stream Thread events
 - `GET /api/v1/threads/{threadId}/files`: List Thread files
-- `POST /api/v1/threads/{threadId}/files`: Add a Thread file
-- `POST /api/v1/threads/{threadId}/files/uploads`: Create a Thread file upload
 - `DELETE /api/v1/threads/{threadId}/files/{fileId}`: Remove a Thread file
 - `POST /api/v1/threads/{threadId}/unarchive`: Unarchive a Thread
 

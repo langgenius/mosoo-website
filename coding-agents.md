@@ -359,9 +359,10 @@ All endpoints below are relative to `/api/v1`.
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| `POST` | `/files/{fileId}/complete` | Complete Thread file upload |
+| `POST` | `/agents/{agentId}/files` | Upload an Agent file |
 | `GET` | `/files/{fileId}/content` | Download Thread file content |
-| `PUT` | `/files/{fileId}/content` | Upload Thread file content |
+| `GET` | `/files/{fileId}` | Retrieve file metadata |
+| `DELETE` | `/files/{fileId}` | Delete a file |
 | `GET` | `/agents/{agentId}/threads` | List Threads for an Agent API Endpoint |
 | `POST` | `/agents/{agentId}/threads` | Create a Thread for an Agent API Endpoint |
 | `GET` | `/threads/{threadId}` | Retrieve Thread summary |
@@ -371,8 +372,6 @@ All endpoints below are relative to `/api/v1`.
 | `POST` | `/threads/{threadId}/events` | Send user messages, permission decisions, or interrupts to a Thread |
 | `GET` | `/threads/{threadId}/events/stream` | Stream Thread events |
 | `GET` | `/threads/{threadId}/files` | List Thread files |
-| `POST` | `/threads/{threadId}/files` | Add a Thread file |
-| `POST` | `/threads/{threadId}/files/uploads` | Create a Thread file upload |
 | `DELETE` | `/threads/{threadId}/files/{fileId}` | Remove a Thread file |
 | `POST` | `/threads/{threadId}/unarchive` | Unarchive a Thread |
 
@@ -387,46 +386,32 @@ Common error response envelope:
 }
 ```
 
-### `POST /files/{fileId}/complete`
+### `POST /agents/{agentId}/files`
 
-Purpose: Completes a pending single PUT Thread file upload. The file must have been created through POST /threads/{threadId}/files/uploads, uploaded through PUT /files/{fileId}/content, and belong to a public Thread visible to the API token.
+Purpose: Uploads a file into the Agent API Endpoint's App draft scope before a Thread exists. Use the returned file ID in create-thread or send-events resources.
 
 Path params:
 
-- `fileId` required, `string(ulid)`. File ID returned by add or list Thread files. v1 IDs are bare ULIDs.
+- `agentId` required, `string(ulid)`. Agent API Endpoint ID from the Agent's API Access panel. v1 IDs are bare ULIDs.
 
 Request body:
 
-- `application/json`: `CompleteFileUploadRequest`
-
-Example:
-
-```json
-{}
-```
+- `multipart/form-data`: `object`
 
 Success responses:
 
-- `200`: Completed files API upload. (`application/json` -> `CompleteFileUploadResponse`)
+- `201`: Uploaded file. (`application/json` -> `PublicFileResponse`)
 
-Example `200`:
+Example `201`:
 
 ```json
 {
   "file": {
     "createdAt": "2026-05-19T00:02:00.000Z",
-    "createdBy": "01J00000000000000000000002",
-    "etag": "etag-1",
-    "expiresAt": null,
     "id": "01J0000000000000000000000J",
     "mimeType": "text/plain",
     "name": "brief.txt",
-    "path": "session-files/01J0000000000000000000000J/brief.txt",
-    "sessionKind": "attachment",
-    "size": 19,
-    "status": "ready",
-    "updatedAt": "2026-05-19T00:03:00.000Z",
-    "version": 1
+    "size": 19
   }
 }
 ```
@@ -467,21 +452,53 @@ Error responses:
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
 
-### `PUT /files/{fileId}/content`
+### `GET /files/{fileId}`
 
-Purpose: Uploads raw bytes for a pending single PUT Thread file upload. The file must have been created through POST /threads/{threadId}/files/uploads and belong to a public Thread visible to the API token.
+Purpose: Returns public file metadata for a pre-Thread uploaded file or a file attached to a public Thread visible to the API token.
 
 Path params:
 
 - `fileId` required, `string(ulid)`. File ID returned by add or list Thread files. v1 IDs are bare ULIDs.
 
-Request body:
+Success responses:
 
-- `application/octet-stream`: `string(binary)`
+- `200`: File metadata. (`application/json` -> `PublicFileResponse`)
+
+Example `200`:
+
+```json
+{
+  "file": {
+    "createdAt": "2026-05-19T00:02:00.000Z",
+    "id": "01J0000000000000000000000J",
+    "mimeType": "text/plain",
+    "name": "brief.txt",
+    "size": 19
+  }
+}
+```
+
+Error responses:
+
+- `400` `InvalidRequest`: The request shape or query value is invalid.
+- `401` `Unauthenticated`: A valid API token is required.
+- `403` `Forbidden`: This operation is not allowed for this Agent.
+- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
+- `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
+- `500` `InternalError`: The request failed unexpectedly.
+
+### `DELETE /files/{fileId}`
+
+Purpose: Deletes a pre-Thread uploaded file or a file attached to a public Thread visible to the API token.
+
+Path params:
+
+- `fileId` required, `string(ulid)`. File ID returned by add or list Thread files. v1 IDs are bare ULIDs.
 
 Success responses:
 
-- `200`: Uploaded. (`application/json` -> `object`)
+- `200`: Deleted. (`application/json` -> `object`)
 
 Error responses:
 
@@ -548,11 +565,6 @@ Example `accessTokenWithFile`:
 ```json
 {
   "client_external_ref": "linear-ENG-123",
-  "files": [
-    {
-      "file_id": "01J0000000000000000000000J"
-    }
-  ],
   "input": {
     "content": [
       {
@@ -561,7 +573,13 @@ Example `accessTokenWithFile`:
       }
     ],
     "type": "user.message"
-  }
+  },
+  "resources": [
+    {
+      "file_id": "01J0000000000000000000000J",
+      "type": "file"
+    }
+  ]
 }
 ```
 
@@ -819,109 +837,6 @@ Error responses:
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
 
-### `POST /threads/{threadId}/files`
-
-Purpose: Claims a ready draft file handle into this Thread. Upload file bytes through the files data plane first, then pass the resulting fileId here.
-
-Path params:
-
-- `threadId` required, `string(ulid)`. Thread ID returned by create thread. v1 IDs are bare ULIDs.
-
-Request body:
-
-- `application/json`: `CreateThreadFileRequest`
-
-Example:
-
-```json
-{
-  "fileId": "01J0000000000000000000000J"
-}
-```
-
-Success responses:
-
-- `201`: Created Thread file. (`application/json` -> `ThreadFileResponse`)
-
-Example `201`:
-
-```json
-{
-  "file": {
-    "committed": true,
-    "createdAt": "2026-05-19T00:02:00.000Z",
-    "id": "01J0000000000000000000000J",
-    "kind": "attachment",
-    "mimeType": "text/plain",
-    "name": "brief.txt",
-    "size": 19
-  }
-}
-```
-
-Error responses:
-
-- `400` `InvalidRequest`: The request shape or query value is invalid.
-- `401` `Unauthenticated`: A valid API token is required.
-- `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
-- `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
-- `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
-- `500` `InternalError`: The request failed unexpectedly.
-
-### `POST /threads/{threadId}/files/uploads`
-
-Purpose: Creates a files API upload session scoped to this Thread. The request only supplies file metadata; Mosoo resolves the backing App and Session from the Thread and creates a session attachment upload. MVP public uploads must be 67108864 bytes or fewer and use single PUT.
-
-Path params:
-
-- `threadId` required, `string(ulid)`. Thread ID returned by create thread. v1 IDs are bare ULIDs.
-
-Request body:
-
-- `application/json`: `CreateThreadFileUploadRequest`
-
-Example:
-
-```json
-{
-  "file": {
-    "contentType": "text/plain",
-    "name": "brief.txt",
-    "size": 19
-  }
-}
-```
-
-Success responses:
-
-- `201`: Created files API upload session. (`application/json` -> `FileUploadSummary`)
-
-Example `201`:
-
-```json
-{
-  "contentType": "text/plain",
-  "expectedSize": 19,
-  "expiresAt": "2026-05-20T00:02:00.000Z",
-  "fileId": "01J0000000000000000000000J",
-  "partSize": null,
-  "path": "session-files/01J0000000000000000000000J/brief.txt",
-  "status": "pending",
-  "strategy": "single_put"
-}
-```
-
-Error responses:
-
-- `400` `InvalidRequest`: The request shape or query value is invalid.
-- `401` `Unauthenticated`: A valid API token is required.
-- `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
-- `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
-- `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
-- `500` `InternalError`: The request failed unexpectedly.
-
 ### `DELETE /threads/{threadId}/files/{fileId}`
 
 Purpose: Detaches a file from the Thread.
@@ -976,7 +891,7 @@ A single event posted to a Thread. Exactly one variant applies: send a user mess
 Variants:
 
 1. `object`: Send a new user message into the Thread, optionally with file attachments.
-   - `attachmentIds` optional, `string(ulid)[]`. File IDs (bare ULIDs) to attach to this message. Each file must already be uploaded and claimed into this Thread.
+   - `resources` optional, `FileResource[]`. Files to attach to this message. Each file must be a ready draft file uploaded through the Agent file endpoint by the same API token.
    - `clientRequestId` optional, `string | null`. Optional caller-supplied correlation ID echoed back on the matching event result so you can pair responses with the message you sent.
    - `text` required, `string`. The user message text. Must not be empty.
    - `type` required, `"user_message"`. Discriminator selecting the send-user-message variant.
@@ -998,84 +913,34 @@ Fields:
 
 - `events` required, `ThreadEventInput[]`. Ordered list of events to apply to the Thread. At least one is required.
 
-### `CreateThreadFileRequest`
+### `FileResource`
 
-Request body for claiming a previously uploaded draft file handle into a Thread.
-
-Fields:
-
-- `fileId` required, `string(ulid)`. ID of a ready draft file (bare ULID) previously uploaded through the files data plane by the same API token.
-
-### `CreateThreadFileUploadRequest`
-
-Request body for creating a files API upload session scoped to this Thread.
+A file resource to mount into a Thread or user message.
 
 Fields:
 
-- `file` required, `object`. Metadata for the file bytes that will be uploaded.
-  - `contentType` required, `string`. MIME type for the file bytes.
-  - `name` required, `string`. Original file name to record for this Thread attachment.
-  - `size` required, `integer`. File size in bytes. Public Thread upload creation currently accepts single-put uploads only.
+- `file_id` required, `string(ulid)`. ID of a ready draft file uploaded through the Agent file endpoint.
+- `type` required, `"file"`. Resource discriminator. Only `file` is supported today.
 
-### `FileUploadSummary`
+### `PublicFile`
 
-Files API upload session summary returned after creating an upload target.
-
-Fields:
-
-- `contentType` required, `string`. Normalized MIME type the upload expects.
-- `expectedSize` required, `integer`. Expected file size in bytes for integrity validation.
-- `expiresAt` required, `string(date-time)`. Timestamp (RFC 3339) when this upload session expires.
-- `fileId` required, `string(ulid)`. File ID (bare ULID) for this upload session.
-- `partSize` required, `integer | null`. Multipart part size in bytes, or null when the upload uses single PUT.
-- `path` required, `string`. Materialized file path exposed by the files API upload summary.
-- `status` required, `"aborted" | "completed" | "completing" | "expired" | "failed" | "pending" | "uploading"`. Current files API upload session status.
-- `strategy` required, `"multipart" | "single_put"`. Files API upload transfer strategy selected for the file size.
-
-### `CompleteFileUploadPart`
-
-A completed multipart upload part. Public Thread MVP uploads use single PUT and do not send parts.
-
-Fields:
-
-- `etag` required, `string`. ETag returned by the uploaded multipart part.
-- `partNumber` required, `integer`. One-based multipart part number for completion ordering.
-
-### `CompleteFileUploadRequest`
-
-Request body for completing a files API upload session. Public Thread MVP single PUT uploads send an empty object.
-
-Fields:
-
-- `parts` optional, `CompleteFileUploadPart[]`. Multipart completion parts. Omit this field for public MVP single PUT uploads.
-
-### `FileEntry`
-
-Files API file entry returned after an upload completes.
+Public file metadata.
 
 Fields:
 
 - `createdAt` required, `string(date-time)`. Timestamp (RFC 3339) at which the file record was created.
-- `createdBy` required, `string(ulid)`. Account ID (bare ULID) that created the file record.
-- `etag` required, `string | null`. Storage ETag for the finalized object, or null when unavailable.
-- `expiresAt` required, `string | null(date-time)`. Expiration timestamp for temporary files, or null for durable Thread files.
-- `id` required, `string(ulid)`. File ID (bare ULID) for the finalized file.
-- `mimeType` required, `string | null`. Stored MIME type for the file bytes, or null when unknown.
-- `name` required, `string`. Original file name recorded for this file.
-- `path` required, `string`. Files API record path for the finalized file.
-- `sessionKind` required, `"artifact" | "attachment" | null`. Session file kind for Thread-scoped files, or null for non-session files.
-- `size` required, `integer`. Finalized file size in bytes.
-- `status` required, `"deleting" | "failed" | "pending" | "ready"`. Current files API file lifecycle status.
-- `updatedAt` required, `string(date-time)`. Timestamp (RFC 3339) at which the file record was last updated.
-- `version` required, `integer`. Monotonic file version number within its path.
+- `id` required, `string(ulid)`. File ID (bare ULID).
+- `mimeType` required, `string | null`. Detected MIME type of the file, or null when unknown.
+- `name` required, `string`. Original file name.
+- `size` required, `integer`. File size in bytes.
 
-### `CompleteFileUploadResponse`
+### `PublicFileResponse`
 
-Result of completing a files API upload session.
+A single public file.
 
 Fields:
 
-- `file` required, `FileEntry`. Completed files API file entry.
+- `file` required, `PublicFile`. Public file metadata.
 
 ### `ErrorResponse`
 
@@ -1139,7 +1004,7 @@ Request body for creating a Thread. All fields are optional: omit `input` to cre
 Fields:
 
 - `client_external_ref` optional, `string`. Optional client-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by Mosoo.
-- `files` optional, `object[]`. Draft file handles uploaded by the same API token.
+- `resources` optional, `FileResource[]`. Files uploaded through the Agent file endpoint and mounted into the first Run.
 - `input` optional, `object`. Initial user message that seeds the Thread and queues the first Run. Omit to create an empty Thread with no run.
   - `content` required, `object[]`. Ordered content parts that make up the initial message.
   - `type` required, `"user.message"`. Discriminator for the initial input. Always `user.message`.

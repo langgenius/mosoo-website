@@ -232,5 +232,22 @@
   "Removed.": "已移除。",
   "Restores a previously archived Thread to active Thread lists.": "将之前归档的 Thread 恢复到活动 Thread 列表。",
   "Unarchive a Thread": "取消归档 Thread",
-  "Unarchived.": "已取消归档。"
+  "Unarchived.": "已取消归档。",
+  "Files to attach to this message. Each file must be a ready draft file uploaded through the Agent file endpoint by the same API token caller.": "",
+  "A file resource to mount into a Thread or user message.": "",
+  "ID of a ready draft file uploaded through the Agent file endpoint.": "",
+  "Resource discriminator. Only `file` is supported today.": "",
+  "Public file metadata.": "",
+  "File ID (bare ULID).": "",
+  "A single public file.": "",
+  "Files uploaded through the Agent file endpoint and mounted into the first Run.": "",
+  "Uploads a file into the Agent API Endpoint's App draft scope before a Thread exists. Use the returned file ID in create-thread or send-events resources.": "",
+  "File bytes to upload before attaching them to a Thread.": "",
+  "Upload an Agent file": "",
+  "Uploaded file.": "",
+  "Deletes a pre-Thread uploaded file or a file attached to a public Thread visible to the API token caller.": "",
+  "Delete a file": "",
+  "Returns public file metadata for a pre-Thread uploaded file or a file attached to a public Thread visible to the API token caller.": "",
+  "Retrieve file metadata": "",
+  "File metadata.": ""
 }
