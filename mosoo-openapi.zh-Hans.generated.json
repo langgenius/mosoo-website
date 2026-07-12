@@ -900,7 +900,7 @@
             ]
           },
           "finalOutput": {
-            "description": "已完成 Run 的稳定最终答案。Mosoo 会按时间顺序从该 Run 的公开 `agent.message.delta` 事件构建此内容。Run 状态变为 `completed` 前为 null。",
+            "description": "Public-safe canonical final assistant answer for a completed Run. It is derived from the persisted final assistant message, not reconstructed from public `agent.message.delta` events. Null until that final message is persisted or when the Run has no final assistant answer.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RunFinalOutput"
@@ -997,12 +997,39 @@
         "description": "已完成公开 Thread Run 的最终助手答案。",
         "properties": {
           "text": {
-            "description": "按时间顺序从当前 Run 的公开 `agent.message.delta` 事件重建出的文本。",
+            "description": "Public-safe text derived from the Run's persisted final assistant message. Provider-private control markup is omitted and reported through warnings.",
             "type": "string"
+          },
+          "warnings": {
+            "description": "Non-fatal warnings raised while making provider output safe for public consumption.",
+            "items": {
+              "$ref": "#/components/schemas/RunFinalOutputWarning"
+            },
+            "type": "array"
           }
         },
         "required": [
           "text"
+        ],
+        "type": "object"
+      },
+      "RunFinalOutputWarning": {
+        "additionalProperties": false,
+        "description": "A non-fatal warning attached to canonical final output.",
+        "properties": {
+          "code": {
+            "const": "unresolved_provider_citation",
+            "description": "Stable code identifying provider citation markup that could not be resolved."
+          },
+          "count": {
+            "description": "Number of private citation envelopes removed from the public text.",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "count"
         ],
         "type": "object"
       },

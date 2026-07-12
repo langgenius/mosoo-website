@@ -249,5 +249,11 @@
   "Delete a file": "",
   "Returns public file metadata for a pre-Thread uploaded file or a file attached to a public Thread visible to the API token caller.": "",
   "Retrieve file metadata": "",
-  "File metadata.": ""
+  "File metadata.": "",
+  "Public-safe canonical final assistant answer for a completed Run. It is derived from the persisted final assistant message, not reconstructed from public `agent.message.delta` events. Null until that final message is persisted or when the Run has no final assistant answer.": "",
+  "Public-safe text derived from the Run's persisted final assistant message. Provider-private control markup is omitted and reported through warnings.": "",
+  "Non-fatal warnings raised while making provider output safe for public consumption.": "",
+  "A non-fatal warning attached to canonical final output.": "",
+  "Stable code identifying provider citation markup that could not be resolved.": "",
+  "Number of private citation envelopes removed from the public text.": ""
 }
