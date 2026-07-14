@@ -1,7 +1,7 @@
 ---
-title: "Why we need a headless agent API in the cloud"
-titleAccent: "headless agent API"
-description: "From Completions to Chat, from Messages to local coding agents: the shape of the API keeps changing. When Agent Work moves to the cloud, the new unit of compute is one request to a headless agent."
+title: "From model calls to agent tasks"
+titleAccent: "agent tasks"
+description: "Local coding agents showed what models can do with a real environment. The next cloud abstraction is a managed agent task: work in, progress and artifacts out."
 date: 2026-07-14
 category: "Engineering"
 author: "evanchen"
@@ -13,74 +13,78 @@ heroImage: "/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/hero.jpg"
 heroAlt: "A collage of green paper squares and wild plants climbing upward on a pale field, like sessions stacking into a living system."
 ---
 
-Every generation of LLM API had a shape, and that shape defined what its generation could build.
+Every generation of AI API gives developers a new primitive. Completions returned text. Chat APIs added structured messages. Tool calling let models request actions.
 
-In 2020, the Completions API was shaped like this: one string in, one string out. No roles, no conversation, no tools. The model was an expensive continuation machine, and everything else — state, memory, workflow — was yours.
+Each step moved more intelligence behind the API. But the application still owned the loop around it: tools, permissions, environment, state, retries, and the product experience.
 
-In early 2023, ChatGPT's first API changed the shape: a `messages` array, with `system`, `user`, and `assistant` roles. It looked like the model had learned to hold a conversation. That was a client-side illusion — the API stayed stateless, and the "history" was something you replayed in full on every call. State was still yours.
+Modern model APIs now include hosted tools, stored state, and background execution. They are useful building blocks. They still do not run your product-specific agent with its own environment, credentials, files, and lifecycle.
 
-Then came the tool-use loop of the Claude Messages API: the model returns `tool_use`, you execute the tool, you send back a `tool_result`, the model continues. This step mattered — for the first time, the model could *do* things. But notice where the loop runs: in your process. You implement the tools, you provide the environment, you gate the permissions, you handle interruption and retry.
+## Local agents proved the runtime
 
-That has been the implicit contract of API evolution these past few years: every unit of intelligence the model gains, a unit of runtime responsibility lands on you.
+Claude Code and Codex changed the experience because the model was no longer alone. It had a filesystem, shell, git, skills, and tools inside a real working environment.
 
-## The golden age of local
+That makes a familiar prototype possible. Point a coding agent at a repository, let it pull data and run an analysis, then feed the result into your own web page. The workflow can come together in one sitting.
 
-Claude Code and Codex supplied the half the loop was missing: a real computer. A filesystem, a shell, git, skills, MCP tools — the loop finally lived in an environment with hands and feet.
+The next request arrives naturally: move it to the cloud, run it on a schedule, run jobs concurrently, or turn it into a feature for teammates and customers.
 
-Which produced a very recognizable scene. On your laptop, you point Codex at a skill and get a repository-analysis pipeline working end to end: pull the data, run the analysis, lightly normalize the output, feed it to your own web page. The whole thing comes together in one sitting, implausibly smooth.
+## Productizing agents exposes the runtime gap
 
-Smooth enough that the next thought arrives on its own: move it to the cloud, run it on a schedule, run it concurrently — or build an app on top of it for your teammates and customers.
+When the workflow leaves the laptop, model intelligence is not the missing piece. Runtime is.
 
-## Then you hit the wall
+A production integration needs:
 
-Here is the problem: the Claude Messages API has no shell, and Chat Completions has no filesystem. Everything that was simply *there* on your machine does not exist in the cloud. Without a managed agent runtime, you rebuild it yourself:
+- a sandboxed environment where the agent can run commands and work with files;
+- execution that can outlive one HTTP request;
+- durable Thread state and explicit file storage;
+- events that expose progress without leaking private runtime data;
+- permission gates, interruption, retries, concurrency, and usage controls;
+- secure custody for model keys and integration credentials.
 
-- an isolated sandbox where the agent can safely run commands and write files;
-- a host for a loop that runs for tens of minutes — not a serverless function that times out in thirty seconds;
-- session persistence, so an interrupted task resumes instead of restarting;
-- an event channel that streams intermediate progress to your frontend;
-- confirmation gates for dangerous actions, file uploads and artifact downloads;
-- model key custody, concurrency and queueing, usage and cost observability, recovery after failure.
+These are not model capabilities. They are runtime and product responsibilities. If every team rebuilds them, an agent feature becomes an agent platform project.
 
-Nothing on that list is your business. You set out to ship a feature and end up building an agent platform. We have watched this happen over and over: fragmented agent experiments growing on countless personal computers, all stuck at the same wall.
+## The unit of work is a task
 
-## The unit of compute moves again
+We should not call this a new unit of compute. One agent task may contain many model calls, tool calls, retries, and files. It is a unit of work.
 
-We once wrapped tokens into an LLM API call and treated that as the smallest unit of compute. Now the unit is moving up once more: **one request to a headless agent in the cloud**.
+Your product hands a task to a purpose-built cloud agent. A managed runtime executes it in a configured sandbox, while your product remains the user interface.
 
-"Headless" is the key word. Your users already have your web, your product surface — your app does not need to grow another chat window. What it needs is the agent response: hand a task to a cloud agent with a full environment, get back structured progress and results, and render them in your own pages.
+This is serverless as a consumption model: you invoke the agent without operating its execution infrastructure. It does not mean the task is a short-lived function.
 
-Agents should be consumed the way databases are. You would not build your own Postgres replication and backups just to store a few rows; you should not build your own sandbox, loop host, and event system just to run one agent pipeline.
+## A managed agent runtime, exposed as an API
 
-## Integration is a paragraph of instructions
+That is the abstraction Mosoo provides. Publish an Agent, call it from your backend, and Mosoo handles execution, Threads, and files.
 
-This is what Mosoo does. A published Agent runs inside a Mosoo-managed sandbox and is exposed as a set of plain HTTP APIs: Threads, Runs, Events, Files. Create a Thread and the task begins:
+Create a Thread with an initial message. Follow its run status through the Thread, observe progress through Events, and exchange attachments and recorded artifacts through Files.
 
 ```bash
-curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
   -H "Authorization: Bearer $MOSOO_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "input": {
       "type": "user.message",
       "content": [
-        { "type": "text", "text": "Analyze last week's commits." }
+        { "type": "text", "text": "Analyze the commits from last week." }
       ]
     }
   }'
 ```
 
-Then poll `GET /threads/{threadId}/events`, or use `/events/stream` to stream the agent's output, tool status, and file artifacts straight into your product.
+Poll `GET /threads/{threadId}/events`, or use `/events/stream` for Server-Sent Events. Your product can show progress, tool activity, results, and downloadable artifacts in its own interface.
 
-And the integration itself is not something you have to hand-write either. In the Mosoo console, every published Agent ships with an **Instruction for LLM**:
+API tokens are backend secrets. Your app remains responsible for end-user authentication, authorization, and mapping its users to Mosoo Threads.
+
+## From local prototype to product
+
+Every published Agent includes a copyable **Instruction for LLM**. It gives a coding agent the generated identifiers, endpoints, environment variables, and integration contract for that Agent.
 
 <figure>
   ![Mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
-  <figcaption>Publish an Agent, copy the Instruction for LLM from the console, paste it into your local coding agent — it writes the rest of the integration.</figcaption>
+  <figcaption>Publish an Agent, copy its Instruction for LLM, and give your coding agent the exact contract it needs to integrate with Mosoo.</figcaption>
 </figure>
 
-Paste that machine-oriented guide (it lives at [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md)) into your local Claude Code or Codex, and it writes the rest of the integration for you. The thing you built locally with a coding agent gets wired to the cloud by the same coding agent — with no wall left for you to climb.
+Paste the instruction into Claude Code or Codex and let it wire the API into your backend. You still review authentication, data access, and the user experience like any production integration.
 
-Agent Work that crosses the threshold should be hosted, isolated, observed, and reused like a cloud resource. This time, the distance from local to cloud is one copy-paste.
+Local agents proved the value of giving models a real runtime. The next step is not a larger model call. It is a managed agent task that your product can start, observe, and continue through an API.
 
 Try it at [try.mosoo.ai](https://try.mosoo.ai), or read the code on GitHub: [langgenius/mosoo](https://github.com/langgenius/mosoo).
