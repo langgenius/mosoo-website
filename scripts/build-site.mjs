@@ -131,4 +131,12 @@ if (!existsSync(join(DIST, "docs", "index.html"))) {
   throw new Error("Docs export did not produce dist/docs/index.html.");
 }
 
+if (!existsSync(join(DIST, "robots.txt"))) {
+  throw new Error("Landing build did not produce dist/robots.txt.");
+}
+
+if (!existsSync(join(DIST, "sitemap.xml"))) {
+  throw new Error("Landing build did not produce dist/sitemap.xml.");
+}
+
 console.log(`Built Mosoo website into ${basename(DIST)}/`);

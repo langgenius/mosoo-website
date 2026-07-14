@@ -47,7 +47,6 @@ function isLegacyDocsRootPath(pathname) {
     pathname === "/zh-Hans" ||
     pathname.startsWith("/zh-Hans/") ||
     pathname === "/llms.txt" ||
-    pathname === "/sitemap.xml" ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
     pathname.startsWith("/favicons/")
