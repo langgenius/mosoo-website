@@ -4,7 +4,8 @@ titleAccent: "headless agent API"
 description: "From Completions to Chat, from Messages to local coding agents: the shape of the API keeps changing. When Agent Work moves to the cloud, the new unit of compute is one request to a headless agent."
 date: 2026-07-14
 category: "Engineering"
-author: "Mosoo team"
+author: "evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
 locale: "en"
 permalink: "why-we-need-a-headless-agent-api-in-the-cloud"
 translationKey: "why-we-need-a-headless-agent-api-in-the-cloud"
@@ -71,7 +72,14 @@ curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 Then poll `GET /threads/{threadId}/events`, or use `/events/stream` to stream the agent's output, tool status, and file artifacts straight into your product.
 
-And the integration itself is not something you have to hand-write either. Paste [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md) — our machine-oriented guide — into your local Claude Code or Codex, and it writes the rest of the integration for you. The thing you built locally with a coding agent gets wired to the cloud by the same coding agent — with no wall left for you to climb.
+And the integration itself is not something you have to hand-write either. In the Mosoo console, every published Agent ships with an **Instruction for LLM**:
+
+<figure>
+  ![Mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  <figcaption>Publish an Agent, copy the Instruction for LLM from the console, paste it into your local coding agent — it writes the rest of the integration.</figcaption>
+</figure>
+
+Paste that machine-oriented guide (it lives at [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md)) into your local Claude Code or Codex, and it writes the rest of the integration for you. The thing you built locally with a coding agent gets wired to the cloud by the same coding agent — with no wall left for you to climb.
 
 Agent Work that crosses the threshold should be hosted, isolated, observed, and reused like a cloud resource. This time, the distance from local to cloud is one copy-paste.
 

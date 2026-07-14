@@ -4,7 +4,8 @@ titleAccent: "无头 Agent API"
 description: "从 Completions 到 Chat，从 Messages 到本地 coding agent：API 的形状一直在变。当 Agent Work 想搬到云上，新的最小计算单元是对一个无头 Agent 的一次请求。"
 date: 2026-07-14
 category: "Engineering"
-author: "Mosoo team"
+author: "evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
 locale: "zh"
 permalink: "why-we-need-a-headless-agent-api-in-the-cloud"
 translationKey: "why-we-need-a-headless-agent-api-in-the-cloud"
@@ -71,7 +72,14 @@ curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 之后用 `GET /threads/{threadId}/events` 轮询，或用 `/events/stream` 把 agent 的输出、工具状态和文件产物流式接进你的产品。
 
-而集成这件事本身，也不必由你手写。把 [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md) 这份面向机器的说明文粘贴给你本地的 Claude Code 或 Codex，剩下的接入代码它会替你写完。你在本地用 coding agent 做出来的东西，由同一个 coding agent 把它接到云上——中间没有一堵需要你亲手翻越的墙。
+而集成这件事本身，也不必由你手写。在 Mosoo 控制台里，每个发布的 Agent 都自带一份 **Instruction for LLM**：
+
+<figure>
+  ![Mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  <figcaption>发布一个 Agent 后，从控制台复制 Instruction for LLM，粘贴给你本地的 coding agent，剩下的接入代码由它完成。</figcaption>
+</figure>
+
+把这份面向机器的说明文（也就是 [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md)）粘贴给你本地的 Claude Code 或 Codex，剩下的接入代码它会替你写完。你在本地用 coding agent 做出来的东西，由同一个 coding agent 把它接到云上——中间没有一堵需要你亲手翻越的墙。
 
 跨过阈值的 Agent Work，应该像云资源一样被托管、被隔离、被观测、被复用。这一次，从本地到云上，只隔一次复制粘贴。
 
