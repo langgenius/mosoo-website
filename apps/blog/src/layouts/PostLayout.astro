@@ -15,6 +15,7 @@ const {
   date,
   category,
   author,
+  authorAvatar,
   heroImage,
   heroAlt,
 } = post.data;
@@ -105,13 +106,25 @@ const jsonLd = {
 
       <div class="mb-12 flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)]">
         <span class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[color:var(--border)] bg-white shadow-[var(--shadow-xs)]">
-          <img
-            src="/blog/favicon.svg"
-            alt=""
-            width="28"
-            height="28"
-            class="h-7 w-7"
-          />
+          {
+            authorAvatar ? (
+              <img
+                src={authorAvatar}
+                alt={author}
+                width="36"
+                height="36"
+                class="h-9 w-9 object-cover"
+              />
+            ) : (
+              <img
+                src="/blog/favicon.svg"
+                alt=""
+                width="28"
+                height="28"
+                class="h-7 w-7"
+              />
+            )
+          }
         </span>
         <span>{copy.by} {author}</span>
       </div>

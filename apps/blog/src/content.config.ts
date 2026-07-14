@@ -18,6 +18,11 @@ const blog = defineCollection({
     date: z.coerce.date(),
     category: z.enum(CATEGORIES),
     author: z.string().default("Mosoo team"),
+    // Optional byline avatar, root-absolute like heroImage. Convention:
+    // store shared author portraits under `public/blog/authors/<name>.<ext>`
+    // so they ship at `/blog/blog/authors/<name>.<ext>`. Falls back to the
+    // Mosoo favicon when unset.
+    authorAvatar: z.string().optional(),
     locale: z.enum(LOCALES).default("en"),
     permalink: z.string().optional(),
     translationKey: z.string().optional(),
