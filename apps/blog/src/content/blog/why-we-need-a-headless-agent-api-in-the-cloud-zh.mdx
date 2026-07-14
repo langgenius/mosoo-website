@@ -1,0 +1,78 @@
+---
+title: "为什么我们需要一个云上的无头 Agent API"
+titleAccent: "无头 Agent API"
+description: "从 Completions 到 Chat，从 Messages 到本地 coding agent：API 的形状一直在变。当 Agent Work 想搬到云上，新的最小计算单元是对一个无头 Agent 的一次请求。"
+date: 2026-07-14
+category: "Engineering"
+author: "Mosoo team"
+locale: "zh"
+permalink: "why-we-need-a-headless-agent-api-in-the-cloud"
+translationKey: "why-we-need-a-headless-agent-api-in-the-cloud"
+heroImage: "/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/hero.jpg"
+heroAlt: "A collage of green paper squares and wild plants climbing upward on a pale field, like sessions stacking into a living system."
+---
+
+每一代 LLM API 的形状，都定义了那一代人能构建什么。
+
+2020 年，Completions API 的形状是：一个字符串进，一个字符串出。没有角色，没有对话，没有工具。模型是一台昂贵的续写机，其余一切——状态、记忆、流程——都归你。
+
+2023 年初，ChatGPT 最早期的 API 换了形状：`messages` 数组、`system` / `user` / `assistant` 角色。看起来模型学会了"对话"，但那是一个客户端的幻觉——API 本身仍然无状态，所谓的对话历史，是你在每次调用时原样重放的。状态还是归你。
+
+然后是 Claude Messages API 带来的工具调用循环：模型返回 `tool_use`，你执行工具，把结果作为 `tool_result` 发回去，模型继续。这一步意义重大——模型第一次可以"做事"了。但请注意这个循环运行在哪里：在你的进程里。工具由你实现，环境由你提供，权限由你把关，中断和重试由你兜底。
+
+这就是过去几年 API 演化的隐含协议：模型每聪明一分，留给你的运行时责任就重一分。
+
+## 本地的黄金时代
+
+Claude Code 和 Codex 补上了循环缺失的另一半：一台真正的计算机。文件系统、shell、git、skills、MCP 工具——循环终于长在了一个有手有脚的环境里。
+
+于是出现了一个很典型的场景。你在本地用 Codex 照着一个 skill，把一条仓库分析流水线跑通了：拉取数据、分析、把输出稍微标准化一下，喂给你自己的 web 页面展示。整件事在你的笔记本上一次成型，顺滑得不像话。
+
+顺滑到你自然而然产生了下一个念头：把它搬到云上，让它定时跑、并发跑；或者干脆基于它做一个 app，给同事和客户用。
+
+## 然后你撞上了那堵墙
+
+问题在于：Claude Messages API 没有 shell，Chat Completions 没有文件系统。你在本地"顺手就有"的一切，云上一样也没有。如果不用托管的 agent 运行时，你需要亲手重建：
+
+- 一个隔离的 sandbox，让 agent 可以安全地执行命令和写文件；
+- 一个能跑几十分钟的循环宿主——而不是三十秒就超时的无服务器函数；
+- 会话的持久化：任务中断后能恢复，而不是从头再来；
+- 把中间过程流式推给前端的事件通道；
+- 危险操作的确认关卡，文件的上传与产物下载；
+- 模型密钥的保管，并发与排队，用量与成本的观测，失败后的恢复。
+
+清单上没有一项是你的业务。你想交付的是一个功能，最后却在给自己造一个 agent 平台。这条路我们见过太多次：每一台个人电脑上长出的碎片化 Agent 实验，都卡在了同一堵墙前面。
+
+## 最小计算单元又变了一次
+
+曾经，我们把 token 封装成一次 LLM API 调用，把它当作最小的计算资源。现在，这个单元正在再一次上移：**对云端一个无头 Agent 的一次请求**。
+
+"无头"是这里的关键词。你的用户已经有自己的 web、自己的产品界面，你的 app 不需要再长出一个聊天窗口。它需要的只是 agent response：把任务交给云上一个有完整环境的 agent，拿回结构化的过程与结果，渲染进你自己的页面。
+
+Agent 应该像数据库一样被消费。你不会为了存几行数据先自建一套 Postgres 的复制与备份；同样，你也不该为了跑一条 agent 流水线先自建 sandbox、循环宿主和事件系统。
+
+## 接入只是一段说明文
+
+这正是 Mosoo 在做的事。发布后的 Agent 运行在 Mosoo 托管的 sandbox 里，对外是一组朴素的 HTTP API：Threads、Runs、Events、Files。创建一个 Thread，任务就开始了：
+
+```bash
+curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+  -H "Authorization: Bearer $MOSOO_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": {
+      "type": "user.message",
+      "content": [
+        { "type": "text", "text": "分析这个仓库最近一周的提交" }
+      ]
+    }
+  }'
+```
+
+之后用 `GET /threads/{threadId}/events` 轮询，或用 `/events/stream` 把 agent 的输出、工具状态和文件产物流式接进你的产品。
+
+而集成这件事本身，也不必由你手写。把 [mosoo.ai/coding-agents.md](https://mosoo.ai/coding-agents.md) 这份面向机器的说明文粘贴给你本地的 Claude Code 或 Codex，剩下的接入代码它会替你写完。你在本地用 coding agent 做出来的东西，由同一个 coding agent 把它接到云上——中间没有一堵需要你亲手翻越的墙。
+
+跨过阈值的 Agent Work，应该像云资源一样被托管、被隔离、被观测、被复用。这一次，从本地到云上，只隔一次复制粘贴。
+
+在 [try.mosoo.ai](https://try.mosoo.ai) 试试，或者到 GitHub 看看我们的仓库：[langgenius/mosoo](https://github.com/langgenius/mosoo)。
