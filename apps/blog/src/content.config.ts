@@ -23,6 +23,17 @@ const blog = defineCollection({
     // so they ship at `/blog/blog/authors/<name>.<ext>`. Falls back to the
     // Mosoo favicon when unset.
     authorAvatar: z.string().optional(),
+    // Optional co-authors shown after the primary author in the byline.
+    // Avatars follow the same `public/blog/authors/<name>.<ext>` convention
+    // as `authorAvatar` and fall back to the Mosoo favicon when unset.
+    coAuthors: z
+      .array(
+        z.object({
+          name: z.string(),
+          avatar: z.string().optional(),
+        }),
+      )
+      .default([]),
     locale: z.enum(LOCALES).default("en"),
     permalink: z.string().optional(),
     translationKey: z.string().optional(),

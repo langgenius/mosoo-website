@@ -16,9 +16,12 @@ const {
   category,
   author,
   authorAvatar,
+  coAuthors,
   heroImage,
   heroAlt,
 } = post.data;
+const bylineAuthors = [{ name: author, avatar: authorAvatar }, ...coAuthors];
+const bylineNames = bylineAuthors.map((a) => a.name).join(" & ");
 const accentIndex = titleAccent ? title.indexOf(titleAccent) : -1;
 const hasTitleAccent = Boolean(titleAccent && accentIndex >= 0);
 const titleBefore = hasTitleAccent ? title.slice(0, accentIndex) : title;
@@ -51,7 +54,7 @@ const jsonLd = {
   ...(heroImage
     ? { image: new URL(heroImage, Astro.site).href }
     : {}),
-  author: { "@type": "Person", name: author },
+  author: bylineAuthors.map((a) => ({ "@type": "Person", name: a.name })),
   publisher: {
     "@type": "Organization",
     name: "Mosoo",
@@ -105,28 +108,32 @@ const jsonLd = {
       </h1>
 
       <div class="mb-12 flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)]">
-        <span class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[color:var(--border)] bg-white shadow-[var(--shadow-xs)]">
+        <span class="flex -space-x-2">
           {
-            authorAvatar ? (
-              <img
-                src={authorAvatar}
-                alt={author}
-                width="36"
-                height="36"
-                class="h-9 w-9 object-cover"
-              />
-            ) : (
-              <img
-                src="/blog/favicon.svg"
-                alt=""
-                width="28"
-                height="28"
-                class="h-7 w-7"
-              />
-            )
+            bylineAuthors.map((a) => (
+              <span class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[color:var(--border)] bg-white shadow-[var(--shadow-xs)]">
+                {a.avatar ? (
+                  <img
+                    src={a.avatar}
+                    alt={a.name}
+                    width="36"
+                    height="36"
+                    class="h-9 w-9 object-cover"
+                  />
+                ) : (
+                  <img
+                    src="/blog/favicon.svg"
+                    alt=""
+                    width="28"
+                    height="28"
+                    class="h-7 w-7"
+                  />
+                )}
+              </span>
+            ))
           }
         </span>
-        <span>{copy.by} {author}</span>
+        <span>{copy.by} {bylineNames}</span>
       </div>
     </header>
 
