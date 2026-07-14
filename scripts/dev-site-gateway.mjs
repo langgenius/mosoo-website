@@ -338,7 +338,6 @@ function routeFor(requestUrl, targets, headers = {}) {
   if (
     url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/favicons/") ||
-    url.pathname === "/sitemap.xml" ||
     url.pathname === "/llms.txt" ||
     isDocsRootPath(url.pathname)
   ) {
