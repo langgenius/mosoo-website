@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20 <25"
+    "node": ">=20"
   },
   "workspaces": [
     "apps/*",
@@ -14,15 +14,12 @@
     "blog:dev": "npm run dev --workspace @mosoo/blog",
     "blog:preview": "npm run preview --workspace @mosoo/blog",
     "deploy": "npm run build && npx --yes --package wrangler@4.100.0 wrangler deploy --env prod",
-    "docs:export": "npx --yes --package mint@4.2.651 mint export --output .tmp/docs-export.zip",
-    "docs:validate": "npx --yes --package mint@4.2.651 mint validate",
     "landing:build": "npm run build --workspace @mosoo/landing",
     "landing:dev": "npm run dev --workspace @mosoo/landing",
     "landing:preview": "npm run preview --workspace @mosoo/landing",
     "openapi:check": "node scripts/sync-openapi-specs.mjs check",
     "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
     "site:build": "npm run build",
-    "site:dev": "node scripts/dev-site-gateway.mjs",
-    "validate": "npm run docs:validate"
+    "validate": "npm run build"
   }
 }

@@ -55,23 +55,8 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs.json llms.txt coding-agents.md mosoo-openapi.generated.json mosoo-openapi.en.generated.json mosoo-openapi.zh-Hans.generated.json scripts package.json README.md
+          git add llms.txt coding-agents.md mosoo-openapi.generated.json mosoo-openapi.en.generated.json mosoo-openapi.zh-Hans.generated.json scripts package.json README.md
           git commit -m "docs: sync OpenAPI reference"
           git push
           echo "changed=true" >> "$GITHUB_OUTPUT"
         working-directory: docs
-
-      - name: Trigger Mintlify deployment
-        if: ${{ steps.commit.outputs.changed == 'true' }}
-        run: |
-          if [ -z "${MINTLIFY_PROJECT_ID}" ] || [ -z "${MINTLIFY_API_KEY}" ]; then
-            echo "Mintlify deployment secrets are not configured; skipping."
-            exit 0
-          fi
-
-          curl --fail --request POST \
-            --url "https://api.mintlify.com/v1/project/update/${MINTLIFY_PROJECT_ID}" \
-            --header "Authorization: Bearer ${MINTLIFY_API_KEY}"
-        env:
-          MINTLIFY_API_KEY: ${{ secrets.MINTLIFY_API_KEY }}
-          MINTLIFY_PROJECT_ID: ${{ secrets.MINTLIFY_PROJECT_ID }}

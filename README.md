@@ -1,25 +1,19 @@
 # Mosoo Website
 
-Website and documentation source for Mosoo.
+Landing page and blog source for Mosoo.
 
 - Live docs: [mosoo.ai/docs](https://mosoo.ai/docs)
 - Mosoo repository: [langgenius/mosoo](https://github.com/langgenius/mosoo)
 
 ## About
 
-This repository contains the Mosoo landing page, blog, and Mintlify documentation for calling published Mosoo Agents. Mosoo's main repository remains the source of truth for product behavior and API contracts. The API Reference is generated from localized OpenAPI snapshots:
-
-```text
-mosoo-openapi.en.generated.json
-mosoo-openapi.zh-Hans.generated.json
-```
-
-`mosoo-openapi.generated.json` is kept as an English compatibility copy for older links or tooling.
+This repository builds and deploys the Mosoo landing page and blog. The
+independent [langgenius/mosoo-docs](https://github.com/langgenius/mosoo-docs)
+Fumadocs Worker owns `https://mosoo.ai/docs`.
 
 ## Local Development
 
-Use Node 24 or another Node version supported by the pinned Mintlify CLI
-(`>=20 <25`). Node 25 is not supported by Mintlify 4.2.651.
+Use Node 24 or another supported Node version (`>=20`).
 
 Install dependencies:
 
@@ -27,15 +21,14 @@ Install dependencies:
 npm install
 ```
 
-Run the whole site locally through one gateway:
+Run the landing page or blog locally:
 
 ```bash
-npm run site:dev
+npm run landing:dev
+npm run blog:dev
 ```
 
-The gateway prints the single local URL. It routes `/` to the landing page, `/blog` to the blog, and `/docs` to the API docs.
-
-Build the copied landing and blog apps:
+Build the landing and blog apps:
 
 ```bash
 npm run site:build
@@ -47,17 +40,18 @@ Deploy the production Worker:
 npm run deploy
 ```
 
-The production Worker serves `/`, `/blog`, and `/docs` from one static asset
-bundle. `/login` redirects to `https://try.mosoo.ai/login`.
+The production Worker serves `/` and `/blog`. The more specific `/docs` and
+`/docs/*` routes are served by the Fumadocs Worker. `/login` redirects to
+`https://try.mosoo.ai/login`.
 
 ## Project Structure
 
-- `docs.json` configures the Mintlify site, navigation, theme, and API reference.
 - `apps/landing/` contains the copied Mosoo landing page source from `langgenius/mosoo`.
 - `apps/blog/` contains the copied Mosoo Astro blog source from `langgenius/mosoo`.
 - `pkgs/design-tokens/` contains the copied design tokens used by the blog.
-- `*.mdx` contains the English documentation pages.
-- `zh-Hans/` contains the Simplified Chinese documentation pages.
+- `*.mdx`, `zh-Hans/`, and the generated OpenAPI snapshots are legacy docs
+  sources retained for a separate ownership cleanup; they are not deployed by
+  this Worker.
 - `mosoo-openapi.en.generated.json` is the English OpenAPI snapshot used by the English API Reference.
 - `mosoo-openapi.zh-Hans.generated.json` is the Simplified Chinese OpenAPI snapshot used by the Chinese API Reference.
 - `mosoo-openapi.generated.json` is a compatibility copy of the English snapshot.
@@ -106,11 +100,13 @@ Optional source controls:
 - `MOSOO_REPO_TOKEN`: token for private repository or private submodule access.
 - `MOSOO_REPO_DIR`: explicit local checkout override for debugging only.
 
-The docs workflow `.github/workflows/sync-openapi.yml` can run manually, nightly, or from a Mosoo `repository_dispatch` event named `mosoo-openapi-changed`. When generated snapshots change, it commits them back to this repo so the configured docs host can redeploy.
+The legacy sync workflow `.github/workflows/sync-openapi.yml` can run manually,
+nightly, or from a Mosoo `repository_dispatch` event named
+`mosoo-openapi-changed`. It updates the retained snapshots but does not deploy
+the Fumadocs site.
 
 Secrets used by the sync workflow:
 
 - `MOSOO_REPO_TOKEN`: optional token for checking out a private Mosoo source repo.
-- `MINTLIFY_API_KEY` and `MINTLIFY_PROJECT_ID`: optional; triggers Mintlify's deployment API after a generated commit.
 
 The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `langgenius/mosoo-website`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.
