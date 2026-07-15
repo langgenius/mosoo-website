@@ -23,4 +23,3 @@ Fumadocs Worker owns `mosoo.ai/docs` and `mosoo.ai/docs/*`.
 3. Run a Wrangler production dry-run.
 4. Open a non-draft PR, merge it, and deploy the merged `main` commit.
 5. Smoke test `/`, `/blog/`, and the Fumadocs-owned `/docs/` routes.
-
