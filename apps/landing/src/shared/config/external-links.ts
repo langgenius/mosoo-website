@@ -1,7 +1,6 @@
 export const MOSOO_GITHUB_URL = "https://github.com/langgenius/mosoo/";
 
-// TODO: replace with the verified product X (Twitter) handle once confirmed.
-export const MOSOO_X_URL = "https://x.com/mosoo";
+export const MOSOO_X_URL = "https://x.com/mosooagent";
 
 export const MOSOO_DOCS_URL = "https://mosoo.ai/docs/";
 export const MOSOO_API_REFERENCE_URL = `${MOSOO_DOCS_URL}api-reference/`;
