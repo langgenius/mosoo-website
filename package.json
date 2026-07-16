@@ -19,6 +19,7 @@
     "landing:preview": "npm run preview --workspace @mosoo/landing",
     "openapi:check": "node scripts/sync-openapi-specs.mjs check",
     "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
+    "perf:pages": "node scripts/measure-page-load.mjs",
     "site:build": "npm run build",
     "validate": "npm run build"
   }
