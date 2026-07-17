@@ -9,11 +9,11 @@ type Faq = { q: string; a: string };
 const FAQS: readonly Faq[] = [
   {
     q: "What is Mosoo?",
-    a: "Mosoo is an open-source backend for managed agents — think Supabase, but for cloud agents. It's self-hostable and BYOK, and it turns agents from one-off desktop scripts into deployable, metered, API-callable services you can build products on. It is currently alpha.",
+    a: "Mosoo is an open-source agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable in your own Cloudflare account. Mosoo is currently alpha.",
   },
   {
     q: "Who is Mosoo built for?",
-    a: "Developers building agent-powered products who don't want to rebuild runtime hosting, sandboxing, and session lifecycle for every app. If you're gluing Claude Code, Codex, or OpenClaw into something your own users depend on, Mosoo is the framework-agnostic backend that handles the plumbing so you ship the product.",
+    a: "Developers extending OpenAI Codex, Claude Agent SDK, or OpenCode into products and automations who don't want to operate a separate agent runtime, sandbox service, session store, file pipeline, and Agent API for every integration.",
   },
   {
     q: "Why a backend instead of just running Claude Code or Codex locally?",
