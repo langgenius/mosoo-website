@@ -1,0 +1,114 @@
+---
+title: "From responses to agents: the API becomes a runtime"
+titleAccent: "runtime"
+description: "OpenAI's Responses API brings state, compaction, tool programs, WebSocket continuation, and multi-agent coordination into one model runtime. Here is what changed—and what still belongs to the application."
+date: 2026-07-18
+category: "Engineering"
+author: "Ennea"
+authorAvatar: "/blog/blog/authors/ennea.jpg"
+locale: "en"
+permalink: "from-responses-to-agents"
+translationKey: "from-responses-to-agents"
+heroImage: "/blog/blog/from-responses-to-agents/hero.webp"
+heroAlt: "Abstract green scan-line blocks assembling across a landscape with the words From responses to agents."
+---
+
+By the GPT-5.6 era, the direction of OpenAI's API platform is difficult to miss. The model endpoint is no longer shaped only around generating the next piece of text. It can keep state, operate tools, compact a growing context, and coordinate parallel work.
+
+One correction matters at the start: **Chat Completions is not deprecated**. OpenAI says it remains supported, while recommending the [Responses API for new projects](https://developers.openai.com/api/docs/guides/migrate-to-responses). The dividing line is architectural, not a shutdown date.
+
+> The important change is not a new endpoint. It is how much of the agent loop can now live inside the model runtime.
+
+## One flow instead of a text-shaped exchange
+
+The [Responses API](https://developers.openai.com/api/reference/responses/overview) works with typed items rather than treating every turn as another chat message. Messages, reasoning items, function calls, function outputs, and hosted-tool activity can participate in the same response flow.
+
+That changes the integration model. A response can include an agentic loop in which the model uses multiple tools before returning its answer. The application still defines permissions and handles client-owned functions, but it no longer has to flatten every intermediate step into a transcript-shaped protocol.
+
+## State becomes a platform primitive
+
+There are two server-side state patterns, and they solve different problems.
+
+`previous_response_id` chains a new response to the previous one. It is the lightweight option for nearby turns: the client sends the new input instead of reconstructing and resending the complete history.
+
+The [Conversations API](https://developers.openai.com/api/docs/guides/conversation-state#using-the-conversations-api) creates a durable object with its own ID. The same conversation can continue across sessions, devices, or background jobs. Its items can include messages, tool calls, tool outputs, and other structured conversation data.
+
+The retention distinction is useful. Ordinary Response objects are stored for 30 days by default. Conversation objects and their items are not subject to that 30-day TTL. This is durable conversation state, not merely a connection-local cache.
+
+It is also not an exposed log of private chain-of-thought. Applications should reason about the structured items the API returns, including supported reasoning summaries or encrypted items, rather than promise a replay of hidden internal reasoning.
+
+<figure>
+  ![A three-turn context window showing inputs and outputs accumulating until the final output is truncated](/blog/blog/from-responses-to-agents/context-window.png)
+  <figcaption>As turns accumulate, useful context competes for a finite window. Source: <a href="https://developers.openai.com/api/docs/guides/conversation-state">OpenAI's conversation state guide</a>.</figcaption>
+</figure>
+
+## WebSocket mode removes continuation overhead
+
+[Responses WebSocket mode](https://developers.openai.com/api/docs/guides/websocket-mode) keeps a persistent connection to `wss://api.openai.com/v1/responses`. Each continuation can send only new input items plus `previous_response_id`.
+
+This is designed for long-running, tool-heavy loops such as coding or orchestration. OpenAI reports that rollouts with more than 20 tool calls have seen **up to roughly 40% faster** end-to-end execution. That is an observed upper bound, not a latency guarantee.
+
+The connection can also be warmed with `response.create` and `generate: false`. A warmup prepares known tools, instructions, or custom messages without generating model output, then returns a response ID for the next turn to continue from.
+
+WebSocket mode does not turn the API into an unlimited process. Connections have documented limits, and an application still needs reconnection, error recovery, and durable job ownership.
+
+## Compaction carries the useful state forward
+
+Long conversations create a simple systems problem: more history means more tokens, more latency, and more competition inside the context window.
+
+[Server-side compaction](https://developers.openai.com/api/docs/guides/compaction) can be enabled with `context_management` and `compact_threshold`. When the rendered token count crosses the threshold, the server emits an encrypted compaction item. That item carries key prior state and reasoning into the next window using fewer tokens.
+
+The compaction item is opaque and not intended to be human-readable. It should not be described as a conventional summary or as a literal dump of a model's “latent understanding.” Its contract is narrower and more useful: preserve the state needed to continue while reducing context pressure.
+
+For stateless input-array chaining, items before the latest compaction item can be dropped after the new window is assembled. When using `previous_response_id`, the service manages the chain and the client should not manually prune it.
+
+## Tools can be coordinated as a program
+
+[Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling) lets the model write JavaScript that coordinates eligible tools. The program can use loops, conditions, parallel calls, and local transformations while keeping intermediate results inside the hosted execution step.
+
+This is useful when control flow is predictable: query several sources, filter and rank the results, then return a smaller structure to the model. It can reduce unnecessary model decisions, repeated API continuations, and the movement of large intermediate payloads.
+
+The runtime boundary is intentionally strict. Each program runs in a fresh isolated V8 environment with top-level `await`, but without Node.js, package installation, direct network access, a general-purpose filesystem, subprocesses, a console, or persistent JavaScript state. External effects are possible only through the tools enabled for that request.
+
+Client-owned function calls still return to the application for execution. Programmatic Tool Calling compresses a class of orchestration; it does not move every integration into OpenAI's sandbox.
+
+## Multi-agent coordination reaches the API layer
+
+The [Responses Multi-agent feature](https://developers.openai.com/api/docs/guides/responses-multi-agent) is available in beta across GPT-5.6 models. A root agent can create subagents, give them bounded work, communicate with them, wait for results, and synthesize the final response.
+
+HTTP and WebSocket expose the same capability, but their coordination behavior differs when client functions are involved.
+
+<figure>
+  ![HTTP function call execution across an application, a Responses API root agent, and three subagents](/blog/blog/from-responses-to-agents/multi-agent-http.png)
+  <figcaption>With HTTP, blocked subagents resume after the active response completes and the application submits outstanding function outputs in a new request. Source: <a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI's Multi-agent guide</a>.</figcaption>
+</figure>
+
+<figure>
+  ![WebSocket function call execution across an application, a Responses API root agent, and three subagents](/blog/blog/from-responses-to-agents/multi-agent-websocket.png)
+  <figcaption>With WebSocket, each function output can be injected as soon as it is ready, so one subagent can resume while others continue. Source: <a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI's Multi-agent guide</a>.</figcaption>
+</figure>
+
+The [Agents SDK](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk) sits at a different level. It adds a reusable agent loop, sessions, guardrails, tracing, and two common ownership patterns: handoffs, where a specialist takes over the conversation, and agents-as-tools, where a manager retains control of the final answer.
+
+## The model runtime is not the whole product runtime
+
+Together, these features move the API from a text-generation primitive toward an **agent runtime substrate**. State, context maintenance, tool execution, continuation, and delegation are becoming native platform concepts.
+
+But the boundary still matters. The Responses API runs model-centric work. A production product may still need its own sandbox, files, credentials, authorization, durable job lifecycle, approvals, retries, observability, and customer-facing state.
+
+That distinction is central to Mosoo's view of the stack. Better model runtimes reduce the amount every team has to rebuild inside the inference loop. A managed agent runtime turns the remaining product-specific work into a deployable Agent with an environment, lifecycle, and API.
+
+The paradigm shift is real, but it is not “one endpoint replaces the application.” It is a cleaner division of labor: the model platform owns more of the agent loop, while the product runtime owns the durable system around it.
+
+## Developer resources
+
+- [Responses API overview](https://developers.openai.com/api/reference/responses/overview)
+- [Migrate to the Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses)
+- [Conversation state](https://developers.openai.com/api/docs/guides/conversation-state)
+- [Create a conversation](https://developers.openai.com/api/reference/resources/conversations/methods/create)
+- [List conversation items](https://developers.openai.com/api/reference/resources/conversations/subresources/items/methods/list)
+- [Responses WebSocket mode](https://developers.openai.com/api/docs/guides/websocket-mode)
+- [Compaction](https://developers.openai.com/api/docs/guides/compaction)
+- [Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling)
+- [Responses Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)
+- [Agents SDK and Responses API](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk)
