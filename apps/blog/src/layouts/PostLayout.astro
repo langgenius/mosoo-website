@@ -1,13 +1,14 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import CardVisual from "../components/CardVisual.astro";
-import { getIndexHref, getPostLocale } from "../lib/i18n";
+import { getIndexHref, getPostLocale, type HreflangAlternates } from "../lib/i18n";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
   post: CollectionEntry<"blog">;
+  hreflang?: HreflangAlternates;
 }
-const { post } = Astro.props;
+const { post, hreflang } = Astro.props;
 const {
   title,
   titleAccent,
@@ -72,6 +73,7 @@ const jsonLd = {
   author={author}
   ogImage={heroImage ? new URL(heroImage, Astro.site).href : undefined}
   lang={lang}
+  hreflang={hreflang}
 >
   <script
     is:inline

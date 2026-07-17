@@ -14,6 +14,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft && data.loc
   title="Mosoo blog · Notes from the bamboo grove"
   description="Notes from the Mosoo team on Agent products, runtime design, and the road to production."
   lang="en"
+  hreflang={{ en: "/blog", "zh-CN": "/blog/zh", "x-default": "/blog" }}
 >
   <BlogIndex
     posts={posts}

@@ -27,6 +27,29 @@ export const getPostHref = (post: CollectionEntry<"blog">, base: string): string
 export const getIndexHref = (locale: Locale, base: string): string =>
   locale === DEFAULT_LOCALE ? `${base || "/"}` : `${base}/${locale}`;
 
+export type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "x-default", string>>;
+
+export const getPostHreflangAlternates = (
+  post: CollectionEntry<"blog">,
+  posts: CollectionEntry<"blog">[],
+  base: string,
+): HreflangAlternates | undefined => {
+  const key = post.data.translationKey;
+  if (!key) return undefined;
+
+  const en = posts.find((p) => p.data.translationKey === key && p.data.locale === "en");
+  const zh = posts.find((p) => p.data.translationKey === key && p.data.locale === "zh");
+  if (!en || !zh) return undefined;
+
+  const enHref = getPostHref(en, base);
+
+  return {
+    en: enHref,
+    "zh-CN": getPostHref(zh, base),
+    "x-default": enHref,
+  };
+};
+
 export const getAlternateLocaleHref = (
   pathname: string,
   base: string,

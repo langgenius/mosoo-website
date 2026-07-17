@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { MOTION_VARIANT } from "../lib/motion";
+import type { HreflangAlternates } from "../lib/i18n";
 
 interface Props {
   title: string;
@@ -13,6 +14,7 @@ interface Props {
   publishedTime?: Date;
   author?: string;
   lang?: "en" | "zh-CN";
+  hreflang?: HreflangAlternates;
 }
 const {
   title,
@@ -23,10 +25,14 @@ const {
   publishedTime,
   author,
   lang = "en",
+  hreflang,
 } = Astro.props;
 const cleanPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 const canonicalUrl = canonical ?? new URL(cleanPath, Astro.site).href;
-const ogImageUrl = ogImage ?? new URL("/og-default.png", Astro.site).href;
+const ogImageUrl =
+  ogImage ??
+  new URL("/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/hero.jpg", Astro.site).href;
+const hreflangEntries = hreflang ? Object.entries(hreflang) : [];
 ---
 
 <!doctype html>
@@ -35,7 +41,13 @@ const ogImageUrl = ogImage ?? new URL("/og-default.png", Astro.site).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+    <meta http-equiv="content-language" content={lang} />
     <link rel="canonical" href={canonicalUrl} />
+    {
+      hreflangEntries.map(([code, href]) => (
+        <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
+      ))
+    }
     <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg" />
     <link
       rel="alternate"
