@@ -123,7 +123,7 @@ export function LandingFooter({
             <div>
               <img src="/brand/logo-wordmark-ondark.svg" alt="Mosoo" className="block h-[22px]" />
               <p className="text-paper-100/55 mt-4 max-w-[260px] text-[13.5px] leading-[1.6]">
-                Managed agents, built open source.
+                Open-source agent runtime and API for coding agents.
               </p>
               <div className="mt-5 flex items-center gap-2.5">
                 <SocialLink href={MOSOO_GITHUB_URL} label="Mosoo on GitHub">
