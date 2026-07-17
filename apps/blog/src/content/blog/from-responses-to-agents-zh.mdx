@@ -1,0 +1,114 @@
+---
+title: "从 Responses 到 Agents：API 正在成为运行时"
+titleAccent: "运行时"
+description: "OpenAI Responses API 正把状态、压缩、工具程序、WebSocket 续接和多 Agent 协同收进统一的模型运行时。本文梳理这条分水岭，以及仍然属于应用层的责任。"
+date: 2026-07-18
+category: "Engineering"
+author: "Ennea"
+authorAvatar: "/blog/blog/authors/ennea.jpg"
+locale: "zh"
+permalink: "from-responses-to-agents"
+translationKey: "from-responses-to-agents"
+heroImage: "/blog/blog/from-responses-to-agents/hero.webp"
+heroAlt: "绿色抽象扫描线块在风景中逐层拼合，中央写着 From responses to agents。"
+---
+
+到了 GPT-5.6 时代，OpenAI API 平台的演进方向已经非常清楚：模型接口不再只围绕“生成下一段文本”设计。它开始管理状态、操作工具、压缩不断增长的上下文，并协调并行任务。
+
+开篇先纠正一个容易被放大的说法：**Chat Completions 并没有被弃用**。OpenAI 的原文是它仍然受支持，同时[建议新项目使用 Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses)。真正的分水岭是架构，而不是停服日期。
+
+> 重要的变化不是多了一个 Endpoint，而是 Agent Loop 中有多少部分开始进入模型运行时。
+
+## 从文本接口到统一的 Item 流
+
+[Responses API](https://developers.openai.com/api/reference/responses/overview) 使用有类型的 Items 组织一次运行。Message、Reasoning Item、Function Call、Function Output 和托管工具活动，都可以出现在同一个 Response 流里。
+
+这改变了集成方式。一次 Response 可以包含一个 Agentic Loop：模型先后使用多个工具，再返回最终答案。应用仍然负责权限边界，也仍需执行客户端拥有的函数，但不必再把所有中间步骤强行压成一份“聊天记录协议”。
+
+## 状态成为平台原语
+
+服务端提供了两种状态路径，它们解决的问题并不相同。
+
+`previous_response_id` 把新 Response 链接到前一个 Response。它适合相邻轮次：客户端只发送新增输入，不必重新拼装并重传完整历史。
+
+[Conversations API](https://developers.openai.com/api/docs/guides/conversation-state#using-the-conversations-api) 则创建一个拥有独立 ID 的持久对象。同一个 Conversation 可以跨 Session、设备或后台 Job 延续；其中的 Items 可以包含消息、工具调用、工具输出和其他结构化会话数据。
+
+这里还有一个重要的保留策略差异：普通 Response 对象默认保存 30 天，而 Conversation 对象及其中的 Items 不受这项 30 天 TTL 限制。这是持久会话状态，不只是某条连接里的临时缓存。
+
+但它也不是对模型私有思维链的公开日志。应用应该围绕 API 实际返回的结构化 Items 工作，例如受支持的 Reasoning Summary 或加密 Item，而不是承诺可以回放隐藏的内部推理。
+
+<figure>
+  ![三个轮次的输入与输出持续累积，最终输出因超过上下文窗口而被截断](/blog/blog/from-responses-to-agents/context-window.png)
+  <figcaption>随着轮次增长，有效信息会共同竞争有限的上下文窗口。图片来源：<a href="https://developers.openai.com/api/docs/guides/conversation-state">OpenAI Conversation state 指南</a>。</figcaption>
+</figure>
+
+## WebSocket 模式降低续接开销
+
+[Responses WebSocket 模式](https://developers.openai.com/api/docs/guides/websocket-mode)通过 `wss://api.openai.com/v1/responses` 保持持久连接。后续轮次只需发送新增 Items 和 `previous_response_id`。
+
+它面向长周期、工具调用密集的 Coding 或 Orchestration Loop。OpenAI 的文档写得很克制：在超过 20 次工具调用的 Rollout 中，官方观察到**最高约 40% 的端到端提速**。这是观测到的上限，不是每个工作负载都能获得的保证。
+
+客户端还可以发送 `response.create` 与 `generate: false` 做预热。预热会准备已知的工具、Instructions 或自定义消息，但不生成模型输出；返回的 Response ID 可以作为下一轮续接的起点。
+
+WebSocket 也不会把 API 变成一个无限运行的进程。连接存在明确限制，应用仍要负责重连、错误恢复和持久 Job 的归属。
+
+## Compaction 把有用状态带进下一个窗口
+
+长会话有一个朴素的系统问题：历史越多，Token 越多，延迟越高，真正有用的信息越容易被挤占。
+
+[服务端 Compaction](https://developers.openai.com/api/docs/guides/compaction) 可以通过 `context_management` 与 `compact_threshold` 开启。当渲染后的 Token 数越过阈值，服务端会产生一个加密的 Compaction Item，以更少的 Token 将关键历史状态和 Reasoning 带进下一个窗口。
+
+这个 Item 是不透明的，也不是给人阅读的。它不应被描述成普通文本摘要，更不是模型“潜空间理解”的字面导出。它的契约更窄也更实用：在降低上下文压力的同时，保留后续运行需要的状态。
+
+使用无状态 Input Array 链接时，新窗口组装完成后可以丢弃最近一个 Compaction Item 之前的内容；使用 `previous_response_id` 时，服务端负责管理链路，客户端不应自行裁剪。
+
+## 工具调用可以变成一段程序
+
+[Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling) 允许模型编写 JavaScript 来协调符合条件的工具。程序可以使用循环、条件、并行调用和本地转换，并在托管执行步骤中处理中间结果。
+
+当控制流可预测时，它很有价值：并行查询多个来源，过滤和排序结果，再把一个更小的结构交还给模型。这样可以减少不必要的模型判断、重复的 API 续接，以及大体量中间数据的搬运。
+
+运行时边界被刻意限制得很严格。每段程序都在一个全新的隔离 V8 环境中执行，支持 top-level `await`，但没有 Node.js、包安装、直接网络访问、通用文件系统、子进程、Console，也没有跨执行持久化的 JavaScript 状态。所有外部作用都必须通过本次请求明确开放的工具完成。
+
+客户端拥有的 Function Call 仍然会回到应用执行。因此，Programmatic Tool Calling 压缩的是一类编排流程，并没有把所有集成都搬进 OpenAI 的沙盒。
+
+## 多 Agent 协同进入 API 层
+
+[Responses Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent) 已面向 GPT-5.6 系列提供 Beta。Root Agent 可以创建 Subagents、分配边界清楚的任务、与它们通信、等待结果，并汇总最终 Response。
+
+HTTP 与 WebSocket 暴露相同的能力，但涉及客户端函数时，两者的协调方式不同。
+
+<figure>
+  ![HTTP 模式下，应用、Responses API Root Agent 与三个 Subagents 之间的函数调用流程](/blog/blog/from-responses-to-agents/multi-agent-http.png)
+  <figcaption>HTTP 模式下，需要等待当前 Response 结束，应用再用新请求提交待处理函数的输出，阻塞的 Subagents 才会恢复。图片来源：<a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI Multi-agent 指南</a>。</figcaption>
+</figure>
+
+<figure>
+  ![WebSocket 模式下，应用、Responses API Root Agent 与三个 Subagents 之间的函数调用流程](/blog/blog/from-responses-to-agents/multi-agent-websocket.png)
+  <figcaption>WebSocket 模式下，每个函数结果准备好后即可注入；一个 Subagent 恢复时，其他 Agent 仍可继续工作。图片来源：<a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI Multi-agent 指南</a>。</figcaption>
+</figure>
+
+[Agents SDK](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk) 位于另一个层次。它提供可复用的 Agent Loop、Sessions、Guardrails 和 Tracing，并内置两种常见的所有权模式：Handoffs 让 Specialist 接管会话；Agents-as-tools 则让 Manager 保留最终回答的控制权。
+
+## 模型运行时并不等于完整的产品运行时
+
+把这些能力放在一起看，Responses API 正从文本生成原语走向一个 **Agent Runtime Substrate**。状态、上下文维护、工具执行、续接和任务委派，都在成为平台原生概念。
+
+但边界依然重要。Responses API 运行的是以模型为中心的工作。一个生产产品通常仍需要自己的 Sandbox、文件、凭证、权限、持久 Job 生命周期、审批、重试、可观测性和面向客户的状态。
+
+这也是 Mosoo 对这套技术栈的判断。更好的模型运行时，会减少每个团队在推理循环内部重复建设的部分；托管 Agent Runtime 则把剩余的产品专属工作，变成一个拥有环境、生命周期和 API 的可部署 Agent。
+
+范式迁移确实已经发生，但它不是“一个 Endpoint 取代整个应用”。更准确的描述是一次新的分工：模型平台承担更多 Agent Loop，产品运行时负责包围它的持久系统。
+
+## 开发者资源
+
+- [Responses API 概述](https://developers.openai.com/api/reference/responses/overview)
+- [迁移至 Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses)
+- [Conversation state](https://developers.openai.com/api/docs/guides/conversation-state)
+- [创建 Conversation](https://developers.openai.com/api/reference/resources/conversations/methods/create)
+- [获取 Conversation Items](https://developers.openai.com/api/reference/resources/conversations/subresources/items/methods/list)
+- [Responses WebSocket 模式](https://developers.openai.com/api/docs/guides/websocket-mode)
+- [Compaction](https://developers.openai.com/api/docs/guides/compaction)
+- [Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling)
+- [Responses Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)
+- [Agents SDK 与 Responses API](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk)
