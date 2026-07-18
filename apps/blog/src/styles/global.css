@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "@mosoo/design-tokens/mosoo.css";
 
+:root {
+  --font-display:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
 /* The signature "culm" texture — a barely-there vertical hairline every 64px,
    the bamboo-segment rhythm called out in the design system. Used on the hero
    band; pull it back to ~2.5% opacity so it reads as paper grain, not stripes. */
