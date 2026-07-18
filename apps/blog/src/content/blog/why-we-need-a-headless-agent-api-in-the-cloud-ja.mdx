@@ -1,0 +1,93 @@
+---
+title: "モデル呼び出しから Agent タスクへ"
+titleAccent: "Agent タスク"
+description: "ローカルの coding agent は、本物の環境があればモデルに何ができるかを証明した。次のクラウド抽象はマネージドな Agent タスク — 仕事を渡すと、進捗と成果物が返ってくる。"
+date: 2026-07-14
+category: "Engineering"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+coAuthors:
+  - name: "Ennea"
+    avatar: "/blog/blog/authors/ennea.jpg"
+locale: "ja"
+permalink: "why-we-need-a-headless-agent-api-in-the-cloud"
+translationKey: "why-we-need-a-headless-agent-api-in-the-cloud"
+heroImage: "/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/hero.jpg"
+heroAlt: "A collage of green paper squares and wild plants climbing upward on a pale field, like sessions stacking into a living system."
+---
+
+AI API は世代が変わるたびに、開発者へ新しいプリミティブを渡してきました。Completions はテキストを返しました。Chat API は構造化されたメッセージを加えました。Tool calling は、モデルがアクションを要求できるようにしました。
+
+一歩進むごとに、より多くの知能が API の向こう側へ移りました。それでも、その周りのループはずっとアプリケーションのものでした。ツール、権限、環境、状態、リトライ、そしてプロダクト体験。
+
+現代のモデル API には、ホストされたツール、保存される状態、バックグラウンド実行が備わっています。便利な部品です。しかし、専用の環境・クレデンシャル・ファイル・ライフサイクルを持つ、あなたのプロダクト固有の agent を動かしてくれるわけではありません。
+
+## ローカルの agent がランタイムを証明した
+
+Claude Code や Codex が体験を変えたのは、モデルがもう一人ぼっちではなくなったからです。ファイルシステム、シェル、git、skill、ツールが、本物の作業環境の中に揃っていました。
+
+これで、おなじみのプロトタイプが可能になります。coding agent をリポジトリに向け、データを取得させて分析を走らせ、その結果を自分の Web ページに流し込む。ワークフローは一晩で形になります。
+
+すると、次のリクエストが自然にやってきます。クラウドに移したい。スケジュールで動かしたい。ジョブを並行で走らせたい。チームメイトや顧客のための機能に変えたい。
+
+## Agent のプロダクト化はランタイムの欠落を露わにする
+
+ワークフローがラップトップを離れるとき、足りないのはモデルの知能ではありません。ランタイムです。
+
+プロダクション統合に必要なのは：
+
+- agent がコマンドを実行しファイルを扱える、サンドボックス化された環境
+- 一つの HTTP リクエストより長生きできる実行
+- 永続的な Thread の状態と、明示的なファイルストレージ
+- プライベートなランタイムデータを漏らさずに進捗を公開するイベント
+- 権限ゲート、中断、リトライ、並行性、利用量の制御
+- モデルキーと統合クレデンシャルの安全な保管
+
+これらはモデルの能力ではありません。ランタイムとプロダクトの責務です。すべてのチームがこれを作り直すなら、agent 機能はいつのまにか agent プラットフォーム構築プロジェクトになってしまいます。
+
+## 仕事の単位はタスク
+
+これを新しい計算の単位と呼ぶべきではありません。一つの agent タスクの中には、多くのモデル呼び出し、ツール呼び出し、リトライ、ファイルが含まれ得ます。これは仕事の単位です。
+
+あなたのプロダクトは、目的に合わせて作られたクラウド agent にタスクを渡します。マネージドなランタイムが設定済みのサンドボックスの中でそれを実行し、あなたのプロダクトはユーザーインターフェースであり続けます。
+
+これは消費モデルとしてのサーバーレスです。実行インフラを運用せずに agent を呼び出せる、という意味であって、タスクが短命な関数だという意味ではありません。
+
+## API として公開される、マネージドな agent ランタイム
+
+それが Mosoo の提供する抽象です。Agent を公開し、バックエンドから呼び出せば、実行・Thread・ファイルは Mosoo が引き受けます。
+
+最初のメッセージとともに Thread を作成します。Thread を通じて run のステータスを追い、Events で進捗を観測し、Files で添付ファイルや記録された成果物をやり取りします。
+
+```bash
+curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+  -H "Authorization: Bearer $MOSOO_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input": {
+      "type": "user.message",
+      "content": [
+        { "type": "text", "text": "Analyze the commits from last week." }
+      ]
+    }
+  }'
+```
+
+`GET /threads/{threadId}/events` をポーリングするか、Server-Sent Events なら `/events/stream` を使います。あなたのプロダクトは、自分のインターフェースの中で進捗、ツールの活動、結果、ダウンロード可能な成果物を表示できます。
+
+API トークンはバックエンドの秘密情報です。エンドユーザーの認証・認可、そして自分のユーザーと Mosoo の Thread の対応付けは、引き続きあなたのアプリの責任です。
+
+## ローカルのプロトタイプからプロダクトへ
+
+公開されたすべての Agent には、コピーできる **Instruction for LLM** が付属します。その Agent の生成済み識別子、エンドポイント、環境変数、統合コントラクトを coding agent に渡すためのものです。
+
+<figure>
+  ![「Instruction for LLM」メニューを開いた、公開済み Agent の Mosoo コンソール](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  <figcaption>Agent を公開し、その Instruction for LLM をコピーして、Mosoo と統合するための正確なコントラクトを coding agent に渡す。</figcaption>
+</figure>
+
+その instruction を Claude Code や Codex に貼り付けて、API をバックエンドへ組み込ませます。認証、データアクセス、ユーザー体験のレビューは、ほかのプロダクション統合と同じようにあなたが行います。
+
+ローカルの agent は、モデルに本物のランタイムを与えることの価値を証明しました。次の一歩は、より大きなモデル呼び出しではありません。あなたのプロダクトが API を通じて開始し、観測し、続行できる、マネージドな agent タスクです。
+
+[try.mosoo.ai](https://try.mosoo.ai) で試すか、GitHub でコードを読んでください: [langgenius/mosoo](https://github.com/langgenius/mosoo)。

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import CardVisual from "../components/CardVisual.astro";
-import { getIndexHref, getPostLocale } from "../lib/i18n";
+import { getIndexHref, getPostLocale, type Locale } from "../lib/i18n";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -30,16 +30,22 @@ const titleAfter =
     ? title.slice(accentIndex + titleAccent.length)
     : "";
 const locale = getPostLocale(post);
-const lang = locale === "zh" ? "zh-CN" : "en";
+const langTags: Record<Locale, "en" | "zh-CN" | "ja"> = { en: "en", zh: "zh-CN", ja: "ja" };
+const lang = langTags[locale];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const indexHref = getIndexHref(locale, base);
+const copyByLocale: Record<Locale, { back: string; more: string }> = {
+  en: { back: "← All posts", more: "← More posts" },
+  zh: { back: "← 返回全部文章", more: "← 更多文章" },
+  ja: { back: "← 記事一覧に戻る", more: "← ほかの記事" },
+};
 const copy = {
-  back: locale === "zh" ? "← 返回全部文章" : "← All posts",
-  by: locale === "zh" ? "By" : "By",
-  more: locale === "zh" ? "← 更多文章" : "← More posts",
+  ...copyByLocale[locale],
+  by: "By",
   learnMore: "Learn More →",
 };
-const dateLabel = date.toLocaleDateString(locale === "zh" ? "zh-CN" : "en-US", {
+const dateLocales: Record<Locale, string> = { en: "en-US", zh: "zh-CN", ja: "ja-JP" };
+const dateLabel = date.toLocaleDateString(dateLocales[locale], {
   year: "numeric",
   month: "long",
   day: "numeric",

@@ -14,7 +14,7 @@ description: "One- or two-sentence dek shown on the index card and metadata."
 date: 2026-05-28
 category: "Engineering" # Engineering | Product | Research | Customer Stories
 author: "Mosoo team" # optional, defaults to "Mosoo team"
-locale: "en" # en | zh, defaults to en
+locale: "en" # en | zh | ja, defaults to en
 permalink: "post-title" # optional shared slug for localized posts
 translationKey: "post-title" # optional key linking localized versions
 titleAccent: "If" # optional colored substring in the title
