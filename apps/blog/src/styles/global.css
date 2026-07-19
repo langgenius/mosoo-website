@@ -1,6 +1,34 @@
 @import "tailwindcss";
 @import "@mosoo/design-tokens/mosoo.css";
 
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../../landing/public/fonts/Geist-Variable.woff2") format("woff2-variations"),
+    url("../../../landing/public/fonts/Geist-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../../landing/public/fonts/InterVariable.woff2") format("woff2-variations"),
+    url("../../../landing/public/fonts/InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../../landing/public/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
+    url("../../../landing/public/fonts/GeistMono-Variable.woff2") format("woff2");
+}
+
 /* The signature "culm" texture — a barely-there vertical hairline every 64px,
    the bamboo-segment rhythm called out in the design system. Used on the hero
    band; pull it back to ~2.5% opacity so it reads as paper grain, not stripes. */
