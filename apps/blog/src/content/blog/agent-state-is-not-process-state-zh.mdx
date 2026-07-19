@@ -1,0 +1,106 @@
+---
+title: "Agent 的状态，不等于它的进程"
+titleAccent: "不等于它的进程"
+description: "与其先争论 Agent Loop 应该放在控制面还是 Sandbox，不如先说明哪些事实必须持久、哪些执行态允许丢失。本文用 mosoo 与 Agent Driver 的实际边界，给出一个可验证的拆分方法。"
+date: 2026-07-19
+category: "Engineering"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "zh"
+permalink: "agent-state-is-not-process-state"
+translationKey: "agent-state-is-not-process-state"
+heroImage: "/blog/blog/agent-state-is-not-process-state/hero.webp"
+heroAlt: "手绘的三段式 Agent 架构：持久事实、控制面与可替换的执行环境之间由箭头和剪刀形边界连接。"
+---
+
+最近两段关于云端 Agent 的讨论，把一个真实的架构分歧摆到了台面上。
+
+[第一段讨论](https://x.com/arkuy99/status/2077676218321956925)给出两个选项：把 Agent Loop 集中运行、仅把工具调用送入 Sandbox；或者让每个用户拥有一套完整的隔离 Agent Runtime。评论区没有形成共识。有人更看重集中治理，也有人认为 Codex、Claude Code 这类 Coding Harness 本来就把 Loop、工具和工作区紧密结合，完整 Runtime 的边界更自然。
+
+[第二段讨论](https://x.com/QuantumTransf/status/2078586634183065867)把问题推进了一步：或许应该持久化交互所需的数据模型，而不是 Agent 进程本身。作者随后也承认，现成 Coding Harness 很难干净地拆成“中央 Loop + Sandbox 工具”。原帖提到的“30 秒冷启动”没有公开、可复现的测量条件，因此本文不把它当作事实。
+
+这些讨论更适合被当作问题清单，而不是市场共识。我们的答案是：
+
+> 先定义用户可见的连续性和可接受的丢失，再决定 Loop 与 Sandbox 放在哪里。部署单元应该服从持久化契约，而不是反过来。
+
+## 先画故障边界，再选择部署单元
+
+“Agent 状态”至少包含三种寿命完全不同的东西：
+
+1. **产品事实**：Agent 配置版本、Session 与 Run 状态、已接受的事件、显式上传的文件和产出的 Artifact。
+2. **控制状态**：鉴权、调度、命令投递、事件确认，以及哪个 Runtime 正在服务哪个主体。
+3. **执行状态**：供应商原生 Session、工作目录、缓存、登录态、临时文件和正在运行的进程。
+
+<figure>
+  ![Agent 状态被拆成持久产品事实、控制面和 Sandbox 执行态三层](/blog/blog/agent-state-is-not-process-state/architecture.svg)
+  <figcaption>一条有用的边界不是“云端与本地”，而是“哪些内容在进程消失后仍属于产品承诺”。图中只表达当前 mosoo 的责任划分，不代表多云或零丢失保证。</figcaption>
+</figure>
+
+当右侧执行环境消失时，左侧是否仍足以解释用户看见了什么、哪些工作已经完成、哪些文件应该存在？如果答案是否定的，那么所谓“可恢复”只是进程还没死，而不是系统拥有了可恢复语义。
+
+## mosoo 实际怎么拆
+
+mosoo 没有再实现一个统一的模型 Planner。创建 Session 时，系统会冻结一次执行快照：Agent 的 Prompt、Model、Runtime、Tools、Skills、MCP 绑定与 Environment Revision 都被绑定到该 Session。这是可追溯的行为配置，[不是完整机器镜像](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L149-L251)。
+
+控制面只通过一组窄接口管理执行环境，例如 Prepare、Dispatch、Terminal、Reset、Recreate 与 Stop。当前代码只有 [Cloudflare Sandbox 这一种执行适配器](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/execution-plane/sandbox-execution-plane-adapter.ts#L96-L245)，所以我们不把这写成“多云抽象已经完成”。
+
+启动时，Runtime 把私有 Boot Payload 写入一次性文件。Driver 读取并删除文件，然后主动向控制面建立带身份的 WebSocket。这样做的含义很朴素：Sandbox 可以执行，但不成为凭据、Session 归属或持久事实的唯一真相。[架构文档把这条链路写得很明确](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L145-L153)。
+
+Sandbox 内的 Agent Driver 保留供应商自己的 Loop。当前 Driver Registry 对接 OpenAI app-server、Claude Agent SDK 与 ACP；统一的是 Start、Input、Cancel、Stop 以及事件、权限、MCP、Skill 和文件等 Host Ports，[不是把各家 Runtime 改造成同一个内部实现](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79)。能力差异仍然显式存在。
+
+这条边界恰好回应了评论区的两派观点：Coding Harness 可以完整地留在 Sandbox 内；产品控制、身份和持久事实则不需要随它一起被锁进同一个进程。
+
+## Pet 与 Cattle 是两种连续性契约
+
+mosoo 没有假设所有 Agent 都需要同一种 Runtime 寿命。`kind` 最终落到两组可观察的策略：
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| Runtime 主体 | 稳定的 `agent:{agentId}` | Session 级 `session:{sessionId}` |
+| Run 结束后 | 不因 Run 终态立即关闭 | 立即关闭并回收 Sandbox |
+| 跨重建保存 | 仅 `/workspace/memory` 与符合条件的 Session Workspaces | 不做 Checkpoint |
+| 不承诺保存 | 重建后的登录态、缓存、供应商原生状态、其他容器文件 | 临时文件、缓存、登录态与原生 Runtime 状态 |
+
+这些不是命名偏好，而是[代码中的 Runtime Policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139)。完整的持久化矩阵也公开在[架构文档](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261)里。
+
+因此，“继续同一个 Session”不必等于“复活同一个进程”。对 Cattle，下一次 Run 会创建新的 Sandbox；平台历史仍可读，但旧工作区和供应商原生状态不会被假装成仍然存在。对 Pet，连续性更强，却仍然是有边界的 Checkpoint，而不是整台容器永生。
+
+## 到达 WebSocket，不等于成为事实
+
+另一个经常被混在一起的问题，是 Streaming 与持久化。
+
+mosoo 的事件入口会先过滤重放，投影并持久化 Canonical Events，再把已经提交的事件送给 Viewer，最后才返回 Accepted Receipt。[源码注释直接说明了原因](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/rpc-event-ingestion-controller.ts#L118-L201)：如果只在可休眠的进程里缓冲片段，就可能确认一段新实例无法重建的文本。
+
+Agent Driver 当前 `main` 进一步把事件分为 Lossless 与 Best-effort。Lossless 事件保留 Source ID、处理部分 Receipt 并重试未确认部分；Best-effort 在传输或确认失败时允许丢弃。[这一区分在队列实现中是显式的](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/driver-event-publisher.ts#L440-L520)。OpenAI 文本 Delta 就被标为 [Best-effort](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/openai/app-server-item-events.ts#L84-L95)，最终 Item Snapshot 才用于仲裁完整消息。
+
+这里需要保留一个版本边界：本文引用的 mosoo Commit 仍固定在较早的 Driver Revision。因此，新的队列语义是 Agent Driver `main` 的当前实现方向，不是对现有 mosoo 部署作出的“所有 Streaming 都不丢”保证。更准确的原则是：
+
+> 增量流服务于体验；持久化事件和终态快照服务于事实。
+
+## 市场真正缺的是可反驳的证据
+
+“中心 Loop”“完整 Runtime”“Durable Agent”都很容易变成标签。比选边站更有帮助的，是公开一组别人可以复现、失败时也能推翻结论的证据。
+
+| 想表达的能力 | 最小证据 |
+| --- | --- |
+| 可以 Resume | 分别杀掉连接、Driver、Sandbox；记录哪些消息、文件、原生 Session 能恢复，哪些不能 |
+| 启动足够快 | 公布工作负载、镜像、区域、预热与池化条件，以及冷/热启动的 P50、P95、P99 分布 |
+| 事件不会重复或丢失 | 断线后重放同一 Source ID，验证去重、部分确认和最终持久化边界 |
+| Sandbox 隔离有效 | 明确身份、凭据、网络、文件和租户边界，并给出失败测试，而不是只展示容器接口 |
+| Cancel 已完成 | 说明它停止了哪些协作，也明确已经发生的工具副作用不会自动回滚 |
+
+mosoo 目前也有应当公开承认的缺口：执行适配器只有一个；[自动 Crash Requeue 尚未完成](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/terminal-run-release.ts#L123-L161)；[部分网络策略只是已保存但未强制执行的意图](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L163-L169)；Cattle 不保存原生 Resume 状态。把这些 Non-goals 和源码链接一起发布，比把路线包装成“主流”更能帮助别人判断是否适合自己的产品。
+
+## 一个长期判断
+
+我们倾向把 Runtime State 视为缓存，直到产品明确承诺它必须连续；把 Semantic Resume 与 Process Resume 分开；把 Per-user Runtime 与 Sandbox-as-tool 视为两种产品模式，而不是互斥的信仰。
+
+真正耐久的抽象，不是让一个进程尽可能活得久，而是即使它消失，系统仍能准确回答三件事：发生了什么，用户还拥有什么，下一次执行从哪里重新开始。
+
+## 参考资料
+
+- [关于 Loop 与 Sandbox 边界的原讨论](https://x.com/arkuy99/status/2077676218321956925)
+- [关于持久数据与 Runtime State 的原讨论](https://x.com/QuantumTransf/status/2078586634183065867)
+- [mosoo Agent Sandbox 与持久化层](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261)
+- [mosoo Runtime Kind Policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139)
+- [mosoo Agent Driver Provider Registry](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79)
