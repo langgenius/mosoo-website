@@ -66,12 +66,7 @@ const jsonLd = {
     ? { image: new URL(heroImage, Astro.site).href }
     : {}),
   author: bylineAuthors.map((a) => ({ "@type": "Person", name: a.name })),
-  publisher: {
-    "@type": "Organization",
-    "@id": "https://mosoo.ai/#organization",
-    name: "Mosoo",
-    url: "https://mosoo.ai",
-  },
+  publisher: { "@id": "https://mosoo.ai/#organization" },
   mainEntityOfPage: canonicalUrl,
   isPartOf: { "@type": "Blog", "@id": "https://mosoo.ai/blog#blog" },
   url: canonicalUrl,

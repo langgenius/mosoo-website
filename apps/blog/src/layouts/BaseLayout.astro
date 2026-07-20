@@ -32,8 +32,7 @@ const {
   hreflang,
   robots = "index, follow, max-image-preview:large",
 } = Astro.props;
-const cleanPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-const canonicalUrl = canonical ?? new URL(cleanPath, Astro.site).href;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 const ogImageUrl = ogImage ?? new URL("/landing/invoke-gradient.jpg", Astro.site).href;
 const hreflangEntries = (hreflang ? Object.entries(hreflang) : []).filter(
   (entry): entry is [string, string] => Boolean(entry[1]),
