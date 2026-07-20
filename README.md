@@ -1,13 +1,13 @@
-# Mosoo Website
+# mosoo Website
 
-Landing page and blog source for Mosoo.
+Landing page and blog source for mosoo.
 
 - Live docs: [mosoo.ai/docs](https://mosoo.ai/docs)
-- Mosoo repository: [langgenius/mosoo](https://github.com/langgenius/mosoo)
+- mosoo repository: [langgenius/mosoo](https://github.com/langgenius/mosoo)
 
 ## About
 
-This repository builds and deploys the Mosoo landing page and blog. The
+This repository builds and deploys the mosoo landing page and blog. The
 independent [langgenius/mosoo-docs](https://github.com/langgenius/mosoo-docs)
 Fumadocs Worker owns `https://mosoo.ai/docs`.
 
@@ -46,8 +46,8 @@ The production Worker serves `/` and `/blog`. The more specific `/docs` and
 
 ## Project Structure
 
-- `apps/landing/` contains the copied Mosoo landing page source from `langgenius/mosoo`.
-- `apps/blog/` contains the copied Mosoo Astro blog source from `langgenius/mosoo`.
+- `apps/landing/` contains the copied mosoo landing page source from `langgenius/mosoo`.
+- `apps/blog/` contains the copied mosoo Astro blog source from `langgenius/mosoo`.
 - `pkgs/design-tokens/` contains the copied design tokens used by the blog.
 - `*.mdx`, `zh-Hans/`, and the generated OpenAPI snapshots are legacy docs
   sources retained for a separate ownership cleanup; they are not deployed by
@@ -57,13 +57,13 @@ The production Worker serves `/` and `/blog`. The more specific `/docs` and
 - `mosoo-openapi.generated.json` is a compatibility copy of the English snapshot.
 - `llms.txt` is the standard LLM discovery entry point for the docs site.
 - `coding-agents.md` is the coding-agent-oriented Markdown guide. Its OpenAPI contract section is regenerated from the English OpenAPI snapshot.
-- `scripts/sync-openapi-specs.mjs` regenerates and validates the localized OpenAPI snapshots from the Mosoo source repo.
+- `scripts/sync-openapi-specs.mjs` regenerates and validates the localized OpenAPI snapshots from the mosoo source repo.
 - `scripts/openapi.zh-Hans.translations.json` stores the Simplified Chinese translations keyed by the English source text.
 - `images/` contains brand and documentation assets.
 
 ## OpenAPI Sync
 
-Mosoo is the source of truth. By default, the sync script fetches `https://github.com/langgenius/mosoo.git` into a temporary directory and generates from that online Git source.
+mosoo is the source of truth. By default, the sync script fetches `https://github.com/langgenius/mosoo.git` into a temporary directory and generates from that online Git source.
 
 ```bash
 npm run openapi:sync
@@ -83,8 +83,8 @@ MOSOO_REPO_REF=<branch-or-sha> npm run openapi:sync
 
 The sync script:
 
-- fetches the Mosoo source from GitHub unless `MOSOO_REPO_DIR` is explicitly set for a local debugging override;
-- imports Mosoo's public OpenAPI document factory from the source repo;
+- fetches the mosoo source from GitHub unless `MOSOO_REPO_DIR` is explicitly set for a local debugging override;
+- imports mosoo's public OpenAPI document factory from the source repo;
 - normalizes public-facing token wording to `API token`;
 - generates English and Simplified Chinese OpenAPI snapshots;
 - regenerates `llms.txt` as the LLM discovery entry point;
@@ -101,12 +101,12 @@ Optional source controls:
 - `MOSOO_REPO_DIR`: explicit local checkout override for debugging only.
 
 The legacy sync workflow `.github/workflows/sync-openapi.yml` can run manually,
-nightly, or from a Mosoo `repository_dispatch` event named
+nightly, or from a mosoo `repository_dispatch` event named
 `mosoo-openapi-changed`. It updates the retained snapshots but does not deploy
 the Fumadocs site.
 
 Secrets used by the sync workflow:
 
-- `MOSOO_REPO_TOKEN`: optional token for checking out a private Mosoo source repo.
+- `MOSOO_REPO_TOKEN`: optional token for checking out a private mosoo source repo.
 
-The Mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `langgenius/mosoo-website`. That workflow listens to OpenAPI source paths and sends the current Mosoo SHA to this repo.
+The mosoo source repo should include `.github/workflows/docs-openapi-dispatch.yml` and configure `MOSOO_DOCS_DISPATCH_TOKEN` with permission to dispatch workflows in `langgenius/mosoo-website`. That workflow listens to OpenAPI source paths and sends the current mosoo SHA to this repo.

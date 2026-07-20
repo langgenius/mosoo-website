@@ -1,32 +1,32 @@
 ---
-title: "Mosoo API for coding agents"
-description: "Machine-oriented guide for calling published Mosoo Agents through the public API."
+title: "mosoo API for coding agents"
+description: "Machine-oriented guide for calling published mosoo Agents through the public API."
 ---
 
-# Mosoo API for coding agents
+# mosoo API for coding agents
 
-Use this document when integrating an existing, published Mosoo Agent into application code through the public API.
+Use this document when integrating an existing, published mosoo Agent into application code through the public API.
 
 ## Integration scope
 
-This document only covers API calls between application code and an existing Mosoo Agent: sending inputs, attaching files, reading outputs, and handling public API errors.
+This document only covers API calls between application code and an existing mosoo Agent: sending inputs, attaching files, reading outputs, and handling public API errors.
 
 It does not cover:
 
 - Creating, configuring, or publishing Agents.
-- Managing Mosoo Apps.
+- Managing mosoo Apps.
 - Managing Agent lifecycle, versions, readiness, runtime settings, model providers, tools, or channels.
-- Any other Mosoo product surface outside the public API used to pass input to an Agent and read output from it.
+- Any other mosoo product surface outside the public API used to pass input to an Agent and read output from it.
 
-This document is also not the source for secrets or live resource IDs. Do not invent API tokens, `agentId`, `threadId`, `fileId`, or `runId` values. Use values supplied by the user, environment variables, Mosoo UI, or Mosoo CLI when available.
+This document is also not the source for secrets or live resource IDs. Do not invent API tokens, `agentId`, `threadId`, `fileId`, or `runId` values. Use values supplied by the user, environment variables, mosoo UI, or mosoo CLI when available.
 
 This document is not a replacement for the raw OpenAPI document when generating clients or validating every schema detail. Use the raw OpenAPI for code generation and strict schema validation.
 
 ## Integration model
 
-Mosoo is the Agent runtime. The published Agent runs inside a Mosoo-managed sandbox, and your application backend and product code should call that sandboxed Agent through the public API.
+mosoo is the Agent runtime. The published Agent runs inside a mosoo-managed sandbox, and your application backend and product code should call that sandboxed Agent through the public API.
 
-Build the app-side integration layer around Mosoo Threads, events, files, and public error handling. Your application can still own backend APIs, jobs, business logic, user flows, and data storage around the sandboxed Agent. For a Mosoo Agent integration, do not implement a parallel Agent layer, sandbox, model loop, planner, tool runner, memory system, lifecycle manager, or provider integration in your application.
+Build the app-side integration layer around mosoo Threads, events, files, and public error handling. Your application can still own backend APIs, jobs, business logic, user flows, and data storage around the sandboxed Agent. For a mosoo Agent integration, do not implement a parallel Agent layer, sandbox, model loop, planner, tool runner, memory system, lifecycle manager, or provider integration in your application.
 
 Primary contract:
 
@@ -37,15 +37,15 @@ Primary contract:
 
 Do not infer request fields that are not listed here or in the raw OpenAPI. The public API rejects unsupported fields.
 
-## What Mosoo exposes
+## What mosoo exposes
 
-Mosoo exposes published Agents through Thread-based HTTP APIs. If required credentials or resource IDs are missing, get them from the environment, the user, Mosoo UI, or Mosoo CLI when it is available. Do not guess or synthesize Mosoo IDs.
+mosoo exposes published Agents through Thread-based HTTP APIs. If required credentials or resource IDs are missing, get them from the environment, the user, mosoo UI, or mosoo CLI when it is available. Do not guess or synthesize mosoo IDs.
 
 | Concept | Meaning for callers |
 | --- | --- |
-| Agent | A configured Mosoo Agent. It must be published and have API access enabled before the API can call it. |
+| Agent | A configured mosoo Agent. It must be published and have API access enabled before the API can call it. |
 | `agentId` | The published Agent ID shown in the Agent API Access panel |
-| API token | Bearer credential used by your code. In the current single-user model, it authenticates the Mosoo user who owns the local Agents, Threads, and files. |
+| API token | Bearer credential used by your code. In the current single-user model, it authenticates the mosoo user who owns the local Agents, Threads, and files. |
 | Thread | The API conversation container. It records messages, files, run status, and public event history. |
 | Run | One execution pass of the Agent on a Thread. A user message can create or resume a Run. |
 | Event | A public timeline entry for Thread inputs, Agent output deltas, tool updates, file changes, status changes, and usage updates. |
@@ -72,13 +72,13 @@ A valid request must pass all of these checks:
 1. The Agent exists.
 2. The Agent is published and has API access enabled.
 3. The API token is valid and not revoked.
-4. The requested Thread or file exists in the same single-user Mosoo workspace.
+4. The requested Thread or file exists in the same single-user mosoo workspace.
 
-Mosoo currently exposes this API as a single-user integration surface. The API token authenticates requests for that user; it does not switch users, create a multi-user access context, or let a request override model provider, channel, tool, or runtime settings. Configure and publish the Agent in Mosoo before calling the API.
+mosoo currently exposes this API as a single-user integration surface. The API token authenticates requests for that user; it does not switch users, create a multi-user access context, or let a request override model provider, channel, tool, or runtime settings. Configure and publish the Agent in mosoo before calling the API.
 
 ## Responsibility boundary
 
-| Your application owns | Mosoo owns |
+| Your application owns | mosoo owns |
 | --- | --- |
 | App UI, app routing, app backend APIs, jobs, app-side users, business logic, data storage, `thread.id` persistence, and caller-owned correlation IDs such as `client_external_ref` or `clientRequestId`. | Sandboxed published Agent execution, model/provider configuration, tool execution, Agent runtime behavior, Agent memory/runtime state, and public event generation. |
 
@@ -88,7 +88,7 @@ Use this workflow when implementing the quickstart in application code. It is ba
 
 | Step | Call | Persist or read | Stop condition |
 | --- | --- | --- | --- |
-| 1. Load credentials | No API call. Read `MOSOO_API_TOKEN` and `MOSOO_AGENT_ID` from the user, environment, Mosoo UI, or Mosoo CLI. | Keep the token in secret storage. Keep `agentId` as configuration. | Missing token or `agentId`; do not invent either value. |
+| 1. Load credentials | No API call. Read `MOSOO_API_TOKEN` and `MOSOO_AGENT_ID` from the user, environment, mosoo UI, or mosoo CLI. | Keep the token in secret storage. Keep `agentId` as configuration. | Missing token or `agentId`; do not invent either value. |
 | 2. Create a Thread | `POST /agents/{agentId}/threads` with the first user input. | Persist `thread.id`. Optionally persist `client_external_ref` for your app record. | A Thread exists and the first Run has been queued. |
 | 3. Continue the Thread | `POST /threads/{threadId}/events` with `user_message`, `permission_decision`, or `user_interrupt` events. | Persist caller-owned references such as `clientRequestId` if your app needs correlation. | The follow-up input has been accepted by the API. |
 | 4. Read output | `GET /threads/{threadId}/events` for the event log, or `GET /threads/{threadId}/events/stream` for streaming. | Read public Agent output, run status, usage updates, tool status, and file events from events. | The app has enough public events to render the Agent response or current status. |
@@ -96,8 +96,8 @@ Use this workflow when implementing the quickstart in application code. It is ba
 
 Implementation rules:
 
-- Build the app-side integration layer around the published Mosoo Agent running in Mosoo's sandbox; do not implement a local Agent runtime or replacement sandbox.
-- Do not call model providers directly for this Mosoo Agent integration.
+- Build the app-side integration layer around the published mosoo Agent running in mosoo's sandbox; do not implement a local Agent runtime or replacement sandbox.
+- Do not call model providers directly for this mosoo Agent integration.
 - Do not send provider credentials, model configuration, channel credentials, tool configuration, or Agent configuration through this public API.
 - Use `Idempotency-Key` for Thread creation and event submission.
 - Treat Thread events as the integration contract and `GET /threads/{threadId}/events` as the stable source for results.
@@ -335,14 +335,14 @@ Branch on `error.code`, not `error.message`. The message is for developers and s
 | 400 | `invalid_request` | Request shape, field value, body size, limit, or unsupported field is invalid. | Fix the request. Do not retry unchanged. |
 | 400 | `invalid_json` | Body is not valid JSON. | Fix serialization or `Content-Type`. Do not retry unchanged. |
 | 401 | `unauthenticated` | Missing, invalid, or revoked API token. | Re-read `Authorization`; rotate or recreate the API token. |
-| 403 | `forbidden` | API token is valid but the operation is not allowed for this Agent, Thread, or file. | Check that the request uses the expected token and a resource from the same Mosoo workspace. |
-| 404 | `not_found` | Agent, Thread, or file is not visible in the current Mosoo workspace or does not exist. | Check the ID and use resource IDs returned by the API. |
+| 403 | `forbidden` | API token is valid but the operation is not allowed for this Agent, Thread, or file. | Check that the request uses the expected token and a resource from the same mosoo workspace. |
+| 404 | `not_found` | Agent, Thread, or file is not visible in the current mosoo workspace or does not exist. | Check the ID and use resource IDs returned by the API. |
 | 409 | `agent_not_published` | Agent exists but is not published as an active API service. | Ask the user to publish the Agent and enable API access. |
-| 409 | `service_inactive` | Published API service has no live published version. | Ask the user to republish or repair the Agent in Mosoo. |
-| 409 | `readiness_blocked` | Agent is not ready to run. | Do not blindly retry; ask the user to fix Agent readiness or configuration in Mosoo. |
+| 409 | `service_inactive` | Published API service has no live published version. | Ask the user to republish or repair the Agent in mosoo. |
+| 409 | `readiness_blocked` | Agent is not ready to run. | Do not blindly retry; ask the user to fix Agent readiness or configuration in mosoo. |
 | 409 | `idempotency_conflict` | Same `Idempotency-Key` is processing or was used for a different request. | If still processing, wait for `Retry-After`; if body differs, use a new key. |
 | 429 | `rate_limited` | API token exceeded public API rate limits. | Back off and retry after `Retry-After`. |
-| 500 | `internal_error` | Mosoo failed internally. | Retry briefly with backoff; persist failure details if it repeats. |
+| 500 | `internal_error` | mosoo failed internally. | Retry briefly with backoff; persist failure details if it repeats. |
 
 Retry policy:
 
@@ -421,7 +421,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -447,7 +447,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -483,7 +483,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -505,7 +505,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -531,14 +531,14 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
 
 ### `POST /agents/{agentId}/threads`
 
-Purpose: Creates a Thread and the backing AgentSession. If input is present, Mosoo also queues the initial Run. If input is omitted, the Thread is immediately visible with IDLE status and no run. API token requests are attributed to the current Mosoo user.
+Purpose: Creates a Thread and the backing AgentSession. If input is present, mosoo also queues the initial Run. If input is omitted, the Thread is immediately visible with IDLE status and no run. API token requests are attributed to the current mosoo user.
 
 Path params:
 
@@ -625,7 +625,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -647,7 +647,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -669,7 +669,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -691,7 +691,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -717,7 +717,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -760,7 +760,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -792,7 +792,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -832,7 +832,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -855,7 +855,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -877,7 +877,7 @@ Error responses:
 - `400` `InvalidRequest`: The request shape or query value is invalid.
 - `401` `Unauthenticated`: A valid API token is required.
 - `403` `Forbidden`: This operation is not allowed for this Agent.
-- `404` `NotFound`: The resource was not found in the current Mosoo workspace.
+- `404` `NotFound`: The resource was not found in the current mosoo workspace.
 - `409` `Conflict`: The Agent/session state rejects this action, or an Idempotency-Key is already processing or was reused for a different request.
 - `429` `RateLimited`: The API token exceeded the public API request budget for the current window.
 - `500` `InternalError`: The request failed unexpectedly.
@@ -1003,7 +1003,7 @@ Request body for creating a Thread. All fields are optional: omit `input` to cre
 
 Fields:
 
-- `client_external_ref` optional, `string`. Optional client-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by Mosoo.
+- `client_external_ref` optional, `string`. Optional client-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by mosoo.
 - `resources` optional, `FileResource[]`. Files uploaded through the Agent file endpoint and mounted into the first Run.
 - `input` optional, `object`. Initial user message that seeds the Thread and queues the first Run. Omit to create an empty Thread with no run.
   - `content` required, `object[]`. Ordered content parts that make up the initial message.
@@ -1061,7 +1061,7 @@ Fields:
 
 ### `ThreadAttributedUser`
 
-The account a Thread is attributed to (the current Mosoo user).
+The account a Thread is attributed to (the current mosoo user).
 
 Fields:
 
@@ -1166,5 +1166,5 @@ Fields:
 - Do not send provider credentials, model configuration, channel credentials, or Agent configuration through this public API.
 - Do not retry invalid requests unchanged.
 - Do not treat `403` as an authentication problem; `403` means the token was understood but the operation is not allowed for that resource.
-- Do not treat a published Agent as ready unless create-thread succeeds or the user confirms Agent readiness in Mosoo.
+- Do not treat a published Agent as ready unless create-thread succeeds or the user confirms Agent readiness in mosoo.
 - Prefer stable caller-owned references such as `client_external_ref` and `clientRequestId` for correlation.

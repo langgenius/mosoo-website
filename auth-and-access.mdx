@@ -3,7 +3,7 @@ title: "Authentication and access"
 description: "How API tokens, Agent access, and owner settings work together."
 ---
 
-When calling the Mosoo API, pass both an `API token` and an `agentId`. Mosoo uses the `API token` to identify the caller, then checks whether that caller can access the Agent selected by `agentId`.
+When calling the mosoo API, pass both an `API token` and an `agentId`. mosoo uses the `API token` to identify the caller, then checks whether that caller can access the Agent selected by `agentId`.
 
 Every request uses a Bearer API token:
 
@@ -11,14 +11,14 @@ Every request uses a Bearer API token:
 Authorization: Bearer mst_...
 ```
 
-Mosoo creates or changes a Thread only after the API token is valid and the caller passes the Agent access check.
+mosoo creates or changes a Thread only after the API token is valid and the caller passes the Agent access check.
 
 ## API tokens
 
-An API token is the credential your code uses to call the Mosoo API. Create it in account settings and store it in your app backend, local tools, or automation jobs.
+An API token is the credential your code uses to call the mosoo API. Create it in account settings and store it in your app backend, local tools, or automation jobs.
 
 <Warning>
-  API tokens are not channel connection credentials. Slack, Lark, Discord, Telegram, WeChat, and other channel setup stays in Mosoo.
+  API tokens are not channel connection credentials. Slack, Lark, Discord, Telegram, WeChat, and other channel setup stays in mosoo.
 </Warning>
 
 ## Published Agent access
@@ -38,11 +38,11 @@ API access is available only after an Agent is configured and published. A valid
 | Organization-wide | Active Organization members with a valid API token. |
 | Invited-only | The Agent owner and explicitly invited collaborators with a valid API token. |
 
-Having an API token is not enough. If the caller does not pass the Agent access check, Mosoo returns `403 Forbidden`.
+Having an API token is not enough. If the caller does not pass the Agent access check, mosoo returns `403 Forbidden`.
 
 ## Caller identity and execution
 
-Mosoo records the API caller for access checks, audit logs, and Thread visibility.
+mosoo records the API caller for access checks, audit logs, and Thread visibility.
 
 Runs still use the capability boundary configured by the published Agent's owner. The API caller does not become the Agent owner, change the Agent's model provider, or supply provider credentials in the request.
 
@@ -50,7 +50,7 @@ For API token calls, the caller is the API token owner. Threads and files create
 
 ## API token lifecycle
 
-Create and revoke API tokens in Mosoo. Revoking an API token blocks future API requests from that API token; it does not delete existing Threads.
+Create and revoke API tokens in mosoo. Revoking an API token blocks future API requests from that API token; it does not delete existing Threads.
 
 Use separate API tokens for separate systems when possible:
 

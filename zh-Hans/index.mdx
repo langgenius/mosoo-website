@@ -1,13 +1,13 @@
 ---
-title: "Mosoo API"
-description: "在你的应用中通过 API 集成并调用 Mosoo Agent。"
+title: "mosoo API"
+description: "在你的应用中通过 API 集成并调用 mosoo Agent。"
 ---
 
 ## 可以用来做什么
 
 <Columns cols={2}>
   <Card title="聊天机器人和应用后端" icon="comments">
-    为聊天机器人、移动 App 或网页应用接入 Mosoo Agent，让你的后端调用 Agent。
+    为聊天机器人、移动 App 或网页应用接入 mosoo Agent，让你的后端调用 Agent。
   </Card>
 
   <Card title="定制应用能力" icon="sliders">
@@ -24,14 +24,14 @@ description: "在你的应用中通过 API 集成并调用 Mosoo Agent。"
 </Columns>
 
 <Note>
-  API 只适用于已发布的 Agent。Agent 配置、模型服务商连接和渠道绑定都需要先在 Mosoo 中完成。
+  API 只适用于已发布的 Agent。Agent 配置、模型服务商连接和渠道绑定都需要先在 mosoo 中完成。
 </Note>
 
 ## 该怎么做？
 
 <Columns cols={3}>
   <Card title="发布 Agent" icon="1">
-    在 Mosoo 中连接模型服务商，配置并发布 Agent 以获得 `agentId`。
+    在 mosoo 中连接模型服务商，配置并发布 Agent 以获得 `agentId`。
   </Card>
 
   <Card title="创建 API token" icon="2">
@@ -74,8 +74,8 @@ curl -X POST "https://mosoo.ai/api/v1/agents/$MOSOO_AGENT_ID/threads" \
 
 ## 核心概念
 
-- **Agent**：你在 Mosoo 中配置的智能体，可以在 Agents 面板和 Agent 详情页获取它的 `agentId`。
-- **API token**：调用 Mosoo API 的身份凭证，用来证明调用者是谁，并决定其对 Agent 和 Thread 的可见性。
+- **Agent**：你在 mosoo 中配置的智能体，可以在 Agents 面板和 Agent 详情页获取它的 `agentId`。
+- **API token**：调用 mosoo API 的身份凭证，用来证明调用者是谁，并决定其对 Agent 和 Thread 的可见性。
 - **Thread**：API 创建的对话容器。Thread 记录历史消息、文件、运行状态和 Agent 的生命周期状态。
 - **Event**：Thread 中的输入、输出、工具、文件、运行状态和用量这些公开可见变化，都是一种 Event。
 

@@ -1,13 +1,13 @@
 ---
-title: "Mosoo API"
-description: "Integrate and call Mosoo Agents through the API in your application."
+title: "mosoo API"
+description: "Integrate and call mosoo Agents through the API in your application."
 ---
 
 ## What you can build
 
 <Columns cols={2}>
   <Card title="Chatbots and app backends" icon="comments">
-    Connect Mosoo Agents to chatbots, mobile apps, or web apps, and let your backend call the Agent.
+    Connect mosoo Agents to chatbots, mobile apps, or web apps, and let your backend call the Agent.
   </Card>
 
   <Card title="Custom app capabilities" icon="sliders">
@@ -24,14 +24,14 @@ description: "Integrate and call Mosoo Agents through the API in your applicatio
 </Columns>
 
 <Note>
-  The API only works with published Agents. Agent setup, model provider connections, and channel bindings are managed in Mosoo before you call these endpoints.
+  The API only works with published Agents. Agent setup, model provider connections, and channel bindings are managed in mosoo before you call these endpoints.
 </Note>
 
 ## How to use it
 
 <Columns cols={3}>
   <Card title="Publish an Agent" icon="1">
-    Configure the Agent in Mosoo, connect its model provider, and publish it so it receives an `agentId`.
+    Configure the Agent in mosoo, connect its model provider, and publish it so it receives an `agentId`.
   </Card>
 
   <Card title="Create an API token" icon="2">
@@ -74,8 +74,8 @@ The response includes a `thread.id` and the first `run`. Use that `thread.id` fo
 
 ## Core concepts
 
-- **Agent**: The agent you configure in Mosoo. You can get its `agentId` from the Agents panel or the Agent details page.
-- **API token**: The credential for calling the Mosoo API. It proves who the caller is and determines visibility for Agents and Threads.
+- **Agent**: The agent you configure in mosoo. You can get its `agentId` from the Agents panel or the Agent details page.
+- **API token**: The credential for calling the mosoo API. It proves who the caller is and determines visibility for Agents and Threads.
 - **Thread**: The conversation container created through the API. A Thread records message history, files, run status, and Agent lifecycle state.
 - **Event**: Inputs, outputs, tool updates, file changes, run status, and usage updates visible in a Thread are Events.
 

@@ -121,15 +121,15 @@ export function LandingFooter({
         <m.div className="border-paper-100/10 mt-12 border-t pt-12" style={bodyStyle}>
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
             <div>
-              <img src="/brand/logo-wordmark-ondark.svg" alt="Mosoo" className="block h-[22px]" />
+              <img src="/brand/logo-wordmark-ondark.svg" alt="mosoo" className="block h-[22px]" />
               <p className="text-paper-100/55 mt-4 max-w-[260px] text-[13.5px] leading-[1.6]">
                 Open-source agent runtime and API for coding agents.
               </p>
               <div className="mt-5 flex items-center gap-2.5">
-                <SocialLink href={MOSOO_GITHUB_URL} label="Mosoo on GitHub">
+                <SocialLink href={MOSOO_GITHUB_URL} label="mosoo on GitHub">
                   <GithubMark className="size-[18px]" />
                 </SocialLink>
-                <SocialLink href={MOSOO_X_URL} label="Mosoo on X">
+                <SocialLink href={MOSOO_X_URL} label="mosoo on X">
                   <XMark className="size-4" />
                 </SocialLink>
               </div>

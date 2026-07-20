@@ -12,8 +12,8 @@ const ICON_LINK_CLASS =
 
 function Brand(): ReactElement {
   return (
-    <span aria-label="Mosoo" className="inline-flex items-center">
-      <img src="/brand/logo-wordmark-onlight.svg" alt="Mosoo" className="block h-[22px]" />
+    <span aria-label="mosoo" className="inline-flex items-center">
+      <img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" className="block h-[22px]" />
     </span>
   );
 }
@@ -42,8 +42,8 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
             href={MOSOO_X_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Mosoo on X"
-            title="Mosoo on X"
+            aria-label="mosoo on X"
+            title="mosoo on X"
             className={ICON_LINK_CLASS}
           >
             <XMark className="size-4" />
@@ -51,7 +51,7 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
           <GithubMarkLink
             href={MOSOO_GITHUB_URL}
             className={ICON_LINK_CLASS}
-            label="Mosoo on GitHub"
+            label="mosoo on GitHub"
           />
           <Button variant="outline" className="ml-1" onClick={onContinue}>
             Log in

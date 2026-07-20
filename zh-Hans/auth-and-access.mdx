@@ -3,7 +3,7 @@ title: "认证和访问控制"
 description: "API token、Agent 访问权限和所有者配置如何配合。"
 ---
 
-调用 Mosoo API 时，请求需要同时带上 `API token` 和 `agentId`。Mosoo 会先用 `API token` 识别调用方，再检查这个调用方是否有权限访问 `agentId` 指向的 Agent。
+调用 mosoo API 时，请求需要同时带上 `API token` 和 `agentId`。mosoo 会先用 `API token` 识别调用方，再检查这个调用方是否有权限访问 `agentId` 指向的 Agent。
 
 每个请求都使用 Bearer API token：
 
@@ -11,14 +11,14 @@ description: "API token、Agent 访问权限和所有者配置如何配合。"
 Authorization: Bearer mst_...
 ```
 
-通过 API token 有效性和 Agent 访问权限检查后，Mosoo 才会创建或修改 Thread。
+通过 API token 有效性和 Agent 访问权限检查后，mosoo 才会创建或修改 Thread。
 
 ## API token
 
-API token 是调用 Mosoo API 的身份凭证。你可以在账号设置中创建它，并把它保存到应用后端、本地工具或自动化任务中。
+API token 是调用 mosoo API 的身份凭证。你可以在账号设置中创建它，并把它保存到应用后端、本地工具或自动化任务中。
 
 <Warning>
-  API token 不是渠道连接凭据。Slack、Lark、Discord、Telegram、WeChat 等渠道设置仍然在 Mosoo 中管理。
+  API token 不是渠道连接凭据。Slack、Lark、Discord、Telegram、WeChat 等渠道设置仍然在 mosoo 中管理。
 </Warning>
 
 ## 已发布 Agent 访问
@@ -38,11 +38,11 @@ API token 是调用 Mosoo API 的身份凭证。你可以在账号设置中创�
 | 组织范围 | 拥有有效 API token 的活跃组织成员。 |
 | 仅限邀请 | Agent 所有者，以及拥有有效 API token 的被邀请协作者。 |
 
-有 API token 不代表一定能调用。如果调用方没有通过 Agent 访问检查，Mosoo 会返回 `403 Forbidden`。
+有 API token 不代表一定能调用。如果调用方没有通过 Agent 访问检查，mosoo 会返回 `403 Forbidden`。
 
 ## 调用方身份和执行
 
-Mosoo 会记录 API 调用方，用于访问检查、审计日志和 Thread 可见性。
+mosoo 会记录 API 调用方，用于访问检查、审计日志和 Thread 可见性。
 
 运行时仍会使用已发布 Agent 所有者配置的能力边界。API 调用方不会变成 Agent 所有者，不会改变 Agent 的模型服务商，也不能在请求中提供新的模型服务商凭据。
 
@@ -50,7 +50,7 @@ Mosoo 会记录 API 调用方，用于访问检查、审计日志和 Thread 可�
 
 ## API token 生命周期
 
-在 Mosoo 中创建和撤销 API token。撤销 API token 会阻止该 API token 发起新的 API 请求；它不会删除已经存在的 Threads。
+在 mosoo 中创建和撤销 API token。撤销 API token 会阻止该 API token 发起新的 API 请求；它不会删除已经存在的 Threads。
 
 建议为不同系统使用不同 API token：
 

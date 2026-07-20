@@ -57,7 +57,7 @@ Agent 应该像数据库一样被消费。你不会为了存几行数据先自�
 
 ## 接入只是一段说明文
 
-这正是 Mosoo 在做的事。发布后的 Agent 运行在 Mosoo 托管的 sandbox 里，对外是一组朴素的 HTTP API：Threads、Runs、Events、Files。创建一个 Thread，任务就开始了：
+这正是 mosoo 在做的事。发布后的 Agent 运行在 mosoo 托管的 sandbox 里，对外是一组朴素的 HTTP API：Threads、Runs、Events、Files。创建一个 Thread，任务就开始了：
 
 ```bash
 curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
@@ -75,10 +75,10 @@ curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 之后用 `GET /threads/{threadId}/events` 轮询，或用 `/events/stream` 把 agent 的输出、工具状态和文件产物流式接进你的产品。
 
-而集成这件事本身，也不必由你手写。在 Mosoo 控制台里，每个发布的 Agent 都自带一份 **Instruction for LLM**：
+而集成这件事本身，也不必由你手写。在 mosoo 控制台里，每个发布的 Agent 都自带一份 **Instruction for LLM**：
 
 <figure>
-  ![Mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  ![mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
   <figcaption>发布一个 Agent 后，从控制台复制 Instruction for LLM，粘贴给你本地的 coding agent，剩下的接入代码由它完成。</figcaption>
 </figure>
 

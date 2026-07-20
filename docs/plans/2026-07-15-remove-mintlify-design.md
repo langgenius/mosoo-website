@@ -1,4 +1,4 @@
-# Remove Mintlify From Mosoo Website
+# Remove Mintlify From mosoo Website
 
 ## Decision
 

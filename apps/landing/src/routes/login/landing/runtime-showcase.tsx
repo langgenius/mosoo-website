@@ -16,7 +16,7 @@ type Runtime = {
   providerLabel: string;
 };
 
-// The agent drivers (harnesses) a Mosoo agent can run on — runtime ids match the
+// The agent drivers (harnesses) a mosoo agent can run on — runtime ids match the
 // brand-icon catalog. Status mirrors the live runtime availability.
 const RUNTIMES: readonly Runtime[] = [
   {
@@ -28,7 +28,7 @@ const RUNTIMES: readonly Runtime[] = [
   { runtimeId: "acp-fallback", label: "OpenCode", providerLabel: "OpenCode" },
 ];
 
-// Mosoo normalises every harness to the same interface — so the capability set is
+// mosoo normalises every harness to the same interface — so the capability set is
 // identical no matter which runtime you pick. That sameness is the whole point.
 const CAPABILITIES = [
   "Streaming + tool calls",
@@ -102,7 +102,7 @@ export function RuntimeShowcase(): ReactElement | null {
             One Agent. Any runtime.
           </h2>
           <p className="text-fg-2 mt-4 max-w-[480px] text-[15px] leading-[1.6]">
-            A Mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK
+            A mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK
             or any driver: the runtime is a swappable harness, not a rewrite. Same interface, same
             session model, every time.
           </p>
