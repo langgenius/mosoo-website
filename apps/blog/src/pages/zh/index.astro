@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import BlogIndex from "../../components/BlogIndex.astro";
+import { getIndexHreflangAlternates } from "../../lib/seo.mjs";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -11,9 +12,10 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft && data.loc
 ---
 
 <BaseLayout
-  title="Mosoo blog · Notes from the bamboo grove"
+  title="Mosoo 博客 · 竹林手记"
   description="Mosoo 团队关于 Agent 产品、运行时和生产化路径的手记。"
   lang="zh-CN"
+  hreflang={getIndexHreflangAlternates(base)}
 >
   <BlogIndex
     posts={posts}

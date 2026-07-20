@@ -4,10 +4,13 @@ import CardVisual from "../components/CardVisual.astro";
 import { getIndexHref, getPostLocale, type Locale } from "../lib/i18n";
 import type { CollectionEntry } from "astro:content";
 
+type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "ja" | "x-default", string>>;
+
 interface Props {
   post: CollectionEntry<"blog">;
+  hreflang?: HreflangAlternates;
 }
-const { post } = Astro.props;
+const { post, hreflang } = Astro.props;
 const {
   title,
   titleAccent,
@@ -50,6 +53,7 @@ const dateLabel = date.toLocaleDateString(dateLocales[locale], {
   month: "long",
   day: "numeric",
 });
+const canonicalUrl = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", Astro.site).href;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -57,16 +61,20 @@ const jsonLd = {
   headline: title,
   description,
   datePublished: date.toISOString(),
+  inLanguage: lang,
   ...(heroImage
     ? { image: new URL(heroImage, Astro.site).href }
     : {}),
   author: bylineAuthors.map((a) => ({ "@type": "Person", name: a.name })),
   publisher: {
     "@type": "Organization",
+    "@id": "https://mosoo.ai/#organization",
     name: "Mosoo",
     url: "https://mosoo.ai",
   },
-  url: new URL(Astro.url.pathname, Astro.site).href,
+  mainEntityOfPage: canonicalUrl,
+  isPartOf: { "@type": "Blog", "@id": "https://mosoo.ai/blog#blog" },
+  url: canonicalUrl,
 };
 ---
 
@@ -77,12 +85,14 @@ const jsonLd = {
   publishedTime={date}
   author={author}
   ogImage={heroImage ? new URL(heroImage, Astro.site).href : undefined}
+  ogImageAlt={heroAlt ?? title}
   lang={lang}
+  hreflang={hreflang}
 >
   <script
     is:inline
     type="application/ld+json"
-    set:html={JSON.stringify(jsonLd)}
+    set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")}
     slot="head"
   />
 

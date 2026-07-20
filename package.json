@@ -20,6 +20,7 @@
     "openapi:check": "node scripts/sync-openapi-specs.mjs check",
     "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
     "site:build": "npm run build",
-    "validate": "npm run build"
+    "test:seo": "node --test tests/*.test.mjs",
+    "validate": "npm run test:seo && npm run build"
   }
 }
