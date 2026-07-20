@@ -17,8 +17,6 @@
     "landing:build": "npm run build --workspace @mosoo/landing",
     "landing:dev": "npm run dev --workspace @mosoo/landing",
     "landing:preview": "npm run preview --workspace @mosoo/landing",
-    "openapi:check": "node scripts/sync-openapi-specs.mjs check",
-    "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
     "site:build": "npm run build",
     "validate": "npm run build"
   }
