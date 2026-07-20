@@ -11,9 +11,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout
   title="Page not found · Mosoo blog"
   description="The page you're looking for doesn't exist on the Mosoo blog."
+  robots="noindex, nofollow"
 >
-  <meta slot="head" name="robots" content="noindex" />
-
   <main class="mx-auto flex min-h-[60vh] w-full max-w-[760px] flex-col items-start justify-center px-6 py-20">
     <div class="font-mono mb-4 text-[12px] font-semibold uppercase tracking-[0.08em] text-[color:var(--accent-text)]">
       404 · Page not found
