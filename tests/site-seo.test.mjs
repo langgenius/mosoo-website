@@ -31,6 +31,22 @@ test("robots advertises the aggregate sitemap", () => {
   assert.deepEqual(sitemaps, ["https://mosoo.ai/sitemap.xml"]);
 });
 
+test("blog canonical metadata preserves final directory URLs", () => {
+  const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
+
+  assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
+  assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
+});
+
+test("blog posts reference the landing page organization identity", () => {
+  const postLayout = read("apps/blog/src/layouts/PostLayout.astro");
+
+  assert.match(
+    postLayout,
+    /publisher:\s*\{\s*"@id": "https:\/\/mosoo\.ai\/#organization"\s*\},/,
+  );
+});
+
 test("landing and blog metadata never point at a missing default image", () => {
   const landing = read("apps/landing/index.html");
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
