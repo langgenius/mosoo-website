@@ -2,5 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://mosoo.ai/sitemap.xml
-Sitemap: https://mosoo.ai/docs/sitemap.xml
-Sitemap: https://mosoo.ai/blog/sitemap-index.xml
