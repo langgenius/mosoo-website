@@ -2,19 +2,21 @@
 import { getCollection, render } from "astro:content";
 import PostLayout from "../layouts/PostLayout.astro";
 import { getPostPath } from "../lib/i18n";
+import { getPostHreflangAlternates } from "../lib/seo.mjs";
 
 export async function getStaticPaths() {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   const posts = await getCollection("blog", ({ data }) => !data.draft);
   return posts.map((post) => ({
     params: { slug: getPostPath(post) },
-    props: { post },
+    props: { post, hreflang: getPostHreflangAlternates(post, posts, base) },
   }));
 }
 
-const { post } = Astro.props;
+const { post, hreflang } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<PostLayout post={post}>
+<PostLayout post={post} hreflang={hreflang}>
   <Content />
 </PostLayout>
