@@ -1,5 +1,3 @@
-import { m, useReducedMotion, useTransform } from "motion/react";
-import type { MotionValue } from "motion/react";
 import type { CSSProperties, ReactElement } from "react";
 
 import { GithubMark } from "../github-mark";
@@ -91,45 +89,28 @@ function SocialLink({
   );
 }
 
-export function LandingFooter({
-  revealProgress,
-}: {
-  revealProgress: MotionValue<number>;
-}): ReactElement {
-  const reduceMotion = useReducedMotion();
-  // `revealProgress` is the footer's own reveal amount: 0 the instant it starts
-  // peeking out, 1 when the page is fully pulled up to the bottom. So the text
-  // resolves from blurred (just uncovered) to fully sharp (at the very bottom).
-  const taglineBlur = useTransform(revealProgress, [0, 0.85], ["blur(10px)", "blur(0px)"]);
-  const taglineOpacity = useTransform(revealProgress, [0, 0.7], [0.45, 1]);
-  const bodyOpacity = useTransform(revealProgress, [0.05, 0.8], [0.5, 1]);
-
-  // Keep the animated style a pure MotionValue object (no static props spread in)
-  // so motion subscribes to the values and actually updates them on scroll.
-  const taglineStyle = reduceMotion ? {} : { filter: taglineBlur, opacity: taglineOpacity };
-  const bodyStyle = reduceMotion ? {} : { opacity: bodyOpacity };
-
+export function LandingFooter(): ReactElement {
   return (
     <footer className="text-paper-100 bg-[#050805] px-4 pt-16 pb-10 md:px-6 md:pt-20">
       <div className="mx-auto w-full max-w-[1280px]">
-        <m.div className="max-w-[760px]" style={taglineStyle}>
+        <div className="max-w-[760px]">
           <p className="[text-wrap:balance]" style={TAGLINE_STYLE}>
             Take root, and grow a bamboo sea.
           </p>
-        </m.div>
+        </div>
 
-        <m.div className="border-paper-100/10 mt-12 border-t pt-12" style={bodyStyle}>
+        <div className="border-paper-100/10 mt-12 border-t pt-12">
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
             <div>
-              <img src="/brand/logo-wordmark-ondark.svg" alt="Mosoo" className="block h-[22px]" />
+              <img src="/brand/logo-wordmark-ondark.svg" alt="mosoo" className="block h-[22px]" />
               <p className="text-paper-100/55 mt-4 max-w-[260px] text-[13.5px] leading-[1.6]">
                 Open-source agent runtime and API for coding agents.
               </p>
               <div className="mt-5 flex items-center gap-2.5">
-                <SocialLink href={MOSOO_GITHUB_URL} label="Mosoo on GitHub">
+                <SocialLink href={MOSOO_GITHUB_URL} label="mosoo on GitHub">
                   <GithubMark className="size-[18px]" />
                 </SocialLink>
-                <SocialLink href={MOSOO_X_URL} label="Mosoo on X">
+                <SocialLink href={MOSOO_X_URL} label="mosoo on X">
                   <XMark className="size-4" />
                 </SocialLink>
               </div>
@@ -146,7 +127,7 @@ export function LandingFooter({
               Self-hostable · BYOK
             </p>
           </div>
-        </m.div>
+        </div>
       </div>
     </footer>
   );

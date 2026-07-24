@@ -76,7 +76,7 @@ export function SandboxSection(): ReactElement {
             No always-on agent cloud.
           </h2>
           <p className="text-fg-2 mt-4 max-w-[480px] text-[15px] leading-[1.6]">
-            Mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn
+            mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn
             ends. No standing fleet to pay for or babysit: compute appears on demand, scoped to the
             session, and disappears.
           </p>

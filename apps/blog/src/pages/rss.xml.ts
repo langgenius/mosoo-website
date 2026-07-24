@@ -31,9 +31,9 @@ export const GET: APIRoute = async ({ site }) => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Mosoo Blog</title>
+    <title>mosoo Blog</title>
     <link>${base}</link>
-    <description>Notes from the bamboo grove — engineering, product, and research from the team building Mosoo.</description>
+    <description>Notes from the bamboo grove — engineering, product, and research from the team building mosoo.</description>
     <language>en-us</language>${items}
   </channel>
 </rss>`;

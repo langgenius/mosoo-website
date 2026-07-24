@@ -1,10 +1,8 @@
 import { ArrowUpRight, Star } from "lucide-react";
-import { m, useReducedMotion } from "motion/react";
 import type { CSSProperties, ReactElement } from "react";
 
 import { GithubMark } from "../github-mark";
 import { MOSOO_API_REFERENCE_URL, MOSOO_GITHUB_URL } from "../links";
-import { fadeUp, staggerParent } from "./motion-variants";
 import { DISPLAY_FONT } from "./typography";
 import { Eyebrow } from "./ui";
 import { UnicornBackground } from "./unicorn";
@@ -29,8 +27,6 @@ const HERO_SUBHEAD_STYLE = {
 } satisfies CSSProperties;
 
 export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
-  const reduceMotion = useReducedMotion();
-
   return (
     <section
       className="relative flex min-h-[640px] flex-col items-center justify-center overflow-hidden px-4 py-20 md:min-h-[680px] md:px-6 md:py-24"
@@ -39,32 +35,27 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
       {/* WebGL aurora — the brand's signature hero motion */}
       <UnicornBackground sceneId={HERO_SCENE_ID} />
 
-      <m.div
+      <div
         className="relative z-10 flex w-full max-w-[1080px] flex-col items-center text-center"
-        initial={reduceMotion ? false : "hidden"}
-        animate="visible"
-        variants={staggerParent}
       >
-        <m.div variants={fadeUp}>
+        <div className="landing-hero-reveal">
           <Eyebrow>Open source · Agent runtime and API</Eyebrow>
-        </m.div>
-        <m.h1
-          className="text-ink-900 mt-7 [text-wrap:balance]"
+        </div>
+        <h1
+          className="landing-hero-reveal landing-hero-reveal-delay-1 text-ink-900 mt-7 [text-wrap:balance]"
           style={HERO_HEADLINE_STYLE}
-          variants={fadeUp}
         >
           <span className="block">Open-source agent runtime</span>
           <span className="block">for coding agents.</span>
-        </m.h1>
-        <m.p
-          className="text-ink-800 mt-6 max-w-[640px]"
+        </h1>
+        <p
+          className="landing-hero-reveal landing-hero-reveal-delay-2 text-ink-800 mt-6 max-w-[640px]"
           style={HERO_SUBHEAD_STYLE}
-          variants={fadeUp}
         >
           Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated
           sandboxes. Stream work, keep durable Threads, and resume across Runs.
-        </m.p>
-        <m.div className="mt-9 flex flex-wrap items-center justify-center gap-3" variants={fadeUp}>
+        </p>
+        <div className="landing-hero-reveal landing-hero-reveal-delay-3 mt-9 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
             onClick={onContinue}
@@ -76,7 +67,7 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             href={MOSOO_GITHUB_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Star Mosoo on GitHub"
+            aria-label="Star mosoo on GitHub"
             className="text-ink-900 ring-ink-900/15 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
           >
             <GithubMark className="size-[18px]" />
@@ -92,14 +83,11 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             <span>API docs</span>
             <ArrowUpRight className="size-4" />
           </a>
-        </m.div>
-        <m.p
-          className="text-ink-700 mt-6 font-mono text-[11px] tracking-[0.18em] uppercase"
-          variants={fadeUp}
-        >
+        </div>
+        <p className="landing-hero-reveal landing-hero-reveal-delay-4 text-ink-700 mt-6 font-mono text-[11px] tracking-[0.18em] uppercase">
           Open source · Self-hostable · BYOK
-        </m.p>
-      </m.div>
+        </p>
+      </div>
     </section>
   );
 }

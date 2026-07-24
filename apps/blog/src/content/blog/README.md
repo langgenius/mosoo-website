@@ -13,7 +13,7 @@ title: "Post title"
 description: "One- or two-sentence dek shown on the index card and metadata."
 date: 2026-05-28
 category: "Engineering" # Engineering | Product | Research | Customer Stories
-author: "Mosoo team" # optional, defaults to "Mosoo team"
+author: "mosoo team" # optional, defaults to "mosoo team"
 locale: "en" # en | zh | ja, defaults to en
 permalink: "post-title" # optional shared slug for localized posts
 translationKey: "post-title" # optional key linking localized versions
@@ -66,7 +66,7 @@ over ~500 KB should be downsized.
 ## Writing tips
 
 - Sentence case in titles and headings. Use the brand casing the post needs,
-  including `Mosoo` when it is a product name in prose.
+  including `mosoo` when it is a product name in prose.
 - `description` shows up in the OG card, the index dek, and the search
   snippet. Make it stand alone.
 - The first paragraph is the lede — write it like a magazine opener.

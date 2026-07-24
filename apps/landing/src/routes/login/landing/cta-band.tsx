@@ -56,7 +56,7 @@ export function CtaBand({ onContinue }: { onContinue: () => void }): ReactElemen
             href={MOSOO_GITHUB_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Star Mosoo on GitHub"
+            aria-label="Star mosoo on GitHub"
             className="text-paper-100 ring-paper-100/25 hover:bg-paper-100/[0.1] focus-visible:ring-paper-100/60 bg-ink-900/30 inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 backdrop-blur-sm transition-colors outline-none focus-visible:ring-2"
           >
             <GithubMark className="size-[18px]" />

@@ -12,7 +12,7 @@ export function GithubMarkLink({
   href,
   className,
   iconClassName,
-  label = "View Mosoo on GitHub",
+  label = "View mosoo on GitHub",
 }: {
   href: string;
   className?: string;
