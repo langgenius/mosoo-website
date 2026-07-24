@@ -806,12 +806,12 @@ function buildCodingAgentsOutput(englishDocument) {
   );
 }
 
-function docsUrl(pathname) {
-  return new URL(pathname, DEFAULT_ORIGIN).toString();
+function siteUrl(pathname) {
+  return new URL(pathname, "https://mosoo.ai").toString();
 }
 
 function renderLlmsLink(label, pathname, description) {
-  return `- [${label}](${docsUrl(pathname)}): ${description}`;
+  return `- [${label}](${siteUrl(pathname)}): ${description}`;
 }
 
 function buildLlmsTxtOutput(englishDocument) {
@@ -830,12 +830,12 @@ function buildLlmsTxtOutput(englishDocument) {
     ),
     renderLlmsLink(
       "Human quickstart",
-      "/quickstart.md",
+      "/docs/quickstart/",
       "Human-oriented walkthrough for creating a Thread, sending events, and reading responses.",
     ),
     renderLlmsLink(
       "Authentication and access",
-      "/auth-and-access.md",
+      "/docs/auth-and-access/",
       "API token usage and access requirements for published Agents.",
     ),
     "",

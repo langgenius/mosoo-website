@@ -5,8 +5,8 @@
 ## Start here
 
 - [Coding agent guide](https://mosoo.ai/coding-agents.md): Machine-oriented guide with API flow, authentication, error handling, examples, implementation guardrails, and the generated API contract.
-- [Human quickstart](https://mosoo.ai/quickstart.md): Human-oriented walkthrough for creating a Thread, sending events, and reading responses.
-- [Authentication and access](https://mosoo.ai/auth-and-access.md): API token usage and access requirements for published Agents.
+- [Human quickstart](https://mosoo.ai/docs/quickstart/): Human-oriented walkthrough for creating a Thread, sending events, and reading responses.
+- [Authentication and access](https://mosoo.ai/docs/auth-and-access/): API token usage and access requirements for published Agents.
 
 ## API specifications
 
