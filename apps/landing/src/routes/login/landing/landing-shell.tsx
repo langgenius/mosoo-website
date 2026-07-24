@@ -1,4 +1,3 @@
-import { domAnimation, LazyMotion, useScroll, useTransform } from "motion/react";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
 
@@ -26,13 +25,13 @@ export function LandingShell({ onContinue }: { onContinue: () => void }): ReactE
   const contentRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
+  const [footerRevealProgress, setFooterRevealProgress] = useState(1);
   const viewportHeight = useSyncExternalStore(
     subscribeViewportHeight,
     getViewportHeightSnapshot,
     () => 0,
   );
   const [maxScroll, setMaxScroll] = useState(0);
-  const { scrollY } = useScroll({ container: scrollRef });
 
   const measureScrollRange = useCallback((): void => {
     if (scrollRef.current) {
@@ -87,35 +86,72 @@ export function LandingShell({ onContinue }: { onContinue: () => void }): ReactE
 
   const reveal = footerHeight > 0 && viewportHeight > 0 && footerHeight <= viewportHeight;
 
-  // The footer's own reveal fraction: 0 the instant it starts peeking out
-  // (scrollY = maxScroll − footerHeight) → 1 at the very bottom (scrollY =
-  // maxScroll). The footer text uses this to go blurred → fully sharp.
-  const revealStart = Math.max(0, maxScroll - footerHeight);
-  const revealEnd = Math.max(revealStart + 1, maxScroll);
-  const revealProgress = useTransform(scrollY, [revealStart, revealEnd], [0, 1], { clamp: true });
+  const updateFooterRevealProgress = useCallback((): void => {
+    const scrollNode = scrollRef.current;
+
+    if (!scrollNode || !reveal || maxScroll <= 0) {
+      setFooterRevealProgress(1);
+      return;
+    }
+
+    const revealStart = Math.max(0, maxScroll - footerHeight);
+    const revealEnd = Math.max(revealStart + 1, maxScroll);
+    const nextProgress = Math.min(
+      1,
+      Math.max(0, (scrollNode.scrollTop - revealStart) / (revealEnd - revealStart)),
+    );
+
+    setFooterRevealProgress((current) =>
+      Math.abs(current - nextProgress) < 0.01 ? current : nextProgress,
+    );
+  }, [footerHeight, maxScroll, reveal]);
+
+  useEffect(() => {
+    const scrollNode = scrollRef.current;
+    if (!scrollNode) {
+      return;
+    }
+
+    let frame = 0;
+    const handleScroll = (): void => {
+      if (frame !== 0) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        updateFooterRevealProgress();
+      });
+    };
+
+    updateFooterRevealProgress();
+    scrollNode.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+      }
+      scrollNode.removeEventListener("scroll", handleScroll);
+    };
+  }, [updateFooterRevealProgress]);
 
   return (
-    <LazyMotion features={domAnimation}>
+    <div
+      ref={setScrollNode}
+      data-theme="landing"
+      className="bg-paper-100 fixed inset-0 overflow-x-hidden overflow-y-auto"
+    >
       <div
-        ref={setScrollNode}
-        data-theme="landing"
-        className="bg-paper-100 fixed inset-0 overflow-x-hidden overflow-y-auto"
+        ref={setContentNode}
+        className="bg-paper-100 relative z-10 shadow-[0_24px_48px_-16px_rgba(11,26,20,0.45)]"
+        style={reveal ? { marginBottom: footerHeight } : undefined}
       >
-        <div
-          ref={setContentNode}
-          className="bg-paper-100 relative z-10 shadow-[0_24px_48px_-16px_rgba(11,26,20,0.45)]"
-          style={reveal ? { marginBottom: footerHeight } : undefined}
-        >
-          <LoginLandingTopbar onContinue={onContinue} />
-          <LoginLanding onContinue={onContinue} />
-        </div>
-        <div
-          ref={setFooterNode}
-          className={reveal ? "fixed inset-x-0 bottom-0 z-0" : "relative z-0"}
-        >
-          <LandingFooter revealProgress={revealProgress} />
-        </div>
+        <LoginLandingTopbar onContinue={onContinue} />
+        <LoginLanding onContinue={onContinue} />
       </div>
-    </LazyMotion>
+      <div ref={setFooterNode} className={reveal ? "fixed inset-x-0 bottom-0 z-0" : "relative z-0"}>
+        <LandingFooter revealProgress={footerRevealProgress} />
+      </div>
+    </div>
   );
 }
