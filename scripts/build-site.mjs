@@ -56,4 +56,4 @@ if (!existsSync(join(DIST, "blog", "sitemap-index.xml"))) {
   throw new Error("Blog build did not produce dist/blog/sitemap-index.xml.");
 }
 
-console.log(`Built Mosoo website into ${basename(DIST)}/`);
+console.log(`Built mosoo website into ${basename(DIST)}/`);

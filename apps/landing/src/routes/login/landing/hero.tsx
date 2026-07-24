@@ -67,7 +67,7 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             href={MOSOO_GITHUB_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Star Mosoo on GitHub"
+            aria-label="Star mosoo on GitHub"
             className="text-ink-900 ring-ink-900/15 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
           >
             <GithubMark className="size-[18px]" />

@@ -17,15 +17,15 @@ const blog = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     category: z.enum(CATEGORIES),
-    author: z.string().default("Mosoo team"),
+    author: z.string().default("mosoo team"),
     // Optional byline avatar, root-absolute like heroImage. Convention:
     // store shared author portraits under `public/blog/authors/<name>.<ext>`
     // so they ship at `/blog/blog/authors/<name>.<ext>`. Falls back to the
-    // Mosoo favicon when unset.
+    // mosoo favicon when unset.
     authorAvatar: z.string().optional(),
     // Optional co-authors shown after the primary author in the byline.
     // Avatars follow the same `public/blog/authors/<name>.<ext>` convention
-    // as `authorAvatar` and fall back to the Mosoo favicon when unset.
+    // as `authorAvatar` and fall back to the mosoo favicon when unset.
     coAuthors: z
       .array(
         z.object({
