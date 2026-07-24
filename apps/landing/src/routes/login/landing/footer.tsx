@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { CSSProperties, ReactElement } from "react";
 
 import { GithubMark } from "../github-mark";
@@ -37,34 +36,6 @@ const TAGLINE_STYLE = {
   letterSpacing: "-0.025em",
   lineHeight: 1.04,
 } satisfies CSSProperties;
-
-function clampProgress(value: number): number {
-  return Math.min(1, Math.max(0, value));
-}
-
-function progressBetween(value: number, start: number, end: number): number {
-  return clampProgress((value - start) / (end - start));
-}
-
-function usePrefersReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = (): void => {
-      setPrefersReducedMotion(query.matches);
-    };
-
-    update();
-    query.addEventListener("change", update);
-
-    return () => {
-      query.removeEventListener("change", update);
-    };
-  }, []);
-
-  return prefersReducedMotion;
-}
 
 function FooterColumn({
   heading,
@@ -118,34 +89,17 @@ function SocialLink({
   );
 }
 
-export function LandingFooter({
-  revealProgress,
-}: {
-  revealProgress: number;
-}): ReactElement {
-  const reduceMotion = usePrefersReducedMotion();
-  const progress = clampProgress(revealProgress);
-  // `revealProgress` is the footer's own reveal amount: 0 the instant it starts
-  // peeking out, 1 when the page is fully pulled up to the bottom. So the text
-  // resolves from blurred (just uncovered) to fully sharp (at the very bottom).
-  const taglineStyle = reduceMotion
-    ? {}
-    : {
-        filter: `blur(${(1 - progressBetween(progress, 0, 0.85)) * 10}px)`,
-        opacity: 0.45 + progressBetween(progress, 0, 0.7) * 0.55,
-      };
-  const bodyStyle = reduceMotion ? {} : { opacity: 0.5 + progressBetween(progress, 0.05, 0.8) * 0.5 };
-
+export function LandingFooter(): ReactElement {
   return (
     <footer className="text-paper-100 bg-[#050805] px-4 pt-16 pb-10 md:px-6 md:pt-20">
       <div className="mx-auto w-full max-w-[1280px]">
-        <div className="max-w-[760px]" style={taglineStyle}>
+        <div className="max-w-[760px]">
           <p className="[text-wrap:balance]" style={TAGLINE_STYLE}>
             Take root, and grow a bamboo sea.
           </p>
         </div>
 
-        <div className="border-paper-100/10 mt-12 border-t pt-12" style={bodyStyle}>
+        <div className="border-paper-100/10 mt-12 border-t pt-12">
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
             <div>
               <img src="/brand/logo-wordmark-ondark.svg" alt="mosoo" className="block h-[22px]" />

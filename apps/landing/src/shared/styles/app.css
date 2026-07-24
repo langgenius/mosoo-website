@@ -47,29 +47,6 @@
     url("/fonts/GeistMono-Variable.woff2") format("woff2");
 }
 
-@keyframes landing-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-[data-landing-hero-reveal] {
-  animation: landing-fade-up 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: var(--landing-hero-delay, 0ms);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-landing-hero-reveal] {
-    animation: none;
-  }
-}
-
 :root {
   /* Brand green — the bright Moso-bamboo shoot (#6FD305). A disciplined accent
      only: primary actions stay BLACK; green marks growth/action/life. */
@@ -562,10 +539,41 @@
   }
 }
 
+@keyframes landing-hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @layer utilities {
   .environment-row-enter {
     animation: environment-row-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: top center;
+  }
+
+  .landing-hero-reveal {
+    animation: landing-hero-reveal 240ms var(--ease-out) both;
+  }
+
+  .landing-hero-reveal-delay-1 {
+    animation-delay: 40ms;
+  }
+
+  .landing-hero-reveal-delay-2 {
+    animation-delay: 120ms;
+  }
+
+  .landing-hero-reveal-delay-3 {
+    animation-delay: 200ms;
+  }
+
+  .landing-hero-reveal-delay-4 {
+    animation-delay: 280ms;
   }
 
   .environment-scroll-area {
@@ -595,6 +603,12 @@
 @media (prefers-reduced-motion: reduce) {
   .environment-row-enter {
     animation: none;
+  }
+
+  .landing-hero-reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

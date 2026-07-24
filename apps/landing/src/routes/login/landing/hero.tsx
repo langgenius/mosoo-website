@@ -26,14 +26,6 @@ const HERO_SUBHEAD_STYLE = {
   lineHeight: 1.55,
 } satisfies CSSProperties;
 
-type HeroRevealStyle = CSSProperties & {
-  "--landing-hero-delay": string;
-};
-
-function revealStyle(delayMs: number): HeroRevealStyle {
-  return { "--landing-hero-delay": `${delayMs}ms` };
-}
-
 export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
   return (
     <section
@@ -46,30 +38,24 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
       <div
         className="relative z-10 flex w-full max-w-[1080px] flex-col items-center text-center"
       >
-        <div data-landing-hero-reveal style={revealStyle(40)}>
+        <div className="landing-hero-reveal">
           <Eyebrow>Open source · Agent runtime and API</Eyebrow>
         </div>
         <h1
-          className="text-ink-900 mt-7 [text-wrap:balance]"
-          data-landing-hero-reveal
-          style={{ ...HERO_HEADLINE_STYLE, ...revealStyle(120) }}
+          className="landing-hero-reveal landing-hero-reveal-delay-1 text-ink-900 mt-7 [text-wrap:balance]"
+          style={HERO_HEADLINE_STYLE}
         >
           <span className="block">Open-source agent runtime</span>
           <span className="block">for coding agents.</span>
         </h1>
         <p
-          className="text-ink-800 mt-6 max-w-[640px]"
-          data-landing-hero-reveal
-          style={{ ...HERO_SUBHEAD_STYLE, ...revealStyle(200) }}
+          className="landing-hero-reveal landing-hero-reveal-delay-2 text-ink-800 mt-6 max-w-[640px]"
+          style={HERO_SUBHEAD_STYLE}
         >
           Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated
           sandboxes. Stream work, keep durable Threads, and resume across Runs.
         </p>
-        <div
-          className="mt-9 flex flex-wrap items-center justify-center gap-3"
-          data-landing-hero-reveal
-          style={revealStyle(280)}
-        >
+        <div className="landing-hero-reveal landing-hero-reveal-delay-3 mt-9 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
             onClick={onContinue}
@@ -98,11 +84,7 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             <ArrowUpRight className="size-4" />
           </a>
         </div>
-        <p
-          className="text-ink-700 mt-6 font-mono text-[11px] tracking-[0.18em] uppercase"
-          data-landing-hero-reveal
-          style={revealStyle(360)}
-        >
+        <p className="landing-hero-reveal landing-hero-reveal-delay-4 text-ink-700 mt-6 font-mono text-[11px] tracking-[0.18em] uppercase">
           Open source · Self-hostable · BYOK
         </p>
       </div>
