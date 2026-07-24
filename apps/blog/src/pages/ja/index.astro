@@ -6,22 +6,22 @@ import { getIndexHreflangAlternates } from "../../lib/seo.mjs";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft && data.locale === "zh")).toSorted(
+const posts = (await getCollection("blog", ({ data }) => !data.draft && data.locale === "ja")).toSorted(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 ---
 
 <BaseLayout
-  title="Mosoo 博客 · 竹林手记"
-  description="Mosoo 团队关于 Agent 产品、运行时和生产化路径的手记。"
-  lang="zh-CN"
+  title="Mosoo ブログ · 竹林からのノート"
+  description="Agent プロダクト、ランタイム設計、プロダクションへの道のりについて綴る Mosoo チームのノート。"
+  lang="ja"
   hreflang={getIndexHreflangAlternates(base)}
 >
   <BlogIndex
     posts={posts}
     base={base}
-    eyebrow="博客"
+    eyebrow="ブログ"
     title="Notes from the bamboo grove."
-    description="写给正在把 Agent 从本地实验带进生产系统的人。"
+    description="Agent をローカルの実験からプロダクションシステムへ運ぼうとしている人に向けた手紙。"
   />
 </BaseLayout>

@@ -538,7 +538,7 @@ Error responses:
 
 ### `POST /agents/{agentId}/threads`
 
-Purpose: Creates a Thread and the backing AgentSession. If input is present, Mosoo also queues the initial Run. If input is omitted, the Thread is immediately visible with IDLE status and no run. API token requests are attributed to the current Mosoo user.
+Purpose: Creates a Thread and the backing AgentSession. If input is present, mosoo also queues the initial Run. If input is omitted, the Thread is immediately visible with IDLE status and no run. API token requests are attributed to the current Mosoo user.
 
 Path params:
 
@@ -1003,7 +1003,7 @@ Request body for creating a Thread. All fields are optional: omit `input` to cre
 
 Fields:
 
-- `client_external_ref` optional, `string`. Optional client-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by Mosoo.
+- `client_external_ref` optional, `string`. Optional client-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by mosoo.
 - `resources` optional, `FileResource[]`. Files uploaded through the Agent file endpoint and mounted into the first Run.
 - `input` optional, `object`. Initial user message that seeds the Thread and queues the first Run. Omit to create an empty Thread with no run.
   - `content` required, `object[]`. Ordered content parts that make up the initial message.

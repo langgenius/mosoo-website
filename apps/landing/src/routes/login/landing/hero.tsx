@@ -46,23 +46,23 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
         variants={staggerParent}
       >
         <m.div variants={fadeUp}>
-          <Eyebrow>Open source · The backend for agents</Eyebrow>
+          <Eyebrow>Open source · Agent runtime and API</Eyebrow>
         </m.div>
         <m.h1
           className="text-ink-900 mt-7 [text-wrap:balance]"
           style={HERO_HEADLINE_STYLE}
           variants={fadeUp}
         >
-          <span className="block">Managed agents,</span>
-          <span className="block">built open source.</span>
+          <span className="block">Open-source agent runtime</span>
+          <span className="block">for coding agents.</span>
         </m.h1>
         <m.p
           className="text-ink-800 mt-6 max-w-[640px]"
           style={HERO_SUBHEAD_STYLE}
           variants={fadeUp}
         >
-          One API for Codex, Claude Code, OpenClaw, and Hermes Agent. Run them as cloud agents in
-          isolated sandboxes, and ship to your users without rebuilding the runtime.
+          Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated
+          sandboxes. Stream work, keep durable Threads, and resume across Runs.
         </m.p>
         <m.div className="mt-9 flex flex-wrap items-center justify-center gap-3" variants={fadeUp}>
           <button

@@ -1,0 +1,114 @@
+---
+title: "Responses から Agents へ：API はランタイムになる"
+titleAccent: "ランタイム"
+description: "OpenAI の Responses API は、状態、コンパクション、ツールプログラム、WebSocket 継続、マルチエージェント協調を一つのモデルランタイムへ収めつつある。何が変わり、何がアプリケーションに残るのかを整理する。"
+date: 2026-07-18
+category: "Engineering"
+author: "Ennea"
+authorAvatar: "/blog/blog/authors/ennea.jpg"
+locale: "ja"
+permalink: "from-responses-to-agents"
+translationKey: "from-responses-to-agents"
+heroImage: "/blog/blog/from-responses-to-agents/hero.webp"
+heroAlt: "緑の抽象的なスキャンラインのブロックが風景の上に組み上がり、From responses to agents の文字が浮かぶ。"
+---
+
+GPT-5.6 の時代になって、OpenAI の API プラットフォームが向かう方向は見誤りようがありません。モデルのエンドポイントは、もはや「次のテキストを生成する」ことだけを中心に設計されてはいません。状態を保持し、ツールを操作し、増え続けるコンテキストを圧縮し、並行作業を協調させられます。
+
+最初に一つ訂正しておきます。**Chat Completions は非推奨になっていません**。OpenAI はサポートの継続を明言した上で、[新規プロジェクトには Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses) を推奨しています。分水嶺はアーキテクチャであって、停止日ではありません。
+
+> 重要な変化は新しいエンドポイントではない。agent のループのどれだけ多くが、モデルランタイムの内側に住めるようになったか、だ。
+
+## テキストのやり取りから、一つのフローへ
+
+[Responses API](https://developers.openai.com/api/reference/responses/overview) は、すべてのターンをチャットメッセージとして扱う代わりに、型付きの Item で動きます。メッセージ、reasoning item、function call、function output、ホストされたツールの活動が、同じレスポンスフローに参加できます。
+
+これは統合モデルを変えます。一つのレスポンスの中に、モデルが答えを返す前に複数のツールを使う agentic なループを含められるのです。アプリケーションは引き続き権限を定義し、クライアント側の関数を処理しますが、すべての中間ステップをトランスクリプト形のプロトコルへ平坦化する必要はもうありません。
+
+## 状態はプラットフォームのプリミティブになる
+
+サーバー側の状態には二つのパターンがあり、解く問題が異なります。
+
+`previous_response_id` は、新しいレスポンスを直前のレスポンスへ連結します。近接したターンのための軽量な選択肢で、クライアントは完全な履歴を再構築して送り直す代わりに、新しい入力だけを送ります。
+
+[Conversations API](https://developers.openai.com/api/docs/guides/conversation-state#using-the-conversations-api) は、独自の ID を持つ永続オブジェクトを作ります。同じ会話を、セッション、デバイス、バックグラウンドジョブをまたいで続けられます。その Item には、メッセージ、ツール呼び出し、ツール出力、その他の構造化された会話データを含められます。
+
+保持期間の違いは実用的です。通常の Response オブジェクトはデフォルトで 30 日間保存されます。Conversation オブジェクトとその Item は、この 30 日の TTL の対象外です。これは接続ローカルなキャッシュではなく、永続的な会話状態です。
+
+また、これは非公開の chain-of-thought を覗くログでもありません。アプリケーションは、隠された内部推論の再生を約束するのではなく、API が返す構造化された Item — サポートされる reasoning の要約や暗号化された Item を含む — に基づいて設計すべきです。
+
+<figure>
+  ![3 ターン分の入力と出力が積み上がり、最後の出力がコンテキストウィンドウを越えて切り詰められる図](/blog/blog/from-responses-to-agents/context-window.png)
+  <figcaption>ターンが積み重なるにつれ、有用なコンテキストは有限のウィンドウを奪い合う。出典: <a href="https://developers.openai.com/api/docs/guides/conversation-state">OpenAI の Conversation state ガイド</a>。</figcaption>
+</figure>
+
+## WebSocket モードは継続のオーバーヘッドを取り除く
+
+[Responses WebSocket モード](https://developers.openai.com/api/docs/guides/websocket-mode) は `wss://api.openai.com/v1/responses` への持続的な接続を保ちます。各継続では、新しい入力 Item と `previous_response_id` だけを送れば済みます。
+
+これは、コーディングやオーケストレーションのような長時間・ツール密度の高いループのために設計されています。OpenAI は、20 回を超えるツール呼び出しを伴うロールアウトで、エンドツーエンドの実行が**最大およそ 40% 速く**なったと報告しています。これは観測された上限であって、レイテンシの保証ではありません。
+
+接続は `response.create` と `generate: false` でウォームアップすることもできます。ウォームアップは、モデル出力を生成せずに既知のツール、instruction、カスタムメッセージを準備し、次のターンが継続の起点にできるレスポンス ID を返します。
+
+WebSocket モードは API を無制限のプロセスへ変えるわけではありません。接続には文書化された制限があり、アプリケーションには依然として再接続、エラーリカバリ、永続的なジョブの所有権が必要です。
+
+## コンパクションは有用な状態だけを持ち越す
+
+長い会話は単純なシステム問題を生みます。履歴が増えるほど、トークンが増え、レイテンシが増え、コンテキストウィンドウの中の競争が激しくなります。
+
+[サーバー側のコンパクション](https://developers.openai.com/api/docs/guides/compaction) は `context_management` と `compact_threshold` で有効化できます。レンダリングされたトークン数が閾値を越えると、サーバーは暗号化されたコンパクション Item を発行します。この Item が、重要な過去の状態と reasoning を、より少ないトークンで次のウィンドウへ運びます。
+
+コンパクション Item は不透明で、人間が読むことを意図していません。従来型の要約や、モデルの「潜在的な理解」の字面通りのダンプとして説明すべきではありません。そのコントラクトはより狭く、より有用です。継続に必要な状態を保ちながら、コンテキストの圧力を減らすこと。
+
+ステートレスな入力配列の連結では、新しいウィンドウが組み立てられた後、最新のコンパクション Item より前の Item は捨てて構いません。`previous_response_id` を使う場合はサービスがチェーンを管理するので、クライアントが手動で刈り込むべきではありません。
+
+## ツールはプログラムとして協調できる
+
+[Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling) は、対象となるツールを協調させる JavaScript をモデルに書かせます。プログラムはループ、条件分岐、並列呼び出し、ローカルな変換を使いながら、中間結果をホストされた実行ステップの内側に留めます。
+
+制御フローが予測可能なときに有効です。複数のソースへ問い合わせ、結果をフィルタしてランク付けし、より小さな構造だけをモデルへ返す。不要なモデルの判断、繰り返される API の継続、大きな中間ペイロードの移動を減らせます。
+
+ランタイムの境界は意図的に厳格です。各プログラムは、トップレベル `await` の使える新品の隔離された V8 環境で動きますが、Node.js、パッケージのインストール、直接のネットワークアクセス、汎用のファイルシステム、サブプロセス、コンソール、実行をまたいで持続する JavaScript の状態はありません。外部への作用は、そのリクエストで有効化されたツールを通じてのみ可能です。
+
+クライアントが所有する function call は、これまで通り実行のためにアプリケーションへ戻ります。Programmatic Tool Calling が圧縮するのはオーケストレーションの一群であって、すべての統合を OpenAI のサンドボックスへ移すものではありません。
+
+## マルチエージェント協調が API 層に届く
+
+[Responses Multi-agent 機能](https://developers.openai.com/api/docs/guides/responses-multi-agent) は、GPT-5.6 系モデルでベータ提供されています。ルート agent はサブエージェントを作り、境界の明確な仕事を与え、対話し、結果を待ち、最終的なレスポンスへ統合できます。
+
+HTTP と WebSocket は同じ能力を公開しますが、クライアント関数が絡むときの協調の振る舞いが異なります。
+
+<figure>
+  ![HTTP モードにおける、アプリケーション・Responses API ルート agent・3 つのサブエージェント間の function call 実行フロー](/blog/blog/from-responses-to-agents/multi-agent-http.png)
+  <figcaption>HTTP では、アクティブなレスポンスが完了し、アプリケーションが未処理の function output を新しいリクエストで送信した後に、ブロックされたサブエージェントが再開する。出典: <a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI の Multi-agent ガイド</a>。</figcaption>
+</figure>
+
+<figure>
+  ![WebSocket モードにおける、アプリケーション・Responses API ルート agent・3 つのサブエージェント間の function call 実行フロー](/blog/blog/from-responses-to-agents/multi-agent-websocket.png)
+  <figcaption>WebSocket では、各 function output を準備でき次第すぐ注入できるため、ほかのサブエージェントが動き続けるあいだに一つのサブエージェントを再開できる。出典: <a href="https://developers.openai.com/api/docs/guides/responses-multi-agent#http-vs-websocket-performance">OpenAI の Multi-agent ガイド</a>。</figcaption>
+</figure>
+
+[Agents SDK](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk) は別のレイヤーに位置します。再利用可能な agent ループ、セッション、ガードレール、トレーシング、そして二つの典型的な所有権パターンを加えます。スペシャリストが会話を引き継ぐ handoff と、マネージャーが最終回答の制御を保持する agents-as-tools です。
+
+## モデルランタイムはプロダクトランタイムの全体ではない
+
+これらの機能を合わせて見ると、API はテキスト生成のプリミティブから **agent ランタイムの基盤** へと動いています。状態、コンテキストの維持、ツール実行、継続、委譲が、プラットフォームネイティブな概念になりつつあります。
+
+それでも境界は重要です。Responses API が実行するのはモデル中心の仕事です。プロダクションのプロダクトには、独自のサンドボックス、ファイル、クレデンシャル、認可、永続的なジョブのライフサイクル、承認、リトライ、可観測性、顧客に見える状態が、依然として必要になり得ます。
+
+この区別は、Mosoo がこのスタックをどう見ているかの中心にあります。より良いモデルランタイムは、各チームが推論ループの内側で作り直さなければならないものを減らします。マネージドな agent ランタイムは、残されたプロダクト固有の仕事を、環境・ライフサイクル・API を備えたデプロイ可能な Agent へ変えます。
+
+パラダイムシフトは本物です。しかしそれは「一つのエンドポイントがアプリケーションを置き換える」という話ではありません。より綺麗な分業です。モデルプラットフォームが agent ループのより多くを所有し、プロダクトランタイムがその周りの永続的なシステムを所有します。
+
+## 開発者向けリソース
+
+- [Responses API 概要](https://developers.openai.com/api/reference/responses/overview)
+- [Responses API への移行](https://developers.openai.com/api/docs/guides/migrate-to-responses)
+- [Conversation state](https://developers.openai.com/api/docs/guides/conversation-state)
+- [Conversation の作成](https://developers.openai.com/api/reference/resources/conversations/methods/create)
+- [Conversation Item の一覧](https://developers.openai.com/api/reference/resources/conversations/subresources/items/methods/list)
+- [Responses WebSocket モード](https://developers.openai.com/api/docs/guides/websocket-mode)
+- [Compaction](https://developers.openai.com/api/docs/guides/compaction)
+- [Programmatic Tool Calling](https://developers.openai.com/api/docs/guides/tools-programmatic-tool-calling)
+- [Responses Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)
+- [Agents SDK と Responses API](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk)

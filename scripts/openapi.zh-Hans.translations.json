@@ -255,5 +255,10 @@
   "Non-fatal warnings raised while making provider output safe for public consumption.": "",
   "A non-fatal warning attached to canonical final output.": "",
   "Stable code identifying provider citation markup that could not be resolved.": "",
-  "Number of private citation envelopes removed from the public text.": ""
+  "Number of private citation envelopes removed from the public text.": "",
+  "Optional caller-owned reference (for example an external ticket key) stored on the Thread for correlation. Not unique and not validated by mosoo.": "",
+  "mosoo API token": "",
+  "Public HTTPS API for creating and retrieving Threads on mosoo Agent API Endpoints. v1 resource identifiers are bare ULIDs, not prefixed IDs. API tokens identify the account caller. Runtime execution resolves the Agent API Endpoint owner's capabilities while the Thread is attributed to the API token owner.": "",
+  "mosoo Public Thread API": "",
+  "Creates a Thread and the backing AgentSession. If input is present, mosoo also queues the initial Run. If input is omitted, the Thread is immediately visible with IDLE status and no run. API token callers are attributed to the API token owner.": ""
 }

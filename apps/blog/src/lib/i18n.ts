@@ -1,6 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 
-import type { LOCALES } from "../content.config";
+import { LOCALES } from "../content.config";
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -9,12 +9,15 @@ export const DEFAULT_LOCALE: Locale = "en";
 const localeLabels: Record<Locale, string> = {
   zh: "中文",
   en: "EN",
+  ja: "日本語",
 };
+
+const localeIdSuffix = new RegExp(`-(${LOCALES.join("|")})$`);
 
 export const getPostLocale = (post: CollectionEntry<"blog">): Locale => post.data.locale;
 
 const getPostSlug = (post: CollectionEntry<"blog">): string =>
-  post.data.permalink ?? post.id.replace(/-(en|zh)$/, "");
+  post.data.permalink ?? post.id.replace(localeIdSuffix, "");
 
 export const getPostPath = (post: CollectionEntry<"blog">): string => {
   const slug = getPostSlug(post);
@@ -27,47 +30,40 @@ export const getPostHref = (post: CollectionEntry<"blog">, base: string): string
 export const getIndexHref = (locale: Locale, base: string): string =>
   locale === DEFAULT_LOCALE ? `${base || "/"}` : `${base}/${locale}`;
 
-export type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "x-default", string>>;
+export interface LocaleOption {
+  locale: Locale;
+  href: string;
+  label: string;
+  active: boolean;
+}
 
-export const getPostHreflangAlternates = (
-  post: CollectionEntry<"blog">,
-  posts: CollectionEntry<"blog">[],
-  base: string,
-): HreflangAlternates | undefined => {
-  const key = post.data.translationKey;
-  if (!key) return undefined;
-
-  const en = posts.find((p) => p.data.translationKey === key && p.data.locale === "en");
-  const zh = posts.find((p) => p.data.translationKey === key && p.data.locale === "zh");
-  if (!en || !zh) return undefined;
-
-  const enHref = getPostHref(en, base);
-
-  return {
-    en: enHref,
-    "zh-CN": getPostHref(zh, base),
-    "x-default": enHref,
-  };
-};
-
-export const getAlternateLocaleHref = (
-  pathname: string,
-  base: string,
-): { href: string; label: string } => {
+// Maps the current pathname onto every locale, preserving the rest of the
+// path. Localized posts share a permalink, so `/blog/zh/<slug>` swaps to
+// `/blog/ja/<slug>` — and to `/blog/<slug>` for the default locale.
+export const getLocaleOptions = (pathname: string, base: string): LocaleOption[] => {
   const normalizedBase = base.replace(/\/$/, "");
   const rawPath = pathname.replace(/\/$/, "") || normalizedBase || "/";
   const withoutBase =
     normalizedBase && rawPath.startsWith(normalizedBase)
       ? rawPath.slice(normalizedBase.length) || "/"
       : rawPath;
-  const isChinese = withoutBase === "/zh" || withoutBase.startsWith("/zh/");
-  const targetWithoutBase = isChinese
-    ? withoutBase.replace(/^\/zh(?=\/|$)/, "") || "/"
-    : `/zh${withoutBase === "/" ? "" : withoutBase}`;
-  const href = `${normalizedBase}${targetWithoutBase}`.replace(/\/$/, "") || normalizedBase || "/";
+  const current =
+    LOCALES.find(
+      (locale) =>
+        locale !== DEFAULT_LOCALE &&
+        (withoutBase === `/${locale}` || withoutBase.startsWith(`/${locale}/`)),
+    ) ?? DEFAULT_LOCALE;
+  const rest =
+    current === DEFAULT_LOCALE
+      ? withoutBase
+      : withoutBase.replace(new RegExp(`^/${current}(?=/|$)`), "") || "/";
+  const ordered = [DEFAULT_LOCALE, ...LOCALES.filter((locale) => locale !== DEFAULT_LOCALE)];
 
-  return {
-    href,
-    label: isChinese ? localeLabels.en : localeLabels.zh,
-  };
+  return ordered.map((locale) => {
+    const targetWithoutBase =
+      locale === DEFAULT_LOCALE ? rest : `/${locale}${rest === "/" ? "" : rest}`;
+    const href =
+      `${normalizedBase}${targetWithoutBase}`.replace(/\/$/, "") || normalizedBase || "/";
+    return { locale, href, label: localeLabels[locale], active: locale === current };
+  });
 };
