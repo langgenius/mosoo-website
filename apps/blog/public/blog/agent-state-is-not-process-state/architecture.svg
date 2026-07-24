@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941" role="img" aria-labelledby="title desc">
+  <title id="title">An agent's state is not its process</title>
+  <desc id="desc">A hand-drawn architecture map separating durable product state, the control plane, and two sandbox runtime modes in mosoo.</desc>
+  <defs>
+    <pattern id="green-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.15" fill="#95DD2C" opacity="0.62" />
+    </pattern>
+    <pattern id="blue-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#8EB5EF" opacity="0.58" />
+    </pattern>
+    <pattern id="gray-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.05" fill="#AEB5BE" opacity="0.5" />
+    </pattern>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 8 5 L 0 10" fill="none" stroke="#1C2024" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+    <style>
+      .paper { fill: #FBFBFC; }
+      .ink { fill: #1C2024; }
+      .muted { fill: #656C75; }
+      .line { fill: none; stroke: #1C2024; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .hairline { fill: none; stroke: #828A93; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+      .box { stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
+      .mono { font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace; }
+      .sans { font-family: "DM Sans", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .col { font-size: 25px; font-weight: 600; letter-spacing: 0.02em; }
+      .label { font-size: 20px; font-weight: 500; }
+      .small { font-size: 16px; font-weight: 400; }
+      .micro { font-size: 14px; font-weight: 400; }
+    </style>
+  </defs>
+
+  <rect class="paper" width="1672" height="941" />
+
+  <text x="836" y="66" class="ink sans" text-anchor="middle" font-size="36" font-weight="500">An agent’s state is not its process</text>
+  <text x="836" y="104" class="muted mono" text-anchor="middle" font-size="16">a boundary map from the current mosoo implementation</text>
+
+  <text x="286" y="166" class="ink mono col" text-anchor="middle">DURABLE PRODUCT STATE</text>
+  <text x="786" y="166" class="ink mono col" text-anchor="middle">CONTROL PLANE</text>
+  <text x="1320" y="166" class="ink mono col" text-anchor="middle">SANDBOX RUNTIME</text>
+
+  <rect x="96" y="208" width="380" height="500" rx="30" fill="url(#blue-dots)" stroke="#235FBE" class="box" />
+  <rect x="132" y="254" width="308" height="72" rx="16" fill="#FFFFFF" stroke="#235FBE" class="box" />
+  <text x="286" y="299" class="ink mono label" text-anchor="middle">AGENT DEFINITION</text>
+  <rect x="132" y="350" width="308" height="72" rx="16" fill="#FFFFFF" stroke="#235FBE" class="box" />
+  <text x="286" y="395" class="ink mono label" text-anchor="middle">SESSION / THREAD</text>
+  <rect x="132" y="446" width="140" height="82" rx="16" fill="#FFFFFF" stroke="#235FBE" class="box" />
+  <text x="202" y="494" class="ink mono label" text-anchor="middle">EVENTS</text>
+  <rect x="300" y="446" width="140" height="82" rx="16" fill="#FFFFFF" stroke="#235FBE" class="box" />
+  <text x="370" y="480" class="ink mono small" text-anchor="middle">FILES +</text>
+  <text x="370" y="503" class="ink mono small" text-anchor="middle">ARTIFACTS</text>
+  <text x="286" y="596" class="muted mono small" text-anchor="middle">declared data</text>
+  <text x="286" y="621" class="muted mono small" text-anchor="middle">survives runtime replacement</text>
+
+  <rect x="606" y="208" width="360" height="500" rx="30" fill="url(#green-dots)" stroke="#3A6E0E" class="box" />
+  <rect x="644" y="254" width="284" height="72" rx="16" fill="#FFFFFF" stroke="#3A6E0E" class="box" />
+  <text x="786" y="299" class="ink mono label" text-anchor="middle">SESSION LIFECYCLE</text>
+  <rect x="644" y="350" width="284" height="72" rx="16" fill="#FFFFFF" stroke="#3A6E0E" class="box" />
+  <text x="786" y="395" class="ink mono label" text-anchor="middle">PERMISSIONS</text>
+  <rect x="644" y="446" width="284" height="82" rx="16" fill="#FFFFFF" stroke="#3A6E0E" class="box" />
+  <text x="786" y="494" class="ink mono label" text-anchor="middle">DRIVER CONNECTION</text>
+  <text x="786" y="596" class="muted mono small" text-anchor="middle">starts / stops / reconstructs</text>
+  <text x="786" y="621" class="muted mono small" text-anchor="middle">process memory is never the truth</text>
+
+  <rect x="1090" y="208" width="430" height="500" rx="30" fill="url(#gray-dots)" stroke="#3D434B" class="box" />
+  <rect x="1122" y="240" width="366" height="184" rx="24" fill="url(#green-dots)" stroke="#3A6E0E" class="box" />
+  <text x="1305" y="280" class="ink mono label" text-anchor="middle">PET · agent:{agentId}</text>
+  <text x="1305" y="323" class="ink mono small" text-anchor="middle">stable sandbox</text>
+  <text x="1305" y="349" class="ink mono small" text-anchor="middle">agent-driver + provider loop</text>
+  <text x="1305" y="375" class="ink mono small" text-anchor="middle">bounded checkpoint paths</text>
+
+  <rect x="1122" y="448" width="366" height="184" rx="24" fill="url(#blue-dots)" stroke="#235FBE" class="box" />
+  <text x="1305" y="488" class="ink mono label" text-anchor="middle">CATTLE · session:{sessionId}</text>
+  <text x="1305" y="531" class="ink mono small" text-anchor="middle">fresh sandbox per run</text>
+  <text x="1305" y="557" class="ink mono small" text-anchor="middle">agent-driver + provider loop</text>
+  <text x="1305" y="583" class="ink mono small" text-anchor="middle">recycle on terminal</text>
+  <text x="1305" y="672" class="muted mono small" text-anchor="middle">tools + workspace live here</text>
+
+  <path d="M476 380 C512 380 536 378 542 392 L542 302 C542 286 564 286 606 286" class="line" marker-end="url(#arrow)" />
+  <text x="541" y="260" class="muted mono micro" text-anchor="middle">input + declared state</text>
+  <path d="M606 524 C568 524 542 526 542 544 L542 606 C542 620 520 620 476 620" class="line" marker-end="url(#arrow)" />
+  <text x="541" y="650" class="muted mono micro" text-anchor="middle">events + artifacts</text>
+
+  <path d="M966 316 C996 316 1012 316 1036 316 L1090 316" class="line" marker-end="url(#arrow)" />
+  <text x="1028" y="286" class="muted mono micro" text-anchor="middle">boot + commands</text>
+  <path d="M1090 548 C1062 548 1048 548 1036 548 L966 548" class="line" marker-end="url(#arrow)" />
+  <text x="1028" y="577" class="muted mono micro" text-anchor="middle">outbound WS · events</text>
+
+  <path d="M1032 194 L1030 736" class="hairline" stroke-dasharray="3 8" />
+  <path d="M1012 733 L1048 761 M1012 761 L1048 733" class="line" />
+  <circle cx="1004" cy="728" r="9" fill="#FBFBFC" stroke="#1C2024" stroke-width="2" />
+  <circle cx="1004" cy="766" r="9" fill="#FBFBFC" stroke="#1C2024" stroke-width="2" />
+  <text x="1032" y="794" class="muted mono small" text-anchor="middle">PROCESS BOUNDARY</text>
+
+  <path d="M96 820 L1570 820" class="hairline" stroke-dasharray="2 6" />
+  <text x="96" y="860" fill="#235FBE" class="mono small">PERSIST · config · history · events · explicit files</text>
+  <text x="1570" y="860" fill="#B91C1C" class="mono small" text-anchor="end">NOT PROMISED · cache · login · vendor-native process state</text>
+</svg>
