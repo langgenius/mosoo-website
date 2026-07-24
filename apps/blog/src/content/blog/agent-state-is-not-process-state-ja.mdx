@@ -1,0 +1,106 @@
+---
+title: "Agent の状態は、プロセスそのものではない"
+titleAccent: "プロセスそのものではない"
+description: "Agent Loop を制御プレーンと Sandbox のどちらに置くかを決める前に、残すべき事実と失ってよい実行状態を定義する。mosoo と Agent Driver の実装を、検証可能な一例としてたどる。"
+date: 2026-07-19
+category: "Engineering"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "ja"
+permalink: "agent-state-is-not-process-state"
+translationKey: "agent-state-is-not-process-state"
+heroImage: "/blog/blog/agent-state-is-not-process-state/hero.webp"
+heroAlt: "永続的な事実、制御プレーン、交換可能な実行環境を、矢印と切断線で結んだ手描きの三層 Agent アーキテクチャ。"
+---
+
+クラウド Agent をめぐる最近の二つの議論は、実際に存在するアーキテクチャ上の対立を浮かび上がらせました。
+
+[一つ目の議論](https://x.com/arkuy99/status/2077676218321956925)が示したのは二つの選択肢です。Agent Loop を中央で動かし、ツール呼び出しだけを Sandbox へ送るのか。それとも、ユーザーごとに完全で隔離された Agent Runtime を持たせるのか。返信欄に合意はありませんでした。中央集約の統制を重視する意見がある一方、Codex や Claude Code のような Coding Harness は Loop、ツール、Workspace をすでに密接に束ねているため、完全な Runtime のほうが自然な境界だという意見もありました。
+
+[二つ目の議論](https://x.com/QuantumTransf/status/2078586634183065867)は問いを一歩進めました。Agent のプロセス自体ではなく、対話に必要なデータモデルを永続化すべきではないか。投稿者も後に、既存の Coding Harness を「中央 Loop + Sandbox ツール」へきれいに分割するのは難しいと認めています。元の投稿にある「コールドスタート 30 秒」には公開された再現条件がないため、ここでは証拠として扱いません。
+
+この二つのスレッドは、市場の総意ではなく、問いのリストとして読むほうが有用です。私たちの答えは次のとおりです。
+
+> まずユーザーに見える継続性と、許容できる損失を定義する。その後で Loop と Sandbox の配置を決める。デプロイ単位は永続化の契約に従うべきで、その逆ではない。
+
+## デプロイ単位を選ぶ前に、障害境界を描く
+
+「Agent の状態」には、寿命が大きく異なるものが少なくとも三つ含まれます。
+
+1. **プロダクトの事実**：Agent 設定のバージョン、Session と Run の状態、受理されたイベント、明示的なアップロード、生成された Artifact。
+2. **制御状態**：認可、スケジューリング、コマンド配信、イベント確認、どの Runtime がどの主体を処理しているか。
+3. **実行状態**：Provider ネイティブの Session、作業ディレクトリ、キャッシュ、ログイン状態、一時ファイル、稼働中のプロセス。
+
+<figure>
+  ![Agent の状態を、永続的なプロダクトの事実、制御プレーン、Sandbox の実行状態に分けた図](/blog/blog/agent-state-is-not-process-state/architecture.svg)
+  <figcaption>有用な境界は「クラウドかローカルか」ではなく、「プロセスが消えた後も何がプロダクトの約束として残るか」である。この図は現在の mosoo における責務の分割を示すもので、マルチクラウドやゼロ損失を主張するものではない。</figcaption>
+</figure>
+
+右側の実行環境が消えても、左側だけでユーザーが何を見たか、どの作業が終わったか、どのファイルが存在すべきかを説明できるでしょうか。できないなら、「回復可能」とはプロセスがまだ死んでいないというだけで、システムが回復の意味論を持っているわけではありません。
+
+## mosoo は実際にどう分けているか
+
+mosoo は、もう一つの汎用 Model Planner を実装してはいません。Session を作成するとき、Agent の Prompt、Model、Runtime、Tools、Skills、MCP Binding、Environment Revision を一つの実行 Snapshot として固定します。これは追跡可能な振る舞いの設定であり、[完全なマシンイメージではありません](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L149-L251)。
+
+制御プレーンは Prepare、Dispatch、Terminal、Reset、Recreate、Stop といった狭い操作だけで実行環境を管理します。現在のコードにある実行 Adapter は [Cloudflare Sandbox の一つだけ](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/execution-plane/sandbox-execution-plane-adapter.ts#L96-L245)なので、これを完成したマルチクラウド抽象とは表現しません。
+
+起動時、Runtime は非公開の Boot Payload を一度限りのファイルへ書きます。Driver はそれを読み取って削除し、認証された WebSocket で制御プレーンへ能動的に接続します。意味は単純です。Sandbox は仕事を実行できますが、Credential、Session の所有権、永続的な事実の唯一の正解にはなりません。[アーキテクチャ文書にはこの流れが明記されています](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L145-L153)。
+
+Sandbox 内の Agent Driver は、各 Provider のネイティブ Loop を残します。現在の Registry は OpenAI app-server、Claude Agent SDK、ACP を統合しています。共通化するのは Start、Input、Cancel、Stop と、イベント、権限、MCP、Skill、ファイルの Host Ports です。[各 Provider の Runtime を同一の内部実装に見せかけてはいません](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79)。能力差も明示されたままです。
+
+この境界なら、元の議論の両側を受け止められます。Coding Harness は完全なまま Sandbox 内に置けます。一方で、プロダクトの制御、Identity、永続的な事実まで同じプロセスへ閉じ込める必要はありません。
+
+## Pet と Cattle は継続性の契約
+
+mosoo は、すべての Agent が同じ Runtime 寿命を必要とするとは仮定しません。`kind` は、観測可能な二つの Policy になります。
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| Runtime の主体 | 安定した `agent:{agentId}` | Session 単位の `session:{sessionId}` |
+| Run が Terminal になった後 | Run の終了だけでは閉じない | Sandbox を直ちに閉じて再利用する |
+| Rebuild をまたいで保存 | `/workspace/memory` と対象となる Session Workspace のみ | Checkpoint なし |
+| 保存を約束しないもの | Rebuild 後のログイン、キャッシュ、Provider ネイティブ状態、その他の Container File | 一時ファイル、キャッシュ、ログイン、ネイティブ Runtime 状態 |
+
+これは命名上の好みではなく、[コード上の Runtime Policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139)です。完全な永続化 Matrix も[アーキテクチャ文書](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261)で公開しています。
+
+したがって、「同じ Session を続ける」は「同じプロセスを復活させる」と同義ではありません。次の Cattle Run は新しい Sandbox を得ます。プロダクト履歴は読めますが、古い Workspace や Provider ネイティブ状態が残っているようには見せません。Pet はより強い継続性を提供しますが、それでも境界のある Checkpoint Policy であり、不死の Container ではありません。
+
+## WebSocket に届くことは、事実になることではない
+
+Streaming と永続化も、しばしば一つにまとめられてしまう二つの概念です。
+
+mosoo のイベント入口は Replay を除外し、Canonical Event を投影して永続化し、Commit 済みの Event を Viewer へ送り、その後で初めて Accepted Receipt を返します。[ソースコードには理由も書かれています](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/rpc-event-ingestion-controller.ts#L118-L201)。休止可能なプロセス内だけに Fragment を Buffer して確認すると、新しい Instance が再構築できない Text を受理済みにしてしまうからです。
+
+現在の Agent Driver `main` はさらに、Lossless Event と Best-effort Event を分けます。Lossless Event は Source ID を保持し、部分的な Receipt を処理して、未確認部分を Retry します。Best-effort Event は Transport または Receipt の失敗時に Drop される場合があります。[Queue はこの違いを明示的に実装しています](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/driver-event-publisher.ts#L440-L520)。OpenAI の Text Delta は [Best-effort](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/openai/app-server-item-events.ts#L84-L95)で、最終 Item Snapshot が完全な Message を確定します。
+
+ここには Version 境界があります。この記事が参照する mosoo Commit は、まだ以前の Driver Revision を固定しています。新しい Queue Semantics は Agent Driver `main` における現在の実装方向であり、既存の mosoo Deployment にあるすべての Stream が Lossless だという包括的な保証ではありません。より正確な原則は次のとおりです。
+
+> 増分 Stream は体験のためにある。永続化された Event と Terminal Snapshot は事実のためにある。
+
+## 市場に必要なのは、反証可能な証拠
+
+「中央 Loop」「完全な Runtime」「Durable Agent」は、どれもラベルになり得ます。陣営を選ぶより、他者が再現でき、失敗すれば結論を覆せる証拠を公開するほうが役に立ちます。
+
+| 主張したい能力 | 最小限の証拠 |
+| --- | --- |
+| Agent を Resume できる | Connection、Driver、Sandbox を個別に Kill し、どの Message、File、Native Session が戻り、どれが戻らないか記録する |
+| Startup は十分速い | Workload、Image、Region、Warmup と Pooling の条件、Cold/Warm の P50・P95・P99 分布を公開する |
+| Event は重複も欠落もしない | 切断後に同じ Source ID を Replay し、Deduplication、部分確認、最終的な永続化境界を検証する |
+| Sandbox の隔離が有効 | Identity、Credential、Network、File、Tenant の境界を明記し、Container 風 API だけでなく Failure Test を公開する |
+| Cancel が完了した | どの協調処理を停止したか、どの Tool Side Effect は Rollback できないかを説明する |
+
+mosoo にも、率直に公開すべき不足があります。実行 Adapter は一つだけで、[自動 Crash Requeue は未完成](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/terminal-run-release.ts#L123-L161)です。[一部の Network Policy は保存された Intent にすぎず、強制されていません](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L163-L169)。Cattle は Native Resume State を保存しません。こうした Non-goal と実装リンクを並べるほうが、ある方向を「主流」と呼ぶより、他のチームが適合性を判断しやすくなります。
+
+## 長期的な判断
+
+私たちは、プロダクトが継続を明示的に約束するまで Runtime State を Cache として扱います。Semantic Resume と Process Resume を分けます。そして Per-user Runtime と Sandbox-as-tool は、排他的な信念ではなく、二つの Product Mode だと考えます。
+
+耐久性のある抽象は、プロセスをできるだけ長く生かす抽象ではありません。プロセスが消えた後も、何が起きたか、ユーザーに何が残っているか、次の実行をどこから始めるか、という三つの問いに答えられる抽象です。
+
+## 参考資料
+
+- [Loop と Sandbox の境界についての元の議論](https://x.com/arkuy99/status/2077676218321956925)
+- [永続データと Runtime State についての元の議論](https://x.com/QuantumTransf/status/2078586634183065867)
+- [mosoo Agent Sandbox と永続化レイヤー](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261)
+- [mosoo Runtime Kind Policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139)
+- [mosoo Agent Driver Provider Registry](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79)
