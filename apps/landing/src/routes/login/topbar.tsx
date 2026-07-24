@@ -1,8 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import type { ReactElement } from "react";
 
-import { Button } from "@/shared/ui/button";
-
 import { GithubMarkLink } from "./github-mark";
 import { MOSOO_API_REFERENCE_URL, MOSOO_BLOG_URL, MOSOO_GITHUB_URL, MOSOO_X_URL } from "./links";
 import { XMark } from "./x-mark";
@@ -53,9 +51,13 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
             className={ICON_LINK_CLASS}
             label="Mosoo on GitHub"
           />
-          <Button variant="outline" className="ml-1" onClick={onContinue}>
+          <button
+            type="button"
+            onClick={onContinue}
+            className="border-border-strong bg-card text-foreground hover:bg-paper-200 focus-visible:border-ring focus-visible:ring-ring active:scale-[0.98] ml-1 inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border px-4 py-2 text-sm font-semibold tracking-[0.01em] whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[2px]"
+          >
             Log in
-          </Button>
+          </button>
         </div>
       </div>
     </div>

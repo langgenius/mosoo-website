@@ -17,7 +17,10 @@
     "landing:build": "npm run build --workspace @mosoo/landing",
     "landing:dev": "npm run dev --workspace @mosoo/landing",
     "landing:preview": "npm run preview --workspace @mosoo/landing",
+    "measure:pages": "node scripts/measure-page-loads.mjs",
+    "perf:pages": "node scripts/measure-page-load.mjs",
     "site:build": "npm run build",
-    "validate": "npm run build"
+    "test:seo": "node --test tests/*.test.mjs",
+    "validate": "npm run test:seo && npm run build"
   }
 }
