@@ -18,8 +18,6 @@
     "landing:dev": "npm run dev --workspace @mosoo/landing",
     "landing:preview": "npm run preview --workspace @mosoo/landing",
     "measure:pages": "node scripts/measure-page-loads.mjs",
-    "openapi:check": "node scripts/sync-openapi-specs.mjs check",
-    "openapi:sync": "node scripts/sync-openapi-specs.mjs write",
     "perf:pages": "node scripts/measure-page-load.mjs",
     "site:build": "npm run build",
     "test:seo": "node --test tests/*.test.mjs",
