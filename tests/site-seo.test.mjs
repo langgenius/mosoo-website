@@ -61,13 +61,3 @@ test("landing and blog metadata never point at a missing default image", () => {
     true,
   );
 });
-
-test("llms entrypoint links to public crawler and docs surfaces", () => {
-  const llms = read("llms.txt");
-
-  assert.match(llms, /https:\/\/mosoo\.ai\/coding-agents\.md/);
-  assert.match(llms, /https:\/\/mosoo\.ai\/docs\/quickstart\//);
-  assert.match(llms, /https:\/\/mosoo\.ai\/docs\/auth-and-access\//);
-  assert.doesNotMatch(llms, /https:\/\/mosoo\.ai\/quickstart\.md/);
-  assert.doesNotMatch(llms, /https:\/\/mosoo\.ai\/auth-and-access\.md/);
-});

@@ -6,13 +6,6 @@ import { writeRootSitemap } from "./sitemap.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = join(ROOT, "dist");
-const CRAWLER_FILES = [
-  "coding-agents.md",
-  "llms.txt",
-  "mosoo-openapi.en.generated.json",
-  "mosoo-openapi.generated.json",
-  "mosoo-openapi.zh-Hans.generated.json",
-];
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -33,9 +26,6 @@ run("npm", ["run", "blog:build"]);
 
 cpSync(join(ROOT, "apps", "landing", "dist"), DIST, { recursive: true });
 cpSync(join(ROOT, "apps", "blog", "dist"), join(DIST, "blog"), { recursive: true });
-for (const file of CRAWLER_FILES) {
-  cpSync(join(ROOT, file), join(DIST, file));
-}
 
 await writeRootSitemap({
   blogIndexPath: join(DIST, "blog", "sitemap-index.xml"),
@@ -66,10 +56,4 @@ if (!existsSync(join(DIST, "blog", "sitemap-index.xml"))) {
   throw new Error("Blog build did not produce dist/blog/sitemap-index.xml.");
 }
 
-for (const file of CRAWLER_FILES) {
-  if (!existsSync(join(DIST, file))) {
-    throw new Error(`Site build did not publish ${file}.`);
-  }
-}
-
-console.log(`Built Mosoo website into ${basename(DIST)}/`);
+console.log(`Built mosoo website into ${basename(DIST)}/`);

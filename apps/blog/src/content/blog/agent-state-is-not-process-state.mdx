@@ -1,0 +1,106 @@
+---
+title: "An agent's state is not its process"
+titleAccent: "not its process"
+description: "Before deciding whether an agent loop belongs in a control plane or a sandbox, define which facts must survive and which execution state may disappear. mosoo and Agent Driver provide a concrete, testable example."
+date: 2026-07-19
+category: "Engineering"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "en"
+permalink: "agent-state-is-not-process-state"
+translationKey: "agent-state-is-not-process-state"
+heroImage: "/blog/blog/agent-state-is-not-process-state/hero.webp"
+heroAlt: "A hand-drawn three-part agent architecture connecting durable facts, a control plane, and replaceable execution environments across a cut line."
+---
+
+Two recent discussions about cloud agents exposed a real architectural disagreement.
+
+[The first discussion](https://x.com/arkuy99/status/2077676218321956925) offered two choices: run agent loops centrally and send only tool calls to sandboxes, or give every user a complete isolated agent runtime. Its replies did not converge. Some favored centralized control; others argued that coding harnesses such as Codex and Claude Code already bind the loop, tools, and workspace tightly enough that a complete runtime is the more natural boundary.
+
+[The second discussion](https://x.com/QuantumTransf/status/2078586634183065867) moved the question forward: perhaps a system should persist the data model needed for interaction, not the agent process itself. Its author later acknowledged that existing coding harnesses are difficult to split cleanly into a central loop and sandboxed tools. The post's “30-second cold start” claim has no public reproducible measurement conditions, so we do not treat it as evidence here.
+
+These threads are more useful as a question set than as market consensus. Our answer is:
+
+> Define user-visible continuity and acceptable loss first. Then decide where the loop and sandbox belong. The deployment unit should follow the durability contract, not define it.
+
+## Draw the failure boundary before choosing a deployment unit
+
+“Agent state” contains at least three things with very different lifetimes:
+
+1. **Product facts**: the agent configuration version, Session and Run state, accepted events, explicit uploads, and produced artifacts.
+2. **Control state**: authorization, scheduling, command delivery, event acknowledgement, and the runtime currently serving a subject.
+3. **Execution state**: the provider-native session, working directory, caches, login state, temporary files, and live processes.
+
+<figure>
+  ![Agent state separated into durable product facts, a control plane, and sandbox execution state](/blog/blog/agent-state-is-not-process-state/architecture.svg)
+  <figcaption>A useful boundary is not “cloud versus local.” It is “what remains part of the product promise after a process disappears.” The diagram describes mosoo's current responsibility split; it is not a multi-cloud or zero-loss claim.</figcaption>
+</figure>
+
+If the execution environment on the right disappears, can the durable side still explain what the user saw, what work completed, and which files should exist? If not, “recoverable” only means that a process has not died yet. The system does not have recovery semantics.
+
+## How mosoo draws the boundary
+
+mosoo does not implement another universal model planner. When it creates a Session, it freezes an execution snapshot: the Agent's prompt, model, runtime, tools, Skills, MCP bindings, and Environment revision are bound to that Session. This is a traceable behavior configuration, [not a full machine image](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L149-L251).
+
+The control plane manages execution through a narrow set of operations such as prepare, dispatch, terminal, reset, recreate, and stop. The current code has [one execution adapter, Cloudflare Sandbox](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/execution-plane/sandbox-execution-plane-adapter.ts#L96-L245), so we do not describe this as a completed multi-cloud abstraction.
+
+At boot, the runtime writes a private payload to a one-time file. The Driver reads and removes it, then actively dials an authenticated WebSocket to the control plane. The implication is simple: a sandbox may execute work without becoming the sole source of truth for credentials, Session ownership, or durable facts. [The architecture document makes this chain explicit](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L145-L153).
+
+Inside the sandbox, Agent Driver keeps each provider's native loop. Its current registry integrates OpenAI app-server, Claude Agent SDK, and ACP. It normalizes start, input, cancel, and stop, plus host ports for events, permissions, MCP, Skills, and files; it [does not pretend the provider runtimes are one internal implementation](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79). Capability differences remain explicit.
+
+That boundary accommodates both sides of the original debate. A coding harness can remain whole inside the sandbox, while product control, identity, and durable facts do not have to be trapped in the same process.
+
+## Pet and Cattle are continuity contracts
+
+mosoo does not assume that every Agent needs the same runtime lifetime. `kind` becomes two observable policies:
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| Runtime subject | Stable `agent:{agentId}` | Session-scoped `session:{sessionId}` |
+| After a Run becomes terminal | Not closed only because the Run ended | Sandbox is closed and recycled immediately |
+| Preserved across rebuild | Only `/workspace/memory` and eligible Session workspaces | No checkpoint |
+| Not promised | Login state, caches, provider-native state, and other container files after rebuild | Temporary files, caches, login state, and native runtime state |
+
+These are not naming preferences. They are [runtime policies in code](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139). The complete persistence matrix is also published in the [architecture document](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261).
+
+“Continue the same Session” therefore does not have to mean “revive the same process.” A later Cattle Run gets a fresh sandbox; product history remains readable, but the old workspace and provider-native state are not presented as if they still existed. Pet offers stronger continuity, but it is still a bounded checkpoint policy rather than an immortal container.
+
+## Reaching a WebSocket is not becoming a fact
+
+Streaming and durability are another pair of concepts that are often collapsed.
+
+mosoo's event ingress filters replays, projects and persists canonical events, delivers committed events to viewers, and only then returns an accepted receipt. [The source explains why](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/rpc-event-ingestion-controller.ts#L118-L201): acknowledging fragments buffered only inside a hibernatable process could confirm text that a fresh instance cannot reconstruct.
+
+The current Agent Driver `main` goes further by separating lossless and best-effort events. Lossless events retain source IDs, drain partial receipts, and retry unconfirmed work; best-effort events may be dropped on transport or receipt failure. [The queue implements the distinction explicitly](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/driver-event-publisher.ts#L440-L520). OpenAI text deltas are marked [best-effort](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/openai/app-server-item-events.ts#L84-L95); a final item snapshot arbitrates the complete message.
+
+One version boundary matters: the mosoo commit linked in this article still pins an earlier Driver revision. The new queue semantics are the current implementation direction on Agent Driver `main`, not a blanket promise that every stream in an existing mosoo deployment is lossless. The more accurate principle is:
+
+> Incremental streams serve the experience. Persisted events and terminal snapshots serve the facts.
+
+## The market needs falsifiable evidence
+
+“Central loop,” “complete runtime,” and “durable agent” can all become labels. Publishing evidence that others can reproduce—and disprove when it fails—contributes more than choosing a camp.
+
+| Capability being claimed | Minimum evidence |
+| --- | --- |
+| The Agent can resume | Kill the connection, Driver, and sandbox separately; record which messages, files, and native sessions return and which do not |
+| Startup is fast enough | Publish the workload, image, region, warming and pooling conditions, and P50/P95/P99 cold and warm distributions |
+| Events are not duplicated or lost | Replay the same source ID after disconnect; verify deduplication, partial acknowledgement, and the persistence boundary |
+| Sandbox isolation is effective | Name the identity, credential, network, file, and tenant boundaries, then publish failure tests instead of only a container-shaped API |
+| Cancellation completed | State which cooperation stopped and which tool side effects cannot be rolled back |
+
+mosoo also has gaps worth stating plainly: there is only one execution adapter; [automatic crash requeue is unfinished](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/infrastructure/driver-instance/terminal-run-release.ts#L123-L161); [some network policy is saved intent rather than enforced policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L163-L169); Cattle does not persist native resume state. Publishing those non-goals next to implementation links helps other teams judge fit better than calling a direction “mainstream.”
+
+## A long-term judgment
+
+We treat runtime state as a cache until the product explicitly promises continuity. We separate semantic resume from process resume. And we see per-user runtimes and sandbox-as-tool as product modes, not mutually exclusive beliefs.
+
+A durable abstraction is not one that keeps a process alive for as long as possible. It is one that can still answer three questions after that process disappears: what happened, what the user still owns, and where the next execution begins.
+
+## References
+
+- [Original discussion about the loop and sandbox boundary](https://x.com/arkuy99/status/2077676218321956925)
+- [Original discussion about durable data and runtime state](https://x.com/QuantumTransf/status/2078586634183065867)
+- [mosoo Agent sandbox and persistence layers](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/docs/architecture.md#L236-L261)
+- [mosoo runtime kind policy](https://github.com/langgenius/mosoo/blob/169441995325f0b7c6846d9ac8969b12437343e9/apps/api/src/modules/runtime/domain/runtime-kind-policy.ts#L84-L139)
+- [mosoo Agent Driver provider registry](https://github.com/langgenius/mosoo-agent-driver/blob/0db020ac5c6c40cc2231dfb650cabff38467956c/src/runtimes/provider-registry.ts#L24-L79)

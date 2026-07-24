@@ -1,8 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import type { ReactElement } from "react";
 
-import { Button } from "@/shared/ui/button";
-
 import { GithubMarkLink } from "./github-mark";
 import { MOSOO_API_REFERENCE_URL, MOSOO_BLOG_URL, MOSOO_GITHUB_URL, MOSOO_X_URL } from "./links";
 import { XMark } from "./x-mark";
@@ -12,8 +10,8 @@ const ICON_LINK_CLASS =
 
 function Brand(): ReactElement {
   return (
-    <span aria-label="Mosoo" className="inline-flex items-center">
-      <img src="/brand/logo-wordmark-onlight.svg" alt="Mosoo" className="block h-[22px]" />
+    <span aria-label="mosoo" className="inline-flex items-center">
+      <img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" className="block h-[22px]" />
     </span>
   );
 }
@@ -42,8 +40,8 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
             href={MOSOO_X_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Mosoo on X"
-            title="Mosoo on X"
+            aria-label="mosoo on X"
+            title="mosoo on X"
             className={ICON_LINK_CLASS}
           >
             <XMark className="size-4" />
@@ -51,11 +49,15 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
           <GithubMarkLink
             href={MOSOO_GITHUB_URL}
             className={ICON_LINK_CLASS}
-            label="Mosoo on GitHub"
+            label="mosoo on GitHub"
           />
-          <Button variant="outline" className="ml-1" onClick={onContinue}>
+          <button
+            type="button"
+            onClick={onContinue}
+            className="border-border-strong bg-card text-foreground hover:bg-paper-200 focus-visible:border-ring focus-visible:ring-ring active:scale-[0.98] ml-1 inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border px-4 py-2 text-sm font-semibold tracking-[0.01em] whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[2px]"
+          >
             Log in
-          </Button>
+          </button>
         </div>
       </div>
     </div>

@@ -8,32 +8,32 @@ type Faq = { q: string; a: string };
 
 const FAQS: readonly Faq[] = [
   {
-    q: "What is Mosoo?",
-    a: "Mosoo is an open-source agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable in your own Cloudflare account. Mosoo is currently alpha.",
+    q: "What is mosoo?",
+    a: "mosoo is an open-source agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable in your own Cloudflare account. mosoo is currently alpha.",
   },
   {
-    q: "Who is Mosoo built for?",
+    q: "Who is mosoo built for?",
     a: "Developers extending OpenAI Codex, Claude Agent SDK, or OpenCode into products and automations who don't want to operate a separate agent runtime, sandbox service, session store, file pipeline, and Agent API for every integration.",
   },
   {
     q: "Why a backend instead of just running Claude Code or Codex locally?",
-    a: "For a one-off problem, a local agent or a single Skill is the right, minimal tool — no need to abstract anything. The moment you have to build, evaluate, deploy, and run agents for other people, concurrently and for longer, the tooling fragments and you end up gluing point solutions across the whole lifecycle. Mosoo is the backend that covers that lifecycle, so you build the product instead of the plumbing.",
+    a: "For a one-off problem, a local agent or a single Skill is the right, minimal tool — no need to abstract anything. The moment you have to build, evaluate, deploy, and run agents for other people, concurrently and for longer, the tooling fragments and you end up gluing point solutions across the whole lifecycle. mosoo is the backend that covers that lifecycle, so you build the product instead of the plumbing.",
   },
   {
-    q: "Where does my data live, and does Mosoo support BYOK?",
-    a: "Mosoo is open source and self-hostable, so data, knowledge, and run history live in infrastructure you control. There's no Mosoo-operated data plane you're forced to route through. It's BYOK: you bring your own model and provider keys, held at the production plane rather than scattered across individual machines and accounts.",
+    q: "Where does my data live, and does mosoo support BYOK?",
+    a: "mosoo is open source and self-hostable, so data, knowledge, and run history live in infrastructure you control. There's no mosoo-operated data plane you're forced to route through. It's BYOK: you bring your own model and provider keys, held at the production plane rather than scattered across individual machines and accounts.",
   },
   {
     q: "What happens to an agent once it moves off my laptop?",
-    a: "A local agent only reproduces if the same files, session history, context, MCP tools, and Skills are available again. Mosoo makes the agent, its Skills, and its Knowledge first-class App resources instead of fragments on a personal machine, so a run reproduces from the API rather than a copy of your disk. Mosoo is alpha, so expect rough edges and breaking changes.",
+    a: "A local agent only reproduces if the same files, session history, context, MCP tools, and Skills are available again. mosoo makes the agent, its Skills, and its Knowledge first-class App resources instead of fragments on a personal machine, so a run reproduces from the API rather than a copy of your disk. mosoo is alpha, so expect rough edges and breaking changes.",
   },
   {
-    q: "Which runtimes does Mosoo support, and am I locked to one vendor?",
+    q: "Which runtimes does mosoo support, and am I locked to one vendor?",
     a: "In the current alpha the Claude Agent SDK, OpenAI runtime, and OpenCode fallback runtime are live, and every harness is normalized to the same interface: streaming, tool calls, native resume, MCP permissions, and session replay. OpenClaw, Hermes, and Gemini are on the roadmap. Because the runtime is a swappable harness, an agent is configured once and resolves a single provider credential at launch, so you can move between vendors without touching the agent definition.",
   },
   {
     q: "When should I use a deterministic workflow versus a general agent?",
-    a: "Use a deterministic workflow when the steps are known and you want repeatability; use a general agent when the path is open-ended and you want it to reason its way through. Mosoo's job is to run both behind one production and lifecycle API, rather than forcing every scenario into a single engine.",
+    a: "Use a deterministic workflow when the steps are known and you want repeatability; use a general agent when the path is open-ended and you want it to reason its way through. mosoo's job is to run both behind one production and lifecycle API, rather than forcing every scenario into a single engine.",
   },
   {
     q: "What does the dashboard show me?",
@@ -48,12 +48,12 @@ const FAQS: readonly Faq[] = [
     a: "You set the agent's runtime, attach Skills, connect Knowledge, bind Channels, and wire in API integrations, and changes accumulate in a Draft that only takes effect when you publish, so callers always reach a published version rather than in-progress edits. In the current alpha the builder binds existing Skills, MCP servers, and environments; first-class creation of those assets from inside the builder is still being filled in.",
   },
   {
-    q: "How is Mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?",
-    a: "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. Mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.",
+    q: "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?",
+    a: "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.",
   },
   {
     q: "What's the license and cost, and is it production-ready?",
-    a: "Mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.",
+    a: "mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.",
   },
 ];
 
@@ -66,7 +66,7 @@ export function FaqSection(): ReactElement {
             Frequently asked questions
           </h2>
           <p className="text-fg-2 mt-4 max-w-[280px] text-[14px] leading-[1.6]">
-            What developers ask before they build on Mosoo.
+            What developers ask before they build on mosoo.
           </p>
         </div>
 

@@ -3,13 +3,38 @@
    Brand: enterprise AI agent + knowledge platform, inspired by Moso bamboo (毛竹).
    System: neutral-forward, premium & minimal, lime-green as a disciplined accent.
    ----------------------------------------------------------------------------
-   Fonts are loaded from Google Fonts (see note in README → Typography).
-   Primary: Hanken Grotesk (neo-grotesque). Mono: JetBrains Mono.
+   Fonts are loaded from local workspace assets and emitted by consumer builds.
+   Display: Cabinet Grotesk. Sans: Geist. Mono: Geist Mono.
    ========================================================================== */
 
-/* Consumer apps load the Google Fonts stylesheet via a <link rel="stylesheet">
-   in their <head> so the @import-must-be-first rule never bites when this
-   file is composed with @import "tailwindcss". See apps/blog/BaseLayout. */
+@font-face {
+  font-family: "Cabinet Grotesk";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../apps/landing/public/fonts/CabinetGrotesk-Variable.woff2")
+      format("woff2-variations"),
+    url("../../apps/landing/public/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../apps/landing/public/fonts/Geist-Variable.woff2") format("woff2-variations"),
+    url("../../apps/landing/public/fonts/Geist-Variable.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src:
+    url("../../apps/landing/public/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
+    url("../../apps/landing/public/fonts/GeistMono-Variable.woff2") format("woff2");
+}
 
 :root {
   /* ---------------------------------------------------------------------------
@@ -104,10 +129,10 @@
      6 · TYPOGRAPHY
      --------------------------------------------------------------------------- */
   --font-display:
-    "DM Sans", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* warm, soft, rounded — headlines */
+    "Cabinet Grotesk", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* warm, soft, rounded — headlines */
   --font-sans:
-    "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* clean neo-grotesque — body & UI */
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* clean neo-grotesque — body & UI */
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* weights */
   --fw-regular: 400;
