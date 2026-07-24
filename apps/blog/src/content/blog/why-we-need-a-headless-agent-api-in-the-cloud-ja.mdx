@@ -55,7 +55,7 @@ Claude Code や Codex が体験を変えたのは、モデルがもう一人ぼ�
 
 ## API として公開される、マネージドな agent ランタイム
 
-それが Mosoo の提供する抽象です。Agent を公開し、バックエンドから呼び出せば、実行・Thread・ファイルは Mosoo が引き受けます。
+それが mosoo の提供する抽象です。Agent を公開し、バックエンドから呼び出せば、実行・Thread・ファイルは mosoo が引き受けます。
 
 最初のメッセージとともに Thread を作成します。Thread を通じて run のステータスを追い、Events で進捗を観測し、Files で添付ファイルや記録された成果物をやり取りします。
 
@@ -75,15 +75,15 @@ curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 `GET /threads/{threadId}/events` をポーリングするか、Server-Sent Events なら `/events/stream` を使います。あなたのプロダクトは、自分のインターフェースの中で進捗、ツールの活動、結果、ダウンロード可能な成果物を表示できます。
 
-API トークンはバックエンドの秘密情報です。エンドユーザーの認証・認可、そして自分のユーザーと Mosoo の Thread の対応付けは、引き続きあなたのアプリの責任です。
+API トークンはバックエンドの秘密情報です。エンドユーザーの認証・認可、そして自分のユーザーと mosoo の Thread の対応付けは、引き続きあなたのアプリの責任です。
 
 ## ローカルのプロトタイプからプロダクトへ
 
 公開されたすべての Agent には、コピーできる **Instruction for LLM** が付属します。その Agent の生成済み識別子、エンドポイント、環境変数、統合コントラクトを coding agent に渡すためのものです。
 
 <figure>
-  ![「Instruction for LLM」メニューを開いた、公開済み Agent の Mosoo コンソール](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
-  <figcaption>Agent を公開し、その Instruction for LLM をコピーして、Mosoo と統合するための正確なコントラクトを coding agent に渡す。</figcaption>
+  ![「Instruction for LLM」メニューを開いた、公開済み Agent の mosoo コンソール](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  <figcaption>Agent を公開し、その Instruction for LLM をコピーして、mosoo と統合するための正確なコントラクトを coding agent に渡す。</figcaption>
 </figure>
 
 その instruction を Claude Code や Codex に貼り付けて、API をバックエンドへ組み込ませます。認証、データアクセス、ユーザー体験のレビューは、ほかのプロダクション統合と同じようにあなたが行います。

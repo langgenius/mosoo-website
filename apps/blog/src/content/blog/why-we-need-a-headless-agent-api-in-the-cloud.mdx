@@ -55,7 +55,7 @@ This is serverless as a consumption model: you invoke the agent without operatin
 
 ## A managed agent runtime, exposed as an API
 
-That is the abstraction Mosoo provides. Publish an Agent, call it from your backend, and Mosoo handles execution, Threads, and files.
+That is the abstraction mosoo provides. Publish an Agent, call it from your backend, and mosoo handles execution, Threads, and files.
 
 Create a Thread with an initial message. Follow its run status through the Thread, observe progress through Events, and exchange attachments and recorded artifacts through Files.
 
@@ -75,15 +75,15 @@ curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 Poll `GET /threads/{threadId}/events`, or use `/events/stream` for Server-Sent Events. Your product can show progress, tool activity, results, and downloadable artifacts in its own interface.
 
-API tokens are backend secrets. Your app remains responsible for end-user authentication, authorization, and mapping its users to Mosoo Threads.
+API tokens are backend secrets. Your app remains responsible for end-user authentication, authorization, and mapping its users to mosoo Threads.
 
 ## From local prototype to product
 
 Every published Agent includes a copyable **Instruction for LLM**. It gives a coding agent the generated identifiers, endpoints, environment variables, and integration contract for that Agent.
 
 <figure>
-  ![Mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
-  <figcaption>Publish an Agent, copy its Instruction for LLM, and give your coding agent the exact contract it needs to integrate with Mosoo.</figcaption>
+  ![mosoo console showing a published agent with the "Instruction for LLM" menu item](/blog/blog/why-we-need-a-headless-agent-api-in-the-cloud/instruction-for-llm.png)
+  <figcaption>Publish an Agent, copy its Instruction for LLM, and give your coding agent the exact contract it needs to integrate with mosoo.</figcaption>
 </figure>
 
 Paste the instruction into Claude Code or Codex and let it wire the API into your backend. You still review authentication, data access, and the user experience like any production integration.

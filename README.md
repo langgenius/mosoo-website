@@ -1,14 +1,14 @@
-# Mosoo Website
+# mosoo Website
 
-Landing page and blog source for [Mosoo](https://mosoo.ai), the open-source agent runtime for coding agents.
+Landing page and blog source for [mosoo](https://mosoo.ai), the open-source agent runtime for coding agents.
 
 - **Live site:** [mosoo.ai](https://mosoo.ai)
 - **Live docs:** [mosoo.ai/docs](https://mosoo.ai/docs)
-- **Mosoo source:** [langgenius/mosoo](https://github.com/langgenius/mosoo)
+- **mosoo source:** [langgenius/mosoo](https://github.com/langgenius/mosoo)
 
 ## About
 
-This repository builds and deploys only the Mosoo landing page and blog. The
+This repository builds and deploys only the mosoo landing page and blog. The
 independent [`langgenius/mosoo-docs`](https://github.com/langgenius/mosoo-docs)
 Fumadocs Worker owns `mosoo.ai/docs` and `mosoo.ai/docs/*`.
 
