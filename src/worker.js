@@ -4,6 +4,10 @@ function redirect(url, status = 307) {
   return Response.redirect(url.toString(), status);
 }
 
+function permanentRedirect(url) {
+  return redirect(url, 308);
+}
+
 function withPath(request, pathname) {
   const url = new URL(request.url);
   url.pathname = pathname;
@@ -82,27 +86,27 @@ export default {
 
     if (pathname === "/blogs" || pathname === "/blogs/") {
       url.pathname = "/blog/";
-      return redirect(url);
+      return permanentRedirect(url);
     }
 
     if (pathname.startsWith("/blogs/")) {
       url.pathname = `/blog/${pathname.slice("/blogs/".length)}`;
-      return redirect(url);
+      return permanentRedirect(url);
     }
 
     if (pathname === "/blog") {
       url.pathname = "/blog/";
-      return redirect(url);
+      return permanentRedirect(url);
     }
 
     if (pathname === "/docs") {
       url.pathname = "/docs/";
-      return redirect(url);
+      return permanentRedirect(url);
     }
 
     if (isLegacyDocsRootPath(pathname)) {
       url.pathname = `/docs${pathname}`;
-      return redirect(url);
+      return permanentRedirect(url);
     }
 
     const asset = await env.ASSETS.fetch(request);
