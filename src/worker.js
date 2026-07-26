@@ -97,12 +97,12 @@ export default {
 
     if (pathname === "/docs") {
       url.pathname = "/docs/";
-      return redirect(url);
+      return redirect(url, 308);
     }
 
     if (isLegacyDocsRootPath(pathname)) {
       url.pathname = `/docs${pathname}`;
-      return redirect(url);
+      return redirect(url, 308);
     }
 
     const asset = await env.ASSETS.fetch(request);
