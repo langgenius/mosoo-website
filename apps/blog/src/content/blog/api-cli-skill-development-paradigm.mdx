@@ -1,0 +1,95 @@
+---
+title: "From API to CLI + Skill: a new software development paradigm (maybe)"
+titleAccent: "CLI"
+description: "What changed when mosoo turned its API into a discoverable CLI, organized commands into skills and workflows, and made end-to-end testing readable to both people and coding agents."
+date: 2026-07-28
+category: "Engineering"
+author: "mosoo team"
+locale: "en"
+permalink: "api-cli-skill-development-paradigm"
+translationKey: "api-cli-skill-development-paradigm"
+---
+
+While building mosoo, we originally followed a familiar sequence: build the API first, close the loop on the product's core capabilities, and only then create a CLI to make those capabilities easier for coding agents to use.
+
+That sequence turned out to be backwards—or, at least, incomplete.
+
+## What we observed
+
+Without a first-class CLI, coding agents usually tested individual API endpoints with `curl`, browser automation, or scripts written on the fly. Each approach created avoidable friction.
+
+1. A raw `curl` response is often a large block of HTML or JSON containing fields that do not matter to the test at hand. The response itself does not explain field semantics, constraints, discovery, or the stable way to call the operation. Without sustained pressure from a CLI, SDK, or maintained tests, an API specification is also more likely to become incomplete, stale, or inconsistent with the implementation. The agent has to infer types, required fields, and constraints from source code, errors, and surrounding context. That consumes more tokens and more time.
+2. Browser automation is expensive in tokens, slow, prone to stalls, and awkward for the person waiting on it.
+3. Temporary test scripts multiply quickly. They become long, structurally inconsistent, and difficult to maintain. Reading them consumes yet more context.
+
+These methods are especially weak for orchestrating integration tests. The agent repeatedly produces piles of nearly unreadable scripts; once the test itself is unreadable, its result becomes difficult to explain or trust.
+
+After getting used to vibe coding, someone may still glance at the business logic. Test code often receives even less attention. **Code nobody reads has almost no value.**
+
+This problem followed mosoo throughout development. The turning point came when we used [Lathe](https://github.com/lathe-cli/lathe), an open-source API-to-CLI generator, to generate a complete CLI for mosoo.
+
+## What Lathe provides
+
+Lathe is designed for teams whose APIs must serve both people and AI agents. It turns Swagger 2.0, OpenAPI 3, or Protobuf APIs with `google.api.http` annotations into a production-grade Cobra CLI.
+
+The generated CLI includes a machine-readable command catalog, intent search, per-command detail JSON, authentication metadata, request-body builders, structured output, and a repository-local `skills/<cli-name>/` directory.
+
+That combination matters. The result is not merely a set of shell commands. It is a discoverable interface an agent can inspect before deciding what to run.
+
+## A new discovery—and a new problem
+
+After generating the CLI, I built skills, workflows, and instructions around it. End-to-end testing and load testing in mosoo became dramatically simpler and faster.
+
+I could sketch a batch of cases and hand them to a coding agent. The agent could implement the cases, run them, and collect the results. Skills, the CLI, and prompt-based workflows supported the entire path.
+
+More importantly, I could readily believe—or challenge—the agent's conclusion because the testing process was readable and explainable. It also felt far less token-intensive than the previous approach, although we did not run a controlled benchmark.
+
+But generation alone did not solve everything.
+
+Lathe converts every API in a project into CLI commands and generates a skill around that surface. It does not know which APIs are central to the product, which should remain internal, which operations form a complete business workflow, or when a particular command should be used.
+
+The first generated CLI was therefore difficult for an agent to use. It did not know which command to choose or when not to use one. At the time, the generated catalog exposed 127 commands, including hidden commands. The volume of operations also created naming and governance problems.
+
+We had to apply our understanding of mosoo's business domain. We reorganized the skill, exercised a large set of CLI-driven cases, and incorporated agent feedback. From generating the first mosoo CLI to making it genuinely usable by coding agents took about a month of intermittent work.
+
+## What if the CLI started on day one?
+
+What would happen if, from the first API on day one, we:
+
+- generated its CLI surface;
+- deliberately selected which APIs should and should not become commands;
+- identified which commands compose into workflows;
+- documented the business situations in which each command applies; and
+- wrote the corresponding `SKILL.md` by hand?
+
+The mosoo CLI would likely have been smaller and more agent-friendly. Command names could have been shorter and easier for people to read. The overall development loop might have moved faster and consumed less context.
+
+## Why did we not build the CLI first?
+
+By June, I was already advocating for a CLI even before the API was complete. Dogfooding cases without one had become painful. The first mosoo CLI did not ship until July, two weeks after Lathe was introduced to the team.
+
+Two assumptions held us back.
+
+First, we had not adapted to how software is consumed in the coding-agent era: less dependence on UI, and a CLI-first operational surface. During the first two months, API development was driven largely through mosoo's frontend. We judged the system with our eyes instead of its inputs and outputs. That made it easy to spend too much attention on naming debates and visual polish while leaving less attention for the product's underlying behavior.
+
+Second, we assumed introducing a CLI early would add complexity. We imagined that every API change would require manual regeneration and distribution. With a generator and a stable workflow, however, that maintenance cost approaches zero. The CLI instead creates healthy pressure to keep the API specification accurate, which also improves the API documentation.
+
+## The development loop
+
+My current view is that software development in the coding-agent era should follow this loop:
+
+1. Develop or modify an API.
+2. Update or export its API specification, such as OpenAPI or Swagger.
+3. Generate or refresh the CLI, command catalog, and skill.
+4. Validate every API operation through the CLI.
+5. Compose CLI commands into workflows.
+6. Run integration and end-to-end tests.
+7. When a problem appears, return to the API, generated interface, or workflow layer that owns it.
+
+Then repeat.
+
+The important part is for this loop to become an **invisible project contract**. A user should not have to remind a coding agent to generate the CLI or test through it.
+
+That suggests a project template similar to what an IDE offers when creating a new project—but designed for coding agents. It would include CLI and skill generation from the beginning, along with an `AGENTS.md` that makes the workflow explicit.
+
+I have not yet surveyed whether a complete template like this already exists. Lathe may be close to providing one.
