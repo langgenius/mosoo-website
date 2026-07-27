@@ -1,0 +1,99 @@
+---
+title: "从 API 到 CLI + Skill：Coding Agent 时代的软件开发新范式（也许）"
+titleAccent: "CLI"
+description: "mosoo 将 API 转换为可发现的 CLI，再把命令组织成 Skill 和 Workflow 后，端到端测试如何变得对人和 Coding Agent 都可读、可解释。"
+date: 2026-07-28
+category: "Engineering"
+author: "mosoo team"
+locale: "zh"
+permalink: "api-cli-skill-development-paradigm"
+translationKey: "api-cli-skill-development-paradigm"
+---
+
+在 mosoo 的开发过程中，我们原先遵循的软件开发范式是：先开发 API，等产品核心功能形成闭环后，再为了方便 Coding Agent 使用而开发 CLI。
+
+后来我们发现，这个顺序可能反了——或者至少并不完整。
+
+## 现象
+
+在缺少一等 CLI 的情况下，Coding Agent 大多通过 `curl`、Browser Use 或临时编写测试脚本来测试单个 API 接口。这些方式都有明显的问题。
+
+1. 直接使用 `curl` 调试 API 时，原始响应通常是一段 HTML 或 JSON，其中包含许多当前测试并不关心的字段和文本。Response 本身不会说明字段语义、约束、发现机制和稳定调用入口。如果缺少 CLI、SDK 或自动化测试等下游使用场景的持续约束，API 规范也更容易缺失、过时，或与实际实现不一致。Coding Agent 只能结合上下文、错误信息和源码来推断字段含义、类型、必填状态及约束，显著增加上下文 Token 消耗、解析成本和时间。
+2. Browser Use 的问题不必多说：Token 消耗高、速度慢，而且容易卡顿，用户交互体验也不好。
+3. Coding Agent 临时生成的测试脚本往往数量多、篇幅长。如果缺乏统一结构和维护，它们不仅难以阅读，也会继续增加上下文 Token 消耗。
+
+这些方式也很难用于编排集成测试。每次都要让 Coding Agent 编写一堆几乎不可读的脚本；脚本一旦不可读，测试结果也就失去了可解释性。
+
+事实也是如此：习惯了 vibe coding 以后，业务代码尚且可能有人看一眼，**而 Test 代码往往完全没人看。没人看的代码，价值几乎为零。**
+
+这些问题始终伴随着 mosoo 的开发过程，令人难以忍受。直到我们采用开源项目 [Lathe](https://github.com/lathe-cli/lathe)，为 mosoo 一次性生成完整 CLI，情况才有所改变。
+
+## 关于 Lathe
+
+Lathe 是一个 API-to-CLI 生成器，适合需要同时服务人类用户和 AI Agent 的团队。它可以将 Swagger 2.0、OpenAPI 3，以及带有 `google.api.http` 注解的 Protobuf API，生成为生产级 Cobra CLI。
+
+生成的 CLI 自带机器可读的 Command Catalog、意图搜索、单命令详情 JSON、认证元数据、请求体构造器、结构化输出，以及仓库内的 Skill 目录 `skills/<cli-name>/`。
+
+这个组合很重要。最终得到的不只是一组 Shell 命令，而是 Agent 可以先发现、再判断、最后调用的结构化接口。
+
+## 新发现，以及新问题
+
+基于 Lathe 生成 CLI 后，我又围绕这套 CLI 编排了一套 Skill、Workflow 和提示词。随后我发现，**mosoo 的端到端测试和压测变得前所未有地简单、快速。**
+
+我可以随手构思一批 Case，然后直接交给 Coding Agent 编排和实现。Case 实现后，它还能自行执行测试并拿到结果。整个过程都由 Skill、CLI 和基于 Prompt 的 Workflow 共同支撑。
+
+更重要的是，我可以**轻易相信或质疑** Agent 得出的测试结果，因为**整个测试过程是可读、可解释的**。它的 Token 消耗也明显低于没有 CLI 时的情况，不过我们没有做过严格的对照统计，这只是体感。
+
+但生成本身并没有解决所有问题。
+
+Lathe 会一次性把一个项目的**所有 API** 转换为 CLI，并为其生成 Skill。它不会区分哪些是核心 API，哪些应该保持内部使用；也不知道不同 API 应该如何组合才能形成业务闭环，或者某条命令应该在什么场景下调用。
+
+因此，刚生成的 CLI 并不好用：Coding Agent 不知道什么时候该用哪条指令，也不知道什么时候不该用。当时生成的 Catalog 共暴露了 127 条命令，其中还包括隐藏命令。海量 API 带来的命令数量、复杂命名和治理问题，也让人感到棘手。
+
+好在，我们对 mosoo 业务本身有较深的理解。重新编排 Skill 后，再结合大量基于 CLI 的 Case 实践和 Agent 反馈，mosoo CLI 才逐渐被 Coding Agent 理解并正确使用。从生成初版 CLI 到它真正变得好用，**这个过程断断续续花了约一个月。**
+
+## 如果从第一天就开始呢？
+
+倘若我们从 Day 1 的第一个 API 开始，就：
+
+- 为它生成 CLI；
+- 主动筛选哪些 API 应该成为命令，哪些不需要；
+- 明确哪些命令可以组合成 Workflow；
+- 记录每条命令对应的业务场景；以及
+- 由人工编写对应的 `SKILL.md`；
+
+结果会怎样？
+
+mosoo CLI 很可能会更加精简、对 Agent 更友好。命令名称也可以更短、更容易被人类阅读。mosoo 的整体开发过程可能会更快，上下文 Token 消耗也会更低。
+
+## 为什么不一开始就做 CLI？
+
+事实上，早在 6 月份，无论 API 是否已经完备，我就已经开始呼吁尽快引入 CLI。因为我已经明显感受到：缺少 CLI 时，做 Case、吃狗粮是一件非常痛苦的事情。
+
+但直到 7 月，在 Lathe 被带到团队两周后，初版 mosoo CLI 才正式上线。
+
+背后有两个原因。
+
+第一，开发者们还没有适应 Coding Agent 时代的软件使用范式：降低对 UI 的依赖，CLI 优先。前两个月的开发一直基于 **mosoo 前端页面进行 API 开发**，依靠眼睛观察，而不是根据产品的**输入和输出**来判断。这很容易让开发者过度关注软件概念的命名、前端视觉效果的调优，把大量注意力、Token 和时间消耗在边缘问题上，却没有把足够的注意力放到产品的根本逻辑上。
+
+第二，我们受固有思维影响，想当然地认为过早引入 CLI 会增加项目复杂度；每次修改 API 都要手动重新生成和分发 CLI，从而增加维护成本。事实上，在有了生成工具和稳定 Workflow 的情况下，这部分维护成本趋近于零。CLI 反而会倒逼开发者维护好 API 规范，也有利于 API 文档的可读性。
+
+## 开发闭环
+
+我现在认为，Coding Agent 时代的软件开发应当形成下面的循环：
+
+1. 开发或修改 API。
+2. 更新或导出 OpenAPI、Swagger 等 API 规范。
+3. 生成或刷新 CLI、Command Catalog 和 Skill。
+4. 通过 CLI 验证每个 API 操作。
+5. 将 CLI 命令编排为 Workflow。
+6. 执行集成测试与端到端测试。
+7. 发现问题后，回到拥有这个问题的 API、生成接口或 Workflow 层。
+
+然后循环往复。
+
+关键在于，这应当成为一种**隐形的项目契约**。用户无需再提示 Coding Agent “生成 CLI” 或“基于 CLI 进行测试”。
+
+这需要一个类似于 IDE 新建项目时提供的项目模板，但它是为 Coding Agent 设计的。这个模板应当从一开始就集成 CLI 和 Skill 的生成功能，以及一份明确约束开发闭环的 `AGENTS.md`。
+
+我目前还没有调研过是否已经存在完整的同类模板，但 Lathe 也许很快就会提供一个。

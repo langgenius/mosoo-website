@@ -35,6 +35,13 @@ const titleAfter =
 const locale = getPostLocale(post);
 const langTags: Record<Locale, "en" | "zh-CN" | "ja"> = { en: "en", zh: "zh-CN", ja: "ja" };
 const lang = langTags[locale];
+const availableLocales = hreflang
+  ? ([
+      hreflang.en ? "en" : undefined,
+      hreflang["zh-CN"] ? "zh" : undefined,
+      hreflang.ja ? "ja" : undefined,
+    ].filter((candidate): candidate is Locale => candidate !== undefined))
+  : undefined;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const indexHref = getIndexHref(locale, base);
 const copyByLocale: Record<Locale, { back: string; more: string }> = {
@@ -83,6 +90,7 @@ const jsonLd = {
   ogImageAlt={heroAlt ?? title}
   lang={lang}
   hreflang={hreflang}
+  availableLocales={availableLocales}
 >
   <script
     is:inline

@@ -1,7 +1,15 @@
 ---
-import { getLocaleOptions } from "../lib/i18n";
+import { getLocaleOptions, type Locale } from "../lib/i18n";
+
+interface Props {
+  availableLocales?: Locale[];
+}
+
+const { availableLocales } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const localeOptions = getLocaleOptions(Astro.url.pathname, base);
+const localeOptions = getLocaleOptions(Astro.url.pathname, base).filter(
+  ({ locale }) => !availableLocales || availableLocales.includes(locale),
+);
 ---
 
 <header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--paper)]/85 backdrop-blur-md">
