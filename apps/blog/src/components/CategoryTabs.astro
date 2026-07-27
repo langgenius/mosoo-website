@@ -17,12 +17,7 @@ const all = ["All", ...categories];
         type="button"
         data-category={c}
         aria-pressed={c === active ? "true" : "false"}
-        class:list={[
-          "rounded-full border px-3.5 py-1.5 text-[13px] font-medium tracking-[-0.01em] transition-colors duration-150",
-          c === active
-            ? "border-[color:var(--ink-900)] bg-[color:var(--ink-900)] text-white"
-            : "border-[color:var(--border)] bg-transparent text-[color:var(--fg-secondary)] hover:border-[color:var(--border-strong)] hover:text-[color:var(--fg)]",
-        ]}
+        class="rounded-full border border-[color:var(--border)] bg-transparent px-3.5 py-1.5 text-[13px] font-medium tracking-[-0.01em] text-[color:var(--fg-secondary)] transition-colors duration-150 hover:border-[color:var(--border-strong)] hover:text-[color:var(--fg)] aria-pressed:border-[color:var(--ink-900)] aria-pressed:bg-[color:var(--ink-900)] aria-pressed:text-white aria-pressed:hover:border-[color:var(--ink-800)] aria-pressed:hover:bg-[color:var(--ink-800)] aria-pressed:hover:text-white"
       >
         {c}
       </button>
@@ -39,12 +34,6 @@ const all = ["All", ...categories];
     buttons.forEach((b) => {
       const isActive = b.dataset.category === category;
       b.setAttribute("aria-pressed", isActive ? "true" : "false");
-      b.classList.toggle("border-[color:var(--ink-900)]", isActive);
-      b.classList.toggle("bg-[color:var(--ink-900)]", isActive);
-      b.classList.toggle("text-white", isActive);
-      b.classList.toggle("border-[color:var(--border)]", !isActive);
-      b.classList.toggle("bg-transparent", !isActive);
-      b.classList.toggle("text-[color:var(--fg-secondary)]", !isActive);
     });
     cards.forEach((c) => {
       c.style.display =
