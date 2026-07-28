@@ -29,7 +29,8 @@ test("worker selects the landing locale by cookie, then country", async () => {
     { pathname: "/?ref=launch", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
     { pathname: "/", cookie: "mosoo_locale=invalid", country: "CN", locale: "zh" },
     { pathname: "/", country: "JP", locale: "ja" },
-    { pathname: "/", country: "US", countryHeader: "CN", locale: "zh" },
+    { pathname: "/", country: "US", countryHeader: "CN", locale: "en" },
+    { pathname: "/", countryHeader: "CN", locale: "zh" },
     { pathname: "/", country: "US", locale: "en" },
     { pathname: "/", locale: "en" },
   ];

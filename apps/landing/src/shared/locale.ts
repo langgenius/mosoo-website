@@ -2,11 +2,11 @@ export const LOCALES = ["en", "zh", "ja"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
-export const LOCALE_LABELS: ReadonlyArray<{ locale: Locale; label: string }> = [
-  { locale: "en", label: "EN" },
-  { locale: "zh", label: "中" },
-  { locale: "ja", label: "日" },
-];
+export const LOCALE_LABELS = {
+  en: { short: "EN", native: "English" },
+  zh: { short: "中", native: "简体中文" },
+  ja: { short: "日", native: "日本語" },
+} as const satisfies Record<Locale, { short: string; native: string }>;
 
 export function isLocale(value: string): value is Locale {
   return value === "en" || value === "zh" || value === "ja";
