@@ -1,9 +1,23 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import type { ReactElement } from "react";
 
+import { useIdleReady } from "@/shared/lib/use-idle-ready";
+
 import { LoginLandingTopbar } from "../topbar";
-import { LandingFooter } from "./footer";
 import { LoginLanding } from "./landing";
+
+const LandingFooter = lazy(async () => {
+  const mod = await import("./footer");
+  return { default: mod.LandingFooter };
+});
 
 function getViewportHeightSnapshot(): number {
   return window.innerHeight;
@@ -24,6 +38,7 @@ export function LandingShell({ onContinue }: { onContinue: () => void }): ReactE
   const contentRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
+  const loadFooter = useIdleReady();
   const viewportHeight = useSyncExternalStore(
     subscribeViewportHeight,
     getViewportHeightSnapshot,
@@ -78,7 +93,11 @@ export function LandingShell({ onContinue }: { onContinue: () => void }): ReactE
         <LoginLanding onContinue={onContinue} />
       </div>
       <div ref={setFooterNode} className={reveal ? "fixed inset-x-0 bottom-0 z-0" : "relative z-0"}>
-        <LandingFooter />
+        {loadFooter ? (
+          <Suspense fallback={null}>
+            <LandingFooter />
+          </Suspense>
+        ) : null}
       </div>
     </div>
   );

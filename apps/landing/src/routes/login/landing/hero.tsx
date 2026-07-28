@@ -1,13 +1,20 @@
 import { ArrowUpRight, Star } from "lucide-react";
+import { lazy, Suspense } from "react";
 import type { CSSProperties, ReactElement } from "react";
+
+import { useIdleReady } from "@/shared/lib/use-idle-ready";
 
 import { GithubMark } from "../github-mark";
 import { MOSOO_API_REFERENCE_URL, MOSOO_GITHUB_URL } from "../links";
 import { DISPLAY_FONT } from "./typography";
 import { Eyebrow } from "./ui";
-import { UnicornBackground } from "./unicorn";
 
 const HERO_SCENE_ID = "RasGv747UbFbFukg0cwh";
+
+const UnicornBackground = lazy(async () => {
+  const mod = await import("./unicorn");
+  return { default: mod.UnicornBackground };
+});
 
 const HERO_PANEL_STYLE = {
   backgroundColor: "var(--paper-100)",
@@ -27,13 +34,19 @@ const HERO_SUBHEAD_STYLE = {
 } satisfies CSSProperties;
 
 export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
+  const loadDecorativeScene = useIdleReady();
+
   return (
     <section
       className="relative flex min-h-[640px] flex-col items-center justify-center overflow-hidden px-4 py-20 md:min-h-[680px] md:px-6 md:py-24"
       style={HERO_PANEL_STYLE}
     >
       {/* WebGL aurora — the brand's signature hero motion */}
-      <UnicornBackground sceneId={HERO_SCENE_ID} />
+      {loadDecorativeScene ? (
+        <Suspense fallback={null}>
+          <UnicornBackground sceneId={HERO_SCENE_ID} />
+        </Suspense>
+      ) : null}
 
       <div
         className="relative z-10 flex w-full max-w-[1080px] flex-col items-center text-center"
