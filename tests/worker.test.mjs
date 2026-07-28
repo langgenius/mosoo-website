@@ -46,7 +46,7 @@ test("worker permanently redirects legacy extensionless docs paths", async () =>
 
 test("worker permanently redirects old blog aliases", async () => {
   const response = await worker.fetch(
-    new Request("https://mosoo.ai/blogs/the-journey-begins-with-an-imagine-if"),
+    new Request("https://mosoo.ai/blogs/the-journey-begins-with-an-imagine-if/"),
     envFor({}),
   );
 
@@ -55,4 +55,14 @@ test("worker permanently redirects old blog aliases", async () => {
     response.headers.get("location"),
     "https://mosoo.ai/blog/the-journey-begins-with-an-imagine-if",
   );
+});
+
+test("worker serves the slashless blog index without redirecting", async () => {
+  const response = await worker.fetch(
+    new Request("https://mosoo.ai/blog"),
+    envFor({ "/blog": "blog index" }),
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), "blog index");
 });

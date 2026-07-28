@@ -31,11 +31,15 @@ test("robots advertises the aggregate sitemap", () => {
   assert.deepEqual(sitemaps, ["https://mosoo.ai/sitemap.xml"]);
 });
 
-test("blog canonical metadata preserves final directory URLs", () => {
+test("blog routing and metadata use slashless canonical URLs", () => {
+  const blogConfig = read("apps/blog/astro.config.mjs");
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
+  const workerConfig = read("wrangler.toml");
 
+  assert.match(blogConfig, /trailingSlash: "never"/);
   assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
   assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
+  assert.match(workerConfig, /html_handling = "drop-trailing-slash"/);
 });
 
 test("blog posts reference the landing page organization identity", () => {

@@ -7,6 +7,7 @@ main = "src/worker.js"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+html_handling = "drop-trailing-slash"
 not_found_handling = "none"
 
 [env.prod]
