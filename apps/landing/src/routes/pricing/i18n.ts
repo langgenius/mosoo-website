@@ -5,6 +5,8 @@ const ZH_MESSAGES = {
   "Start free. Grow when your agents do.": "免费起步，随你的 Agent 一同生长。",
   "Run agents on mosoo Cloud with a free tier that's ready today. Paid plans land soon, and self-hosting stays free and open source, forever.":
     "mosoo Cloud 免费档今天即可使用。付费方案即将上线，而自托管永远免费且开源。",
+  "Billing isn't implemented yet. During the alpha, everything runs free.":
+    "计费尚未实装，alpha 期间全部免费。",
   Free: "免费",
   Pro: "Pro",
   Enterprise: "企业",
@@ -64,6 +66,8 @@ const JA_MESSAGES = {
   "Start free. Grow when your agents do.": "無料で始めて、Agent\u00A0の成長に合わせて。",
   "Run agents on mosoo Cloud with a free tier that's ready today. Paid plans land soon, and self-hosting stays free and open source, forever.":
     "mosoo Cloud の無料プランは今日から利用可能。有料プランは近日公開。セルフホストは永久に無料のオープンソースです。",
+  "Billing isn't implemented yet. During the alpha, everything runs free.":
+    "課金機能はまだ実装されていません。alpha 期間中はすべて無料です。",
   Free: "無料",
   Pro: "Pro",
   Enterprise: "エンタープライズ",

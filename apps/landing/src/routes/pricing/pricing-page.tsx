@@ -68,6 +68,9 @@ function PricingHeader(): ReactElement {
             "Run agents on mosoo Cloud with a free tier that's ready today. Paid plans land soon, and self-hosting stays free and open source, forever.",
           )}
         </p>
+        <p className="text-fg-3 mt-4 max-w-[560px] text-[13px] leading-[1.6] [text-wrap:pretty]">
+          {t("Billing isn't implemented yet. During the alpha, everything runs free.")}
+        </p>
       </Reveal>
     </section>
   );
