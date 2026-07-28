@@ -47,6 +47,15 @@ test("blog posts reference the landing page organization identity", () => {
   );
 });
 
+test("blog pages send explicit PostHog page views without the analytics SDK", () => {
+  const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
+
+  assert.match(blogLayout, /event: "page_viewed"/);
+  assert.match(blogLayout, /article_slug:/);
+  assert.match(blogLayout, /surface: "blog"/);
+  assert.doesNotMatch(blogLayout, /posthog-js|autocapture|session[_-]replay/i);
+});
+
 test("landing and blog metadata never point at a missing default image", () => {
   const landing = read("apps/landing/index.html");
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");

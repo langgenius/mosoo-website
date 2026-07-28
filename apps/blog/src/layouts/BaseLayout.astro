@@ -54,6 +54,9 @@ const alternateOgLocales = [
       .filter((locale) => locale && locale !== ogLocale),
   ),
 ];
+// PostHog project keys are public ingestion identifiers, not secrets.
+const posthogApiHost = "https://us.i.posthog.com";
+const posthogProjectKey = "phc_AkgQ7EFzyJZYDeMi4MHFkhjAJjEvzPN6PnfHdACHqqBA";
 ---
 
 <!doctype html>
@@ -140,6 +143,48 @@ const alternateOgLocales = [
       } else {
         targets.forEach((el) => el.classList.add("is-revealed"));
       }
+    </script>
+    <script is:inline define:vars={{ pageType: type, posthogApiHost, posthogProjectKey }}>
+      var storageKey = "mosoo_posthog_anonymous_id";
+      var distinctId;
+      try {
+        distinctId = localStorage.getItem(storageKey);
+      } catch {}
+      if (!distinctId || !distinctId.startsWith("mosoo_anon_")) {
+        var suffix =
+          typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : Date.now().toString(36) + "_" + Math.random().toString(36).slice(2);
+        distinctId = "mosoo_anon_" + suffix;
+        try {
+          localStorage.setItem(storageKey, distinctId);
+        } catch {}
+      }
+
+      var pathSegments = location.pathname.split("/").filter(Boolean);
+      void fetch(posthogApiHost + "/capture/", {
+        body: JSON.stringify({
+          api_key: posthogProjectKey,
+          event: "page_viewed",
+          properties: {
+            $host: location.host,
+            $pathname: location.pathname,
+            article_slug:
+              pageType === "article" ? pathSegments[pathSegments.length - 1] : undefined,
+            deployment_mode: "cloud",
+            distinct_id: distinctId,
+            environment: "production",
+            locale: document.documentElement.lang,
+            page_type: pageType,
+            route: location.pathname,
+            surface: "blog",
+          },
+          timestamp: new Date().toISOString(),
+        }),
+        headers: { "Content-Type": "application/json" },
+        keepalive: true,
+        method: "POST",
+      }).catch(() => undefined);
     </script>
   </body>
 </html>
