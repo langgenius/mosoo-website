@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactElement } from "react";
 
+import { locale } from "@/shared/locale";
+
 import { GithubMark } from "../github-mark";
 import {
   MOSOO_API_REFERENCE_URL,
@@ -12,21 +14,26 @@ import {
   MOSOO_X_URL,
 } from "../links";
 import { XMark } from "../x-mark";
+import { t } from "./i18n";
 import { DISPLAY_FONT } from "./typography";
 
 type FooterLink = { label: string; href: string; internal?: boolean };
 
 const RESOURCE_LINKS: readonly FooterLink[] = [
-  { label: "Blog", href: MOSOO_BLOG_URL, internal: true },
-  { label: "Docs", href: MOSOO_DOCS_URL },
-  { label: "API docs", href: MOSOO_API_REFERENCE_URL },
-  { label: "Releases", href: MOSOO_RELEASES_URL },
+  {
+    label: t("Blog"),
+    href: locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`,
+    internal: true,
+  },
+  { label: t("Docs"), href: MOSOO_DOCS_URL },
+  { label: t("API docs"), href: MOSOO_API_REFERENCE_URL },
+  { label: t("Releases"), href: MOSOO_RELEASES_URL },
 ];
 
 const APP_LINKS: readonly FooterLink[] = [
   { label: "GitHub", href: MOSOO_GITHUB_URL },
-  { label: "License", href: MOSOO_LICENSE_URL },
-  { label: "Security", href: MOSOO_SECURITY_URL },
+  { label: t("License"), href: MOSOO_LICENSE_URL },
+  { label: t("Security"), href: MOSOO_SECURITY_URL },
 ];
 
 const TAGLINE_STYLE = {
@@ -95,7 +102,7 @@ export function LandingFooter(): ReactElement {
       <div className="mx-auto w-full max-w-[1280px]">
         <div className="max-w-[760px]">
           <p className="[text-wrap:balance]" style={TAGLINE_STYLE}>
-            Take root, and grow a bamboo sea.
+            {t("Take root, and grow a bamboo sea.")}
           </p>
         </div>
 
@@ -104,19 +111,19 @@ export function LandingFooter(): ReactElement {
             <div>
               <img src="/brand/logo-wordmark-ondark.svg" alt="mosoo" className="block h-[22px]" />
               <p className="text-paper-100/55 mt-4 max-w-[260px] text-[13.5px] leading-[1.6]">
-                Open-source agent runtime and API for coding agents.
+                {t("Open-source agent runtime and API for coding agents.")}
               </p>
               <div className="mt-5 flex items-center gap-2.5">
-                <SocialLink href={MOSOO_GITHUB_URL} label="mosoo on GitHub">
+                <SocialLink href={MOSOO_GITHUB_URL} label={t("mosoo on GitHub")}>
                   <GithubMark className="size-[18px]" />
                 </SocialLink>
-                <SocialLink href={MOSOO_X_URL} label="mosoo on X">
+                <SocialLink href={MOSOO_X_URL} label={t("mosoo on X")}>
                   <XMark className="size-4" />
                 </SocialLink>
               </div>
             </div>
-            <FooterColumn heading="Resources" links={RESOURCE_LINKS} />
-            <FooterColumn heading="App" links={APP_LINKS} />
+            <FooterColumn heading={t("Resources")} links={RESOURCE_LINKS} />
+            <FooterColumn heading={t("App")} links={APP_LINKS} />
           </div>
 
           <div className="border-paper-100/10 mt-14 flex flex-col items-start justify-between gap-3 border-t pt-6 md:flex-row md:items-center">
@@ -124,7 +131,7 @@ export function LandingFooter(): ReactElement {
               © 2026 LangGenius, Inc.
             </p>
             <p className="text-paper-100/70 font-mono text-[11px] leading-[1.6] tracking-[0.18em] uppercase">
-              Self-hostable · BYOK
+              {t("Self-hostable · BYOK")}
             </p>
           </div>
         </div>

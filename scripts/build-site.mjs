@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, rmSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildLandingLocales } from "./landing-locales.mjs";
 import { writeRootSitemap } from "./sitemap.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -24,6 +25,8 @@ rmSync(DIST, { force: true, recursive: true });
 run("npm", ["run", "landing:build"]);
 run("npm", ["run", "blog:build"]);
 
+await buildLandingLocales(join(ROOT, "apps", "landing", "dist"));
+
 cpSync(join(ROOT, "apps", "landing", "dist"), DIST, { recursive: true });
 cpSync(join(ROOT, "apps", "blog", "dist"), join(DIST, "blog"), { recursive: true });
 
@@ -34,6 +37,12 @@ await writeRootSitemap({
 
 if (!existsSync(join(DIST, "index.html"))) {
   throw new Error("Landing build did not produce dist/index.html.");
+}
+
+for (const locale of ["en", "zh", "ja"]) {
+  if (!existsSync(join(DIST, `${locale}.html`))) {
+    throw new Error(`Landing build did not produce dist/${locale}.html.`);
+  }
 }
 
 if (!existsSync(join(DIST, "blog", "index.html"))) {

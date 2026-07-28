@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 
 import { RuntimeIcon } from "@/shared/ui/brand-icons";
 
+import { t } from "./i18n";
 import { Reveal } from "./motion";
 import { sectionHeadingStyle } from "./typography";
 
@@ -18,15 +19,15 @@ function SandboxTerminal(): ReactElement {
             <RuntimeIcon runtimeId="claude-agent-sdk" className="size-full" />
           </span>
           <div className="min-w-0">
-            <p className="truncate text-[12.5px] font-medium text-white">Agent sandbox</p>
+            <p className="truncate text-[12.5px] font-medium text-white">{t("Agent sandbox")}</p>
             <p className="truncate font-mono text-[10px] text-white/45">
-              claude-agent-sdk · ephemeral
+              {t("claude-agent-sdk · ephemeral")}
             </p>
           </div>
         </div>
         <span className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.04] px-2 py-1 text-[10.5px] font-medium text-emerald-300">
           <Circle className="size-2 fill-current" />
-          mounted
+          {t("mounted")}
         </span>
       </div>
 
@@ -35,22 +36,27 @@ function SandboxTerminal(): ReactElement {
           <span className="text-emerald-300">$</span> mosoo run support-agent --runtime
           claude-agent-sdk
         </p>
-        <p className="text-white/45">▸ mounting sandbox 27fe1193af5a …</p>
+        <p className="text-white/45">{t("▸ mounting sandbox 27fe1193af5a …")}</p>
         <p className="text-white/80">
-          <span className="text-emerald-300">✓</span> sandbox ready in 0.4s · /workspace mounted
+          <span className="text-emerald-300">✓</span>{" "}
+          {t("✓ sandbox ready in 0.4s · /workspace mounted").slice(2)}
         </p>
-        <p className="text-white/45">▸ pulling runtime · Claude Agent SDK</p>
+        <p className="text-white/45">{t("▸ pulling runtime · Claude Agent SDK")}</p>
         <p className="text-white/80">
-          <span className="text-emerald-300">✓</span> runtime online · claude-opus-4.8 · streaming +
-          tools
+          <span className="text-emerald-300">✓</span>{" "}
+          {t("✓ runtime online · claude-opus-4.8 · streaming + tools").slice(2)}
         </p>
-        <p className="text-white/45">▸ mounting session files · support-kb, runbooks (ro)</p>
-        <p className="text-white/80">
-          <span className="text-emerald-300">✓</span> 12 MCP tools · BYOK credentials resolved
+        <p className="text-white/45">
+          {t("▸ mounting session files · support-kb, runbooks (ro)")}
         </p>
-        <p className="text-white/45">▸ booting agent · memory + context restored</p>
         <p className="text-white/80">
-          <span className="text-emerald-300">✓</span> support-agent live · full cloud agent ready
+          <span className="text-emerald-300">✓</span>{" "}
+          {t("✓ 12 MCP tools · BYOK credentials resolved").slice(2)}
+        </p>
+        <p className="text-white/45">{t("▸ booting agent · memory + context restored")}</p>
+        <p className="text-white/80">
+          <span className="text-emerald-300">✓</span>{" "}
+          {t("✓ support-agent live · full cloud agent ready").slice(2)}
         </p>
         <p className="flex items-center text-white/55">
           root@27fe1193af5a:/workspace#
@@ -59,8 +65,8 @@ function SandboxTerminal(): ReactElement {
       </div>
 
       <div className="flex items-center justify-between border-t border-white/10 bg-black/30 px-4 py-1.5 font-mono text-[10px] text-white/40">
-        <span>agent · support-agent</span>
-        <span>ephemeral sandbox</span>
+        <span>{t("agent · support-agent")}</span>
+        <span>{t("ephemeral sandbox")}</span>
       </div>
     </div>
   );
@@ -73,16 +79,18 @@ export function SandboxSection(): ReactElement {
         {/* Left — message + Claude Code badge + the sandbox terminal */}
         <Reveal className="flex flex-col">
           <h2 className="text-fg-1" style={sectionHeadingStyle}>
-            No always-on agent cloud.
+            {t("No always-on agent cloud.")}
           </h2>
           <p className="text-fg-2 mt-4 max-w-[480px] text-[15px] leading-[1.6]">
-            mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn
-            ends. No standing fleet to pay for or babysit: compute appears on demand, scoped to the
-            session, and disappears.
+            {t(
+              "mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn ends. No standing fleet to pay for or babysit: compute appears on demand, scoped to the session, and disappears.",
+            )}
           </p>
           <span className="border-border-soft bg-bg-elevated mt-6 inline-flex w-fit items-center gap-2 rounded-[8px] border px-3 py-1.5">
             <RuntimeIcon runtimeId="claude-agent-sdk" className="size-4" />
-            <span className="text-fg-2 text-[12.5px] font-medium">Runs on Claude Code</span>
+            <span className="text-fg-2 text-[12.5px] font-medium">
+              {t("Runs on Claude Code")}
+            </span>
           </span>
           <div className="mt-8">
             <SandboxTerminal />
@@ -93,7 +101,7 @@ export function SandboxSection(): ReactElement {
         <Reveal delay={0.08} className="md:h-full">
           <img
             src="/landing/bamboo-sky.jpg"
-            alt="Pixel-art bamboo reaching into a bright sky"
+            alt={t("Pixel-art bamboo reaching into a bright sky")}
             className="h-[300px] w-full rounded-[18px] object-cover md:h-full"
           />
         </Reveal>

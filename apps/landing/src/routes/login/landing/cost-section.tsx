@@ -6,6 +6,7 @@ import type { CSSProperties, ReactElement, ReactNode } from "react";
 
 import { cn } from "@/shared/lib/class-names";
 
+import { t } from "./i18n";
 import { Reveal } from "./motion";
 import { sectionHeadingStyle } from "./typography";
 
@@ -23,19 +24,19 @@ type Kpi = {
 };
 
 const KPIS: readonly Kpi[] = [
-  { label: "Total spend", value: "US$4.82K", delta: "−12.3%", down: true, Icon: Wallet },
-  { label: "Requests", value: "18.9K", delta: "+8.1%", down: false, Icon: Activity },
-  { label: "Tokens", value: "142M", sub: "94% cache hit", Icon: Coins },
-  { label: "Active apps", value: "7", sub: "of 9", Icon: Users },
+  { label: t("Total spend"), value: "US$4.82K", delta: "−12.3%", down: true, Icon: Wallet },
+  { label: t("Requests"), value: "18.9K", delta: "+8.1%", down: false, Icon: Activity },
+  { label: t("Tokens"), value: "142M", sub: t("94% cache hit"), Icon: Coins },
+  { label: t("Active apps"), value: "7", sub: t("of 9"), Icon: Users },
 ];
 
 const SPEND_TREND = [
-  { month: "Jan", prod: 58, debug: 22 },
-  { month: "Feb", prod: 74, debug: 40 },
-  { month: "Mar", prod: 64, debug: 28 },
-  { month: "Apr", prod: 90, debug: 48 },
-  { month: "May", prod: 50, debug: 20 },
-  { month: "Jun", prod: 72, debug: 34 },
+  { month: t("Jan"), prod: 58, debug: 22 },
+  { month: t("Feb"), prod: 74, debug: 40 },
+  { month: t("Mar"), prod: 64, debug: 28 },
+  { month: t("Apr"), prod: 90, debug: 48 },
+  { month: t("May"), prod: 50, debug: 20 },
+  { month: t("Jun"), prod: 72, debug: 34 },
 ] as const;
 
 type ModelRow = {
@@ -110,7 +111,7 @@ type AgentRow = {
 
 const AGENTS: readonly AgentRow[] = [
   {
-    name: "Support copilot",
+    name: t("Support copilot"),
     owner: "Rina Kato",
     mix: [
       { className: "bg-[#6FD305]", pct: 76 },
@@ -123,7 +124,7 @@ const AGENTS: readonly AgentRow[] = [
     share: "38%",
   },
   {
-    name: "Contract reviewer",
+    name: t("Contract reviewer"),
     owner: "Amir Shah",
     mix: [
       { className: "bg-[#6FD305]", pct: 54 },
@@ -136,7 +137,7 @@ const AGENTS: readonly AgentRow[] = [
     share: "23%",
   },
   {
-    name: "IT helpdesk",
+    name: t("IT helpdesk"),
     owner: "Lena Ortiz",
     mix: [
       { className: "bg-[#6FD305]", pct: 88 },
@@ -149,7 +150,7 @@ const AGENTS: readonly AgentRow[] = [
     share: "18%",
   },
   {
-    name: "Sales researcher",
+    name: t("Sales researcher"),
     owner: "Tom Vogel",
     mix: [
       { className: "bg-[#6FD305]", pct: 61 },
@@ -162,7 +163,7 @@ const AGENTS: readonly AgentRow[] = [
     share: "13%",
   },
   {
-    name: "Onboarding bot",
+    name: t("Onboarding bot"),
     owner: "Priya Nair",
     mix: [
       { className: "bg-[#6FD305]", pct: 80 },
@@ -187,41 +188,41 @@ type AppRow = {
 
 const APPS: readonly AppRow[] = [
   {
-    name: "Support Console",
-    app: "Customer Ops",
-    topAgent: "Support copilot",
+    name: t("Support Console"),
+    app: t("Customer Ops"),
+    topAgent: t("Support copilot"),
     agents: 8,
     cost: "US$1.46K",
     share: "30%",
   },
   {
-    name: "Contract Desk",
-    app: "Legal Ops",
-    topAgent: "Contract reviewer",
+    name: t("Contract Desk"),
+    app: t("Legal Ops"),
+    topAgent: t("Contract reviewer"),
     agents: 3,
     cost: "US$0.98K",
     share: "20%",
   },
   {
-    name: "IT Intake",
-    app: "Internal Tools",
-    topAgent: "IT helpdesk",
+    name: t("IT Intake"),
+    app: t("Internal Tools"),
+    topAgent: t("IT helpdesk"),
     agents: 5,
     cost: "US$0.74K",
     share: "15%",
   },
   {
-    name: "Sales Research",
-    app: "Revenue",
-    topAgent: "Sales researcher",
+    name: t("Sales Research"),
+    app: t("Revenue"),
+    topAgent: t("Sales researcher"),
     agents: 4,
     cost: "US$0.55K",
     share: "11%",
   },
   {
-    name: "Onboarding Hub",
-    app: "Customer Ops",
-    topAgent: "Onboarding bot",
+    name: t("Onboarding Hub"),
+    app: t("Customer Ops"),
+    topAgent: t("Onboarding bot"),
     agents: 6,
     cost: "US$0.49K",
     share: "10%",
@@ -229,15 +230,15 @@ const APPS: readonly AppRow[] = [
 ];
 
 const TABS = [
-  { value: "agent", label: "By Agent" },
-  { value: "app", label: "By App" },
-  { value: "model", label: "By Model" },
+  { value: "agent", label: t("By Agent") },
+  { value: "app", label: t("By App") },
+  { value: "model", label: t("By Model") },
 ] as const;
 
 const RUN_MIX_LEGEND = [
-  { className: "bg-[#6FD305]", label: "Production" },
-  { className: "bg-[#B6E85F]", label: "Debug" },
-  { className: "bg-ink-300", label: "Preview" },
+  { className: "bg-[#6FD305]", label: t("Production") },
+  { className: "bg-[#B6E85F]", label: t("Debug") },
+  { className: "bg-ink-300", label: t("Preview") },
 ] as const;
 
 function Card({ children, className }: { children: ReactNode; className?: string }): ReactElement {
@@ -300,17 +301,19 @@ function SpendChart(): ReactElement {
     <Card className="flex flex-col p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-fg-1 text-[14px] font-semibold">Spend over time</p>
-          <p className="text-fg-3 mt-0.5 text-[12px]">Production vs debug · last 6 months</p>
+          <p className="text-fg-1 text-[14px] font-semibold">{t("Spend over time")}</p>
+          <p className="text-fg-3 mt-0.5 text-[12px]">
+            {t("Production vs debug · last 6 months")}
+          </p>
         </div>
         <div className="flex items-center gap-3 text-[11.5px]">
           <span className="text-fg-2 inline-flex items-center gap-1.5">
             <span className="size-2 rounded-[2px] bg-[#6FD305]" />
-            Production
+            {t("Production")}
           </span>
           <span className="text-fg-2 inline-flex items-center gap-1.5">
             <span className="size-2 rounded-[2px] bg-[#B6E85F]" />
-            Debug
+            {t("Debug")}
           </span>
         </div>
       </div>
@@ -353,8 +356,8 @@ function ModelDonut(): ReactElement {
 
   return (
     <Card className="flex flex-col p-5">
-      <p className="text-fg-1 text-[14px] font-semibold">Spend by model</p>
-      <p className="text-fg-3 mt-0.5 text-[12px]">Where the budget goes</p>
+      <p className="text-fg-1 text-[14px] font-semibold">{t("Spend by model")}</p>
+      <p className="text-fg-3 mt-0.5 text-[12px]">{t("Where the budget goes")}</p>
       <div className="mt-4 flex items-center gap-5">
         <div className="relative size-[128px] shrink-0">
           <svg viewBox="0 0 36 36" className="size-full -rotate-90">
@@ -386,7 +389,7 @@ function ModelDonut(): ReactElement {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-fg-1 text-[16px] font-semibold tracking-[-0.02em]">US$4.82K</span>
-            <span className="text-fg-2 text-[10.5px]">30 days</span>
+            <span className="text-fg-2 text-[10.5px]">{t("30 days")}</span>
           </div>
         </div>
         <ul className="flex min-w-0 flex-1 flex-col gap-2">
@@ -413,11 +416,12 @@ export function CostSection(): ReactElement {
     <section className="flex flex-col px-4 py-20 md:px-6 md:py-24">
       <Reveal className="max-w-[620px]">
         <h2 className="text-fg-1" style={sectionHeadingStyle}>
-          Know the unit cost of every run.
+          {t("Know the unit cost of every run.")}
         </h2>
         <p className="text-fg-2 mt-4 text-[15px] leading-[1.6]">
-          See exactly where spend goes: by app, by agent, by model. Roll cost up to an app or a run,
-          compare against last period, and know the unit economics of every agent you ship.
+          {t(
+            "See exactly where spend goes: by app, by agent, by model. Roll cost up to an app or a run, compare against last period, and know the unit economics of every agent you ship.",
+          )}
         </p>
       </Reveal>
 
@@ -464,12 +468,16 @@ export function CostSection(): ReactElement {
         <Card className="overflow-hidden">
           <div className="border-border-soft flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3.5">
             <div>
-              <p className="text-fg-1 text-[15px] font-semibold tracking-[-0.01em]">Breakdown</p>
-              <p className="text-fg-3 text-[12px]">Pivot the same spend by app, agent, or model</p>
+              <p className="text-fg-1 text-[15px] font-semibold tracking-[-0.01em]">
+                {t("Breakdown")}
+              </p>
+              <p className="text-fg-3 text-[12px]">
+                {t("Pivot the same spend by app, agent, or model")}
+              </p>
             </div>
             <span className="border-border-soft text-fg-2 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium">
               <Download className="size-3.5" />
-              Export CSV
+              {t("Export CSV")}
             </span>
           </div>
 
@@ -490,12 +498,12 @@ export function CostSection(): ReactElement {
             <Tabs.Panel value="agent" className="overflow-x-auto">
               <div className={TABLE_SHELL}>
                 <div className="border-border-soft grid grid-cols-[1.4fr_1fr_120px_90px_90px_110px] items-center gap-3 border-b px-5 py-2.5">
-                  <HeadCell>Agent</HeadCell>
-                  <HeadCell>Owner</HeadCell>
-                  <HeadCell>Run mix</HeadCell>
-                  <HeadCell>vs. prev</HeadCell>
-                  <HeadCell>Requests</HeadCell>
-                  <HeadCell className="text-right">Cost</HeadCell>
+                  <HeadCell>{t("Agent")}</HeadCell>
+                  <HeadCell>{t("Owner")}</HeadCell>
+                  <HeadCell>{t("Run mix")}</HeadCell>
+                  <HeadCell>{t("vs. prev")}</HeadCell>
+                  <HeadCell>{t("Requests")}</HeadCell>
+                  <HeadCell className="text-right">{t("Cost")}</HeadCell>
                 </div>
                 {AGENTS.map((agent) => (
                   <div
@@ -535,11 +543,11 @@ export function CostSection(): ReactElement {
             <Tabs.Panel value="app" className="overflow-x-auto">
               <div className={TABLE_SHELL}>
                 <div className="border-border-soft grid grid-cols-[1.6fr_1fr_1.2fr_80px_110px] items-center gap-3 border-b px-5 py-2.5">
-                  <HeadCell>App</HeadCell>
-                  <HeadCell>App</HeadCell>
-                  <HeadCell>Top agent</HeadCell>
-                  <HeadCell>Agents</HeadCell>
-                  <HeadCell className="text-right">Cost</HeadCell>
+                  <HeadCell>{t("App")}</HeadCell>
+                  <HeadCell>{t("App")}</HeadCell>
+                  <HeadCell>{t("Top agent")}</HeadCell>
+                  <HeadCell>{t("Agents")}</HeadCell>
+                  <HeadCell className="text-right">{t("Cost")}</HeadCell>
                 </div>
                 {APPS.map((app) => (
                   <div
@@ -563,7 +571,7 @@ export function CostSection(): ReactElement {
                   </div>
                 ))}
                 <div className="bg-bg-sunken/40 text-fg-3 grid grid-cols-[1.6fr_1fr_1.2fr_80px_110px] items-center gap-3 px-5 py-3 text-[12.5px]">
-                  <div className="col-span-4">External · API-triggered</div>
+                  <div className="col-span-4">{t("External · API-triggered")}</div>
                   <div className="text-right">
                     <span className="text-fg-2 font-mono text-[13px] font-semibold">US$0.41K</span>
                     <span className="text-fg-3 ml-1.5 text-[11.5px]">9%</span>
@@ -576,11 +584,11 @@ export function CostSection(): ReactElement {
             <Tabs.Panel value="model" className="overflow-x-auto">
               <div className={TABLE_SHELL}>
                 <div className="border-border-soft grid grid-cols-[1.4fr_1fr_90px_90px_110px] items-center gap-3 border-b px-5 py-2.5">
-                  <HeadCell>Model</HeadCell>
-                  <HeadCell>Vendor</HeadCell>
-                  <HeadCell>Tokens</HeadCell>
-                  <HeadCell>Cache hit</HeadCell>
-                  <HeadCell className="text-right">Cost</HeadCell>
+                  <HeadCell>{t("Model")}</HeadCell>
+                  <HeadCell>{t("Vendor")}</HeadCell>
+                  <HeadCell>{t("Tokens")}</HeadCell>
+                  <HeadCell>{t("Cache hit")}</HeadCell>
+                  <HeadCell className="text-right">{t("Cost")}</HeadCell>
                 </div>
                 {MODELS.map((model) => (
                   <div
