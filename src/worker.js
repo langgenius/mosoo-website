@@ -22,7 +22,7 @@ function preferredLocale(request) {
     return locale;
   }
 
-  const country = request.headers.get("CF-IPCountry") ?? request.cf?.country;
+  const country = request.cf?.country ?? request.headers.get("CF-IPCountry");
   if (country === "CN") return "zh";
   if (country === "JP") return "ja";
   return "en";
