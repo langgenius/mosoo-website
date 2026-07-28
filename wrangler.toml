@@ -9,6 +9,7 @@ directory = "./dist"
 binding = "ASSETS"
 html_handling = "drop-trailing-slash"
 not_found_handling = "none"
+run_worker_first = ["/"]
 
 [env.prod]
 name = "mosoo-website-prod"

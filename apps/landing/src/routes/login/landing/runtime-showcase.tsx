@@ -6,6 +6,7 @@ import type { ReactElement } from "react";
 import { cn } from "@/shared/lib/class-names";
 import { RuntimeIcon } from "@/shared/ui/brand-icons";
 
+import { t } from "./i18n";
 import { Reveal } from "./motion";
 import { EASE_OUT } from "./motion-variants";
 import { sectionHeadingStyle } from "./typography";
@@ -31,10 +32,10 @@ const RUNTIMES: readonly Runtime[] = [
 // mosoo normalises every harness to the same interface — so the capability set is
 // identical no matter which runtime you pick. That sameness is the whole point.
 const CAPABILITIES = [
-  "Streaming + tool calls",
-  "Native resume",
-  "MCP tools & permissions",
-  "Session replay",
+  t("Streaming + tool calls"),
+  t("Native resume"),
+  t("MCP tools & permissions"),
+  t("Session replay"),
 ] as const;
 
 function CheckDot(): ReactElement {
@@ -58,18 +59,18 @@ function RuntimeCard({ runtime }: { runtime: Runtime }): ReactElement {
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-[6px] bg-green-50 px-2 py-1 text-[11px] font-semibold text-green-800">
           <span className="size-1.5 rounded-full bg-green-600" />
-          Available
+          {t("Available")}
         </span>
       </div>
 
       <div className="border-border-soft text-fg-2 mt-4 flex items-center gap-2 border-t pt-4 text-[13px]">
         <CheckDot />
-        <span>Resolves one Provider credential at launch</span>
+        <span>{t("Resolves one Provider credential at launch")}</span>
       </div>
 
       <div className="border-border-soft bg-bg-sunken mt-3 rounded-[12px] border p-3.5">
         <p className="text-fg-3 text-[11px] font-semibold tracking-[0.08em] uppercase">
-          Normalized interface
+          {t("Normalized interface")}
         </p>
         <ul className="mt-2.5 flex flex-col gap-2">
           {CAPABILITIES.map((capability) => (
@@ -99,16 +100,16 @@ export function RuntimeShowcase(): ReactElement | null {
         {/* Left — copy + selectable runtime row */}
         <Reveal>
           <h2 className="text-fg-1" style={sectionHeadingStyle}>
-            One Agent. Any runtime.
+            {t("One Agent. Any runtime.")}
           </h2>
           <p className="text-fg-2 mt-4 max-w-[480px] text-[15px] leading-[1.6]">
-            A mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK
-            or any driver: the runtime is a swappable harness, not a rewrite. Same interface, same
-            session model, every time.
+            {t(
+              "A mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK or any driver: the runtime is a swappable harness, not a rewrite. Same interface, same session model, every time.",
+            )}
           </p>
 
           <p className="text-fg-3 mt-8 text-[11px] font-semibold tracking-[0.14em] uppercase">
-            Agent runtimes
+            {t("Agent runtimes")}
           </p>
           <div className="mt-3 flex flex-wrap gap-2.5">
             {RUNTIMES.map((runtime, index) => {
@@ -120,7 +121,7 @@ export function RuntimeShowcase(): ReactElement | null {
                   onMouseEnter={() => setActive(index)}
                   onFocus={() => setActive(index)}
                   onClick={() => setActive(index)}
-                  aria-label={`Preview ${runtime.label}`}
+                  aria-label={t("Preview {runtime}").replace("{runtime}", runtime.label)}
                   aria-pressed={isActive}
                   className={cn(
                     "focus-visible:ring-ring flex size-12 items-center justify-center rounded-[12px] border bg-white outline-none transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:ring-2",

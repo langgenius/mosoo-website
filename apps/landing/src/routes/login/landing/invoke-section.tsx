@@ -4,6 +4,7 @@ import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { ChannelBrandIcon } from "@/shared/ui/channel-brand-icon";
 import type { BrandIconKey } from "@/shared/ui/channel-brand-icon";
 
+import { t } from "./i18n";
 import { Reveal } from "./motion";
 import { DISPLAY_FONT } from "./typography";
 
@@ -20,9 +21,9 @@ const GRADIENT_STYLE = {
 } satisfies CSSProperties;
 
 const SKILLS = [
-  { cmd: "/support-agent", desc: "Grounded support" },
-  { cmd: "/contract-reviewer", desc: "Legal redlines" },
-  { cmd: "/it-helpdesk", desc: "Internal IT" },
+  { cmd: "/support-agent", desc: t("Grounded support") },
+  { cmd: "/contract-reviewer", desc: t("Legal redlines") },
+  { cmd: "/it-helpdesk", desc: t("Internal IT") },
 ] as const;
 
 const CHANNELS: readonly { id: BrandIconKey; name: string }[] = [
@@ -50,7 +51,7 @@ function SkillMock(): ReactElement {
         <span className="bg-bg-sunken text-fg-2 rounded-[4px] px-1.5 py-0.5 font-mono text-[10px]">
           ⌘K
         </span>
-        Run exported Skill.md
+        {t("Run exported Skill.md")}
       </div>
       <ul className="p-1.5">
         {SKILLS.map((skill, index) => (
@@ -80,7 +81,8 @@ function ApiMock(): ReactElement {
         <p className="text-fg-3">Authorization: Bearer sk_live_…</p>
         <p className="text-fg-2 mt-1.5">
           {"{ "}
-          <span className="text-[#3B82A6]">&quot;input&quot;</span>: &quot;Reset my 2FA&quot;{" }"}
+          <span className="text-[#3B82A6]">&quot;input&quot;</span>: &quot;
+          {t("Reset my 2FA")}&quot;{" }"}
         </p>
       </div>
     </MockCard>
@@ -97,7 +99,7 @@ function ChannelsMock(): ReactElement {
             <span className="text-fg-1 truncate text-[13px] font-medium">{channel.name}</span>
             <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-[5px] bg-[#F4FCE4] px-2 py-0.5 text-[10.5px] font-semibold text-[#3A6E0E]">
               <span className="size-1.5 rounded-full bg-[#5CB300]" />
-              Connected
+              {t("Connected")}
             </span>
           </li>
         ))}
@@ -109,18 +111,24 @@ function ChannelsMock(): ReactElement {
 const CARDS = [
   {
     visual: <SkillMock />,
-    title: "Reuse as Skill.md",
-    desc: "Export the App to one Skill.md, then reuse it as a /skill inside Claude Code or any compatible CLI: no context-switching, no glue code.",
+    title: t("Reuse as Skill.md"),
+    desc: t(
+      "Export the App to one Skill.md, then reuse it as a /skill inside Claude Code or any compatible CLI: no context-switching, no glue code.",
+    ),
   },
   {
     visual: <ApiMock />,
-    title: "Call it over the API",
-    desc: "Every App-local Agent gets a typed HTTP endpoint. Wire it into your backend, a cron job, or another agent.",
+    title: t("Call it over the API"),
+    desc: t(
+      "Every App-local Agent gets a typed HTTP endpoint. Wire it into your backend, a cron job, or another agent.",
+    ),
   },
   {
     visual: <ChannelsMock />,
-    title: "Live in your channels",
-    desc: "Connect Slack, Lark, Discord, Telegram, or WeChat. Your users talk to the agent without leaving chat.",
+    title: t("Live in your channels"),
+    desc: t(
+      "Connect Slack, Lark, Discord, Telegram, or WeChat. Your users talk to the agent without leaving chat.",
+    ),
   },
 ] as const;
 
@@ -141,13 +149,14 @@ export function InvokeSection(): ReactElement {
       <div className="relative z-10 mx-auto w-full max-w-[1080px]">
         <Reveal className="mx-auto max-w-[680px] text-center">
           <h2 className="text-fg-1" style={HEADING_STYLE}>
-            Build one App.
+            {t("Build one App.")}
             <br />
-            Invoke its agents anywhere.
+            {t("Invoke its agents anywhere.")}
           </h2>
           <p className="text-fg-2 mt-5 text-[15px] leading-[1.6]">
-            Export the App for Skill.md reuse, expose an App-local Agent through a typed API, or
-            bind that Agent to the chat tools your users already live in: one App, every surface.
+            {t(
+              "Export the App for Skill.md reuse, expose an App-local Agent through a typed API, or bind that Agent to the chat tools your users already live in: one App, every surface.",
+            )}
           </p>
         </Reveal>
 

@@ -1,4 +1,5 @@
 const CONSOLE_ORIGIN = "https://try.mosoo.ai";
+const LOCALE_COOKIE = "mosoo_locale";
 
 function redirect(url, status = 307) {
   return Response.redirect(url.toString(), status);
@@ -6,6 +7,37 @@ function redirect(url, status = 307) {
 
 function permanentRedirect(url) {
   return redirect(url, 308);
+}
+
+function preferredLocale(request) {
+  const prefix = `${LOCALE_COOKIE}=`;
+  const locale = request.headers
+    .get("cookie")
+    ?.split(";")
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(prefix))
+    ?.slice(prefix.length);
+
+  if (locale === "en" || locale === "zh" || locale === "ja") {
+    return locale;
+  }
+
+  const country = request.headers.get("CF-IPCountry") ?? request.cf?.country;
+  if (country === "CN") return "zh";
+  if (country === "JP") return "ja";
+  return "en";
+}
+
+function localeRedirect(request, url) {
+  url.pathname = `/${preferredLocale(request)}`;
+  return new Response(null, {
+    status: 307,
+    headers: {
+      "cache-control": "private, no-store",
+      location: url.toString(),
+      vary: "Cookie",
+    },
+  });
 }
 
 function withPath(request, pathname) {
@@ -58,7 +90,7 @@ function isLegacyDocsRootPath(pathname) {
 }
 
 async function blogNotFound(request, env) {
-  const notFound = await env.ASSETS.fetch(withPath(request, "/blog/404.html"));
+  const notFound = await env.ASSETS.fetch(withPath(request, "/blog/404"));
   if (notFound.status === 404) {
     return new Response("Not found", {
       status: 404,
@@ -78,6 +110,10 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const pathname = url.pathname;
+
+    if (pathname === "/") {
+      return localeRedirect(request, url);
+    }
 
     if (isConsolePath(pathname)) {
       url.hostname = new URL(CONSOLE_ORIGIN).hostname;
@@ -117,6 +153,7 @@ export default {
       return asset;
     }
 
-    return env.ASSETS.fetch(withPath(request, "/index.html"));
+    url.pathname = "/";
+    return redirect(url);
   },
 };

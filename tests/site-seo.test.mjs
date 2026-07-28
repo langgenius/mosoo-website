@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
+import { renderLandingLocale } from "../scripts/landing-locales.mjs";
+
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
@@ -16,12 +18,16 @@ test("the root sitemap aggregates every public content surface", () => {
   ]);
 });
 
-test("the main-page sitemap contains the canonical landing URL", () => {
+test("the main-page sitemap contains every canonical landing locale", () => {
   assert.equal(existsSync(new URL("../apps/landing/public/sitemap-pages.xml", import.meta.url)), true);
   const sitemap = read("apps/landing/public/sitemap-pages.xml");
 
   assert.match(sitemap, /<urlset\b/);
-  assert.deepEqual(locations(sitemap), ["https://mosoo.ai/"]);
+  assert.deepEqual(locations(sitemap), [
+    "https://mosoo.ai/en",
+    "https://mosoo.ai/zh",
+    "https://mosoo.ai/ja",
+  ]);
 });
 
 test("robots advertises the aggregate sitemap", () => {
@@ -40,6 +46,7 @@ test("blog routing and metadata use slashless canonical URLs", () => {
   assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
   assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
   assert.match(workerConfig, /html_handling = "drop-trailing-slash"/);
+  assert.match(workerConfig, /run_worker_first = \["\/"\]/);
 });
 
 test("blog posts reference the landing page organization identity", () => {
@@ -64,13 +71,35 @@ test("landing and blog metadata never point at a missing default image", () => {
   const landing = read("apps/landing/index.html");
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
 
-  assert.match(landing, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/"/);
-  assert.match(landing, /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/"/);
+  assert.match(landing, /rel="canonical" href="https:\/\/mosoo\.ai\/en"/);
+  assert.match(landing, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en"/);
+  assert.match(landing, /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh"/);
+  assert.match(landing, /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja"/);
+  assert.match(
+    landing,
+    /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/en"/,
+  );
   assert.match(landing, /"@id": "https:\/\/mosoo\.ai\/#organization"/);
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
   assert.match(blogLayout, /\/landing\/invoke-gradient\.jpg/);
   assert.equal(
     existsSync(new URL("../apps/landing/public/landing/invoke-gradient.jpg", import.meta.url)),
     true,
+  );
+});
+
+test("landing locale pages receive localized canonical metadata", () => {
+  const source = read("apps/landing/index.html");
+  const zh = renderLandingLocale(source, "zh");
+  const ja = renderLandingLocale(source, "ja");
+
+  assert.match(zh, /<html lang="zh-CN">/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh"/);
+  assert.match(zh, /<title>mosoo — 面向 Coding Agent 的开源 Agent runtime<\/title>/);
+  assert.match(ja, /<html lang="ja">/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
+  assert.match(
+    ja,
+    /<title>mosoo — Coding Agent 向けオープンソース Agent runtime<\/title>/,
   );
 });

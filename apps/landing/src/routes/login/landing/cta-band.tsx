@@ -6,6 +6,7 @@ import type { CSSProperties, ReactElement } from "react";
 import { GithubMark } from "../github-mark";
 import { MOSOO_GITHUB_URL } from "../links";
 import { Reveal } from "./motion";
+import { t } from "./i18n";
 import { sectionHeadingStyle } from "./typography";
 import { Eyebrow } from "./ui";
 import { UnicornBackground } from "./unicorn";
@@ -37,12 +38,12 @@ export function CtaBand({ onContinue }: { onContinue: () => void }): ReactElemen
         style={SCRIM_STYLE}
       />
       <Reveal className="relative z-10 mx-auto flex max-w-[680px] flex-col items-center text-center">
-        <Eyebrow tone="dark">Get started</Eyebrow>
+        <Eyebrow tone="dark">{t("Get started")}</Eyebrow>
         <h2 className="mt-4 text-white drop-shadow-sm" style={sectionHeadingStyle}>
-          Take root in your stack.
+          {t("Take root in your stack.")}
         </h2>
         <p className="mt-4 max-w-[460px] text-[15px] leading-[1.6] text-white/80">
-          Log in to build on your agents, or star the repo and self-host in minutes.
+          {t("Log in to build on your agents, or star the repo and self-host in minutes.")}
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <button
@@ -50,17 +51,17 @@ export function CtaBand({ onContinue }: { onContinue: () => void }): ReactElemen
             onClick={onContinue}
             className="focus-visible:ring-paper-100/60 inline-flex h-12 items-center rounded-md bg-[#6FD305] px-7 text-[15px] font-semibold text-[#0F1A02] shadow-sm transition-colors outline-none hover:bg-[#5CB300] focus-visible:ring-2"
           >
-            Log in
+            {t("Log in")}
           </button>
           <a
             href={MOSOO_GITHUB_URL}
             target="_blank"
             rel="noreferrer noopener"
-            aria-label="Star mosoo on GitHub"
+            aria-label={t("Star mosoo on GitHub")}
             className="text-paper-100 ring-paper-100/25 hover:bg-paper-100/[0.1] focus-visible:ring-paper-100/60 bg-ink-900/30 inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 backdrop-blur-sm transition-colors outline-none focus-visible:ring-2"
           >
             <GithubMark className="size-[18px]" />
-            <span>Star on GitHub</span>
+            <span>{t("Star on GitHub")}</span>
             <Star className="size-4" />
           </a>
         </div>
