@@ -3,7 +3,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { LandingShell } from "./routes/login/landing/landing-shell";
-import { LoginLanding } from "./routes/login/landing/landing";
+import { PricingPage } from "./routes/pricing/pricing-page";
 import { htmlLanguage, locale } from "./shared/locale";
 
 import "./shared/styles/app.css";
@@ -23,8 +23,8 @@ const openAuth = (): void => {
 createRoot(container).render(
   <StrictMode>
     <LazyMotion features={domAnimation}>
-      <LandingShell onContinue={openAuth}>
-        <LoginLanding onContinue={openAuth} />
+      <LandingShell onContinue={openAuth} activeNav="pricing">
+        <PricingPage onGetStarted={openAuth} />
       </LandingShell>
     </LazyMotion>
   </StrictMode>,

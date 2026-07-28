@@ -6,9 +6,18 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const sourceRoot = fileURLToPath(new URL("src", import.meta.url));
+const appRoot = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      input: {
+        index: resolve(appRoot, "index.html"),
+        pricing: resolve(appRoot, "pricing.html"),
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": resolve(sourceRoot),

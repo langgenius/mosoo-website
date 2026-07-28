@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
-import { renderLandingLocale } from "../scripts/landing-locales.mjs";
+import { renderLandingLocale, renderPricingLocale } from "../scripts/landing-locales.mjs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
@@ -27,6 +27,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en",
     "https://mosoo.ai/zh",
     "https://mosoo.ai/ja",
+    "https://mosoo.ai/en/pricing",
+    "https://mosoo.ai/zh/pricing",
+    "https://mosoo.ai/ja/pricing",
   ]);
 });
 
@@ -46,7 +49,7 @@ test("blog routing and metadata use slashless canonical URLs", () => {
   assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
   assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
   assert.match(workerConfig, /html_handling = "drop-trailing-slash"/);
-  assert.match(workerConfig, /run_worker_first = \["\/"\]/);
+  assert.match(workerConfig, /run_worker_first = \["\/", "\/pricing"\]/);
 });
 
 test("blog posts reference the landing page organization identity", () => {
@@ -102,4 +105,32 @@ test("landing locale pages receive localized canonical metadata", () => {
     ja,
     /<title>mosoo — Coding Agent 向けオープンソース Agent runtime<\/title>/,
   );
+});
+
+test("pricing metadata lists every localized alternate", () => {
+  const pricing = read("apps/landing/pricing.html");
+
+  assert.match(pricing, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/pricing"/);
+  assert.match(pricing, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/);
+  assert.match(pricing, /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh\/pricing"/);
+  assert.match(pricing, /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
+  assert.match(
+    pricing,
+    /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/en\/pricing"/,
+  );
+  assert.match(pricing, /"@id": "https:\/\/mosoo\.ai\/#organization"/);
+});
+
+test("pricing locale pages receive localized canonical metadata", () => {
+  const source = read("apps/landing/pricing.html");
+  const zh = renderPricingLocale(source, "zh");
+  const ja = renderPricingLocale(source, "ja");
+
+  assert.match(zh, /<html lang="zh-CN">/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/pricing"/);
+  assert.match(zh, /<title>mosoo — 定价<\/title>/);
+  assert.match(zh, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/);
+  assert.match(ja, /<html lang="ja">/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
+  assert.match(ja, /<title>mosoo — 料金<\/title>/);
 });

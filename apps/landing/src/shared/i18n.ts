@@ -2,6 +2,7 @@ import { locale } from "./locale";
 
 const ZH_MESSAGES = {
   Language: "语言",
+  Pricing: "定价",
   Blog: "博客",
   "API docs": "API 文档",
   "mosoo on X": "mosoo 的 X 主页",
@@ -21,6 +22,7 @@ type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
   Language: "言語",
+  Pricing: "料金",
   Blog: "ブログ",
   "API docs": "API ドキュメント",
   "mosoo on X": "mosoo の X",
