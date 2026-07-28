@@ -14,10 +14,10 @@ const posts = [
 
 test("blog indexes expose every language plus an English default", () => {
   assert.deepEqual(getIndexHreflangAlternates("/blog"), {
-    en: "/blog/",
-    "zh-CN": "/blog/zh/",
-    ja: "/blog/ja/",
-    "x-default": "/blog/",
+    en: "/blog",
+    "zh-CN": "/blog/zh",
+    ja: "/blog/ja",
+    "x-default": "/blog",
   });
 });
 

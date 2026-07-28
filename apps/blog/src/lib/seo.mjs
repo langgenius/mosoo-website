@@ -47,12 +47,12 @@ function postHref(post, base) {
  */
 export function getIndexHreflangAlternates(base) {
   const cleanBase = trimTrailingSlash(base) || "/";
-  const indexBase = cleanBase === "/" ? cleanBase : `${cleanBase}/`;
+  const localeBase = cleanBase === "/" ? "" : cleanBase;
   return {
-    en: indexBase,
-    "zh-CN": `${indexBase}zh/`,
-    ja: `${indexBase}ja/`,
-    "x-default": indexBase,
+    en: cleanBase,
+    "zh-CN": `${localeBase}/zh`,
+    ja: `${localeBase}/ja`,
+    "x-default": cleanBase,
   };
 }
 
