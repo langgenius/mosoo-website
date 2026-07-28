@@ -18,11 +18,16 @@ import { XMark } from "./x-mark";
 const ICON_LINK_CLASS =
   "text-fg-2 hover:bg-paper-200/70 hover:text-fg-1 focus-visible:ring-ring flex size-9 items-center justify-center rounded-md transition-colors outline-none focus-visible:ring-2";
 
+const TEXT_LINK_CLASS =
+  "hover:text-fg-1 focus-visible:ring-ring hidden rounded-md px-3 text-[13.5px] font-semibold transition-colors outline-none focus-visible:ring-2 sm:inline-flex";
+
+export type TopbarNav = "pricing";
+
 function Brand(): ReactElement {
   return (
-    <span aria-label="mosoo" className="inline-flex items-center">
+    <a href={`/${locale}`} aria-label="mosoo" className="inline-flex items-center">
       <img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" className="block h-[22px]" />
-    </span>
+    </a>
   );
 }
 
@@ -85,7 +90,13 @@ function LanguageMenu(): ReactElement {
   );
 }
 
-export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): ReactElement {
+export function LoginLandingTopbar({
+  onContinue,
+  activeNav,
+}: {
+  onContinue: () => void;
+  activeNav?: TopbarNav | undefined;
+}): ReactElement {
   const blogHref = locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`;
 
   return (
@@ -94,16 +105,20 @@ export function LoginLandingTopbar({ onContinue }: { onContinue: () => void }): 
         <Brand />
         <div className="flex items-center gap-1">
           <a
-            href={blogHref}
-            className="text-fg-2 hover:text-fg-1 focus-visible:ring-ring hidden rounded-md px-3 text-[13.5px] font-semibold transition-colors outline-none focus-visible:ring-2 sm:inline-flex"
+            href={`/${locale}/pricing`}
+            aria-current={activeNav === "pricing" ? "page" : undefined}
+            className={`${TEXT_LINK_CLASS} ${activeNav === "pricing" ? "text-fg-1" : "text-fg-2"}`}
           >
+            {t("Pricing")}
+          </a>
+          <a href={blogHref} className={`${TEXT_LINK_CLASS} text-fg-2`}>
             {t("Blog")}
           </a>
           <a
             href={MOSOO_API_REFERENCE_URL}
             target="_blank"
             rel="noreferrer noopener"
-            className="text-fg-2 hover:text-fg-1 focus-visible:ring-ring hidden rounded-md px-3 text-[13.5px] font-semibold transition-colors outline-none focus-visible:ring-2 sm:inline-flex"
+            className={`${TEXT_LINK_CLASS} text-fg-2`}
           >
             {t("API docs")}
           </a>

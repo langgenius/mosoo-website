@@ -28,8 +28,8 @@ function preferredLocale(request) {
   return "en";
 }
 
-function localeRedirect(request, url) {
-  url.pathname = `/${preferredLocale(request)}`;
+function localeRedirect(request, url, subpath = "") {
+  url.pathname = `/${preferredLocale(request)}${subpath}`;
   return new Response(null, {
     status: 307,
     headers: {
@@ -113,6 +113,12 @@ export default {
 
     if (pathname === "/") {
       return localeRedirect(request, url);
+    }
+
+    // Bare /pricing is a geo-aware entry point, mirroring "/"; the canonical
+    // localized pages live at /en/pricing, /zh/pricing, and /ja/pricing.
+    if (pathname === "/pricing") {
+      return localeRedirect(request, url, "/pricing");
     }
 
     if (isConsolePath(pathname)) {

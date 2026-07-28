@@ -20,6 +20,7 @@ import { DISPLAY_FONT } from "./typography";
 type FooterLink = { label: string; href: string; internal?: boolean };
 
 const RESOURCE_LINKS: readonly FooterLink[] = [
+  { label: t("Pricing"), href: `/${locale}/pricing`, internal: true },
   {
     label: t("Blog"),
     href: locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`,

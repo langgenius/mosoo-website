@@ -46,6 +46,38 @@ test("worker selects the landing locale by cookie, then country", async () => {
   }
 });
 
+test("worker redirects bare /pricing to the locale pricing page", async () => {
+  const cases = [
+    { pathname: "/pricing", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
+    { pathname: "/pricing", country: "JP", locale: "ja" },
+    { pathname: "/pricing", countryHeader: "CN", locale: "zh" },
+    { pathname: "/pricing?ref=launch", locale: "en" },
+  ];
+
+  for (const entry of cases) {
+    const response = await worker.fetch(requestFor(entry.pathname, entry), envFor({}));
+    const suffix = entry.pathname.includes("?") ? "?ref=launch" : "";
+
+    assert.equal(response.status, 307);
+    assert.equal(
+      response.headers.get("location"),
+      `https://mosoo.ai/${entry.locale}/pricing${suffix}`,
+    );
+    assert.equal(response.headers.get("cache-control"), "private, no-store");
+    assert.equal(response.headers.get("vary"), "Cookie");
+  }
+});
+
+test("worker serves localized pricing pages from assets", async () => {
+  const response = await worker.fetch(
+    new Request("https://mosoo.ai/en/pricing"),
+    envFor({ "/en/pricing": "pricing page" }),
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(await response.text(), "pricing page");
+});
+
 test("worker serves existing static assets before SPA fallback", async () => {
   for (const pathname of ["/coding-agents.md", "/mosoo-openapi.en.generated.json"]) {
     const response = await worker.fetch(

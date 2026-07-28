@@ -7,12 +7,12 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import { useIdleReady } from "@/shared/lib/use-idle-ready";
 
 import { LoginLandingTopbar } from "../topbar";
-import { LoginLanding } from "./landing";
+import type { TopbarNav } from "../topbar";
 
 const LandingFooter = lazy(async () => {
   const mod = await import("./footer");
@@ -34,7 +34,15 @@ function subscribeViewportHeight(listener: () => void): () => void {
 // exa-style footer reveal: the foreground content sits on a higher layer and
 // "peels up" as you reach the bottom, uncovering the footer pinned behind it.
 // Falls back to a normal in-flow footer when it's taller than the viewport.
-export function LandingShell({ onContinue }: { onContinue: () => void }): ReactElement {
+export function LandingShell({
+  onContinue,
+  activeNav,
+  children,
+}: {
+  onContinue: () => void;
+  activeNav?: TopbarNav;
+  children: ReactNode;
+}): ReactElement {
   const contentRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [footerHeight, setFooterHeight] = useState(0);
@@ -89,8 +97,8 @@ export function LandingShell({ onContinue }: { onContinue: () => void }): ReactE
         className="bg-paper-100 relative z-10 shadow-[0_24px_48px_-16px_rgba(11,26,20,0.45)]"
         style={reveal ? { marginBottom: footerHeight } : undefined}
       >
-        <LoginLandingTopbar onContinue={onContinue} />
-        <LoginLanding onContinue={onContinue} />
+        <LoginLandingTopbar onContinue={onContinue} activeNav={activeNav} />
+        {children}
       </div>
       <div ref={setFooterNode} className={reveal ? "fixed inset-x-0 bottom-0 z-0" : "relative z-0"}>
         {loadFooter ? (

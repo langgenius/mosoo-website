@@ -39,9 +39,16 @@ if (!existsSync(join(DIST, "index.html"))) {
   throw new Error("Landing build did not produce dist/index.html.");
 }
 
+if (!existsSync(join(DIST, "pricing.html"))) {
+  throw new Error("Landing build did not produce dist/pricing.html.");
+}
+
 for (const locale of ["en", "zh", "ja"]) {
   if (!existsSync(join(DIST, `${locale}.html`))) {
     throw new Error(`Landing build did not produce dist/${locale}.html.`);
+  }
+  if (!existsSync(join(DIST, locale, "pricing.html"))) {
+    throw new Error(`Landing build did not produce dist/${locale}/pricing.html.`);
   }
 }
 

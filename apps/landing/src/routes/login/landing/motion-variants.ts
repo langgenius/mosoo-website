@@ -2,9 +2,12 @@ import type { Variants } from "motion/react";
 
 export const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+// No embedded transition here: a variant-level transition would replace the
+// transition prop Reveal passes (motion resolves variant transitions first),
+// silently dropping per-instance delays.
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 14 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.24, ease: EASE_OUT } },
+  visible: { opacity: 1, y: 0 },
 };
 
 export const staggerParent: Variants = {
