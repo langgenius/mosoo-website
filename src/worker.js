@@ -85,17 +85,12 @@ export default {
     }
 
     if (pathname === "/blogs" || pathname === "/blogs/") {
-      url.pathname = "/blog/";
+      url.pathname = "/blog";
       return permanentRedirect(url);
     }
 
     if (pathname.startsWith("/blogs/")) {
-      url.pathname = `/blog/${pathname.slice("/blogs/".length)}`;
-      return permanentRedirect(url);
-    }
-
-    if (pathname === "/blog") {
-      url.pathname = "/blog/";
+      url.pathname = `/blog/${pathname.slice("/blogs/".length).replace(/\/$/, "")}`;
       return permanentRedirect(url);
     }
 

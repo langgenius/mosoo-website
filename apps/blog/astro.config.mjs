@@ -17,9 +17,8 @@ export default defineConfig({
   trailingSlash: "never",
   build: {
     // `directory` writes each route as <path>/index.html so URLs stay clean
-    // and extensionless. Cloudflare Workers Assets resolves /blog/why-mosoo
-    // to /blog/why-mosoo/index.html via the default `auto-trailing-slash`
-    // html_handling, which keeps the canonical URL the user actually visits.
+    // and extensionless. Cloudflare Workers Assets uses `drop-trailing-slash`
+    // so /blog/why-mosoo serves this file at the same URL Astro marks canonical.
     format: "directory",
   },
   integrations: [mdx(), sitemap()],
