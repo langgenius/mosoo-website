@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 
+import { scheduleDeferredWork } from "./defer";
+
 // The landing page is the first thing every unauthenticated visitor loads, and
 // this background is purely decorative (aria-hidden, non-interactive, behind the
 // content). The actual rendering is done by the Unicorn Studio runtime fetched
@@ -89,24 +91,31 @@ export function UnicornBackground({ sceneId }: { sceneId: string }): ReactElemen
     let cancelled = false;
     let scene: UnicornScene | null = null;
 
-    loadUnicornSdk()
-      .then(async (sdk) => sdk.addScene({ element, projectId: sceneId }))
-      .then((created) => {
-        if (cancelled) {
-          // Unmounted before the scene resolved — tear it down immediately.
-          created.destroy();
-          return;
-        }
-        scene = created;
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setFailed(true);
-        }
-      });
+    const cancelDeferredLoad = scheduleDeferredWork(() => {
+      if (cancelled) {
+        return;
+      }
+
+      loadUnicornSdk()
+        .then(async (sdk) => sdk.addScene({ element, projectId: sceneId }))
+        .then((created) => {
+          if (cancelled) {
+            // Unmounted before the scene resolved — tear it down immediately.
+            created.destroy();
+            return;
+          }
+          scene = created;
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setFailed(true);
+          }
+        });
+    });
 
     return () => {
       cancelled = true;
+      cancelDeferredLoad();
       scene?.destroy();
     };
   }, [sceneId]);

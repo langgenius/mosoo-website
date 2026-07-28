@@ -1,6 +1,7 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactElement } from "react";
 
+import { scheduleDeferredWork } from "./defer";
 import { Hero } from "./hero";
 
 // The marketing sections below the hero are not part of the first viewport, so
@@ -12,6 +13,28 @@ const LandingBelowFold = lazy(async () => {
   return { default: mod.LandingBelowFold };
 });
 
+function DeferredLandingBelowFold({ onContinue }: { onContinue: () => void }): ReactElement | null {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(
+    () =>
+      scheduleDeferredWork(() => {
+        setShouldLoad(true);
+      }, { timeoutMs: 900, fallbackDelayMs: 300, includeInteractionEvents: true }),
+    [],
+  );
+
+  if (!shouldLoad) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={null}>
+      <LandingBelowFold onContinue={onContinue} />
+    </Suspense>
+  );
+}
+
 export function LoginLanding({ onContinue }: { onContinue: () => void }): ReactElement {
   return (
     <div className="px-4 md:px-6">
@@ -19,9 +42,7 @@ export function LoginLanding({ onContinue }: { onContinue: () => void }): ReactE
           height (the "wireframe"); sections are split by horizontal dividers. */}
       <div className="border-border-strong divide-border-strong mx-auto w-full max-w-[1280px] divide-y border-x">
         <Hero onContinue={onContinue} />
-        <Suspense fallback={null}>
-          <LandingBelowFold onContinue={onContinue} />
-        </Suspense>
+        <DeferredLandingBelowFold onContinue={onContinue} />
       </div>
     </div>
   );
