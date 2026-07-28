@@ -1,3 +1,4 @@
+import { domAnimation, LazyMotion } from "motion/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -20,6 +21,8 @@ const openAuth = (): void => {
 
 createRoot(container).render(
   <StrictMode>
-    <LandingShell onContinue={openAuth} />
+    <LazyMotion features={domAnimation}>
+      <LandingShell onContinue={openAuth} />
+    </LazyMotion>
   </StrictMode>,
 );
