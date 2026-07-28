@@ -49,7 +49,7 @@ export function CtaBand({ onContinue }: { onContinue: () => void }): ReactElemen
           <button
             type="button"
             onClick={onContinue}
-            className="focus-visible:ring-paper-100/60 inline-flex h-12 items-center rounded-md bg-[#6FD305] px-7 text-[15px] font-semibold text-[#0F1A02] shadow-sm transition-colors outline-none hover:bg-[#5CB300] focus-visible:ring-2"
+            className="focus-visible:ring-paper-100/60 inline-flex h-12 items-center rounded-md bg-[#6FD305] px-7 text-[15px] font-semibold text-[#0F1A02] shadow-sm transition-[background-color,transform] duration-150 outline-none hover:bg-[#5CB300] active:scale-[0.98] focus-visible:ring-2"
           >
             {t("Log in")}
           </button>
@@ -58,7 +58,7 @@ export function CtaBand({ onContinue }: { onContinue: () => void }): ReactElemen
             target="_blank"
             rel="noreferrer noopener"
             aria-label={t("Star mosoo on GitHub")}
-            className="text-paper-100 ring-paper-100/25 hover:bg-paper-100/[0.1] focus-visible:ring-paper-100/60 bg-ink-900/30 inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 backdrop-blur-sm transition-colors outline-none focus-visible:ring-2"
+            className="text-paper-100 ring-paper-100/25 hover:bg-paper-100/[0.1] focus-visible:ring-paper-100/60 bg-ink-900/30 inline-flex h-12 items-center gap-2 rounded-md px-5 text-[14px] font-semibold ring-1 backdrop-blur-sm transition-[background-color,transform] duration-150 outline-none active:scale-[0.98] focus-visible:ring-2"
           >
             <GithubMark className="size-[18px]" />
             <span>{t("Star on GitHub")}</span>

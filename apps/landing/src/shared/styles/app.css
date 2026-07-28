@@ -422,6 +422,13 @@
   * {
     box-sizing: border-box;
   }
+  /* Japanese line breaking: strict kinsoku (no line-initial ー or small
+     kana) plus phrase-based wrapping where supported (Chromium BudouX), so
+     words like メーター never split mid-katakana. */
+  :lang(ja) {
+    line-break: strict;
+    word-break: auto-phrase;
+  }
   html,
   body {
     font-family: var(--font-sans);
