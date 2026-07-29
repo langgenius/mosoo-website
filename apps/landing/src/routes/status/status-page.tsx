@@ -345,15 +345,17 @@ export function StatusPage(): ReactElement {
               {t("Incident record")}
             </p>
             <p className="text-fg-2 mt-4 text-[14px] leading-[1.65]">
-              {t("No formal postmortems have been published since this status surface launched.")}
+              {t(
+                "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.",
+              )}
             </p>
             <a
-              href="https://github.com/langgenius/mosoo/tree/main/docs/operations/incidents"
+              href="https://github.com/langgenius/mosoo/blob/main/docs/operations/incidents/2026-07-29-openai-runtime-unavailable.md"
               target="_blank"
               rel="noreferrer noopener"
               className="text-green-800 focus-visible:ring-ring mt-5 inline-flex rounded-sm text-[13px] font-semibold underline decoration-green-800/30 underline-offset-4 outline-none hover:decoration-green-800 focus-visible:ring-2"
             >
-              {t("View the public postmortem archive")} ↗
+              {t("Read the OpenAI Runtime incident postmortem")} ↗
             </a>
           </article>
           <article>
