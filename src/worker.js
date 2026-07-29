@@ -9,6 +9,10 @@ function permanentRedirect(url) {
   return redirect(url, 308);
 }
 
+function shouldDropTrailingSlash(pathname) {
+  return pathname.length > 1 && pathname.endsWith("/") && !pathname.startsWith("/docs/");
+}
+
 function preferredLocale(request) {
   const prefix = `${LOCALE_COOKIE}=`;
   const locale = request.headers
@@ -110,6 +114,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const pathname = url.pathname;
+    const forceHttps = url.protocol === "http:";
+    const dropTrailingSlash = shouldDropTrailingSlash(pathname);
+
+    if (forceHttps) url.protocol = "https:";
+    if (dropTrailingSlash) url.pathname = pathname.slice(0, -1);
 
     if (pathname === "/") {
       return localeRedirect(request, url);
@@ -143,6 +152,10 @@ export default {
 
     if (isLegacyDocsRootPath(pathname)) {
       url.pathname = `/docs${pathname}`;
+      return permanentRedirect(url);
+    }
+
+    if (forceHttps || dropTrailingSlash) {
       return permanentRedirect(url);
     }
 

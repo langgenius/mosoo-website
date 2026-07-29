@@ -59,7 +59,7 @@ test("blog routing and metadata use slashless canonical URLs", () => {
   assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
   assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
   assert.match(workerConfig, /html_handling = "drop-trailing-slash"/);
-  assert.match(workerConfig, /run_worker_first = \["\/", "\/pricing"\]/);
+  assert.match(workerConfig, /run_worker_first = true/);
 });
 
 test("blog posts reference the landing page organization identity", () => {
