@@ -7,6 +7,16 @@ import { renderLandingLocale, renderPricingLocale } from "../scripts/landing-loc
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
+const assertInitialSiteLinks = (html, locale = "en") => {
+  assert.match(html, /aria-label="Primary site links"/);
+  assert.match(html, new RegExp(`href="/${locale}/pricing"`));
+  assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/"/);
+  assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
+  assert.match(html, /href="https:\/\/mosoo\.ai\/blog"/);
+  assert.match(html, /href="https:\/\/github\.com\/langgenius\/mosoo\/"/);
+  assert.match(html, /href="https:\/\/try\.mosoo\.ai\/login"/);
+};
+
 test("the root sitemap aggregates every public content surface", () => {
   const sitemap = read("apps/landing/public/sitemap.xml");
 
@@ -91,6 +101,11 @@ test("landing and blog metadata never point at a missing default image", () => {
   );
 });
 
+test("landing initial HTML exposes crawlable primary site links", () => {
+  assertInitialSiteLinks(read("apps/landing/index.html"));
+  assertInitialSiteLinks(read("apps/landing/pricing.html"));
+});
+
 test("landing locale pages receive localized canonical metadata", () => {
   const source = read("apps/landing/index.html");
   const zh = renderLandingLocale(source, "zh");
@@ -105,6 +120,12 @@ test("landing locale pages receive localized canonical metadata", () => {
     ja,
     /<title>mosoo — Coding Agent 向けオープンソース Agent runtime<\/title>/,
   );
+  assertInitialSiteLinks(zh, "zh");
+  assert.match(zh, />文档<\/a>/);
+  assert.match(zh, />快速开始<\/a>/);
+  assertInitialSiteLinks(ja, "ja");
+  assert.match(ja, />ドキュメント<\/a>/);
+  assert.match(ja, />クイックスタート<\/a>/);
 });
 
 test("pricing metadata lists every localized alternate", () => {
@@ -133,4 +154,6 @@ test("pricing locale pages receive localized canonical metadata", () => {
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
   assert.match(ja, /<title>mosoo — 料金<\/title>/);
+  assertInitialSiteLinks(zh, "zh");
+  assertInitialSiteLinks(ja, "ja");
 });

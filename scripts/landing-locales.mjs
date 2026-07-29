@@ -41,6 +41,30 @@ const SEO = {
   },
 };
 
+const FALLBACK_LABELS = {
+  en: {
+    pricing: "Pricing",
+    docs: "Docs",
+    quickstart: "Quickstart",
+    blog: "Blog",
+    login: "Log in",
+  },
+  zh: {
+    pricing: "定价",
+    docs: "文档",
+    quickstart: "快速开始",
+    blog: "博客",
+    login: "登录",
+  },
+  ja: {
+    pricing: "料金",
+    docs: "ドキュメント",
+    quickstart: "クイックスタート",
+    blog: "ブログ",
+    login: "ログイン",
+  },
+};
+
 const PRICING_EN = {
   lang: "en",
   title: "mosoo — Pricing",
@@ -89,6 +113,7 @@ function applyReplacements(source, replacements) {
 
 function localizeHtml(source, locale, copy) {
   const url = `https://mosoo.ai/${locale}`;
+  const labels = FALLBACK_LABELS[locale];
   const replacements = [
     [`<html lang="${EN.lang}">`, `<html lang="${copy.lang}">`],
     [EN.title, copy.title],
@@ -101,6 +126,11 @@ function localizeHtml(source, locale, copy) {
     ['<meta property="og:url" content="https://mosoo.ai/en" />', `<meta property="og:url" content="${url}" />`],
     ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    [">Docs</a>", `>${labels.docs}</a>`],
+    [">Quickstart</a>", `>${labels.quickstart}</a>`],
+    [">Blog</a>", `>${labels.blog}</a>`],
+    [">Log in</a>", `>${labels.login}</a>`],
   ];
 
   return applyReplacements(source, replacements);
@@ -108,6 +138,7 @@ function localizeHtml(source, locale, copy) {
 
 function localizePricingHtml(source, locale, copy) {
   const url = `https://mosoo.ai/${locale}/pricing`;
+  const labels = FALLBACK_LABELS[locale];
   const replacements = [
     [`<html lang="${PRICING_EN.lang}">`, `<html lang="${copy.lang}">`],
     [PRICING_EN.title, copy.title],
@@ -125,6 +156,11 @@ function localizePricingHtml(source, locale, copy) {
     ['"@id": "https://mosoo.ai/en/pricing"', `"@id": "${url}"`],
     ['"url": "https://mosoo.ai/en/pricing"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    [">Docs</a>", `>${labels.docs}</a>`],
+    [">Quickstart</a>", `>${labels.quickstart}</a>`],
+    [">Blog</a>", `>${labels.blog}</a>`],
+    [">Log in</a>", `>${labels.login}</a>`],
   ];
 
   return applyReplacements(source, replacements);
