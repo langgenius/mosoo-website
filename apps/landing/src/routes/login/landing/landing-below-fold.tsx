@@ -1,3 +1,4 @@
+import { domAnimation, LazyMotion } from "motion/react";
 import type { ReactElement } from "react";
 
 import { CostSection } from "./cost-section";
@@ -14,7 +15,7 @@ import { SandboxSection } from "./sandbox-section";
 // stream in as the visitor scrolls past the first viewport.
 export function LandingBelowFold({ onContinue }: { onContinue: () => void }): ReactElement {
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <DeploySection />
       <RuntimeShowcase />
       <SandboxSection />
@@ -22,6 +23,6 @@ export function LandingBelowFold({ onContinue }: { onContinue: () => void }): Re
       <CostSection />
       <FaqSection />
       <CtaBand onContinue={onContinue} />
-    </>
+    </LazyMotion>
   );
 }
