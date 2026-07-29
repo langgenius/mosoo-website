@@ -36,9 +36,9 @@ const ZH_MESSAGES = {
     "连续三次破线即冻结功能发布。恢复通过且完成事故审查前，团队只发布可靠性修复。",
   "Release freeze active": "功能发布冻结中",
   "Incident record": "事故记录",
-  "No formal postmortems have been published since this status surface launched.":
-    "此状态界面上线后，尚未发布正式事故复盘。",
-  "View the public postmortem archive": "查看公开事故复盘归档",
+  "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.":
+    "已恢复 · 2026 年 7 月 29 日 — OpenAI Runtime 运行在生成回复前失败。生产热修已恢复 sandbox 启动、provider 路由和生命周期收敛。",
+  "Read the OpenAI Runtime incident postmortem": "查看 OpenAI Runtime 事故复盘",
   "How this is measured": "测量方法",
   "Canaries run every five minutes against the public production API for OpenAI Codex, Claude Agent SDK, and OpenCode. Missing two check intervals makes a component Unknown.":
     "Canary 每五分钟通过公开生产 API 检查 OpenAI Codex、Claude Agent SDK 与 OpenCode。连续缺失两个检查周期后，该组件会显示为未知。",
@@ -82,9 +82,9 @@ const JA_MESSAGES = {
     "3 回連続で未達になると機能リリースを凍結します。canary の合格とインシデントレビューが完了するまで、信頼性修正のみを出荷します。",
   "Release freeze active": "機能リリースを凍結中",
   "Incident record": "インシデント記録",
-  "No formal postmortems have been published since this status surface launched.":
-    "このステータス画面の公開後、正式なポストモーテムはまだありません。",
-  "View the public postmortem archive": "公開ポストモーテムのアーカイブを見る",
+  "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.":
+    "復旧済み · 2026 年 7 月 29 日 — OpenAI Runtime の実行が応答生成前に失敗しました。本番ホットフィックスにより、sandbox の起動、provider のルーティング、ライフサイクルの復旧を回復しました。",
+  "Read the OpenAI Runtime incident postmortem": "OpenAI Runtime インシデントのポストモーテムを読む",
   "How this is measured": "測定方法",
   "Canaries run every five minutes against the public production API for OpenAI Codex, Claude Agent SDK, and OpenCode. Missing two check intervals makes a component Unknown.":
     "Canary は 5 分ごとに公開本番 API から OpenAI Codex、Claude Agent SDK、OpenCode を確認します。2 回分のチェックが欠けると、そのコンポーネントは不明になります。",
