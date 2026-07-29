@@ -15,6 +15,7 @@ export default defineConfig({
       input: {
         index: resolve(appRoot, "index.html"),
         pricing: resolve(appRoot, "pricing.html"),
+        status: resolve(appRoot, "status.html"),
       },
     },
   },

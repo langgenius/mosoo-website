@@ -68,6 +68,28 @@ test("worker redirects bare /pricing to the locale pricing page", async () => {
   }
 });
 
+test("worker redirects bare /status to the locale status page", async () => {
+  const response = await worker.fetch(
+    requestFor("/status?ref=incident", { cookie: "mosoo_locale=zh" }),
+    envFor({}),
+  );
+
+  assert.equal(response.status, 307);
+  assert.equal(response.headers.get("location"), "https://mosoo.ai/zh/status?ref=incident");
+});
+
+test("worker publishes an unknown status feed before the first canary", async () => {
+  const response = await worker.fetch(requestFor("/status.json"), envFor({}));
+  const payload = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(payload.status, "unknown");
+  assert.deepEqual(
+    payload.components.map((component) => component.id),
+    ["openai-runtime", "claude-agent-sdk", "acp-fallback"],
+  );
+});
+
 test("worker serves localized pricing pages from assets", async () => {
   const response = await worker.fetch(
     new Request("https://mosoo.ai/en/pricing"),

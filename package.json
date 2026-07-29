@@ -13,7 +13,7 @@
     "blog:build": "npm run build --workspace @mosoo/blog",
     "blog:dev": "npm run dev --workspace @mosoo/blog",
     "blog:preview": "npm run preview --workspace @mosoo/blog",
-    "deploy": "npm run build && npx --yes --package wrangler@4.100.0 wrangler deploy --env prod",
+    "deploy": "npm run build && npx --yes --package wrangler@4.115.0 wrangler deploy --env prod",
     "landing:build": "npm run build --workspace @mosoo/landing",
     "landing:dev": "npm run dev --workspace @mosoo/landing",
     "landing:preview": "npm run preview --workspace @mosoo/landing",

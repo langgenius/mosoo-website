@@ -11,10 +11,31 @@ html_handling = "drop-trailing-slash"
 not_found_handling = "none"
 run_worker_first = true
 
+[vars]
+STATUS_API_ORIGIN = "http://localhost:8787"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[durable_objects.bindings]]
+name = "STATUS_STORE"
+class_name = "StatusStore"
+
 [env.prod]
 name = "mosoo-website-prod"
 workers_dev = false
 
+[env.prod.vars]
+STATUS_API_ORIGIN = "https://try.mosoo.ai"
+
+[[env.prod.durable_objects.bindings]]
+name = "STATUS_STORE"
+class_name = "StatusStore"
+
 [[env.prod.routes]]
 pattern = "mosoo.ai"
 custom_domain = true
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["StatusStore"]
