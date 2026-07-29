@@ -78,6 +78,29 @@ test("worker serves localized pricing pages from assets", async () => {
   assert.equal(await response.text(), "pricing page");
 });
 
+test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {
+  const response = await worker.fetch(
+    new Request("http://mosoo.ai/en?ref=launch"),
+    envFor({ "/en": "landing page" }),
+  );
+
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), "https://mosoo.ai/en?ref=launch");
+});
+
+test("worker permanently redirects trailing-slash website URLs to canonical slashless URLs", async () => {
+  for (const [from, to] of [
+    ["https://mosoo.ai/en/", "https://mosoo.ai/en"],
+    ["https://mosoo.ai/zh/pricing/?ref=launch", "https://mosoo.ai/zh/pricing?ref=launch"],
+    ["https://mosoo.ai/blog/post/", "https://mosoo.ai/blog/post"],
+  ]) {
+    const response = await worker.fetch(new Request(from), envFor({}));
+
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get("location"), to);
+  }
+});
+
 test("worker serves existing static assets before SPA fallback", async () => {
   for (const pathname of ["/coding-agents.md", "/mosoo-openapi.en.generated.json"]) {
     const response = await worker.fetch(
