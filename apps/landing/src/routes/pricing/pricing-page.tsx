@@ -1,5 +1,5 @@
 import { Check, Star } from "lucide-react";
-import { useInView } from "motion/react";
+import { domAnimation, LazyMotion, useInView } from "motion/react";
 import { useRef } from "react";
 import type { CSSProperties, ReactElement } from "react";
 
@@ -253,15 +253,17 @@ function SelfHostBand(): ReactElement {
 
 export function PricingPage({ onGetStarted }: { onGetStarted: () => void }): ReactElement {
   return (
-    <div className="px-4 md:px-6">
-      {/* Same framed column as the landing — continuous hairlines, sections
-          split by horizontal dividers. */}
-      <div className="border-border-strong divide-border-strong mx-auto w-full max-w-[1280px] divide-y border-x">
-        <PricingHeader />
-        <TierGrid onGetStarted={onGetStarted} />
-        <MeteredSection />
-        <SelfHostBand />
+    <LazyMotion features={domAnimation}>
+      <div className="px-4 md:px-6">
+        {/* Same framed column as the landing — continuous hairlines, sections
+            split by horizontal dividers. */}
+        <div className="border-border-strong divide-border-strong mx-auto w-full max-w-[1280px] divide-y border-x">
+          <PricingHeader />
+          <TierGrid onGetStarted={onGetStarted} />
+          <MeteredSection />
+          <SelfHostBand />
+        </div>
       </div>
-    </div>
+    </LazyMotion>
   );
 }
