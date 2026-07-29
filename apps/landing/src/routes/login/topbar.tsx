@@ -12,7 +12,13 @@ import {
 } from "@/shared/locale";
 
 import { GithubMarkLink } from "./github-mark";
-import { MOSOO_API_REFERENCE_URL, MOSOO_BLOG_URL, MOSOO_GITHUB_URL, MOSOO_X_URL } from "./links";
+import {
+  MOSOO_API_REFERENCE_URL,
+  MOSOO_BLOG_URL,
+  MOSOO_DOCS_URL,
+  MOSOO_GITHUB_URL,
+  MOSOO_X_URL,
+} from "./links";
 import { XMark } from "./x-mark";
 
 const ICON_LINK_CLASS =
@@ -113,6 +119,9 @@ export function LoginLandingTopbar({
           </a>
           <a href={blogHref} className={`${TEXT_LINK_CLASS} text-fg-2`}>
             {t("Blog")}
+          </a>
+          <a href={MOSOO_DOCS_URL} className={`${TEXT_LINK_CLASS} text-fg-2`}>
+            {t("Docs")}
           </a>
           <a
             href={MOSOO_API_REFERENCE_URL}
