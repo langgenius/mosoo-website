@@ -22,7 +22,7 @@ const ICON_LINK_CLASS =
 const TEXT_LINK_CLASS =
   "hover:text-fg-1 focus-visible:ring-ring hidden rounded-md px-3 text-[13.5px] font-semibold transition-colors outline-none focus-visible:ring-2 sm:inline-flex";
 
-export type TopbarNav = "pricing";
+export type TopbarNav = "pricing" | "status";
 
 const LazyLanguageMenu = lazy(async () => {
   const mod = await import("./language-menu");
@@ -76,6 +76,13 @@ export function LoginLandingTopbar({
             className={`${TEXT_LINK_CLASS} ${activeNav === "pricing" ? "text-fg-1" : "text-fg-2"}`}
           >
             {t("Pricing")}
+          </a>
+          <a
+            href={`/${locale}/status`}
+            aria-current={activeNav === "status" ? "page" : undefined}
+            className={`${TEXT_LINK_CLASS} ${activeNav === "status" ? "text-fg-1" : "text-fg-2"}`}
+          >
+            {t("Status")}
           </a>
           <a href={blogHref} className={`${TEXT_LINK_CLASS} text-fg-2`}>
             {t("Blog")}

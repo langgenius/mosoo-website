@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
-import { renderLandingLocale, renderPricingLocale } from "../scripts/landing-locales.mjs";
+import {
+  renderLandingLocale,
+  renderPricingLocale,
+  renderStatusLocale,
+} from "../scripts/landing-locales.mjs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
@@ -10,6 +14,7 @@ const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
   assert.match(html, new RegExp(`href="/${locale}/pricing"`));
+  assert.match(html, new RegExp(`href="/${locale}/status"`));
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/blog"/);
@@ -40,6 +45,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/pricing",
     "https://mosoo.ai/zh/pricing",
     "https://mosoo.ai/ja/pricing",
+    "https://mosoo.ai/en/status",
+    "https://mosoo.ai/zh/status",
+    "https://mosoo.ai/ja/status",
   ]);
 });
 
@@ -154,6 +162,21 @@ test("pricing locale pages receive localized canonical metadata", () => {
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
   assert.match(ja, /<title>mosoo — 料金<\/title>/);
+  assertInitialSiteLinks(zh, "zh");
+  assertInitialSiteLinks(ja, "ja");
+});
+
+test("status pages expose localized canonical metadata and crawlable links", () => {
+  const source = read("apps/landing/status.html");
+  const zh = renderStatusLocale(source, "zh");
+  const ja = renderStatusLocale(source, "ja");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/status"/);
+  assert.match(zh, /<html lang="zh-CN">/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/status"/);
+  assert.match(zh, /<title>mosoo — 系统状态<\/title>/);
+  assert.match(ja, /<html lang="ja">/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/status"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });

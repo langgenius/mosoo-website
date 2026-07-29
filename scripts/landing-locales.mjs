@@ -44,6 +44,7 @@ const SEO = {
 const FALLBACK_LABELS = {
   en: {
     pricing: "Pricing",
+    status: "Status",
     docs: "Docs",
     quickstart: "Quickstart",
     blog: "Blog",
@@ -51,6 +52,7 @@ const FALLBACK_LABELS = {
   },
   zh: {
     pricing: "定价",
+    status: "状态",
     docs: "文档",
     quickstart: "快速开始",
     blog: "博客",
@@ -58,6 +60,7 @@ const FALLBACK_LABELS = {
   },
   ja: {
     pricing: "料金",
+    status: "稼働状況",
     docs: "ドキュメント",
     quickstart: "クイックスタート",
     blog: "ブログ",
@@ -96,6 +99,36 @@ const PRICING_SEO = {
   },
 };
 
+const STATUS_EN = {
+  lang: "en",
+  title: "mosoo — System Status",
+  description:
+    "Live production canary status, measured availability, TTFT, and driver continuity for mosoo public agent runtimes.",
+  socialDescription:
+    "Production canary status and measured availability for mosoo public agent runtimes.",
+  imageAlt: "mosoo system status",
+};
+
+const STATUS_SEO = {
+  en: STATUS_EN,
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — 系统状态",
+    description:
+      "查看 mosoo 公共 Agent runtime 的生产 canary 状态、实测可用率、TTFT 与 driver 连续性。",
+    socialDescription: "查看 mosoo 公共 Agent runtime 的生产 canary 状态与实测可用率。",
+    imageAlt: "mosoo 系统状态",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — システムステータス",
+    description:
+      "mosoo の公開 Agent runtime に対する本番 canary、実測可用性、TTFT、driver 継続性を確認できます。",
+    socialDescription: "mosoo 公開 Agent runtime の本番 canary と実測可用性。",
+    imageAlt: "mosoo システムステータス",
+  },
+};
+
 function replaceRequired(html, search, replacement) {
   if (!html.includes(search)) {
     throw new Error(`Landing locale build could not find: ${search}`);
@@ -127,6 +160,7 @@ function localizeHtml(source, locale, copy) {
     ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
     ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
@@ -157,6 +191,38 @@ function localizePricingHtml(source, locale, copy) {
     ['"url": "https://mosoo.ai/en/pricing"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
     ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
+    [">Docs</a>", `>${labels.docs}</a>`],
+    [">Quickstart</a>", `>${labels.quickstart}</a>`],
+    [">Blog</a>", `>${labels.blog}</a>`],
+    [">Log in</a>", `>${labels.login}</a>`],
+  ];
+
+  return applyReplacements(source, replacements);
+}
+
+function localizeStatusHtml(source, locale, copy) {
+  const url = `https://mosoo.ai/${locale}/status`;
+  const labels = FALLBACK_LABELS[locale];
+  const replacements = [
+    [`<html lang="${STATUS_EN.lang}">`, `<html lang="${copy.lang}">`],
+    [STATUS_EN.title, copy.title],
+    [STATUS_EN.description, copy.description],
+    [STATUS_EN.socialDescription, copy.socialDescription],
+    [STATUS_EN.imageAlt, copy.imageAlt],
+    [
+      '<link rel="canonical" href="https://mosoo.ai/en/status" />',
+      `<link rel="canonical" href="${url}" />`,
+    ],
+    [
+      '<meta property="og:url" content="https://mosoo.ai/en/status" />',
+      `<meta property="og:url" content="${url}" />`,
+    ],
+    ['"@id": "https://mosoo.ai/en/status"', `"@id": "${url}"`],
+    ['"url": "https://mosoo.ai/en/status"', `"url": "${url}"`],
+    ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
@@ -178,9 +244,16 @@ export function renderPricingLocale(source, locale) {
   return localizePricingHtml(source, locale, copy);
 }
 
+export function renderStatusLocale(source, locale) {
+  const copy = STATUS_SEO[locale];
+  if (!copy) throw new Error(`Unsupported status locale: ${locale}`);
+  return localizeStatusHtml(source, locale, copy);
+}
+
 export async function buildLandingLocales(landingDist) {
   const source = await readFile(join(landingDist, "index.html"), "utf8");
   const pricingSource = await readFile(join(landingDist, "pricing.html"), "utf8");
+  const statusSource = await readFile(join(landingDist, "status.html"), "utf8");
 
   await Promise.all(
     Object.keys(SEO).map(async (locale) => {
@@ -189,6 +262,10 @@ export async function buildLandingLocales(landingDist) {
       await writeFile(
         join(landingDist, locale, "pricing.html"),
         renderPricingLocale(pricingSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "status.html"),
+        renderStatusLocale(statusSource, locale),
       );
     }),
   );

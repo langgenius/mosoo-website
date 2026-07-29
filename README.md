@@ -8,7 +8,8 @@ Landing page and blog source for [mosoo](https://mosoo.ai), the open-source agen
 
 ## About
 
-This repository builds and deploys only the mosoo landing page and blog. The
+This repository builds and deploys the mosoo landing page, public status page,
+and blog. The
 independent [`langgenius/mosoo-docs`](https://github.com/langgenius/mosoo-docs)
 Fumadocs Worker owns `mosoo.ai/docs` and `mosoo.ai/docs/*`.
 
@@ -17,7 +18,8 @@ the source of truth for product behavior and API contracts.
 
 Production currently uses this topology:
 
-- `mosoo-website-prod` serves `/`, `/blog`, and other non-docs routes.
+- `mosoo-website-prod` serves `/`, `/status`, `/status.json`, `/blog`, and other
+  non-docs routes.
 - `mosoo-docs` serves `/docs` and `/docs/*` through more specific Cloudflare
   Worker routes.
 - Legacy unprefixed documentation URLs are redirected to their `/docs`
@@ -31,8 +33,8 @@ Production currently uses this topology:
   blog.
 - `scripts/build-site.mjs` assembles the landing and blog outputs into one
   deployable directory.
-- `src/worker.js` serves the combined static assets and handles redirects and
-  route-specific fallback behavior.
+- `src/worker.js` serves the combined static assets, runs the five-minute
+  production canary, and handles route-specific behavior.
 - `wrangler.toml` configures the production Cloudflare Worker.
 
 ## Development
@@ -93,6 +95,12 @@ dist/
 
 The Cloudflare Worker uses strict 404 handling for `/blog/*` and SPA fallback
 behavior for landing-page routes.
+
+The status canary is dormant until the production Worker has
+`STATUS_CANARY_SECRET` and `STATUS_CANARY_TARGETS` secrets. The API Worker must
+hold the matching `MOSOO_STATUS_CANARY_SECRET`. Configuration and incident
+policy live in
+[`docs/operations/reliability.md`](https://github.com/langgenius/mosoo/blob/main/docs/operations/reliability.md).
 
 ## Deployment
 

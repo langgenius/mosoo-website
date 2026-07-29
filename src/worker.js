@@ -1,3 +1,7 @@
+import { runStatusCanary, statusJsonResponse } from "./status.js";
+
+export { StatusStore } from "./status.js";
+
 const CONSOLE_ORIGIN = "https://try.mosoo.ai";
 const LOCALE_COOKIE = "mosoo_locale";
 
@@ -130,6 +134,20 @@ export default {
       return localeRedirect(request, url, "/pricing");
     }
 
+    if (pathname === "/status") {
+      return localeRedirect(request, url, "/status");
+    }
+
+    if (pathname === "/status.json") {
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return new Response("Method not allowed", {
+          headers: { allow: "GET, HEAD" },
+          status: 405,
+        });
+      }
+      return statusJsonResponse(env);
+    }
+
     if (isConsolePath(pathname)) {
       url.hostname = new URL(CONSOLE_ORIGIN).hostname;
       return redirect(url);
@@ -174,5 +192,8 @@ export default {
 
     url.pathname = "/";
     return redirect(url);
+  },
+  async scheduled(controller, env) {
+    await runStatusCanary(env, controller.scheduledTime);
   },
 };
