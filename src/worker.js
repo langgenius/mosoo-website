@@ -4,6 +4,8 @@ export { StatusStore } from "./status.js";
 
 const CONSOLE_ORIGIN = "https://try.mosoo.ai";
 const LOCALE_COOKIE = "mosoo_locale";
+const LLMS_LINK_HEADER =
+  '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"';
 
 function redirect(url, status = 307) {
   return Response.redirect(url.toString(), status);
@@ -91,10 +93,23 @@ function isLegacyDocsRootPath(pathname) {
     pathname === "/zh-Hans" ||
     pathname.startsWith("/zh-Hans/") ||
     pathname === "/llms.txt" ||
+    pathname === "/llms-full.txt" ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
     pathname.startsWith("/favicons/")
   );
+}
+
+function withAnswerEngineLinks(response) {
+  if (!response.headers.get("content-type")?.includes("text/html")) return response;
+
+  const headers = new Headers(response.headers);
+  headers.append("link", LLMS_LINK_HEADER);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
 async function blogNotFound(request, env) {
@@ -179,7 +194,7 @@ export default {
 
     const asset = await env.ASSETS.fetch(request);
     if (asset.status !== 404) {
-      return asset;
+      return withAnswerEngineLinks(asset);
     }
 
     if (pathname === "/blog/" || pathname.startsWith("/blog/")) {
