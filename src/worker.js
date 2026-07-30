@@ -2,7 +2,7 @@ import { runStatusCanary, statusJsonResponse } from "./status.js";
 
 export { StatusStore } from "./status.js";
 
-const CONSOLE_ORIGIN = "https://try.mosoo.ai";
+const CONSOLE_ORIGIN = "https://cloud.mosoo.ai";
 const LOCALE_COOKIE = "mosoo_locale";
 
 function redirect(url, status = 307) {

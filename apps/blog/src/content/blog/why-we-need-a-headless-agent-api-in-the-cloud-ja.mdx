@@ -60,7 +60,7 @@ Claude Code や Codex が体験を変えたのは、モデルがもう一人ぼ�
 最初のメッセージとともに Thread を作成します。Thread を通じて run のステータスを追い、Events で進捗を観測し、Files で添付ファイルや記録された成果物をやり取りします。
 
 ```bash
-curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+curl -X POST "https://cloud.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
   -H "Authorization: Bearer $MOSOO_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -90,4 +90,4 @@ API トークンはバックエンドの秘密情報です。エンドユーザ�
 
 ローカルの agent は、モデルに本物のランタイムを与えることの価値を証明しました。次の一歩は、より大きなモデル呼び出しではありません。あなたのプロダクトが API を通じて開始し、観測し、続行できる、マネージドな agent タスクです。
 
-[try.mosoo.ai](https://try.mosoo.ai) で試すか、GitHub でコードを読んでください: [langgenius/mosoo](https://github.com/langgenius/mosoo)。
+[cloud.mosoo.ai](https://cloud.mosoo.ai) で試すか、GitHub でコードを読んでください: [langgenius/mosoo](https://github.com/langgenius/mosoo)。

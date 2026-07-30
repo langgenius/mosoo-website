@@ -60,7 +60,7 @@ That is the abstraction mosoo provides. Publish an Agent, call it from your back
 Create a Thread with an initial message. Follow its run status through the Thread, observe progress through Events, and exchange attachments and recorded artifacts through Files.
 
 ```bash
-curl -X POST "https://try.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+curl -X POST "https://cloud.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
   -H "Authorization: Bearer $MOSOO_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -90,4 +90,4 @@ Paste the instruction into Claude Code or Codex and let it wire the API into you
 
 Local agents proved the value of giving models a real runtime. The next step is not a larger model call. It is a managed agent task that your product can start, observe, and continue through an API.
 
-Try it at [try.mosoo.ai](https://try.mosoo.ai), or read the code on GitHub: [langgenius/mosoo](https://github.com/langgenius/mosoo).
+Try it at [cloud.mosoo.ai](https://cloud.mosoo.ai), or read the code on GitHub: [langgenius/mosoo](https://github.com/langgenius/mosoo).

@@ -17,7 +17,7 @@ if (!container) {
 document.documentElement.lang = htmlLanguage[locale];
 
 const openAuth = (): void => {
-  window.location.href = "https://try.mosoo.ai/login";
+  window.location.href = "https://cloud.mosoo.ai/login";
 };
 
 createRoot(container).render(

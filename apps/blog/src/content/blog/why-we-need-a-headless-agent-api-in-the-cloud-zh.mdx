@@ -60,7 +60,7 @@ Agent 应该像数据库一样被消费。你不会为了存几行数据先自�
 这正是 mosoo 在做的事。发布后的 Agent 运行在 mosoo 托管的 sandbox 里，对外是一组朴素的 HTTP API：Threads、Runs、Events、Files。创建一个 Thread，任务就开始了：
 
 ```bash
-curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
+curl -X POST "https://cloud.mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
   -H "Authorization: Bearer $MOSOO_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -86,4 +86,4 @@ curl -X POST "https://mosoo.ai/api/v1/agents/$AGENT_ID/threads" \
 
 跨过阈值的 Agent Work，应该像云资源一样被托管、被隔离、被观测、被复用。这一次，从本地到云上，只隔一次复制粘贴。
 
-在 [try.mosoo.ai](https://try.mosoo.ai) 试试，或者到 GitHub 看看我们的仓库：[langgenius/mosoo](https://github.com/langgenius/mosoo)。
+在 [cloud.mosoo.ai](https://cloud.mosoo.ai) 试试，或者到 GitHub 看看我们的仓库：[langgenius/mosoo](https://github.com/langgenius/mosoo)。
