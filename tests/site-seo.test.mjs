@@ -19,7 +19,7 @@ const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/blog"/);
   assert.match(html, /href="https:\/\/github\.com\/langgenius\/mosoo\/"/);
-  assert.match(html, /href="https:\/\/try\.mosoo\.ai\/login"/);
+  assert.match(html, /href="https:\/\/cloud\.mosoo\.ai\/login"/);
 };
 
 test("the root sitemap aggregates every public content surface", () => {

@@ -26,7 +26,7 @@ name = "mosoo-website-prod"
 workers_dev = false
 
 [env.prod.vars]
-STATUS_API_ORIGIN = "https://try.mosoo.ai"
+STATUS_API_ORIGIN = "https://cloud.mosoo.ai"
 
 [[env.prod.durable_objects.bindings]]
 name = "STATUS_STORE"
