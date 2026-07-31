@@ -100,6 +100,26 @@ test("worker serves localized pricing pages from assets", async () => {
   assert.equal(await response.text(), "pricing page");
 });
 
+test("worker advertises answer-engine docs from HTML assets", async () => {
+  const response = await worker.fetch(
+    new Request("https://mosoo.ai/blog"),
+    {
+      ASSETS: {
+        async fetch() {
+          return new Response("<!doctype html><html></html>", {
+            headers: { "content-type": "text/html; charset=utf-8" },
+          });
+        },
+      },
+    },
+  );
+
+  assert.equal(
+    response.headers.get("link"),
+    '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"',
+  );
+});
+
 test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {
   const response = await worker.fetch(
     new Request("http://mosoo.ai/en?ref=launch"),
@@ -135,11 +155,16 @@ test("worker serves existing static assets before SPA fallback", async () => {
   }
 });
 
-test("worker redirects the llms entrypoint to the docs app", async () => {
-  const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
+test("worker redirects llms entrypoints to the docs app", async () => {
+  for (const [from, to] of [
+    ["/llms.txt", "/docs/llms.txt"],
+    ["/llms-full.txt", "/docs/llms-full.txt"],
+  ]) {
+    const response = await worker.fetch(new Request(`https://mosoo.ai${from}`), envFor({}));
 
-  assert.equal(response.status, 308);
-  assert.equal(response.headers.get("location"), "https://mosoo.ai/docs/llms.txt");
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get("location"), `https://mosoo.ai${to}`);
+  }
 });
 
 test("worker permanently redirects legacy extensionless docs paths", async () => {
