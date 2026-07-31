@@ -1,6 +1,6 @@
 import { Check, Star } from "lucide-react";
 import { domAnimation, LazyMotion, useInView } from "motion/react";
-import { useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import type { CSSProperties, ReactElement } from "react";
 
 import { cn } from "@/shared/lib/class-names";
@@ -9,7 +9,6 @@ import { GithubMark } from "../login/github-mark";
 import { MOSOO_DEPLOY_URL, MOSOO_GITHUB_URL } from "../login/links";
 import { Reveal } from "../login/landing/motion";
 import { DISPLAY_FONT, sectionHeadingStyle } from "../login/landing/typography";
-import { UnicornBackground } from "../login/landing/unicorn";
 import { t } from "./i18n";
 import { METERED_ITEMS, TIERS } from "./pricing-data";
 import type { Tier } from "./pricing-data";
@@ -40,6 +39,11 @@ const BAND_SCRIM_STYLE = {
   background:
     "radial-gradient(72% 82% at 50% 50%, rgba(8,11,9,0.46) 0%, rgba(8,11,9,0.18) 58%, rgba(8,11,9,0) 100%)",
 } satisfies CSSProperties;
+
+const UnicornBackground = lazy(async () => {
+  const mod = await import("../login/landing/unicorn");
+  return { default: mod.UnicornBackground };
+});
 
 /** Quiet uppercase overline — no accent marker, per the pricing page's stricter restraint. */
 function Overline({ children, dark = false }: { children: string; dark?: boolean }): ReactElement {
@@ -209,7 +213,11 @@ function SelfHostBand(): ReactElement {
       ref={panelRef}
       className="bg-ink-900 relative overflow-hidden px-4 py-16 md:px-6 md:py-20"
     >
-      {sceneVisible ? <UnicornBackground sceneId={BAND_SCENE_ID} /> : null}
+      {sceneVisible ? (
+        <Suspense fallback={null}>
+          <UnicornBackground sceneId={BAND_SCENE_ID} />
+        </Suspense>
+      ) : null}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
