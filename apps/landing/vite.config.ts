@@ -16,6 +16,8 @@ export default defineConfig({
         index: resolve(appRoot, "index.html"),
         pricing: resolve(appRoot, "pricing.html"),
         status: resolve(appRoot, "status.html"),
+        useCases: resolve(appRoot, "use-cases.html"),
+        useCaseCodexPet: resolve(appRoot, "use-cases/codex-pet.html"),
       },
     },
   },

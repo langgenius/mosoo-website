@@ -78,6 +78,24 @@ test("worker redirects bare /status to the locale status page", async () => {
   assert.equal(response.headers.get("location"), "https://mosoo.ai/zh/status?ref=incident");
 });
 
+test("worker redirects bare use-cases paths to the locale pages", async () => {
+  const cases = [
+    { pathname: "/use-cases", location: "https://mosoo.ai/zh/use-cases" },
+    { pathname: "/use-cases/", location: "https://mosoo.ai/zh/use-cases" },
+    { pathname: "/use-cases/codex-pet", location: "https://mosoo.ai/zh/use-cases/codex-pet" },
+  ];
+
+  for (const entry of cases) {
+    const response = await worker.fetch(
+      requestFor(entry.pathname, { cookie: "mosoo_locale=zh" }),
+      envFor({}),
+    );
+
+    assert.equal(response.status, 307);
+    assert.equal(response.headers.get("location"), entry.location);
+  }
+});
+
 test("worker publishes an unknown status feed before the first canary", async () => {
   const response = await worker.fetch(requestFor("/status.json"), envFor({}));
   const payload = await response.json();

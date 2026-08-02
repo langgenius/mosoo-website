@@ -6,6 +6,8 @@ import {
   renderLandingLocale,
   renderPricingLocale,
   renderStatusLocale,
+  renderUseCaseCodexPetLocale,
+  renderUseCasesLocale,
 } from "../scripts/landing-locales.mjs";
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -14,6 +16,7 @@ const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match)
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
   assert.match(html, new RegExp(`href="/${locale}/pricing"`));
+  assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
   assert.match(html, new RegExp(`href="/${locale}/status"`));
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
@@ -48,6 +51,12 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/status",
     "https://mosoo.ai/zh/status",
     "https://mosoo.ai/ja/status",
+    "https://mosoo.ai/en/use-cases",
+    "https://mosoo.ai/zh/use-cases",
+    "https://mosoo.ai/ja/use-cases",
+    "https://mosoo.ai/en/use-cases/codex-pet",
+    "https://mosoo.ai/zh/use-cases/codex-pet",
+    "https://mosoo.ai/ja/use-cases/codex-pet",
   ]);
 });
 
@@ -179,4 +188,34 @@ test("status pages expose localized canonical metadata and crawlable links", () 
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/status"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
+});
+
+test("use-cases pages expose localized canonical metadata and crawlable links", () => {
+  const source = read("apps/landing/use-cases.html");
+  const zh = renderUseCasesLocale(source, "zh");
+  const ja = renderUseCasesLocale(source, "ja");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases"/);
+  assert.match(source, /href="\/en\/use-cases\/codex-pet"/);
+  assert.match(zh, /<html lang="zh-CN">/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
+  assert.match(zh, /<title>mosoo — 用例<\/title>/);
+  assert.match(zh, /href="\/zh\/use-cases\/codex-pet"/);
+  assert.match(ja, /<html lang="ja">/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases"/);
+  assertInitialSiteLinks(zh, "zh");
+  assertInitialSiteLinks(ja, "ja");
+});
+
+test("the codex-pet case page keeps its canonical, screenshot, and outbound links", () => {
+  const source = read("apps/landing/use-cases/codex-pet.html");
+  const zh = renderUseCaseCodexPetLocale(source, "zh");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/codex-pet"/);
+  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/codex-pet-app\.png"/);
+  assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/mosoo-codex-pet"/);
+  assert.match(source, /href="https:\/\/app-01kwc37q6ejfnjvvk3g192x5x7\.apps\.mosoo\.ai\/"/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/);
+  assert.match(zh, /<title>mosoo — Codex Pet：Agent as API<\/title>/);
+  assertInitialSiteLinks(zh, "zh");
 });

@@ -27,4 +27,22 @@
   <url>
     <loc>https://mosoo.ai/ja/status</loc>
   </url>
+  <url>
+    <loc>https://mosoo.ai/en/use-cases</loc>
+  </url>
+  <url>
+    <loc>https://mosoo.ai/zh/use-cases</loc>
+  </url>
+  <url>
+    <loc>https://mosoo.ai/ja/use-cases</loc>
+  </url>
+  <url>
+    <loc>https://mosoo.ai/en/use-cases/codex-pet</loc>
+  </url>
+  <url>
+    <loc>https://mosoo.ai/zh/use-cases/codex-pet</loc>
+  </url>
+  <url>
+    <loc>https://mosoo.ai/ja/use-cases/codex-pet</loc>
+  </url>
 </urlset>

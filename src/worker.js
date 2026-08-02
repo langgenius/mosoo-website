@@ -153,6 +153,10 @@ export default {
       return localeRedirect(request, url, "/status");
     }
 
+    if (pathname === "/use-cases" || pathname.startsWith("/use-cases/")) {
+      return localeRedirect(request, url, dropTrailingSlash ? pathname.slice(0, -1) : pathname);
+    }
+
     if (pathname === "/status.json") {
       if (request.method !== "GET" && request.method !== "HEAD") {
         return new Response("Method not allowed", {

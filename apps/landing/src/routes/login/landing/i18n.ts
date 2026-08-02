@@ -3,6 +3,7 @@ import { locale } from "@/shared/locale";
 const ZH_MESSAGES = {
   Pricing: "定价",
   Status: "状态",
+  "Use cases": "用例",
   Blog: "博客",
   "API docs": "API 文档",
   "mosoo on X": "mosoo 的 X 主页",
@@ -207,6 +208,7 @@ type Message = keyof typeof ZH_MESSAGES;
 const JA_MESSAGES = {
   Pricing: "料金",
   Status: "稼働状況",
+  "Use cases": "ユースケース",
   Blog: "ブログ",
   "API docs": "API ドキュメント",
   "mosoo on X": "mosoo の X",
