@@ -1,19 +1,22 @@
 ---
 import CardVisual from "./CardVisual.astro";
 import { getPostHref } from "../lib/i18n";
+import { categoryLabel, dateLocaleByLocale } from "../lib/copy.mjs";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
   featured: CollectionEntry<"blog">;
   base: string;
+  locale?: "en" | "zh" | "ja";
 }
-const { featured, base } = Astro.props;
+const { featured, base, locale = "en" } = Astro.props;
 const href = getPostHref(featured, base);
-const dateLabel = featured.data.date.toLocaleDateString("en-US", {
+const dateLabel = featured.data.date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
+const displayCategory = categoryLabel(locale, featured.data.category);
 ---
 
 <a href={href} class="group block">
@@ -28,7 +31,7 @@ const dateLabel = featured.data.date.toLocaleDateString("en-US", {
     </div>
     <div class="flex min-w-0 flex-col gap-4 md:order-1">
       <div class="flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
-        <span class="font-semibold text-[color:var(--accent-text)]">{featured.data.category}</span>
+        <span class="font-semibold text-[color:var(--accent-text)]">{displayCategory}</span>
         <span aria-hidden="true">·</span>
         <time datetime={featured.data.date.toISOString()}>{dateLabel}</time>
       </div>

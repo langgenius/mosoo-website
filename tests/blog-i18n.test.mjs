@@ -5,6 +5,13 @@ import {
   getIndexHreflangAlternates,
   getPostHreflangAlternates,
 } from "../apps/blog/src/lib/seo.mjs";
+import {
+  categoryLabel,
+  footerCopyByLocale,
+  headerCopyByLocale,
+  indexCopyByLocale,
+  postCopyByLocale,
+} from "../apps/blog/src/lib/copy.mjs";
 
 const posts = [
   { id: "guide.mdx", data: { locale: "en", permalink: "guide", translationKey: "guide" } },
@@ -36,4 +43,14 @@ test("unpaired posts do not claim unavailable translations", () => {
     data: { locale: "en", permalink: "standalone", translationKey: "standalone" },
   };
   assert.equal(getPostHreflangAlternates(single, [single], "/blog"), undefined);
+});
+
+test("localized blog chrome uses localized visible copy", () => {
+  assert.equal(indexCopyByLocale.zh.title, "竹林手记。");
+  assert.equal(indexCopyByLocale.ja.allPosts, "すべての記事");
+  assert.equal(categoryLabel("zh", "Engineering"), "工程");
+  assert.equal(categoryLabel("ja", "Product"), "プロダクト");
+  assert.equal(headerCopyByLocale.zh.learnMore, "了解更多");
+  assert.equal(postCopyByLocale.ja.by, "著者");
+  assert.match(footerCopyByLocale.zh, /竹海/);
 });

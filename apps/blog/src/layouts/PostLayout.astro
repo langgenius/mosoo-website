@@ -2,6 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import CardVisual from "../components/CardVisual.astro";
 import { getIndexHref, getPostLocale, type Locale } from "../lib/i18n";
+import { categoryLabel, dateLocaleByLocale, postCopyByLocale } from "../lib/copy.mjs";
 import type { CollectionEntry } from "astro:content";
 
 type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "ja" | "x-default", string>>;
@@ -44,23 +45,14 @@ const availableLocales = hreflang
   : undefined;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const indexHref = getIndexHref(locale, base);
-const copyByLocale: Record<Locale, { back: string; more: string }> = {
-  en: { back: "← All posts", more: "← More posts" },
-  zh: { back: "← 返回全部文章", more: "← 更多文章" },
-  ja: { back: "← 記事一覧に戻る", more: "← ほかの記事" },
-};
-const copy = {
-  ...copyByLocale[locale],
-  by: "By",
-  learnMore: "Learn More →",
-};
-const dateLocales: Record<Locale, string> = { en: "en-US", zh: "zh-CN", ja: "ja-JP" };
-const dateLabel = date.toLocaleDateString(dateLocales[locale], {
+const copy = postCopyByLocale[locale] ?? postCopyByLocale.en;
+const dateLabel = date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
 const canonicalUrl = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", Astro.site).href;
+const displayCategory = categoryLabel(locale, category);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -109,7 +101,7 @@ const jsonLd = {
       </a>
 
       <div class="mb-4 flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
-        <span class="font-semibold text-[color:var(--accent-text)]">{category}</span>
+        <span class="font-semibold text-[color:var(--accent-text)]">{displayCategory}</span>
         <span aria-hidden="true">·</span>
         <time datetime={date.toISOString()}>{dateLabel}</time>
       </div>

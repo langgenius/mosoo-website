@@ -1,10 +1,15 @@
 ---
+import { categoryLabel, indexCopyByLocale } from "../lib/copy.mjs";
+
 interface Props {
   categories: readonly string[];
+  locale?: "en" | "zh" | "ja";
   active?: string;
 }
-const { categories, active = "All" } = Astro.props;
+
+const { categories, locale = "en", active = "All" } = Astro.props;
 const all = ["All", ...categories];
+const copy = indexCopyByLocale[locale] ?? indexCopyByLocale.en;
 ---
 
 <div
@@ -19,7 +24,7 @@ const all = ["All", ...categories];
         aria-pressed={c === active ? "true" : "false"}
         class="rounded-full border border-[color:var(--border)] bg-transparent px-3.5 py-1.5 text-[13px] font-medium tracking-[-0.01em] text-[color:var(--fg-secondary)] transition-colors duration-150 hover:border-[color:var(--border-strong)] hover:text-[color:var(--fg)] aria-pressed:border-[color:var(--ink-900)] aria-pressed:bg-[color:var(--ink-900)] aria-pressed:text-white aria-pressed:hover:border-[color:var(--ink-800)] aria-pressed:hover:bg-[color:var(--ink-800)] aria-pressed:hover:text-white"
       >
-        {c}
+        {c === "All" ? copy.all : categoryLabel(locale, c)}
       </button>
     ))
   }

@@ -1,5 +1,6 @@
 ---
 import { getIndexHref, getLocaleOptions, type Locale } from "../lib/i18n";
+import { headerCopyByLocale } from "../lib/copy.mjs";
 
 interface Props {
   availableLocales?: Locale[];
@@ -12,6 +13,7 @@ const localeOptions = getLocaleOptions(Astro.url.pathname, base).filter(
 );
 const currentLocale = localeOptions.find(({ active }) => active)?.locale ?? "en";
 const blogHref = getIndexHref(currentLocale, base);
+const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
 ---
 
 <header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--paper)]/85 backdrop-blur-md">
@@ -25,20 +27,20 @@ const blogHref = getIndexHref(currentLocale, base);
         href={blogHref}
         class="text-[14.5px] font-medium tracking-[-0.01em] text-[color:var(--ink-900)] transition-colors duration-150 hover:text-[color:var(--accent-text)]"
       >
-        Blog
+        {copy.blog}
       </a>
     </div>
     <nav class="flex items-center gap-6 text-[14px] text-[color:var(--fg-secondary)]">
-      <a href="/" class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline">Back to mosoo</a>
+      <a href="/" class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline">{copy.backToMosoo}</a>
       <a
         href={`${base}/rss.xml`}
         class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline"
-        title="Subscribe via RSS"
+        title={copy.rssTitle}
         >RSS</a
       >
       <div
         class="flex items-center overflow-hidden rounded-[var(--r-sm)] border border-[color:var(--border)] font-mono text-[12px] font-semibold uppercase tracking-[0.08em]"
-        aria-label="Blog language"
+        aria-label={copy.languageLabel}
       >
         {
           localeOptions.map((option) => (
@@ -61,7 +63,7 @@ const blogHref = getIndexHref(currentLocale, base);
         href="https://github.com/langgenius/mosoo"
         class="inline-flex items-center gap-2 rounded-[var(--r-md)] bg-[color:var(--ink-900)] px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[color:var(--ink-800)]"
       >
-        Learn More
+        {copy.learnMore}
       </a>
     </nav>
   </div>
