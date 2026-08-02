@@ -44,6 +44,7 @@ const SEO = {
 const FALLBACK_LABELS = {
   en: {
     pricing: "Pricing",
+    useCases: "Use cases",
     status: "Status",
     docs: "Docs",
     quickstart: "Quickstart",
@@ -52,6 +53,7 @@ const FALLBACK_LABELS = {
   },
   zh: {
     pricing: "定价",
+    useCases: "用例",
     status: "状态",
     docs: "文档",
     quickstart: "快速开始",
@@ -60,6 +62,7 @@ const FALLBACK_LABELS = {
   },
   ja: {
     pricing: "料金",
+    useCases: "ユースケース",
     status: "稼働状況",
     docs: "ドキュメント",
     quickstart: "クイックスタート",
@@ -68,18 +71,16 @@ const FALLBACK_LABELS = {
   },
 };
 
-const PRICING_EN = {
-  lang: "en",
-  title: "mosoo — Pricing",
-  description:
-    "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid plans with more sandbox hours and concurrency are coming soon.",
-  socialDescription:
-    "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys.",
-  imageAlt: "mosoo pricing",
-};
-
 const PRICING_SEO = {
-  en: PRICING_EN,
+  en: {
+    lang: "en",
+    title: "mosoo — Pricing",
+    description:
+      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid plans with more sandbox hours and concurrency are coming soon.",
+    socialDescription:
+      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys.",
+    imageAlt: "mosoo pricing",
+  },
   zh: {
     lang: "zh-CN",
     title: "mosoo — 定价",
@@ -99,18 +100,16 @@ const PRICING_SEO = {
   },
 };
 
-const STATUS_EN = {
-  lang: "en",
-  title: "mosoo — System Status",
-  description:
-    "Live production canary status, measured availability, TTFT, and driver continuity for mosoo public agent runtimes.",
-  socialDescription:
-    "Production canary status and measured availability for mosoo public agent runtimes.",
-  imageAlt: "mosoo system status",
-};
-
 const STATUS_SEO = {
-  en: STATUS_EN,
+  en: {
+    lang: "en",
+    title: "mosoo — System Status",
+    description:
+      "Live production canary status, measured availability, TTFT, and driver continuity for mosoo public agent runtimes.",
+    socialDescription:
+      "Production canary status and measured availability for mosoo public agent runtimes.",
+    imageAlt: "mosoo system status",
+  },
   zh: {
     lang: "zh-CN",
     title: "mosoo — 系统状态",
@@ -129,6 +128,63 @@ const STATUS_SEO = {
   },
 };
 
+const USE_CASES_SEO = {
+  en: {
+    lang: "en",
+    title: "mosoo — Use Cases",
+    description:
+      "Real products built on mosoo: agents published once and called as APIs. Each case ships with the repository, the live app, and the integration path.",
+    socialDescription: "Real products built on mosoo: agents published once and called as APIs.",
+    imageAlt: "mosoo use cases",
+  },
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — 用例",
+    description:
+      "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。每个案例都附带仓库、线上应用与集成路径。",
+    socialDescription: "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。",
+    imageAlt: "mosoo 用例",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — ユースケース",
+    description:
+      "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。各ケースにリポジトリ、ライブアプリ、統合手順が付属。",
+    socialDescription: "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
+    imageAlt: "mosoo ユースケース",
+  },
+};
+
+const USE_CASE_CODEX_PET_SEO = {
+  en: {
+    lang: "en",
+    title: "mosoo — Codex Pet: Agent as API",
+    description:
+      "How one published mosoo Agent turns an uploaded avatar into all nine Codex pet animation states — integrated from Codex through the Thread API.",
+    socialDescription:
+      "One published mosoo Agent turns an uploaded avatar into all nine Codex pet animation states.",
+    imageAlt: "The Codex Pet app built on mosoo",
+  },
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — Codex Pet：Agent as API",
+    description:
+      "一个已发布的 mosoo Agent 如何把一张上传的头像变成全部九个 Codex 宠物动画状态——由 Codex 通过 Thread API 完成集成。",
+    socialDescription:
+      "一个已发布的 mosoo Agent 把一张上传的头像变成全部九个 Codex 宠物动画状态。",
+    imageAlt: "用 mosoo 构建的 Codex Pet 应用",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — Codex Pet：Agent as API",
+    description:
+      "公開済みの mosoo Agent 1 つが、アップロードされたアバターを 9 つの Codex ペットアニメーション状態に変換。Codex から Thread API 経由で統合します。",
+    socialDescription:
+      "公開済みの mosoo Agent 1 つが、アップロードされたアバターを 9 つの Codex ペットアニメーション状態に変換。",
+    imageAlt: "mosoo でつくられた Codex Pet アプリ",
+  },
+};
+
 function replaceRequired(html, search, replacement) {
   if (!html.includes(search)) {
     throw new Error(`Landing locale build could not find: ${search}`);
@@ -144,9 +200,21 @@ function applyReplacements(source, replacements) {
   );
 }
 
+function navReplacements(locale) {
+  const labels = FALLBACK_LABELS[locale];
+  return [
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/use-cases">Use cases</a>', `href="/${locale}/use-cases">${labels.useCases}</a>`],
+    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
+    [">Docs</a>", `>${labels.docs}</a>`],
+    [">Quickstart</a>", `>${labels.quickstart}</a>`],
+    [">Blog</a>", `>${labels.blog}</a>`],
+    [">Log in</a>", `>${labels.login}</a>`],
+  ];
+}
+
 function localizeHtml(source, locale, copy) {
   const url = `https://mosoo.ai/${locale}`;
-  const labels = FALLBACK_LABELS[locale];
   const replacements = [
     [`<html lang="${EN.lang}">`, `<html lang="${copy.lang}">`],
     [EN.title, copy.title],
@@ -159,74 +227,35 @@ function localizeHtml(source, locale, copy) {
     ['<meta property="og:url" content="https://mosoo.ai/en" />', `<meta property="og:url" content="${url}" />`],
     ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
-    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
-    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
-    [">Docs</a>", `>${labels.docs}</a>`],
-    [">Quickstart</a>", `>${labels.quickstart}</a>`],
-    [">Blog</a>", `>${labels.blog}</a>`],
-    [">Log in</a>", `>${labels.login}</a>`],
+    ...navReplacements(locale),
   ];
 
   return applyReplacements(source, replacements);
 }
 
-function localizePricingHtml(source, locale, copy) {
-  const url = `https://mosoo.ai/${locale}/pricing`;
-  const labels = FALLBACK_LABELS[locale];
+// Localizes any landing subpage (pricing, status, use cases…): the EN copy in
+// the source HTML is looked up from seo.en and swapped for seo[locale].
+function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = []) {
+  const en = seo.en;
+  const copy = seo[locale];
+  const url = `https://mosoo.ai/${locale}${subpath}`;
+  const enUrl = `https://mosoo.ai/en${subpath}`;
   const replacements = [
-    [`<html lang="${PRICING_EN.lang}">`, `<html lang="${copy.lang}">`],
-    [PRICING_EN.title, copy.title],
-    [PRICING_EN.description, copy.description],
-    [PRICING_EN.socialDescription, copy.socialDescription],
-    [PRICING_EN.imageAlt, copy.imageAlt],
+    [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
+    [en.title, copy.title],
+    [en.description, copy.description],
+    [en.socialDescription, copy.socialDescription],
+    [en.imageAlt, copy.imageAlt],
+    [`<link rel="canonical" href="${enUrl}" />`, `<link rel="canonical" href="${url}" />`],
     [
-      '<link rel="canonical" href="https://mosoo.ai/en/pricing" />',
-      `<link rel="canonical" href="${url}" />`,
-    ],
-    [
-      '<meta property="og:url" content="https://mosoo.ai/en/pricing" />',
+      `<meta property="og:url" content="${enUrl}" />`,
       `<meta property="og:url" content="${url}" />`,
     ],
-    ['"@id": "https://mosoo.ai/en/pricing"', `"@id": "${url}"`],
-    ['"url": "https://mosoo.ai/en/pricing"', `"url": "${url}"`],
+    [`"@id": "${enUrl}"`, `"@id": "${url}"`],
+    [`"url": "${enUrl}"`, `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
-    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
-    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
-    [">Docs</a>", `>${labels.docs}</a>`],
-    [">Quickstart</a>", `>${labels.quickstart}</a>`],
-    [">Blog</a>", `>${labels.blog}</a>`],
-    [">Log in</a>", `>${labels.login}</a>`],
-  ];
-
-  return applyReplacements(source, replacements);
-}
-
-function localizeStatusHtml(source, locale, copy) {
-  const url = `https://mosoo.ai/${locale}/status`;
-  const labels = FALLBACK_LABELS[locale];
-  const replacements = [
-    [`<html lang="${STATUS_EN.lang}">`, `<html lang="${copy.lang}">`],
-    [STATUS_EN.title, copy.title],
-    [STATUS_EN.description, copy.description],
-    [STATUS_EN.socialDescription, copy.socialDescription],
-    [STATUS_EN.imageAlt, copy.imageAlt],
-    [
-      '<link rel="canonical" href="https://mosoo.ai/en/status" />',
-      `<link rel="canonical" href="${url}" />`,
-    ],
-    [
-      '<meta property="og:url" content="https://mosoo.ai/en/status" />',
-      `<meta property="og:url" content="${url}" />`,
-    ],
-    ['"@id": "https://mosoo.ai/en/status"', `"@id": "${url}"`],
-    ['"url": "https://mosoo.ai/en/status"', `"url": "${url}"`],
-    ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
-    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
-    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
-    [">Docs</a>", `>${labels.docs}</a>`],
-    [">Quickstart</a>", `>${labels.quickstart}</a>`],
-    [">Blog</a>", `>${labels.blog}</a>`],
-    [">Log in</a>", `>${labels.login}</a>`],
+    ...navReplacements(locale),
+    ...extraReplacements,
   ];
 
   return applyReplacements(source, replacements);
@@ -239,26 +268,40 @@ export function renderLandingLocale(source, locale) {
 }
 
 export function renderPricingLocale(source, locale) {
-  const copy = PRICING_SEO[locale];
-  if (!copy) throw new Error(`Unsupported pricing locale: ${locale}`);
-  return localizePricingHtml(source, locale, copy);
+  if (!PRICING_SEO[locale]) throw new Error(`Unsupported pricing locale: ${locale}`);
+  return localizeSubpageHtml(source, locale, PRICING_SEO, "/pricing");
 }
 
 export function renderStatusLocale(source, locale) {
-  const copy = STATUS_SEO[locale];
-  if (!copy) throw new Error(`Unsupported status locale: ${locale}`);
-  return localizeStatusHtml(source, locale, copy);
+  if (!STATUS_SEO[locale]) throw new Error(`Unsupported status locale: ${locale}`);
+  return localizeSubpageHtml(source, locale, STATUS_SEO, "/status");
+}
+
+export function renderUseCasesLocale(source, locale) {
+  if (!USE_CASES_SEO[locale]) throw new Error(`Unsupported use-cases locale: ${locale}`);
+  return localizeSubpageHtml(source, locale, USE_CASES_SEO, "/use-cases", [
+    ['href="/en/use-cases/codex-pet">', `href="/${locale}/use-cases/codex-pet">`],
+  ]);
+}
+
+export function renderUseCaseCodexPetLocale(source, locale) {
+  if (!USE_CASE_CODEX_PET_SEO[locale]) {
+    throw new Error(`Unsupported use-case locale: ${locale}`);
+  }
+  return localizeSubpageHtml(source, locale, USE_CASE_CODEX_PET_SEO, "/use-cases/codex-pet");
 }
 
 export async function buildLandingLocales(landingDist) {
   const source = await readFile(join(landingDist, "index.html"), "utf8");
   const pricingSource = await readFile(join(landingDist, "pricing.html"), "utf8");
   const statusSource = await readFile(join(landingDist, "status.html"), "utf8");
+  const useCasesSource = await readFile(join(landingDist, "use-cases.html"), "utf8");
+  const codexPetSource = await readFile(join(landingDist, "use-cases", "codex-pet.html"), "utf8");
 
   await Promise.all(
     Object.keys(SEO).map(async (locale) => {
       await writeFile(join(landingDist, `${locale}.html`), renderLandingLocale(source, locale));
-      await mkdir(join(landingDist, locale), { recursive: true });
+      await mkdir(join(landingDist, locale, "use-cases"), { recursive: true });
       await writeFile(
         join(landingDist, locale, "pricing.html"),
         renderPricingLocale(pricingSource, locale),
@@ -266,6 +309,14 @@ export async function buildLandingLocales(landingDist) {
       await writeFile(
         join(landingDist, locale, "status.html"),
         renderStatusLocale(statusSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "use-cases.html"),
+        renderUseCasesLocale(useCasesSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "use-cases", "codex-pet.html"),
+        renderUseCaseCodexPetLocale(codexPetSource, locale),
       );
     }),
   );
