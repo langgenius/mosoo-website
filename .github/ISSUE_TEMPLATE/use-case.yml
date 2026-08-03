@@ -1,0 +1,67 @@
+name: Use case submission
+description: Submit a product built on mosoo to be featured at mosoo.ai/en/use-cases
+title: "[use-case] <product name>"
+labels: ["use-case"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for shipping on mosoo! Fill this in and a maintainer will build the
+        localized page (en/zh/ja) at `mosoo.ai/{locale}/use-cases/<slug>`.
+        Live example: https://mosoo.ai/en/use-cases/codex-pet
+  - type: input
+    id: name
+    attributes:
+      label: Product name
+      placeholder: Codex Pet
+    validations:
+      required: true
+  - type: input
+    id: capability
+    attributes:
+      label: mosoo capability it demonstrates
+      description: One line. This becomes the card kicker.
+      placeholder: Agent as API
+    validations:
+      required: true
+  - type: input
+    id: repo
+    attributes:
+      label: Public repository URL
+      placeholder: https://github.com/you/your-project
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Live app URL
+      placeholder: https://app-….apps.mosoo.ai/
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: One-paragraph summary
+      description: What goes in, what comes out, and which published mosoo Agent does the work.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How it integrates with mosoo, in three steps
+      description: One or two sentences per step.
+      placeholder: |
+        1. Publish the Agent …
+        2. Copy the Instruction for LLM …
+        3. Integrate from …
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshot and demo video
+      description: >-
+        Drag in a 1440×900 screenshot of the live app (or just say "capture it for me").
+        Optional: a demo video up to 60 s — it will be compressed and played inline on the page.
+    validations:
+      required: true
