@@ -71,12 +71,24 @@ function UseCaseCard({ useCase }: { useCase: UseCase }): ReactElement {
               </li>
             ))}
           </ul>
-          <span className="text-fg-1 mt-8 inline-flex items-center gap-1.5 text-[13.5px] font-semibold md:mt-auto md:pt-8">
-            {t("Read the case")}
-            <ArrowUpRight
-              aria-hidden="true"
-              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
+          <span className="mt-8 flex items-center justify-between gap-3 md:mt-auto md:pt-8">
+            <span className="text-fg-2 inline-flex items-center gap-2 text-[13px] font-medium">
+              <img
+                src={useCase.author.avatar}
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 rounded-[4px]"
+              />
+              {useCase.author.name}
+            </span>
+            <span className="text-fg-1 inline-flex items-center gap-1.5 text-[13.5px] font-semibold">
+              {t("Read the case")}
+              <ArrowUpRight
+                aria-hidden="true"
+                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </span>
           </span>
         </div>
         <div className="bg-paper-200/70 border-border-soft border-t p-3 md:border-t-0 md:border-l md:p-4">

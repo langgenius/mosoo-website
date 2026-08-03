@@ -15,6 +15,7 @@ const ZH_MESSAGES = {
     "正在用 mosoo 构建产品？下一个案例希望就是你的。",
   "Start on mosoo Cloud": "在 mosoo Cloud 开始",
   "Use case": "用例",
+  "Submitted by": "提交者",
   "Publish one Agent. Let any Codex call it.": "发布一个 Agent，任何 Codex 都能调用。",
   "Codex Pet shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.":
     "Codex Pet 展示了在 coding IDE 里搭好的工作流，如何变成一个由 mosoo 托管、通过 API 暴露的可复用 Agent——上传一张头像，返回包含全部九个 Codex 宠物动画状态、经校验的 ZIP。",
@@ -63,6 +64,7 @@ const JA_MESSAGES = {
     "mosoo で何かをつくっていますか？次のケースはあなたの番です。",
   "Start on mosoo Cloud": "mosoo Cloud で始める",
   "Use case": "ユースケース",
+  "Submitted by": "投稿者",
   "Publish one Agent. Let any Codex call it.":
     "Agent を一度公開すれば、どの Codex からでも呼び出せる。",
   "Codex Pet shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.":
