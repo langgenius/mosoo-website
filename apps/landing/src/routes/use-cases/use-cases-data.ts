@@ -10,10 +10,26 @@ export interface UseCase {
   kicker: string;
   name: string;
   productUrl: string;
-  repoUrl: string;
+  repoUrl?: string;
   summary: string;
   tags: readonly string[];
 }
+
+export const GO_GYM: UseCase = {
+  author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
+  detailPath: `/${locale}/use-cases/go-gym`,
+  image: "/landing/use-cases/go-gym-dashboard.png",
+  imageAlt: t(
+    "The Go Gym dashboard after the Agent recorded a day of meals and training.",
+  ),
+  kicker: "Multi-user Agent Backend",
+  name: "Go Gym",
+  productUrl: "https://go-gym-prod.wh-2099.workers.dev/",
+  summary: t(
+    "A production fitness app where users log meals and workouts in natural language. One shared mosoo Agent turns every conversation into isolated, persistent user data.",
+  ),
+  tags: ["Thread API", "Delegated MCP", "Cattle sandbox"],
+};
 
 export const CODEX_PET: UseCase = {
   author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
@@ -33,4 +49,4 @@ export const CODEX_PET: UseCase = {
 export const CODEX_PET_DEMO_VIDEO = "/landing/use-cases/codex-pet-demo.mp4";
 export const CODEX_PET_DEMO_POSTER = "/landing/use-cases/codex-pet-demo.jpg";
 
-export const USE_CASES: readonly UseCase[] = [CODEX_PET];
+export const USE_CASES: readonly UseCase[] = [GO_GYM, CODEX_PET];

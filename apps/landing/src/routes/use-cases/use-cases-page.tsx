@@ -36,7 +36,7 @@ function UseCasesHeader(): ReactElement {
         </h1>
         <p className="text-fg-2 mt-5 max-w-[600px] text-[15px] leading-[1.6] [text-wrap:pretty]">
           {t(
-            "Real products that publish an Agent once and let any client call it as an API. Each case ships with the repository, the live app, and the integration path.",
+            "Real products that use mosoo as their Agent backend. Each case shows the live product, the value mosoo provides, and the integration path.",
           )}
         </p>
       </Reveal>

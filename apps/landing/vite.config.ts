@@ -18,6 +18,7 @@ export default defineConfig({
         status: resolve(appRoot, "status.html"),
         useCases: resolve(appRoot, "use-cases.html"),
         useCaseCodexPet: resolve(appRoot, "use-cases/codex-pet.html"),
+        useCaseGoGym: resolve(appRoot, "use-cases/go-gym.html"),
       },
     },
   },

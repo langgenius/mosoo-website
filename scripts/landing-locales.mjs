@@ -133,7 +133,7 @@ const USE_CASES_SEO = {
     lang: "en",
     title: "mosoo — Use Cases",
     description:
-      "Real products built on mosoo: agents published once and called as APIs. Each case ships with the repository, the live app, and the integration path.",
+      "Real products built on mosoo: see the live product, what mosoo provides, and how the rest of the stack fits together.",
     socialDescription: "Real products built on mosoo: agents published once and called as APIs.",
     imageAlt: "mosoo use cases",
   },
@@ -141,7 +141,7 @@ const USE_CASES_SEO = {
     lang: "zh-CN",
     title: "mosoo — 用例",
     description:
-      "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。每个案例都附带仓库、线上应用与集成路径。",
+      "用 mosoo 构建的真实产品：查看线上产品、mosoo 提供的能力，以及技术栈其他部分如何协同。",
     socialDescription: "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。",
     imageAlt: "mosoo 用例",
   },
@@ -149,9 +149,39 @@ const USE_CASES_SEO = {
     lang: "ja",
     title: "mosoo — ユースケース",
     description:
-      "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。各ケースにリポジトリ、ライブアプリ、統合手順が付属。",
+      "mosoo でつくられた実プロダクト：ライブプロダクト、mosoo が提供する機能、スタック全体の連携を紹介します。",
     socialDescription: "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
     imageAlt: "mosoo ユースケース",
+  },
+};
+
+const USE_CASE_GO_GYM_SEO = {
+  en: {
+    lang: "en",
+    title: "mosoo — Go Gym: Multi-user Agent Backend",
+    description:
+      "How Go Gym uses one shared mosoo Agent, user-scoped Threads, delegated MCP identity, and isolated sandboxes inside a production multi-user fitness app.",
+    socialDescription:
+      "One shared mosoo Agent turns fitness conversations into isolated, durable user records.",
+    imageAlt: "The Go Gym dashboard after the Agent recorded meals and training",
+  },
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — Go Gym：多用户 Agent Backend",
+    description:
+      "Go Gym 如何在生产级多用户健身应用中使用一个共享的 mosoo Agent、用户范围内的 Thread、委托 MCP 身份与隔离 sandbox。",
+    socialDescription:
+      "一个共享的 mosoo Agent 把健身对话转化为隔离、持久的用户记录。",
+    imageAlt: "Agent 记录饮食与训练后的 Go Gym 仪表盘",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — Go Gym：マルチユーザー Agent Backend",
+    description:
+      "Go Gym が本番マルチユーザーフィットネスアプリで、共有 mosoo Agent、ユーザー単位の Thread、委任 MCP ID、隔離 sandbox を使う方法。",
+    socialDescription:
+      "共有された 1 つの mosoo Agent が、フィットネス会話を隔離された永続ユーザーレコードに変換します。",
+    imageAlt: "Agent が食事とトレーニングを記録した後の Go Gym ダッシュボード",
   },
 };
 
@@ -191,7 +221,6 @@ function replaceRequired(html, search, replacement) {
   }
   return html.replaceAll(search, replacement);
 }
-
 function applyReplacements(source, replacements) {
   return replacements.reduce(
     (html, [search, replacement]) =>
@@ -280,8 +309,16 @@ export function renderStatusLocale(source, locale) {
 export function renderUseCasesLocale(source, locale) {
   if (!USE_CASES_SEO[locale]) throw new Error(`Unsupported use-cases locale: ${locale}`);
   return localizeSubpageHtml(source, locale, USE_CASES_SEO, "/use-cases", [
+    ['href="/en/use-cases/go-gym">', `href="/${locale}/use-cases/go-gym">`],
     ['href="/en/use-cases/codex-pet">', `href="/${locale}/use-cases/codex-pet">`],
   ]);
+}
+
+export function renderUseCaseGoGymLocale(source, locale) {
+  if (!USE_CASE_GO_GYM_SEO[locale]) {
+    throw new Error(`Unsupported use-case locale: ${locale}`);
+  }
+  return localizeSubpageHtml(source, locale, USE_CASE_GO_GYM_SEO, "/use-cases/go-gym");
 }
 
 export function renderUseCaseCodexPetLocale(source, locale) {
@@ -296,6 +333,7 @@ export async function buildLandingLocales(landingDist) {
   const pricingSource = await readFile(join(landingDist, "pricing.html"), "utf8");
   const statusSource = await readFile(join(landingDist, "status.html"), "utf8");
   const useCasesSource = await readFile(join(landingDist, "use-cases.html"), "utf8");
+  const goGymSource = await readFile(join(landingDist, "use-cases", "go-gym.html"), "utf8");
   const codexPetSource = await readFile(join(landingDist, "use-cases", "codex-pet.html"), "utf8");
 
   await Promise.all(
@@ -313,6 +351,10 @@ export async function buildLandingLocales(landingDist) {
       await writeFile(
         join(landingDist, locale, "use-cases.html"),
         renderUseCasesLocale(useCasesSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "use-cases", "go-gym.html"),
+        renderUseCaseGoGymLocale(goGymSource, locale),
       );
       await writeFile(
         join(landingDist, locale, "use-cases", "codex-pet.html"),
