@@ -3,6 +3,7 @@ import { locale } from "@/shared/locale";
 import { t } from "./i18n";
 
 export interface UseCase {
+  author: { avatar: string; name: string };
   detailPath: string;
   image: string;
   imageAlt: string;
@@ -15,6 +16,7 @@ export interface UseCase {
 }
 
 export const CODEX_PET: UseCase = {
+  author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
   detailPath: `/${locale}/use-cases/codex-pet`,
   image: "/landing/use-cases/codex-pet-app.png",
   imageAlt: t("The Codex Pet app: one avatar in, nine animation states out."),

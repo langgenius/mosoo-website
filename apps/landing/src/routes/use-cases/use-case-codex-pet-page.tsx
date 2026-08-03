@@ -76,7 +76,18 @@ function CaseHeader(): ReactElement {
           "Codex Pet shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.",
         )}
       </p>
-      <div className="mt-8 flex flex-wrap items-center gap-3">
+      <div className="mt-6 flex items-center gap-2.5">
+        <span className="text-fg-3 text-[13px]">{t("Submitted by")}</span>
+        <img
+          src={CODEX_PET.author.avatar}
+          alt=""
+          width={20}
+          height={20}
+          className="size-5 rounded-[4px]"
+        />
+        <span className="text-fg-1 text-[13.5px] font-semibold">{CODEX_PET.author.name}</span>
+      </div>
+      <div className="mt-7 flex flex-wrap items-center gap-3">
         <a
           href={CODEX_PET.productUrl}
           target="_blank"

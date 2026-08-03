@@ -25,6 +25,16 @@ body:
     validations:
       required: true
   - type: input
+    id: submitter
+    attributes:
+      label: Submitter
+      description: >-
+        Name or handle as it should appear on the case page, plus an optional
+        link (GitHub / X) and an avatar image if you have one.
+      placeholder: "Jane @janedoe · https://github.com/janedoe"
+    validations:
+      required: true
+  - type: input
     id: repo
     attributes:
       label: Public repository URL
