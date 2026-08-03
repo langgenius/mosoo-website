@@ -209,8 +209,10 @@ export default {
       return asset;
     }
 
-    url.pathname = "/";
-    return redirect(url);
+    return new Response("Not found", {
+      status: 404,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+    });
   },
   async scheduled(controller, env) {
     await runStatusCanary(env, controller.scheduledTime);

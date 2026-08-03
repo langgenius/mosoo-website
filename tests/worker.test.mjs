@@ -228,3 +228,12 @@ test("worker returns the built blog 404 without a redirect header", async () => 
   assert.equal(response.headers.get("location"), null);
   assert.equal(await response.text(), "blog not found");
 });
+
+test("worker returns a real 404 for unknown website paths", async () => {
+  const response = await worker.fetch(new Request("https://mosoo.ai/en/missing"), envFor({}));
+
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get("location"), null);
+  assert.equal(response.headers.get("content-type"), "text/plain; charset=utf-8");
+  assert.equal(await response.text(), "Not found");
+});
