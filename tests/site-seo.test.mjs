@@ -11,8 +11,10 @@ import {
   renderUseCasesLocale,
 } from "../scripts/landing-locales.mjs";
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
-const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+const read = (path) =>
+  readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+const locations = (xml) =>
+  [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
@@ -37,7 +39,12 @@ test("the root sitemap aggregates every public content surface", () => {
   ]);
 });
 test("the main-page sitemap contains every canonical landing locale", () => {
-  assert.equal(existsSync(new URL("../apps/landing/public/sitemap-pages.xml", import.meta.url)), true);
+  assert.equal(
+    existsSync(
+      new URL("../apps/landing/public/sitemap-pages.xml", import.meta.url),
+    ),
+    true,
+  );
   const sitemap = read("apps/landing/public/sitemap-pages.xml");
 
   assert.match(sitemap, /<urlset\b/);
@@ -65,7 +72,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
 
 test("robots advertises the aggregate sitemap", () => {
   const robots = read("apps/landing/public/robots.txt");
-  const sitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)$/gm)].map((match) => match[1]);
+  const sitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)$/gm)].map(
+    (match) => match[1],
+  );
 
   assert.deepEqual(sitemaps, ["https://mosoo.ai/sitemap.xml"]);
 });
@@ -76,7 +85,10 @@ test("blog routing and metadata use slashless canonical URLs", () => {
   const workerConfig = read("wrangler.toml");
 
   assert.match(blogConfig, /trailingSlash: "never"/);
-  assert.match(blogLayout, /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/);
+  assert.match(
+    blogLayout,
+    /new URL\(Astro\.url\.pathname, Astro\.site\)\.href/,
+  );
   assert.doesNotMatch(blogLayout, /pathname\.replace\(\/\\\/\$\//);
   assert.match(workerConfig, /html_handling = "drop-trailing-slash"/);
   assert.match(workerConfig, /run_worker_first = true/);
@@ -105,9 +117,18 @@ test("landing and blog metadata never point at a missing default image", () => {
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
 
   assert.match(landing, /rel="canonical" href="https:\/\/mosoo\.ai\/en"/);
-  assert.match(landing, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en"/);
-  assert.match(landing, /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh"/);
-  assert.match(landing, /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja"/);
+  assert.match(
+    landing,
+    /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en"/,
+  );
+  assert.match(
+    landing,
+    /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh"/,
+  );
+  assert.match(
+    landing,
+    /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja"/,
+  );
   assert.match(
     landing,
     /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/en"/,
@@ -116,7 +137,12 @@ test("landing and blog metadata never point at a missing default image", () => {
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
   assert.match(blogLayout, /\/landing\/invoke-gradient\.jpg/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/landing/invoke-gradient.jpg", import.meta.url)),
+    existsSync(
+      new URL(
+        "../apps/landing/public/landing/invoke-gradient.jpg",
+        import.meta.url,
+      ),
+    ),
     true,
   );
 });
@@ -133,7 +159,10 @@ test("landing locale pages receive localized canonical metadata", () => {
 
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh"/);
-  assert.match(zh, /<title>mosoo — 面向 Coding Agent 的开源 Agent runtime<\/title>/);
+  assert.match(
+    zh,
+    /<title>mosoo — 面向 Coding Agent 的开源 Agent runtime<\/title>/,
+  );
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
   assert.match(
@@ -151,10 +180,22 @@ test("landing locale pages receive localized canonical metadata", () => {
 test("pricing metadata lists every localized alternate", () => {
   const pricing = read("apps/landing/pricing.html");
 
-  assert.match(pricing, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/pricing"/);
-  assert.match(pricing, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/);
-  assert.match(pricing, /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh\/pricing"/);
-  assert.match(pricing, /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
+  assert.match(
+    pricing,
+    /rel="canonical" href="https:\/\/mosoo\.ai\/en\/pricing"/,
+  );
+  assert.match(
+    pricing,
+    /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/,
+  );
+  assert.match(
+    pricing,
+    /rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh\/pricing"/,
+  );
+  assert.match(
+    pricing,
+    /rel="alternate" hreflang="ja" href="https:\/\/mosoo\.ai\/ja\/pricing"/,
+  );
   assert.match(
     pricing,
     /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/en\/pricing"/,
@@ -168,11 +209,20 @@ test("pricing locale pages receive localized canonical metadata", () => {
   const ja = renderPricingLocale(source, "ja");
 
   assert.match(zh, /<html lang="zh-CN">/);
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/pricing"/);
+  assert.match(
+    zh,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/pricing"/,
+  );
   assert.match(zh, /<title>mosoo — 定价<\/title>/);
-  assert.match(zh, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/);
+  assert.match(
+    zh,
+    /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/,
+  );
   assert.match(ja, /<html lang="ja">/);
-  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
+  assert.match(
+    ja,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/,
+  );
   assert.match(ja, /<title>mosoo — 料金<\/title>/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
@@ -183,12 +233,21 @@ test("status pages expose localized canonical metadata and crawlable links", () 
   const zh = renderStatusLocale(source, "zh");
   const ja = renderStatusLocale(source, "ja");
 
-  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/status"/);
+  assert.match(
+    source,
+    /rel="canonical" href="https:\/\/mosoo\.ai\/en\/status"/,
+  );
   assert.match(zh, /<html lang="zh-CN">/);
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/status"/);
+  assert.match(
+    zh,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/status"/,
+  );
   assert.match(zh, /<title>mosoo — 系统状态<\/title>/);
   assert.match(ja, /<html lang="ja">/);
-  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/status"/);
+  assert.match(
+    ja,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/status"/,
+  );
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });
@@ -198,18 +257,35 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   const zh = renderUseCasesLocale(source, "zh");
   const ja = renderUseCasesLocale(source, "ja");
 
-  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases"/);
+  assert.match(
+    source,
+    /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases"/,
+  );
   assert.match(source, /href="\/en\/use-cases\/go-gym"/);
   assert.match(source, /href="\/en\/use-cases\/codex-pet"/);
   assert.match(zh, /<html lang="zh-CN">/);
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
+  assert.match(
+    zh,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/,
+  );
   assert.match(zh, /<title>mosoo — 用例<\/title>/);
   assert.match(zh, /href="\/zh\/use-cases\/go-gym"/);
   assert.match(zh, /href="\/zh\/use-cases\/codex-pet"/);
   assert.match(ja, /<html lang="ja">/);
-  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases"/);
+  assert.match(
+    ja,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases"/,
+  );
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
+});
+
+test("the use-cases gallery switches to a featured grid at three cases", () => {
+  const source = read("apps/landing/src/routes/use-cases/use-cases-page.tsx");
+
+  assert.match(source, /USE_CASES\.length < 3/);
+  assert.match(source, /md:grid-cols-2/);
+  assert.match(source, /gridCases\.length >= 3 \? "lg:grid-cols-3"/);
 });
 
 test("the go-gym case page keeps its localized metadata, screenshots, and outbound links", () => {
@@ -217,26 +293,44 @@ test("the go-gym case page keeps its localized metadata, screenshots, and outbou
   const zh = renderUseCaseGoGymLocale(source, "zh");
   const ja = renderUseCaseGoGymLocale(source, "ja");
 
-  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/go-gym"/);
-  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/go-gym-dashboard\.png"/);
+  assert.match(
+    source,
+    /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/go-gym"/,
+  );
+  assert.match(
+    source,
+    /content="https:\/\/mosoo\.ai\/landing\/use-cases\/go-gym-dashboard\.png"/,
+  );
   assert.match(source, /href="https:\/\/go-gym-prod\.wh-2099\.workers\.dev\/"/);
   assert.match(source, /href="https:\/\/mosoo\.ai\/docs\/api-reference\/"/);
   assert.match(source, /href="https:\/\/github\.com\/langgenius\/mosoo\/"/);
   assert.equal(
     existsSync(
-      new URL("../apps/landing/public/landing/use-cases/go-gym-dashboard.png", import.meta.url),
+      new URL(
+        "../apps/landing/public/landing/use-cases/go-gym-dashboard.png",
+        import.meta.url,
+      ),
     ),
     true,
   );
   assert.equal(
     existsSync(
-      new URL("../apps/landing/public/landing/use-cases/go-gym-mosoo-agents.png", import.meta.url),
+      new URL(
+        "../apps/landing/public/landing/use-cases/go-gym-mosoo-agents.png",
+        import.meta.url,
+      ),
     ),
     true,
   );
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/go-gym"/);
+  assert.match(
+    zh,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/go-gym"/,
+  );
   assert.match(zh, /<title>mosoo — Go Gym：多用户 Agent Backend<\/title>/);
-  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/go-gym"/);
+  assert.match(
+    ja,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/go-gym"/,
+  );
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });
@@ -245,11 +339,26 @@ test("the codex-pet case page keeps its canonical, screenshot, and outbound link
   const source = read("apps/landing/use-cases/codex-pet.html");
   const zh = renderUseCaseCodexPetLocale(source, "zh");
 
-  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/codex-pet"/);
-  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/codex-pet-app\.png"/);
-  assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/mosoo-codex-pet"/);
-  assert.match(source, /href="https:\/\/app-01kwc37q6ejfnjvvk3g192x5x7\.apps\.mosoo\.ai\/"/);
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/);
+  assert.match(
+    source,
+    /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/codex-pet"/,
+  );
+  assert.match(
+    source,
+    /content="https:\/\/mosoo\.ai\/landing\/use-cases\/codex-pet-app\.png"/,
+  );
+  assert.match(
+    source,
+    /href="https:\/\/github\.com\/Yevanchen\/mosoo-codex-pet"/,
+  );
+  assert.match(
+    source,
+    /href="https:\/\/app-01kwc37q6ejfnjvvk3g192x5x7\.apps\.mosoo\.ai\/"/,
+  );
+  assert.match(
+    zh,
+    /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/,
+  );
   assert.match(zh, /<title>mosoo — Codex Pet：Agent as API<\/title>/);
   assertInitialSiteLinks(zh, "zh");
 });

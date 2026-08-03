@@ -26,12 +26,23 @@ const CASE_NAME_STYLE = {
   lineHeight: 1.08,
 } satisfies CSSProperties;
 
+const GRID_CASE_NAME_STYLE = {
+  fontFamily: DISPLAY_FONT,
+  fontSize: "clamp(24px, 2vw, 28px)",
+  fontWeight: 500,
+  letterSpacing: "-0.022em",
+  lineHeight: 1.08,
+} satisfies CSSProperties;
+
 function UseCasesHeader(): ReactElement {
   return (
     <section className="px-4 pt-16 pb-12 md:px-6 md:pt-20 md:pb-14">
       <Reveal className="mx-auto flex max-w-[760px] flex-col items-center text-center">
         <Eyebrow>{t("Use cases")}</Eyebrow>
-        <h1 className="text-fg-1 mt-5 [text-wrap:balance]" style={PAGE_HEADLINE_STYLE}>
+        <h1
+          className="text-fg-1 mt-5 [text-wrap:balance]"
+          style={PAGE_HEADLINE_STYLE}
+        >
           {t("Built on mosoo.")}
         </h1>
         <p className="text-fg-2 mt-5 max-w-[600px] text-[15px] leading-[1.6] [text-wrap:pretty]">
@@ -108,14 +119,67 @@ function UseCaseCard({ useCase }: { useCase: UseCase }): ReactElement {
   );
 }
 
+function UseCaseGridCard({ useCase }: { useCase: UseCase }): ReactElement {
+  return (
+    <Reveal className="h-full">
+      <a
+        href={useCase.detailPath}
+        className="group border-border-default bg-paper-50 hover:border-border-strong focus-visible:ring-ring flex h-full flex-col overflow-hidden rounded-[18px] border shadow-[var(--shadow-xs)] transition-[border-color,box-shadow,transform] duration-200 outline-none hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] focus-visible:ring-2"
+      >
+        <div className="bg-paper-200/70 aspect-[16/10] overflow-hidden border-b border-border-soft">
+          <img
+            src={useCase.image}
+            alt={useCase.imageAlt}
+            width={1440}
+            height={900}
+            loading="lazy"
+            className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.015]"
+          />
+        </div>
+        <div className="flex flex-1 flex-col p-6">
+          <p className="text-green-700 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
+            {useCase.kicker}
+          </p>
+          <h2 className="text-fg-1 mt-3" style={GRID_CASE_NAME_STYLE}>
+            {useCase.name}
+          </h2>
+          <p className="text-fg-2 mt-3 text-[13.5px] leading-[1.6] [text-wrap:pretty]">
+            {useCase.summary}
+          </p>
+          <span className="border-border-soft text-fg-2 mt-6 flex items-center justify-between gap-3 border-t pt-4 text-[12.5px] font-medium">
+            <span className="inline-flex items-center gap-2">
+              <img
+                src={useCase.author.avatar}
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 rounded-[4px]"
+              />
+              {useCase.author.name}
+            </span>
+            <ArrowUpRight
+              aria-hidden="true"
+              className="text-fg-1 size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </span>
+        </div>
+      </a>
+    </Reveal>
+  );
+}
+
 function MoreCasesBand(): ReactElement {
   return (
     <Reveal className="border-border-soft mt-16 border-t pt-10 pb-4 md:mt-20">
       <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
         <div>
-          <p className="text-fg-1 text-[15px] font-semibold">{t("More cases are being written up.")}</p>
+          <p className="text-fg-1 text-[15px] font-semibold">
+            {t("More cases are being written up.")}
+          </p>
           <p className="text-fg-2 mt-1 text-[13.5px] leading-[1.6]">
-            {t("Shipping something on mosoo? We want the next case to be yours.")}
+            {t(
+              "Shipping something on mosoo? We want the next case to be yours.",
+            )}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -141,15 +205,30 @@ function MoreCasesBand(): ReactElement {
 }
 
 export function UseCasesPage(): ReactElement {
+  const [featuredCase, ...gridCases] = USE_CASES;
+
   return (
     <div className="pb-20 md:pb-24">
       <UseCasesHeader />
       <div className="mx-auto max-w-[1120px] px-4 md:px-6">
-        <div className="flex flex-col gap-8">
-          {USE_CASES.map((useCase) => (
-            <UseCaseCard key={useCase.detailPath} useCase={useCase} />
-          ))}
-        </div>
+        {USE_CASES.length < 3 ? (
+          <div className="flex flex-col gap-8">
+            {USE_CASES.map((useCase) => (
+              <UseCaseCard key={useCase.detailPath} useCase={useCase} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6 md:gap-8">
+            {featuredCase ? <UseCaseCard useCase={featuredCase} /> : null}
+            <div
+              className={`grid gap-5 md:grid-cols-2 ${gridCases.length >= 3 ? "lg:grid-cols-3" : ""}`}
+            >
+              {gridCases.map((useCase) => (
+                <UseCaseGridCard key={useCase.detailPath} useCase={useCase} />
+              ))}
+            </div>
+          </div>
+        )}
         <MoreCasesBand />
       </div>
     </div>
