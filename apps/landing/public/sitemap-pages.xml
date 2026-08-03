@@ -1,31 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
   <url>
     <loc>https://mosoo.ai/en</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/pricing" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/pricing" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja/pricing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/pricing" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/pricing" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/pricing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/pricing" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/use-cases</loc>
