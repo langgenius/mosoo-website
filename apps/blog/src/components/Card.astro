@@ -1,22 +1,25 @@
 ---
 import CardVisual from "./CardVisual.astro";
+import { categoryLabel, dateLocaleByLocale } from "../lib/copy.mjs";
 
 interface Props {
   href: string;
   title: string;
   category: string;
   date: Date;
+  locale?: "en" | "zh" | "ja";
   description?: string | undefined;
   slug: string;
   heroImage?: string | undefined;
   heroAlt?: string | undefined;
 }
-const { href, title, category, date, description, slug, heroImage, heroAlt } = Astro.props;
-const dateLabel = date.toLocaleDateString("en-US", {
+const { href, title, category, date, locale = "en", description, slug, heroImage, heroAlt } = Astro.props;
+const dateLabel = date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US", {
   year: "numeric",
   month: "short",
   day: "numeric",
 });
+const displayCategory = categoryLabel(locale, category);
 ---
 
 <a href={href} class="group flex flex-col gap-4">
@@ -25,7 +28,7 @@ const dateLabel = date.toLocaleDateString("en-US", {
   </div>
   <div class="flex min-w-0 flex-1 flex-col gap-2">
     <div class="flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
-      <span class="font-semibold text-[color:var(--accent-text)]">{category}</span>
+      <span class="font-semibold text-[color:var(--accent-text)]">{displayCategory}</span>
       <span aria-hidden="true">·</span>
       <time datetime={date.toISOString()}>{dateLabel}</time>
     </div>
