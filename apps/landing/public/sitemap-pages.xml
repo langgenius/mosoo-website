@@ -68,29 +68,65 @@
   </url>
   <url>
     <loc>https://mosoo.ai/en/use-cases</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh/use-cases</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja/use-cases</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/use-cases/go-gym</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/go-gym" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh/use-cases/go-gym</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/go-gym" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja/use-cases/go-gym</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/go-gym" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/go-gym" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/use-cases/codex-pet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/codex-pet" />
   </url>
   <url>
     <loc>https://mosoo.ai/zh/use-cases/codex-pet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/codex-pet" />
   </url>
   <url>
     <loc>https://mosoo.ai/ja/use-cases/codex-pet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/codex-pet" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/codex-pet" />
   </url>
 </urlset>

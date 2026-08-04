@@ -17,6 +17,24 @@ const alternates = (xml) =>
   [...xml.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)" \/>/g)].map(
     (match) => [match[1], match[2]],
   );
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const urlBlock = (xml, loc) => {
+  const match = new RegExp(`<url>\\s*<loc>${escapeRegExp(loc)}<\\/loc>[\\s\\S]*?<\\/url>`).exec(xml);
+  assert.ok(match, `Missing sitemap URL block for ${loc}`);
+  return match[0];
+};
+const assertLandingAlternates = (sitemap, path) => {
+  const expected = [
+    ["en", `https://mosoo.ai/en${path}`],
+    ["zh-CN", `https://mosoo.ai/zh${path}`],
+    ["ja", `https://mosoo.ai/ja${path}`],
+    ["x-default", `https://mosoo.ai/en${path}`],
+  ];
+
+  for (const locale of ["en", "zh", "ja"]) {
+    assert.deepEqual(alternates(urlBlock(sitemap, `https://mosoo.ai/${locale}${path}`)), expected);
+  }
+};
 
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
@@ -77,12 +95,10 @@ test("the main-page sitemap exposes reciprocal landing hreflang alternates", () 
     ["ja", "https://mosoo.ai/ja"],
     ["x-default", "https://mosoo.ai/en"],
   ]);
-  assert.deepEqual(alternates(sitemap).slice(-4), [
-    ["en", "https://mosoo.ai/en/status"],
-    ["zh-CN", "https://mosoo.ai/zh/status"],
-    ["ja", "https://mosoo.ai/ja/status"],
-    ["x-default", "https://mosoo.ai/en/status"],
-  ]);
+  assertLandingAlternates(sitemap, "/status");
+  assertLandingAlternates(sitemap, "/use-cases");
+  assertLandingAlternates(sitemap, "/use-cases/go-gym");
+  assertLandingAlternates(sitemap, "/use-cases/codex-pet");
 });
 
 test("robots advertises the aggregate sitemap", () => {
@@ -120,6 +136,16 @@ test("blog pages send explicit PostHog page views without the analytics SDK", ()
   assert.match(blogLayout, /article_slug:/);
   assert.match(blogLayout, /surface: "blog"/);
   assert.doesNotMatch(blogLayout, /posthog-js|autocapture|session[_-]replay/i);
+});
+
+test("blog chrome links back to canonical localized landing pages", () => {
+  const header = read("apps/blog/src/components/Header.astro");
+  const footer = read("apps/blog/src/components/Footer.astro");
+
+  assert.match(header, /const landingHref = `\/\$\{currentLocale\}`;/);
+  assert.match(footer, /const landingHref = `\/\$\{locale\}`;/);
+  assert.doesNotMatch(header, /href="\/"/);
+  assert.doesNotMatch(footer, /href="\/"/);
 });
 
 test("landing and blog metadata never point at a missing default image", () => {
