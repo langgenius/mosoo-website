@@ -1,0 +1,129 @@
+.bambooWaveBackground {
+  --segment-width: clamp(36px, 3.85vw, 58px);
+  --segment-height: calc(var(--segment-width) * 0.7964);
+  --segment-gap: clamp(4px, 0.4vw, 6px);
+  --segment-bleed: clamp(2px, 0.16vw, 4px);
+  --h1: var(--segment-height);
+  --h0: 0px;
+  --h2: calc(2 * var(--segment-height) + var(--segment-gap));
+  --h3: calc(3 * var(--segment-height) + 2 * var(--segment-gap));
+  --h4: calc(4 * var(--segment-height) + 3 * var(--segment-gap));
+  --h5: calc(5 * var(--segment-height) + 4 * var(--segment-gap));
+  --h6: calc(6 * var(--segment-height) + 5 * var(--segment-gap));
+  --h7: calc(7 * var(--segment-height) + 6 * var(--segment-gap));
+  --h8: calc(8 * var(--segment-height) + 7 * var(--segment-gap));
+  --h9: calc(9 * var(--segment-height) + 8 * var(--segment-gap));
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 68% at 50% 112%, rgb(111 211 5 / 12%), transparent 72%),
+    linear-gradient(180deg, rgb(251 251 252 / 92%) 0%, rgb(251 251 252 / 99%) 100%);
+}
+
+.bambooWaveBackground__wash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 25%, rgb(251 251 252 / 34%) 72%, #fbfbfc 100%);
+}
+
+.bambooWaveBackground__columns {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0px, 0.4vw, 8px);
+  height: min(58vw, 620px);
+  padding: 0 clamp(8px, 2vw, 96px);
+}
+
+.bambooWaveBackground__column {
+  position: relative;
+  width: calc(var(--segment-width) + 2 * var(--segment-bleed));
+  flex: 0 0 calc(var(--segment-width) + 2 * var(--segment-bleed));
+}
+
+.bambooWaveBackground__column--0 { height: var(--h0); }
+.bambooWaveBackground__column--1 { height: var(--h1); }
+.bambooWaveBackground__column--2 { height: var(--h2); }
+.bambooWaveBackground__column--3 { height: var(--h3); }
+.bambooWaveBackground__column--4 { height: var(--h4); }
+.bambooWaveBackground__column--5 { height: var(--h5); }
+.bambooWaveBackground__column--6 { height: var(--h6); }
+.bambooWaveBackground__column--7 { height: var(--h7); }
+.bambooWaveBackground__column--8 { height: var(--h8); }
+.bambooWaveBackground__column--9 { height: var(--h9); }
+
+.bambooWaveBackground__stack-window {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.bambooWaveBackground__stack {
+  position: absolute;
+  right: var(--segment-bleed);
+  bottom: 0;
+  left: var(--segment-bleed);
+  display: flex;
+  height: var(--h9);
+  flex-direction: column-reverse;
+  gap: var(--segment-gap);
+}
+
+.bambooWaveBackground__segment {
+  display: block;
+  width: var(--segment-width);
+  height: var(--segment-height);
+  flex: 0 0 var(--segment-height);
+  overflow: visible;
+}
+
+.bambooWaveBackground__segment path {
+  fill: #6fd305;
+}
+
+.bambooWaveBackground__agents {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: visible;
+}
+
+.bambooWaveBackground__agent {
+  position: absolute;
+  z-index: 4;
+  width: var(--segment-width);
+  height: var(--segment-width);
+  pointer-events: none;
+  filter: drop-shadow(0 4px 5px rgb(22 42 27 / 12%));
+  will-change: left, top, transform;
+}
+
+.bambooWaveBackground__agent img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bambooWaveBackground__agent--codex {
+    left: 13%;
+    top: 78%;
+  }
+
+  .bambooWaveBackground__agent--claude {
+    left: 40%;
+    top: 61%;
+  }
+
+  .bambooWaveBackground__agent--opencode {
+    left: 78%;
+    top: 76%;
+  }
+}

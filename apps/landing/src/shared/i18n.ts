@@ -12,10 +12,10 @@ const ZH_MESSAGES = {
   "mosoo on GitHub": "mosoo 的 GitHub 主页",
   "Log in": "登录",
   "Open source · Agent runtime and API": "开源 · Agent runtime 与 API",
-  "Open-source agent runtime": "开源 Agent runtime",
-  "for coding agents.": "专为 Coding Agent 而生。",
-  "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Stream work, keep durable Threads, and resume across Runs.":
-    "通过统一的 Agent API，在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode。实时流式传输任务，持久保存 Threads，并可跨 Runs 恢复。",
+  "Launch your Skill online": "让你的 Skill 上线",
+  "for anyone to try.": "供任何人在线体验。",
+  "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":
+    "让任何人都能在隔离 sandbox 中，通过 Codex、Claude 或 OpenCode 在线使用你的 Skill。",
   "Star on GitHub": "在 GitHub 上加 Star",
   "Star mosoo on GitHub": "在 GitHub 上为 mosoo 加 Star",
   "Open source · Self-hostable · BYOK": "开源 · 可自行托管 · BYOK",
@@ -35,10 +35,10 @@ const JA_MESSAGES = {
   "mosoo on GitHub": "mosoo の GitHub",
   "Log in": "ログイン",
   "Open source · Agent runtime and API": "オープンソース · Agent runtime と API",
-  "Open-source agent runtime": "オープンソースの Agent runtime",
-  "for coding agents.": "Coding Agent のために。",
-  "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Stream work, keep durable Threads, and resume across Runs.":
-    "OpenAI Codex、Claude Agent SDK、OpenCode を、隔離された sandbox 上で 1 つの Agent API 経由で実行。作業をストリーミングし、Threads を永続化して、Runs をまたいで再開できます。",
+  "Launch your Skill online": "あなたの Skill をオンラインへ",
+  "for anyone to try.": "誰でも試せるように。",
+  "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":
+    "誰でも隔離された sandbox で、Codex、Claude、OpenCode を使ってあなたの Skill をオンラインで利用できます。",
   "Star on GitHub": "GitHub で Star",
   "Star mosoo on GitHub": "GitHub で mosoo に Star",
   "Open source · Self-hostable · BYOK": "オープンソース · セルフホスト可能 · BYOK",
