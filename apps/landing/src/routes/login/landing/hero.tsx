@@ -1,10 +1,10 @@
-import { ArrowUpRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import type { CSSProperties, ReactElement } from "react";
 
 import { t } from "@/shared/i18n";
 
 import { GithubMark } from "../github-mark";
-import { MOSOO_API_REFERENCE_URL, MOSOO_GITHUB_URL } from "../links";
+import { MOSOO_GITHUB_URL } from "../links";
 import { BambooWaveBackground } from "./bamboo-wave-background";
 import { DISPLAY_FONT } from "./typography";
 import { Eyebrow } from "./ui";
@@ -60,7 +60,7 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             onClick={onContinue}
             className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring inline-flex h-12 items-center rounded-md px-7 text-[15px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2"
           >
-            {t("Log in")}
+            {t("Get Started")}
           </button>
           <a
             href={MOSOO_GITHUB_URL}
@@ -72,15 +72,6 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             <GithubMark className="size-[18px]" />
             <span>{t("Star on GitHub")}</span>
             <Star className="size-4" />
-          </a>
-          <a
-            href={MOSOO_API_REFERENCE_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-ink-900 hover:text-ink-900 focus-visible:ring-ring inline-flex h-12 items-center gap-1.5 rounded-md px-3 text-[14px] font-semibold transition-colors outline-none focus-visible:ring-2"
-          >
-            <span>{t("API docs")}</span>
-            <ArrowUpRight className="size-4" />
           </a>
         </div>
         <p className="landing-hero-reveal landing-hero-reveal-delay-4 text-ink-700 mt-6 font-mono text-[11px] tracking-[0.18em] uppercase">

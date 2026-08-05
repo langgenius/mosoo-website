@@ -23,9 +23,11 @@ type MutableAgent = {
 };
 
 const COLUMN_COUNT = 18;
+const EDGE_COLUMN_COUNT = 4;
 const PLATFORM_BEAT_DURATION = 0.525;
 const PLATFORM_TRANSITION_FRACTION = 0.22;
-const PLATFORM_MAX_HEIGHT = 9;
+const EDGE_PLATFORM_MAX_HEIGHT = 9;
+const CENTER_PLATFORM_MAX_HEIGHT = 5;
 const AGENT_RADIUS = 0.024;
 const PLATFORM_HALF_WIDTH = 0.04;
 const GRAVITY = 0.82;
@@ -37,10 +39,20 @@ const CEILING_BOUNCE_MIN_SPEED = 0.48;
 const BOUNCE_SPEED_SCALE = 0.5;
 const BOUNCE_SPEED_OFFSET = 0.2;
 
-// Low columns occur more often, but every target from 3 through 9 remains
-// possible. The seeded selection keeps the movement varied without changing
-// unpredictably on every render.
-const PLATFORM_HEIGHT_DISTRIBUTION = [0, 1, 2, 0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5, 6, 7, 8, 9] as const;
+// The center keeps the hero controls clear: 6-9 are impossible there. The low
+// states 0-2 occupy two thirds of the center targets, while 3-5 occupy the
+// remaining third.
+const CENTER_PLATFORM_HEIGHT_DISTRIBUTION = [
+  0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2,
+  3, 4, 5, 3, 4, 5,
+] as const;
+
+// The outer four columns on each side retain the full 0-9 range used before
+// the center-safe area was introduced.
+const EDGE_PLATFORM_HEIGHT_DISTRIBUTION = [
+  0, 1, 2, 0, 1, 2, 0, 1, 2,
+  3, 4, 5, 3, 4, 5, 6, 7, 8, 9, 6, 7, 8, 9,
+] as const;
 
 const INITIAL_AGENTS: MutableAgent[] = [
   { id: "codex", x: 0.18, y: 0.78, vx: 0.24, vy: -0.34, rotation: 0, angularVelocity: 1.8 },
@@ -79,9 +91,10 @@ function clampAngularVelocity(agent: MutableAgent): void {
 function targetPlatformHeight(columnIndex: number, beat: number): number {
   const random = Math.sin((columnIndex + 1) * 12.9898 + (beat + 1) * 78.233) * 43758.5453;
   const normalized = random - Math.floor(random);
-  const distributionIndex = Math.floor(normalized * PLATFORM_HEIGHT_DISTRIBUTION.length);
+  const distribution = platformHeightDistribution(columnIndex);
+  const distributionIndex = Math.floor(normalized * distribution.length);
 
-  return PLATFORM_HEIGHT_DISTRIBUTION[distributionIndex]!;
+  return distribution[distributionIndex]!;
 }
 
 function platformCount(columnIndex: number, time: number): number {
@@ -94,6 +107,20 @@ function platformCount(columnIndex: number, time: number): number {
   return Math.round(fromCount + (toCount - fromCount) * transitionProgress);
 }
 
+function isEdgeColumn(columnIndex: number): boolean {
+  return columnIndex < EDGE_COLUMN_COUNT || columnIndex >= COLUMN_COUNT - EDGE_COLUMN_COUNT;
+}
+
+function platformHeightDistribution(columnIndex: number): readonly number[] {
+  return isEdgeColumn(columnIndex)
+    ? EDGE_PLATFORM_HEIGHT_DISTRIBUTION
+    : CENTER_PLATFORM_HEIGHT_DISTRIBUTION;
+}
+
+function platformMaxHeight(columnIndex: number): number {
+  return isEdgeColumn(columnIndex) ? EDGE_PLATFORM_MAX_HEIGHT : CENTER_PLATFORM_MAX_HEIGHT;
+}
+
 function platformTop(columnIndex: number, time: number): number | null {
   const segmentCount = platformCount(columnIndex, time);
 
@@ -101,7 +128,7 @@ function platformTop(columnIndex: number, time: number): number | null {
     return null;
   }
 
-  return 0.96 - (segmentCount / PLATFORM_MAX_HEIGHT) * 0.44;
+  return 0.96 - (segmentCount / platformMaxHeight(columnIndex)) * 0.44;
 }
 
 function platformHeightsAt(time: number): readonly number[] {

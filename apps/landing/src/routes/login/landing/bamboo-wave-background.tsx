@@ -15,6 +15,14 @@ const SEGMENT_HEIGHT = 46.13;
 const BAMBOO_PATH =
   "M45.68,0H0c.83,5.28,1.31,11.5,1.31,18.16S.83,31.04,0,36.32h45.68c-.83-5.28-1.31-11.5-1.31-18.16s.48-12.88,1.31-18.16Z";
 
+function bambooSegmentOpacity(columnIndex: number, segmentIndex: number): number {
+  const random = Math.sin((columnIndex + 1) * 19.17 + (segmentIndex + 1) * 47.31) * 43758.5453;
+  const normalized = random - Math.floor(random);
+  const opacityLevels = [0.35, 0.55, 0.75, 1] as const;
+
+  return opacityLevels[Math.min(opacityLevels.length - 1, Math.floor(normalized * opacityLevels.length))]!;
+}
+
 const AGENT_RUNTIME_IDS = {
   codex: "openai-runtime",
   claude: "claude-agent-sdk",
@@ -48,6 +56,7 @@ export function BambooWaveBackground(): ReactElement {
                     className="bambooWaveBackground__segment"
                     focusable="false"
                     key={segmentIndex}
+                    style={{ opacity: bambooSegmentOpacity(columnIndex, segmentIndex) }}
                     viewBox="0 0 45.68 36.32"
                     width={SEGMENT_WIDTH}
                     height={SEGMENT_HEIGHT}
