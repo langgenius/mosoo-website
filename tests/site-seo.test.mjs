@@ -6,6 +6,7 @@ import {
   renderLandingLocale,
   renderPricingLocale,
   renderStatusLocale,
+  renderUseCaseBlueprintLocale,
   renderUseCaseCodexPetLocale,
   renderUseCaseGoGymLocale,
   renderUseCasesLocale,
@@ -58,6 +59,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/use-cases",
     "https://mosoo.ai/zh/use-cases",
     "https://mosoo.ai/ja/use-cases",
+    "https://mosoo.ai/en/use-cases/blueprint",
+    "https://mosoo.ai/zh/use-cases/blueprint",
+    "https://mosoo.ai/ja/use-cases/blueprint",
     "https://mosoo.ai/en/use-cases/go-gym",
     "https://mosoo.ai/zh/use-cases/go-gym",
     "https://mosoo.ai/ja/use-cases/go-gym",
@@ -221,11 +225,13 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   const ja = renderUseCasesLocale(source, "ja");
 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases"/);
+  assert.match(source, /href="\/en\/use-cases\/blueprint"/);
   assert.match(source, /href="\/en\/use-cases\/go-gym"/);
   assert.match(source, /href="\/en\/use-cases\/codex-pet"/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
   assert.match(zh, /<title>mosoo — 用例<\/title>/);
+  assert.match(zh, /href="\/zh\/use-cases\/blueprint"/);
   assert.match(zh, /href="\/zh\/use-cases\/go-gym"/);
   assert.match(zh, /href="\/zh\/use-cases\/codex-pet"/);
   assert.match(ja, /<html lang="ja">/);
@@ -240,6 +246,28 @@ test("the use-cases gallery switches to a featured grid at three cases", () => {
   assert.match(source, /USE_CASES\.length < 3/);
   assert.match(source, /md:grid-cols-2/);
   assert.match(source, /gridCases\.length >= 3 \? "lg:grid-cols-3"/);
+});
+
+test("the blueprint case page keeps its canonical, screenshot, and outbound links", () => {
+  const source = read("apps/landing/use-cases/blueprint.html");
+  const zh = renderUseCaseBlueprintLocale(source, "zh");
+  const ja = renderUseCaseBlueprintLocale(source, "ja");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/blueprint"/);
+  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/blueprint-app\.png"/);
+  assert.match(source, /href="https:\/\/trybp\.page"/);
+  assert.match(source, /href="https:\/\/github\.com\/samzong\/blueprint"/);
+  assert.equal(
+    existsSync(
+      new URL("../apps/landing/public/landing/use-cases/blueprint-app.png", import.meta.url),
+    ),
+    true,
+  );
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/blueprint"/);
+  assert.match(zh, /<title>mosoo — Blueprint：人人可用的站点构建器<\/title>/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/blueprint"/);
+  assertInitialSiteLinks(zh, "zh");
+  assertInitialSiteLinks(ja, "ja");
 });
 
 test("the go-gym case page keeps its localized metadata, screenshots, and outbound links", () => {

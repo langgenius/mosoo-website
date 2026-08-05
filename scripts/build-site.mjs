@@ -59,6 +59,10 @@ if (!existsSync(join(DIST, "use-cases", "go-gym.html"))) {
   throw new Error("Landing build did not produce dist/use-cases/go-gym.html.");
 }
 
+if (!existsSync(join(DIST, "use-cases", "blueprint.html"))) {
+  throw new Error("Landing build did not produce dist/use-cases/blueprint.html.");
+}
+
 for (const locale of ["en", "zh", "ja"]) {
   if (!existsSync(join(DIST, `${locale}.html`))) {
     throw new Error(`Landing build did not produce dist/${locale}.html.`);
@@ -77,6 +81,9 @@ for (const locale of ["en", "zh", "ja"]) {
   }
   if (!existsSync(join(DIST, locale, "use-cases", "go-gym.html"))) {
     throw new Error(`Landing build did not produce dist/${locale}/use-cases/go-gym.html.`);
+  }
+  if (!existsSync(join(DIST, locale, "use-cases", "blueprint.html"))) {
+    throw new Error(`Landing build did not produce dist/${locale}/use-cases/blueprint.html.`);
   }
 }
 
