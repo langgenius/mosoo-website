@@ -113,6 +113,28 @@ const ZH_MESSAGES = {
   "Embed an Agent in your own SaaS.": "在你的 SaaS 中嵌入 Agent。",
   "Keep your product, auth, and database. Let mosoo own the Agent lifecycle, isolation, harness, and delegated tool context.":
     "保留你的产品、身份系统和数据库，让 mosoo 负责 Agent 生命周期、隔离、harness 与委托工具上下文。",
+  "Prompt in, shippable site out — a cattle mosoo Agent runs the Blueprint CLI, and trybp.page publishes each successful artifact to a stable hostname.":
+    "提示词进，可上线站点出——一个 cattle mosoo Agent 运行 Blueprint CLI，trybp.page 把每次成功产物发布到稳定主机名。",
+  "The Blueprint control surface on trybp.page.": "trybp.page 上的 Blueprint 控制台。",
+  "From a brief to a live site. Mosoo runs the Agent.":
+    "从一句话到线上站点。Mosoo 负责跑 Agent。",
+  "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint inside a cattle sandbox, and publishes validated artifacts — without ever exposing the Mosoo token to the browser.":
+    "Blueprint 把对话式 brief 变成确定的页面。线上产品 trybp.page 把每个项目映射到一个 mosoo Thread，在 cattle sandbox 里运行 Blueprint，并发布经校验的产物——Mosoo token 从不进入浏览器。",
+  "A shared cattle Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.":
+    "在 mosoo 上发布一个共享的 cattle Agent，配备 Blueprint skill 与 full 网络访问，生成过程可以访问任意参考 URL。",
+  "Drive generation from the Control Worker": "由 Control Worker 驱动生成",
+  "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the Mosoo token off the browser.":
+    "Control Worker 为每个项目创建一个 Thread，为每次提示或修订创建一个 Run。它轮询 Run，下载 outputs/ 下已提交的产物，并把 Mosoo token 留在浏览器之外。",
+  "Publish outside mosoo": "在 mosoo 之外发布",
+  "The Worker validates the artifact, writes an immutable R2 version, and activates it on a stable *.trybp.page hostname. Mosoo never receives Cloudflare credentials.":
+    "Worker 校验产物，写入不可变的 R2 版本，并在稳定的 *.trybp.page 主机名上激活。Mosoo 从不接收 Cloudflare 凭证。",
+  "The token stays in the Control Worker. The browser only ever sees the published site.":
+    "token 始终留在 Control Worker 里，浏览器只会看到已发布的站点。",
+  "A self-contained site artifact — typically one index.html — versioned on R2 with three-version retention and a stable public hostname.":
+    "一份自包含站点产物——通常是单个 index.html——在 R2 上版本化，默认保留三个版本，并绑定稳定的公开主机名。",
+  "Build your own site-generation Agent.": "构建你自己的站点生成 Agent。",
+  "Publish an Agent that produces artifacts, keep the publish path in your Worker, and ship the product UI on top.":
+    "发布一个产出 artifact 的 Agent，把发布路径留在 Worker 里，再在上层做出产品 UI。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -231,6 +253,28 @@ const JA_MESSAGES = {
   "Embed an Agent in your own SaaS.": "自分の SaaS に Agent を組み込む。",
   "Keep your product, auth, and database. Let mosoo own the Agent lifecycle, isolation, harness, and delegated tool context.":
     "プロダクト、auth、データベースはそのままに。Agent のライフサイクル、隔離、harness、委任ツールコンテキストは mosoo に任せます。",
+  "Prompt in, shippable site out — a cattle mosoo Agent runs the Blueprint CLI, and trybp.page publishes each successful artifact to a stable hostname.":
+    "プロンプトを入れると出荷可能なサイトが出てくる — cattle の mosoo Agent が Blueprint CLI を実行し、trybp.page が成功した成果物を安定したホスト名へ公開します。",
+  "The Blueprint control surface on trybp.page.": "trybp.page 上の Blueprint コントロール画面。",
+  "From a brief to a live site. Mosoo runs the Agent.":
+    "ブリーフからライブサイトへ。Agent の実行は Mosoo が担う。",
+  "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint inside a cattle sandbox, and publishes validated artifacts — without ever exposing the Mosoo token to the browser.":
+    "Blueprint は会話形式のブリーフを決定的なページに変えます。オンライン製品 trybp.page は各プロジェクトを 1 つの mosoo Thread に対応づけ、cattle sandbox 内で Blueprint を実行し、検証済みの成果物を公開します。Mosoo token がブラウザに渡ることはありません。",
+  "A shared cattle Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.":
+    "Blueprint skill とフルネットワークアクセスを持つ共有 cattle Agent を mosoo で公開し、生成処理が任意の参照 URL に到達できるようにします。",
+  "Drive generation from the Control Worker": "Control Worker から生成を駆動する",
+  "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the Mosoo token off the browser.":
+    "Control Worker はプロジェクトごとに 1 つの Thread、プロンプトまたは改訂ごとに 1 つの Run を作成します。Run をポーリングし、outputs/ 配下のコミット済み成果物をダウンロードし、Mosoo token をブラウザの外に留めます。",
+  "Publish outside mosoo": "mosoo の外で公開する",
+  "The Worker validates the artifact, writes an immutable R2 version, and activates it on a stable *.trybp.page hostname. Mosoo never receives Cloudflare credentials.":
+    "Worker が成果物を検証し、不変の R2 バージョンを書き込み、安定した *.trybp.page ホスト名で有効化します。Mosoo が Cloudflare 資格情報を受け取ることはありません。",
+  "The token stays in the Control Worker. The browser only ever sees the published site.":
+    "token は Control Worker の中に留まり、ブラウザに渡るのは公開済みサイトだけです。",
+  "A self-contained site artifact — typically one index.html — versioned on R2 with three-version retention and a stable public hostname.":
+    "自己完結したサイト成果物 — 通常は 1 つの index.html — を R2 でバージョン管理し、既定で 3 バージョンを保持して安定した公開ホスト名に載せます。",
+  "Build your own site-generation Agent.": "自分のサイト生成 Agent をつくる。",
+  "Publish an Agent that produces artifacts, keep the publish path in your Worker, and ship the product UI on top.":
+    "成果物を出す Agent を公開し、公開経路は Worker に残したまま、その上にプロダクト UI を載せて出荷します。",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };

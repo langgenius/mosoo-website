@@ -19,6 +19,7 @@ export default defineConfig({
         useCases: resolve(appRoot, "use-cases.html"),
         useCaseCodexPet: resolve(appRoot, "use-cases/codex-pet.html"),
         useCaseGoGym: resolve(appRoot, "use-cases/go-gym.html"),
+        useCaseBlueprint: resolve(appRoot, "use-cases/blueprint.html"),
       },
     },
   },

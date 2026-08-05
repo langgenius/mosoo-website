@@ -15,6 +15,21 @@ export interface UseCase {
   tags: readonly string[];
 }
 
+export const BLUEPRINT: UseCase = {
+  author: { avatar: "/landing/use-cases/samzong.png", name: "samzong" },
+  detailPath: `/${locale}/use-cases/blueprint`,
+  image: "/landing/use-cases/blueprint-app.png",
+  imageAlt: t("The Blueprint control surface on trybp.page."),
+  kicker: "A site builder for everyone",
+  name: "Blueprint",
+  productUrl: "https://trybp.page",
+  repoUrl: "https://github.com/samzong/blueprint",
+  summary: t(
+    "Prompt in, shippable site out — a cattle mosoo Agent runs the Blueprint CLI, and trybp.page publishes each successful artifact to a stable hostname.",
+  ),
+  tags: ["Thread API", "Cattle sandbox", "Cloudflare Workers"],
+};
+
 export const GO_GYM: UseCase = {
   author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
   detailPath: `/${locale}/use-cases/go-gym`,
@@ -49,4 +64,4 @@ export const CODEX_PET: UseCase = {
 export const CODEX_PET_DEMO_VIDEO = "/landing/use-cases/codex-pet-demo.mp4";
 export const CODEX_PET_DEMO_POSTER = "/landing/use-cases/codex-pet-demo.jpg";
 
-export const USE_CASES: readonly UseCase[] = [GO_GYM, CODEX_PET];
+export const USE_CASES: readonly UseCase[] = [BLUEPRINT, GO_GYM, CODEX_PET];

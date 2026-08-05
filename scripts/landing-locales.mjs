@@ -155,6 +155,36 @@ const USE_CASES_SEO = {
   },
 };
 
+const USE_CASE_BLUEPRINT_SEO = {
+  en: {
+    lang: "en",
+    title: "mosoo — Blueprint: A site builder for everyone",
+    description:
+      "How Blueprint at trybp.page uses one shared cattle mosoo Agent, Thread-scoped projects, and Worker-side publish to turn a brief into a live site.",
+    socialDescription:
+      "Prompt in, shippable site out — a cattle mosoo Agent runs Blueprint; trybp.page publishes the artifact.",
+    imageAlt: "The Blueprint control surface on trybp.page",
+  },
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — Blueprint：人人可用的站点构建器",
+    description:
+      "trybp.page 上的 Blueprint 如何用一个共享的 cattle mosoo Agent、按项目划分的 Thread，以及 Worker 侧发布，把 brief 变成线上站点。",
+    socialDescription:
+      "提示词进，可上线站点出——cattle mosoo Agent 运行 Blueprint；trybp.page 发布产物。",
+    imageAlt: "trybp.page 上的 Blueprint 控制台",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — Blueprint：だれでも使えるサイトビルダー",
+    description:
+      "trybp.page の Blueprint が、共有 cattle mosoo Agent、プロジェクト単位の Thread、Worker 側の公開でブリーフをライブサイトに変える方法。",
+    socialDescription:
+      "プロンプトを入れると出荷可能なサイトが出てくる — cattle の mosoo Agent が Blueprint を実行し、trybp.page が成果物を公開します。",
+    imageAlt: "trybp.page 上の Blueprint コントロール画面",
+  },
+};
+
 const USE_CASE_GO_GYM_SEO = {
   en: {
     lang: "en",
@@ -309,9 +339,17 @@ export function renderStatusLocale(source, locale) {
 export function renderUseCasesLocale(source, locale) {
   if (!USE_CASES_SEO[locale]) throw new Error(`Unsupported use-cases locale: ${locale}`);
   return localizeSubpageHtml(source, locale, USE_CASES_SEO, "/use-cases", [
+    ['href="/en/use-cases/blueprint">', `href="/${locale}/use-cases/blueprint">`],
     ['href="/en/use-cases/go-gym">', `href="/${locale}/use-cases/go-gym">`],
     ['href="/en/use-cases/codex-pet">', `href="/${locale}/use-cases/codex-pet">`],
   ]);
+}
+
+export function renderUseCaseBlueprintLocale(source, locale) {
+  if (!USE_CASE_BLUEPRINT_SEO[locale]) {
+    throw new Error(`Unsupported use-case locale: ${locale}`);
+  }
+  return localizeSubpageHtml(source, locale, USE_CASE_BLUEPRINT_SEO, "/use-cases/blueprint");
 }
 
 export function renderUseCaseGoGymLocale(source, locale) {
@@ -335,6 +373,10 @@ export async function buildLandingLocales(landingDist) {
   const useCasesSource = await readFile(join(landingDist, "use-cases.html"), "utf8");
   const goGymSource = await readFile(join(landingDist, "use-cases", "go-gym.html"), "utf8");
   const codexPetSource = await readFile(join(landingDist, "use-cases", "codex-pet.html"), "utf8");
+  const blueprintSource = await readFile(
+    join(landingDist, "use-cases", "blueprint.html"),
+    "utf8",
+  );
 
   await Promise.all(
     Object.keys(SEO).map(async (locale) => {
@@ -359,6 +401,10 @@ export async function buildLandingLocales(landingDist) {
       await writeFile(
         join(landingDist, locale, "use-cases", "codex-pet.html"),
         renderUseCaseCodexPetLocale(codexPetSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "use-cases", "blueprint.html"),
+        renderUseCaseBlueprintLocale(blueprintSource, locale),
       );
     }),
   );
