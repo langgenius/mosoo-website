@@ -18,6 +18,11 @@ const alternates = (xml) =>
   [...xml.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)" \/>/g)].map(
     (match) => [match[1], match[2]],
   );
+const sitemapEntries = (xml) =>
+  [...xml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>([\s\S]*?)<\/url>/g)].map((match) => ({
+    loc: match[1],
+    alternates: alternates(match[2]),
+  }));
 
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
@@ -75,18 +80,15 @@ test("the main-page sitemap exposes reciprocal landing hreflang alternates", () 
   const sitemap = read("apps/landing/public/sitemap-pages.xml");
 
   assert.match(sitemap, /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
-  assert.deepEqual(alternates(sitemap).slice(0, 4), [
-    ["en", "https://mosoo.ai/en"],
-    ["zh-CN", "https://mosoo.ai/zh"],
-    ["ja", "https://mosoo.ai/ja"],
-    ["x-default", "https://mosoo.ai/en"],
-  ]);
-  assert.deepEqual(alternates(sitemap).slice(-4), [
-    ["en", "https://mosoo.ai/en/status"],
-    ["zh-CN", "https://mosoo.ai/zh/status"],
-    ["ja", "https://mosoo.ai/ja/status"],
-    ["x-default", "https://mosoo.ai/en/status"],
-  ]);
+  for (const entry of sitemapEntries(sitemap)) {
+    const suffix = entry.loc.replace(/^https:\/\/mosoo\.ai\/(?:en|zh|ja)/, "");
+    assert.deepEqual(entry.alternates, [
+      ["en", `https://mosoo.ai/en${suffix}`],
+      ["zh-CN", `https://mosoo.ai/zh${suffix}`],
+      ["ja", `https://mosoo.ai/ja${suffix}`],
+      ["x-default", `https://mosoo.ai/en${suffix}`],
+    ]);
+  }
 });
 
 test("robots advertises the aggregate sitemap", () => {
