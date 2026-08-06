@@ -278,19 +278,34 @@ test("the blueprint case page keeps its canonical, screenshot, and outbound link
 
 test("the pitchpilot case page keeps its localized metadata, screenshot, and outbound links", () => {
   const source = read("apps/landing/use-cases/pitchpilot.html");
+  const page = read("apps/landing/src/routes/use-cases/use-case-pitchpilot-page.tsx");
+  const data = read("apps/landing/src/routes/use-cases/use-cases-data.ts");
   const zh = renderUseCasePitchPilotLocale(source, "zh");
   const ja = renderUseCasePitchPilotLocale(source, "ja");
 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/pitchpilot"/);
   assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/pitchpilot-mosoo\.png"/);
   assert.match(source, /href="https:\/\/pitchpilot-mosoo\.wh-2099\.workers\.dev\/"/);
-  assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/pitchpilot-mosoo"/);
+  assert.match(source, /href="https:\/\/github\.com\/Petrus-Han\/pitchpilot-mosoo"/);
+  assert.match(page, /pitchpilot-application-architecture\.jpg/);
+  assert.match(page, /pitchpilot-runtime-architecture\.jpg/);
+  assert.match(data, /avatar: "\/landing\/use-cases\/petrus-han\.jpg", name: "Peter Han"/);
   assert.equal(
     existsSync(
       new URL("../apps/landing/public/landing/use-cases/pitchpilot-mosoo.png", import.meta.url),
     ),
     true,
   );
+  for (const image of [
+    "petrus-han.jpg",
+    "pitchpilot-application-architecture.jpg",
+    "pitchpilot-runtime-architecture.jpg",
+  ]) {
+    assert.equal(
+      existsSync(new URL(`../apps/landing/public/landing/use-cases/${image}`, import.meta.url)),
+      true,
+    );
+  }
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/pitchpilot"/);
   assert.match(zh, /<title>mosoo — PitchPilot：Agent 驱动的 Web 应用<\/title>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/pitchpilot"/);

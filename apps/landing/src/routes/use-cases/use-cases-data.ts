@@ -31,7 +31,7 @@ export const BLUEPRINT: UseCase = {
 };
 
 export const PITCHPILOT: UseCase = {
-  author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
+  author: { avatar: "/landing/use-cases/petrus-han.jpg", name: "Peter Han" },
   detailPath: `/${locale}/use-cases/pitchpilot`,
   image: "/landing/use-cases/pitchpilot-mosoo.png",
   imageAlt: t(
@@ -40,7 +40,7 @@ export const PITCHPILOT: UseCase = {
   kicker: "Agent-powered Web App",
   name: "PitchPilot",
   productUrl: "https://pitchpilot-mosoo.wh-2099.workers.dev/",
-  repoUrl: "https://github.com/Yevanchen/pitchpilot-mosoo",
+  repoUrl: "https://github.com/Petrus-Han/pitchpilot-mosoo",
   summary: t(
     "PitchPilot keeps the presentation workflow in its own product UI while a published mosoo Agent reads attachments, runs the work, and returns a committed HTML artifact for preview and download.",
   ),

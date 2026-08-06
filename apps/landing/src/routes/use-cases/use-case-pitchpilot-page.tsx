@@ -11,6 +11,11 @@ import { MOSOO_DOCS_URL } from "../login/links";
 import { t } from "./i18n";
 import { PITCHPILOT } from "./use-cases-data";
 
+const APPLICATION_ARCHITECTURE_SCREENSHOT =
+  "/landing/use-cases/pitchpilot-application-architecture.jpg";
+const RUNTIME_ARCHITECTURE_SCREENSHOT =
+  "/landing/use-cases/pitchpilot-runtime-architecture.jpg";
+
 const PAGE_HEADLINE_STYLE = {
   fontFamily: DISPLAY_FONT,
   fontSize: "clamp(36px, 4.6vw, 60px)",
@@ -164,6 +169,63 @@ function HowItWorks(): ReactElement {
   );
 }
 
+function ArchitectureGallery(): ReactElement {
+  return (
+    <section className="mt-16 md:mt-24">
+      <Reveal>
+        <h2 className="text-fg-1" style={sectionHeadingStyle}>
+          {t("See the architecture the Agent delivered.")}
+        </h2>
+        <p className="text-fg-2 mt-4 max-w-[700px] text-[14.5px] leading-[1.65] [text-wrap:pretty]">
+          {t(
+            "Each capture keeps the PitchPilot workspace on the left and the committed Agent artifact on the right: first at the application level, then inside the managed Agent runtime.",
+          )}
+        </p>
+      </Reveal>
+      <div className="mt-8 grid gap-5">
+        <Reveal>
+          <figure className="border-border-default overflow-hidden rounded-[14px] border bg-white shadow-[var(--shadow-xs)]">
+            <img
+              src={APPLICATION_ARCHITECTURE_SCREENSHOT}
+              alt={t(
+                "PitchPilot workspace beside a slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.",
+              )}
+              width={1272}
+              height={868}
+              loading="lazy"
+              className="w-full"
+            />
+            <figcaption className="border-border-soft text-fg-2 border-t px-4 py-3 text-[13px] leading-[1.55]">
+              {t(
+                "Application boundary: Dify owns the product layer; Mosoo supplies the managed Agent backend.",
+              )}
+            </figcaption>
+          </figure>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <figure className="border-border-default overflow-hidden rounded-[14px] border bg-white shadow-[var(--shadow-xs)]">
+            <img
+              src={RUNTIME_ARCHITECTURE_SCREENSHOT}
+              alt={t(
+                "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.",
+              )}
+              width={1272}
+              height={868}
+              loading="lazy"
+              className="w-full"
+            />
+            <figcaption className="border-border-soft text-fg-2 border-t px-4 py-3 text-[13px] leading-[1.55]">
+              {t(
+                "Runtime boundary: one Thread contains Runs, tools, delegated identity, events, and Artifacts.",
+              )}
+            </figcaption>
+          </figure>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function RequestPath(): ReactElement {
   return (
     <Reveal className="mt-16 md:mt-20">
@@ -270,6 +332,7 @@ export function UseCasePitchPilotPage(): ReactElement {
       <CaseHeader />
       <AppScreenshot />
       <HowItWorks />
+      <ArchitectureGallery />
       <RequestPath />
       <Facts />
       <ClosingCta />

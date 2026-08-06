@@ -163,6 +163,17 @@ const ZH_MESSAGES = {
   "Put a managed Agent behind your product UI.": "把托管 Agent 放到你的产品 UI 背后。",
   "Publish the Agent once, call it through Threads, and turn its events and files into the experience your users already understand.":
     "发布一次 Agent，通过 Thread 调用它，再把事件和文件变成用户已经理解的产品体验。",
+  "See the architecture the Agent delivered.": "看看 Agent 交付的架构图。",
+  "Each capture keeps the PitchPilot workspace on the left and the committed Agent artifact on the right: first at the application level, then inside the managed Agent runtime.":
+    "每张截图都在左侧保留 PitchPilot 工作区、右侧展示 Agent 交付物：先看应用层，再深入 managed Agent runtime。",
+  "PitchPilot workspace beside a slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.":
+    "PitchPilot 工作区与架构幻灯片并列，展示 Dify Application Layer 与 Mosoo managed Agent runtime 两类职责。",
+  "Application boundary: Dify owns the product layer; Mosoo supplies the managed Agent backend.":
+    "应用边界：Dify 负责产品层，Mosoo 提供 managed Agent backend。",
+  "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.":
+    "PitchPilot 工作区与 Runtime 幻灯片并列，展示 Mosoo 内的 Thread、Run、Harness Selection、MCP Tools、Delegated End-User Context、Normalized Events 与 Artifacts。",
+  "Runtime boundary: one Thread contains Runs, tools, delegated identity, events, and Artifacts.":
+    "Runtime 边界：一个 Thread 承载 Runs、工具、委托身份、事件与 Artifacts。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -332,6 +343,17 @@ const JA_MESSAGES = {
     "プロダクト UI の背後に managed Agent を置く。",
   "Publish the Agent once, call it through Threads, and turn its events and files into the experience your users already understand.":
     "Agent を一度公開し、Thread 経由で呼び出し、そのイベントとファイルをユーザーが理解できる体験に変換します。",
+  "See the architecture the Agent delivered.": "Agent が納品したアーキテクチャを見る。",
+  "Each capture keeps the PitchPilot workspace on the left and the committed Agent artifact on the right: first at the application level, then inside the managed Agent runtime.":
+    "各スクリーンショットは左に PitchPilot ワークスペース、右に Agent の成果物を配置し、まずアプリケーション層、次に managed Agent runtime の内部を示します。",
+  "PitchPilot workspace beside a slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.":
+    "PitchPilot ワークスペースと、Dify Application Layer と Mosoo managed Agent runtime の 2 つの責務を示すスライド。",
+  "Application boundary: Dify owns the product layer; Mosoo supplies the managed Agent backend.":
+    "アプリケーション境界：Dify がプロダクト層を担い、Mosoo が managed Agent backend を提供します。",
+  "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.":
+    "PitchPilot ワークスペースと、Mosoo 内の Thread、Run、Harness Selection、MCP Tools、Delegated End-User Context、Normalized Events、Artifacts を示すスライド。",
+  "Runtime boundary: one Thread contains Runs, tools, delegated identity, events, and Artifacts.":
+    "Runtime 境界：1 つの Thread が Runs、ツール、委任 ID、イベント、Artifacts を保持します。",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
