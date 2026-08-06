@@ -120,7 +120,7 @@
   border-radius: 28px;
   background: rgb(255 255 255 / 88%);
   box-shadow: 0 24px 70px rgb(25 45 37 / 10%), 0 3px 10px rgb(25 45 37 / 5%);
-  transform: rotate(1deg) scale(0.9);
+  transform: scale(0.9);
   backdrop-filter: blur(8px);
 }
 
@@ -420,7 +420,7 @@
 @media (max-width: 767px) {
   .landing-config-card {
     border-radius: 22px;
-    transform: rotate(0.35deg) scale(0.9);
+    transform: scale(0.9);
   }
 }
 
