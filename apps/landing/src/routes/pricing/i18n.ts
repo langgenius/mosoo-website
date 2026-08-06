@@ -21,6 +21,8 @@ const ZH_MESSAGES = {
   "3 agents in one App": "1 个 App，3 个 Agent",
   "OpenAI Codex · Claude Agent SDK · OpenCode": "OpenAI Codex · Claude Agent SDK · OpenCode",
   "10 sandbox hours every month": "每月 10 小时 sandbox 时长",
+  "Concurrent sandboxes: 3 per Agent · 10 per App · 20 per account":
+    "并发 sandbox：每个 Agent 3 个 · 每个 App 10 个 · 每个账户 20 个",
   "Durable Threads and session replay": "持久 Threads 与 session 重放",
   "BYOK provider keys": "BYOK 自带 Provider 密钥",
   "Everything in Free": "包含免费档全部能力",
@@ -82,6 +84,8 @@ const JA_MESSAGES = {
   "3 agents in one App": "1 App・3 Agent まで",
   "OpenAI Codex · Claude Agent SDK · OpenCode": "OpenAI Codex · Claude Agent SDK · OpenCode",
   "10 sandbox hours every month": "毎月 10 時間の sandbox 実行",
+  "Concurrent sandboxes: 3 per Agent · 10 per App · 20 per account":
+    "同時 sandbox：Agent ごとに 3 · App ごとに 10 · アカウントごとに 20",
   "Durable Threads and session replay": "永続的な Threads と session の再生",
   "BYOK provider keys": "BYOK の Provider キー",
   "Everything in Free": "無料プランの全機能を含む",
