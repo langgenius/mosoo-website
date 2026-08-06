@@ -139,15 +139,13 @@
 .landing-config-card__eyebrow,
 .landing-config-card__status {
   color: rgb(25 45 37 / 56%);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: normal;
 }
 
 .landing-config-card__status {
   color: #168046;
-  letter-spacing: 0.12em;
 }
 
 .landing-config-card__group + .landing-config-card__group {
