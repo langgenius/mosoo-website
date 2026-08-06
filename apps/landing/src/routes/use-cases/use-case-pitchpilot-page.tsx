@@ -178,20 +178,20 @@ function ArchitectureGallery(): ReactElement {
         </h2>
         <p className="text-fg-2 mt-4 max-w-[700px] text-[14.5px] leading-[1.65] [text-wrap:pretty]">
           {t(
-            "The committed HTML deck explains the product boundary twice: first at the application level, then inside the managed Agent runtime.",
+            "Each capture keeps the PitchPilot workspace on the left and the committed Agent artifact on the right: first at the application level, then inside the managed Agent runtime.",
           )}
         </p>
       </Reveal>
-      <div className="mt-8 grid gap-5 md:grid-cols-2">
+      <div className="mt-8 grid gap-5">
         <Reveal>
           <figure className="border-border-default overflow-hidden rounded-[14px] border bg-white shadow-[var(--shadow-xs)]">
             <img
               src={APPLICATION_ARCHITECTURE_SCREENSHOT}
               alt={t(
-                "PitchPilot slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.",
+                "PitchPilot workspace beside a slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.",
               )}
               width={1272}
-              height={812}
+              height={868}
               loading="lazy"
               className="w-full"
             />
@@ -207,10 +207,10 @@ function ArchitectureGallery(): ReactElement {
             <img
               src={RUNTIME_ARCHITECTURE_SCREENSHOT}
               alt={t(
-                "PitchPilot slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.",
+                "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.",
               )}
               width={1272}
-              height={812}
+              height={868}
               loading="lazy"
               className="w-full"
             />
