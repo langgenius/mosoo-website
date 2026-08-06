@@ -12,7 +12,7 @@ const ZH_MESSAGES = {
   "mosoo on GitHub": "mosoo 的 GitHub 主页",
   "Log in": "登录",
   "Get Started": "开始使用",
-  "Open source · Agent runtime and API": "开源 · Agent runtime 与 API",
+  "Open source · Agent runtime · On Cloud": "开源 · Agent runtime · 云端",
   "Launch your Skill online": "让你的 Skill 上线",
   "for anyone to try.": "供任何人在线体验。",
   "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":
@@ -36,7 +36,7 @@ const JA_MESSAGES = {
   "mosoo on GitHub": "mosoo の GitHub",
   "Log in": "ログイン",
   "Get Started": "始める",
-  "Open source · Agent runtime and API": "オープンソース · Agent runtime と API",
+  "Open source · Agent runtime · On Cloud": "オープンソース · Agent runtime · クラウド",
   "Launch your Skill online": "あなたの Skill をオンラインへ",
   "for anyone to try.": "誰でも試せるように。",
   "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":

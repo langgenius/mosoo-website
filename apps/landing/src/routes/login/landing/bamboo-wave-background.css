@@ -1,8 +1,8 @@
 .bambooWaveBackground {
-  --segment-width: clamp(36px, 3.85vw, 58px);
+  --segment-width: clamp(18px, 1.95vw, 29px);
   --segment-height: calc(var(--segment-width) * 0.7964);
-  --segment-gap: clamp(4px, 0.4vw, 6px);
-  --segment-bleed: clamp(2px, 0.16vw, 4px);
+  --segment-gap: clamp(2px, 0.2vw, 3px);
+  --segment-bleed: clamp(1px, 0.08vw, 2px);
   --h1: var(--segment-height);
   --h0: 0px;
   --h2: calc(2 * var(--segment-height) + var(--segment-gap));
@@ -14,10 +14,11 @@
   --h8: calc(8 * var(--segment-height) + 7 * var(--segment-gap));
   --h9: calc(9 * var(--segment-height) + 8 * var(--segment-gap));
   position: absolute;
-  inset: 0;
+  inset: -8% 0 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  filter: saturate(0.72) brightness(1.04) contrast(0.96);
   background:
     radial-gradient(ellipse 72% 68% at 50% 112%, rgb(111 211 5 / 12%), transparent 72%),
     linear-gradient(180deg, rgb(251 251 252 / 92%) 0%, rgb(251 251 252 / 99%) 100%);
@@ -36,10 +37,10 @@
   z-index: 2;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  gap: clamp(0px, 0.4vw, 8px);
-  height: min(58vw, 620px);
-  padding: 0 clamp(8px, 2vw, 96px);
+  justify-content: space-around;
+  gap: 0;
+  height: min(88vw, 100%);
+  padding: 0;
 }
 
 .bambooWaveBackground__column {
@@ -82,6 +83,7 @@
   height: var(--segment-height);
   flex: 0 0 var(--segment-height);
   overflow: visible;
+  transition: opacity 220ms ease-in-out, filter 320ms ease-in-out;
 }
 
 .bambooWaveBackground__segment path {
@@ -109,6 +111,347 @@
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.landing-config-card {
+  width: min(100%, 620px);
+  padding: clamp(24px, 3vw, 38px);
+  border: 1px solid rgb(25 45 37 / 14%);
+  border-radius: 28px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 24px 70px rgb(25 45 37 / 10%), 0 3px 10px rgb(25 45 37 / 5%);
+  transform: rotate(1deg) scale(0.9);
+  backdrop-filter: blur(8px);
+}
+
+.landing-config-card__header,
+.landing-config-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.landing-config-card__header {
+  margin-bottom: clamp(28px, 3vw, 42px);
+}
+
+.landing-config-card__eyebrow,
+.landing-config-card__status {
+  color: rgb(25 45 37 / 56%);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.landing-config-card__status {
+  color: #168046;
+  letter-spacing: 0.12em;
+}
+
+.landing-config-card__group + .landing-config-card__group {
+  margin-top: 28px;
+}
+
+.landing-config-card__label {
+  margin-bottom: 10px;
+  color: rgb(25 45 37 / 68%);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.landing-config-card__options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.landing-config-option {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 15px;
+  border: 1px solid rgb(25 45 37 / 12%);
+  border-radius: 14px;
+  color: #192d25;
+  font-size: 16px;
+  font-weight: 600;
+  background: rgb(255 255 255 / 76%);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.landing-config-option--selected {
+  border-color: rgb(15 158 133 / 58%);
+  box-shadow: inset 0 0 0 1px rgb(15 158 133 / 12%);
+}
+
+.landing-config-option:hover:not(:disabled) {
+  border-color: rgb(15 158 133 / 48%);
+  background: rgb(15 158 133 / 4%);
+}
+
+.landing-config-option--disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.landing-config-more {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 9px 0 0 auto;
+  padding: 0;
+  border: 0;
+  color: rgb(25 45 37 / 52%);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  background: transparent;
+  cursor: pointer;
+}
+
+.landing-config-more:hover {
+  color: #0f9e85;
+}
+
+.landing-config-more svg {
+  width: 13px;
+  height: 13px;
+}
+
+.landing-config-option__icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: rgb(25 45 37 / 6%);
+}
+
+.landing-config-option__check {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  color: #0f9e85;
+}
+
+.landing-config-card__skill-grid {
+  display: grid;
+  grid-template-columns: max-content 1px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 8px;
+}
+
+.landing-config-card__skill-grid > .landing-config-card__label {
+  grid-column: 1;
+  grid-row: 1;
+  margin-bottom: 0;
+}
+
+.landing-config-card__skill-divider {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: stretch;
+  width: 1px;
+  background: rgb(25 45 37 / 16%);
+}
+
+.landing-config-card__cli-label {
+  grid-column: 3;
+  grid-row: 1;
+  color: rgb(25 45 37 / 52%);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.landing-config-upload {
+  grid-column: 1;
+  grid-row: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid rgb(15 158 133 / 36%);
+  border-radius: 999px;
+  color: #192d25;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgb(15 158 133 / 6%);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.landing-config-upload:hover {
+  border-color: rgb(15 158 133 / 60%);
+  background: rgb(15 158 133 / 12%);
+}
+
+.landing-config-upload svg {
+  width: 14px;
+  height: 14px;
+  color: #0f9e85;
+}
+
+.landing-config-command {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 0;
+  padding: 9px 11px;
+  border: 1px solid rgb(25 45 37 / 12%);
+  border-radius: 8px;
+  color: rgb(25 45 37 / 64%);
+  background: rgb(25 45 37 / 4%);
+  cursor: pointer;
+  text-align: left;
+}
+
+.landing-config-command:hover {
+  border-color: rgb(15 158 133 / 42%);
+  color: #192d25;
+}
+
+.landing-config-command code {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.landing-config-command svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: #0f9e85;
+}
+
+.landing-config-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid rgb(15 158 133 / 36%);
+  border-radius: 999px;
+  color: #192d25;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgb(15 158 133 / 6%);
+}
+
+.landing-config-pill svg {
+  width: 14px;
+  height: 14px;
+  color: #0f9e85;
+}
+
+.landing-config-pill--muted {
+  border-color: rgb(25 45 37 / 12%);
+  color: rgb(25 45 37 / 58%);
+  background: transparent;
+}
+
+.landing-config-card__footer {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid rgb(25 45 37 / 11%);
+}
+
+.landing-config-card__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(25 45 37 / 48%);
+  font-size: 15px;
+}
+
+.landing-config-card__note-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0f9e85;
+}
+
+.landing-config-card__action {
+  display: inline-flex;
+  align-items: center;
+}
+
+.landing-config-card__action button {
+  display: inline-flex;
+  height: 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  background: #66c602;
+  box-shadow: 0 1px 2px rgb(25 45 37 / 12%);
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.landing-config-card__action button:hover {
+  background: #5bb802;
+}
+
+.landing-config-card__action button svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 767px) {
+  .landing-config-card {
+    border-radius: 22px;
+    transform: rotate(0.35deg) scale(0.9);
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-config-card__skill-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-config-card__skill-divider {
+    display: none;
+  }
+
+  .landing-config-card__label,
+  .landing-config-card__cli-label,
+  .landing-config-upload,
+  .landing-config-command {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .landing-config-card__options {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-config-card__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

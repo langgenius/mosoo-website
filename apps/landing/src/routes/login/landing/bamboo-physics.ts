@@ -22,22 +22,20 @@ type MutableAgent = {
   angularVelocity: number;
 };
 
-const COLUMN_COUNT = 18;
+const COLUMN_COUNT = 36;
 const EDGE_COLUMN_COUNT = 4;
-const PLATFORM_BEAT_DURATION = 0.525;
+const PLATFORM_BEAT_DURATION = 0.68;
 const PLATFORM_TRANSITION_FRACTION = 0.22;
-const EDGE_PLATFORM_MAX_HEIGHT = 9;
-const CENTER_PLATFORM_MAX_HEIGHT = 5;
-const AGENT_RADIUS = 0.024;
-const PLATFORM_HALF_WIDTH = 0.04;
+const AGENT_RADIUS = 0.012;
+const PLATFORM_HALF_WIDTH = 0.014;
 const GRAVITY = 0.82;
 const MAX_ANGULAR_VELOCITY = Math.PI * 2;
 const FLOOR_BOUNCE_MIN_SPEED = 0.78;
 const PLATFORM_BOUNCE_MIN_SPEED = 0.88;
 const PLATFORM_BOUNCE_BOOST = 0.42;
 const CEILING_BOUNCE_MIN_SPEED = 0.48;
-const BOUNCE_SPEED_SCALE = 0.5;
-const BOUNCE_SPEED_OFFSET = 0.2;
+const BOUNCE_SPEED_SCALE = 0.42;
+const BOUNCE_SPEED_OFFSET = 0.16;
 
 // The center keeps the hero controls clear: 6-9 are impossible there. The low
 // states 0-2 occupy two thirds of the center targets, while 3-5 occupy the
@@ -47,24 +45,42 @@ const CENTER_PLATFORM_HEIGHT_DISTRIBUTION = [
   3, 4, 5, 3, 4, 5,
 ] as const;
 
-// The outer four columns on each side retain the full 0-9 range used before
-// the center-safe area was introduced.
+// Keep the current first-screen canvas compact as well. The outer columns used
+// to retain the full 0-9 range, but the split hero now needs the whole visible
+// canvas to stay below the copy and configuration card.
 const EDGE_PLATFORM_HEIGHT_DISTRIBUTION = [
+  0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2,
+  3, 4, 5, 3, 4, 5,
+] as const;
+
+const FULL_PLATFORM_HEIGHT_DISTRIBUTION = [
   0, 1, 2, 0, 1, 2, 0, 1, 2,
   3, 4, 5, 3, 4, 5, 6, 7, 8, 9, 6, 7, 8, 9,
 ] as const;
+
+const TALL_PLATFORM_COLUMN_INDICES = new Set([10, 16, 22, 28, 33]);
+
+type BambooGeometry = Readonly<{
+  canvasHeight: number;
+  segmentHeight: number;
+  segmentGap: number;
+}>;
+
+const FALLBACK_BAMBOO_GEOMETRY: BambooGeometry = {
+  canvasHeight: 1,
+  segmentHeight: 0.02,
+  segmentGap: 0.002,
+};
 
 const INITIAL_AGENTS: MutableAgent[] = [
   { id: "codex", x: 0.18, y: 0.78, vx: 0.24, vy: -0.34, rotation: 0, angularVelocity: 1.8 },
   { id: "claude", x: 0.47, y: 0.62, vx: -0.18, vy: -0.28, rotation: 0.7, angularVelocity: -1.4 },
   { id: "opencode", x: 0.77, y: 0.76, vx: -0.22, vy: -0.4, rotation: -0.5, angularVelocity: 2.1 },
-  { id: "minimax", x: 0.33, y: 0.44, vx: 0.2, vy: 0.12, rotation: 1.4, angularVelocity: -1.8 },
   { id: "deepseek", x: 0.64, y: 0.28, vx: -0.16, vy: 0.2, rotation: -0.8, angularVelocity: 1.3 },
   { id: "hermes", x: 0.88, y: 0.42, vx: -0.25, vy: 0.08, rotation: -1.1, angularVelocity: 1.7 },
   { id: "openai", x: 0.52, y: 0.18, vx: 0.14, vy: 0.22, rotation: 0.2, angularVelocity: -1.1 },
   { id: "gemini", x: 0.58, y: 0.38, vx: 0.16, vy: -0.12, rotation: -0.6, angularVelocity: 1.4 },
   { id: "qwen", x: 0.08, y: 0.54, vx: 0.22, vy: -0.18, rotation: 0.5, angularVelocity: -1.3 },
-  { id: "kimi", x: 0.92, y: 0.58, vx: -0.2, vy: -0.14, rotation: -0.9, angularVelocity: 1.1 },
 ];
 
 let agents = INITIAL_AGENTS.map((agent) => ({ ...agent }));
@@ -112,23 +128,48 @@ function isEdgeColumn(columnIndex: number): boolean {
 }
 
 function platformHeightDistribution(columnIndex: number): readonly number[] {
+  if (columnIndex === 0 || TALL_PLATFORM_COLUMN_INDICES.has(columnIndex)) {
+    return FULL_PLATFORM_HEIGHT_DISTRIBUTION;
+  }
+
   return isEdgeColumn(columnIndex)
     ? EDGE_PLATFORM_HEIGHT_DISTRIBUTION
     : CENTER_PLATFORM_HEIGHT_DISTRIBUTION;
 }
 
-function platformMaxHeight(columnIndex: number): number {
-  return isEdgeColumn(columnIndex) ? EDGE_PLATFORM_MAX_HEIGHT : CENTER_PLATFORM_MAX_HEIGHT;
+function readBambooGeometry(): BambooGeometry {
+  if (typeof document === "undefined") {
+    return FALLBACK_BAMBOO_GEOMETRY;
+  }
+
+  const background = document.querySelector<HTMLElement>(".bambooWaveBackground");
+  const segment = background?.querySelector<SVGElement>(".bambooWaveBackground__segment");
+  const stack = background?.querySelector<HTMLElement>(".bambooWaveBackground__stack");
+  const canvasHeight = background?.getBoundingClientRect().height ?? 0;
+  const segmentHeight = segment?.getBoundingClientRect().height ?? 0;
+  const stackStyles = stack ? getComputedStyle(stack) : null;
+  const segmentGap = Number.parseFloat(stackStyles?.rowGap ?? "0");
+
+  if (canvasHeight <= 0 || segmentHeight <= 0) {
+    return FALLBACK_BAMBOO_GEOMETRY;
+  }
+
+  return {
+    canvasHeight,
+    segmentHeight: segmentHeight / canvasHeight,
+    segmentGap: (Number.isFinite(segmentGap) ? segmentGap : 0) / canvasHeight,
+  };
 }
 
-function platformTop(columnIndex: number, time: number): number | null {
+function platformTop(columnIndex: number, time: number, geometry: BambooGeometry): number | null {
   const segmentCount = platformCount(columnIndex, time);
 
   if (segmentCount === 0) {
     return null;
   }
 
-  return 0.96 - (segmentCount / platformMaxHeight(columnIndex)) * 0.44;
+  const stackHeight = segmentCount * geometry.segmentHeight + (segmentCount - 1) * geometry.segmentGap;
+  return 1 - stackHeight;
 }
 
 function platformHeightsAt(time: number): readonly number[] {
@@ -149,11 +190,15 @@ function bounceFromPlatform(agent: MutableAgent, platformY: number, columnIndex:
   agent.angularVelocity += Math.sin(elapsed * 4 + columnIndex) * 0.35;
 }
 
-function resolveBambooCollisions(agent: MutableAgent, previousY: number): void {
+function resolveBambooCollisions(
+  agent: MutableAgent,
+  previousY: number,
+  geometry: BambooGeometry,
+): void {
   let highestPlatform: { columnIndex: number; top: number } | null = null;
 
   for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex += 1) {
-    const platformTopY = platformTop(columnIndex, elapsed);
+    const platformTopY = platformTop(columnIndex, elapsed, geometry);
 
     if (platformTopY === null) {
       continue;
@@ -192,7 +237,7 @@ function resolveBambooCollisions(agent: MutableAgent, previousY: number): void {
   }
 }
 
-function updateAgent(agent: MutableAgent, dt: number): void {
+function updateAgent(agent: MutableAgent, dt: number, geometry: BambooGeometry): void {
   const previousY = agent.y;
   clampAngularVelocity(agent);
   agent.vy += GRAVITY * dt;
@@ -228,7 +273,7 @@ function updateAgent(agent: MutableAgent, dt: number): void {
     agent.angularVelocity += Math.sin(elapsed * 3.5) * 0.5;
   }
 
-  resolveBambooCollisions(agent, previousY);
+  resolveBambooCollisions(agent, previousY, geometry);
 }
 
 function resolveAgentCollisions(): void {
@@ -279,9 +324,10 @@ function tick(frameTime: number): void {
   const dt = Math.min((frameTime - lastFrameTime) / 1000, 0.032);
   lastFrameTime = frameTime;
   elapsed += dt;
+  const geometry = readBambooGeometry();
 
   for (const agent of agents) {
-    updateAgent(agent, dt);
+    updateAgent(agent, dt, geometry);
   }
   resolveAgentCollisions();
   for (const agent of agents) {
