@@ -9,6 +9,7 @@ import {
   renderUseCaseBlueprintLocale,
   renderUseCaseCodexPetLocale,
   renderUseCaseGoGymLocale,
+  renderUseCasePitchPilotLocale,
   renderUseCasesLocale,
 } from "../scripts/landing-locales.mjs";
 
@@ -62,6 +63,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/use-cases/blueprint",
     "https://mosoo.ai/zh/use-cases/blueprint",
     "https://mosoo.ai/ja/use-cases/blueprint",
+    "https://mosoo.ai/en/use-cases/pitchpilot",
+    "https://mosoo.ai/zh/use-cases/pitchpilot",
+    "https://mosoo.ai/ja/use-cases/pitchpilot",
     "https://mosoo.ai/en/use-cases/go-gym",
     "https://mosoo.ai/zh/use-cases/go-gym",
     "https://mosoo.ai/ja/use-cases/go-gym",
@@ -226,12 +230,14 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases"/);
   assert.match(source, /href="\/en\/use-cases\/blueprint"/);
+  assert.match(source, /href="\/en\/use-cases\/pitchpilot"/);
   assert.match(source, /href="\/en\/use-cases\/go-gym"/);
   assert.match(source, /href="\/en\/use-cases\/codex-pet"/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
   assert.match(zh, /<title>mosoo — 用例<\/title>/);
   assert.match(zh, /href="\/zh\/use-cases\/blueprint"/);
+  assert.match(zh, /href="\/zh\/use-cases\/pitchpilot"/);
   assert.match(zh, /href="\/zh\/use-cases\/go-gym"/);
   assert.match(zh, /href="\/zh\/use-cases\/codex-pet"/);
   assert.match(ja, /<html lang="ja">/);
@@ -266,6 +272,29 @@ test("the blueprint case page keeps its canonical, screenshot, and outbound link
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/blueprint"/);
   assert.match(zh, /<title>mosoo — Blueprint：人人可用的站点构建器<\/title>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/blueprint"/);
+  assertInitialSiteLinks(zh, "zh");
+  assertInitialSiteLinks(ja, "ja");
+});
+
+test("the pitchpilot case page keeps its localized metadata, screenshot, and outbound links", () => {
+  const source = read("apps/landing/use-cases/pitchpilot.html");
+  const zh = renderUseCasePitchPilotLocale(source, "zh");
+  const ja = renderUseCasePitchPilotLocale(source, "ja");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/pitchpilot"/);
+  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/pitchpilot-mosoo\.png"/);
+  assert.match(source, /href="https:\/\/pitchpilot-mosoo\.wh-2099\.workers\.dev\/"/);
+  assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/pitchpilot-mosoo"/);
+  assert.equal(
+    existsSync(
+      new URL("../apps/landing/public/landing/use-cases/pitchpilot-mosoo.png", import.meta.url),
+    ),
+    true,
+  );
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/pitchpilot"/);
+  assert.match(zh, /<title>mosoo — PitchPilot：Agent 驱动的 Web 应用<\/title>/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/pitchpilot"/);
+  assert.match(ja, /<title>mosoo — PitchPilot：Agent 搭載 Web アプリ<\/title>/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });

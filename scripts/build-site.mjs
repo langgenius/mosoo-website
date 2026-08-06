@@ -63,6 +63,10 @@ if (!existsSync(join(DIST, "use-cases", "blueprint.html"))) {
   throw new Error("Landing build did not produce dist/use-cases/blueprint.html.");
 }
 
+if (!existsSync(join(DIST, "use-cases", "pitchpilot.html"))) {
+  throw new Error("Landing build did not produce dist/use-cases/pitchpilot.html.");
+}
+
 for (const locale of ["en", "zh", "ja"]) {
   if (!existsSync(join(DIST, `${locale}.html`))) {
     throw new Error(`Landing build did not produce dist/${locale}.html.`);
@@ -84,6 +88,9 @@ for (const locale of ["en", "zh", "ja"]) {
   }
   if (!existsSync(join(DIST, locale, "use-cases", "blueprint.html"))) {
     throw new Error(`Landing build did not produce dist/${locale}/use-cases/blueprint.html.`);
+  }
+  if (!existsSync(join(DIST, locale, "use-cases", "pitchpilot.html"))) {
+    throw new Error(`Landing build did not produce dist/${locale}/use-cases/pitchpilot.html.`);
   }
 }
 
