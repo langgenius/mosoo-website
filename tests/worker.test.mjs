@@ -165,6 +165,16 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
 });
 
 test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {
+  const protectedResourceResponse = await worker.fetch(
+    new Request("https://mosoo.ai/.well-known/oauth-protected-resource"),
+    envFor({}),
+  );
+  assert.equal(protectedResourceResponse.status, 307);
+  assert.equal(
+    protectedResourceResponse.headers.get("location"),
+    "https://cloud.mosoo.ai/.well-known/oauth-protected-resource",
+  );
+
   const catalogResponse = await worker.fetch(
     new Request("https://mosoo.ai/.well-known/api-catalog"),
     envFor({}),
