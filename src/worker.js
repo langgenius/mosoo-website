@@ -7,6 +7,7 @@ const PUBLIC_API_BASE = `${CONSOLE_ORIGIN}/api/v1`;
 const PUBLIC_API_DESCRIPTION = `${PUBLIC_API_BASE}/openapi.json`;
 const PUBLIC_API_DOCUMENTATION = "https://mosoo.ai/docs/api-reference/";
 const PUBLIC_API_STATUS = `${CONSOLE_ORIGIN}/api/health`;
+const PROTECTED_RESOURCE_METADATA = `${CONSOLE_ORIGIN}/.well-known/oauth-protected-resource`;
 const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=no";
 const LOCALE_COOKIE = "mosoo_locale";
 const LLMS_LINK_HEADER =
@@ -277,6 +278,11 @@ export default {
 
     if (forceHttps) url.protocol = "https:";
     if (dropTrailingSlash) url.pathname = pathname.slice(0, -1);
+
+    if (!forceHttps && !dropTrailingSlash && pathname === "/.well-known/oauth-protected-resource") {
+      if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed();
+      return redirect(PROTECTED_RESOURCE_METADATA);
+    }
 
     if (!forceHttps && !dropTrailingSlash && pathname === "/.well-known/api-catalog") {
       if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed();
