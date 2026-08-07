@@ -55,6 +55,10 @@ if (!existsSync(join(DIST, "use-cases", "codex-pet.html"))) {
   throw new Error("Landing build did not produce dist/use-cases/codex-pet.html.");
 }
 
+if (!existsSync(join(DIST, "use-cases", "ghfind.html"))) {
+  throw new Error("Landing build did not produce dist/use-cases/ghfind.html.");
+}
+
 if (!existsSync(join(DIST, "use-cases", "go-gym.html"))) {
   throw new Error("Landing build did not produce dist/use-cases/go-gym.html.");
 }
@@ -82,6 +86,9 @@ for (const locale of ["en", "zh", "ja"]) {
   }
   if (!existsSync(join(DIST, locale, "use-cases", "codex-pet.html"))) {
     throw new Error(`Landing build did not produce dist/${locale}/use-cases/codex-pet.html.`);
+  }
+  if (!existsSync(join(DIST, locale, "use-cases", "ghfind.html"))) {
+    throw new Error(`Landing build did not produce dist/${locale}/use-cases/ghfind.html.`);
   }
   if (!existsSync(join(DIST, locale, "use-cases", "go-gym.html"))) {
     throw new Error(`Landing build did not produce dist/${locale}/use-cases/go-gym.html.`);

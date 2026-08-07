@@ -81,4 +81,21 @@ export const CODEX_PET: UseCase = {
 export const CODEX_PET_DEMO_VIDEO = "/landing/use-cases/codex-pet-demo.mp4";
 export const CODEX_PET_DEMO_POSTER = "/landing/use-cases/codex-pet-demo.jpg";
 
-export const USE_CASES: readonly UseCase[] = [BLUEPRINT, PITCHPILOT, GO_GYM, CODEX_PET];
+export const GHFIND: UseCase = {
+  author: { avatar: "/landing/use-cases/asperformias.png", name: "AsperforMias" },
+  detailPath: `/${locale}/use-cases/ghfind`,
+  image: "/landing/use-cases/ghfind-app.png",
+  imageAlt: t(
+    "The ghfind homepage: deep valuation for any open-source project, honest 0–100 scores for any GitHub account.",
+  ),
+  kicker: "Deep project valuation engine",
+  name: "ghfind",
+  productUrl: "https://ghfind.com",
+  repoUrl: "https://github.com/hikariming/ghfind",
+  summary: t(
+    "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score. The deep project valuation runs on one published mosoo Agent, called from the ghfind backend through the Thread API.",
+  ),
+  tags: ["Thread API", "Artifacts", "GitHub API"],
+};
+
+export const USE_CASES: readonly UseCase[] = [BLUEPRINT, PITCHPILOT, GO_GYM, CODEX_PET, GHFIND];

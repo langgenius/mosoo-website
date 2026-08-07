@@ -171,4 +171,25 @@
     <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/codex-pet" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/codex-pet" />
   </url>
+  <url>
+    <loc>https://mosoo.ai/en/use-cases/ghfind</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/ghfind" />
+  </url>
+  <url>
+    <loc>https://mosoo.ai/zh/use-cases/ghfind</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/ghfind" />
+  </url>
+  <url>
+    <loc>https://mosoo.ai/ja/use-cases/ghfind</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/use-cases/ghfind" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/use-cases/ghfind" />
+  </url>
 </urlset>

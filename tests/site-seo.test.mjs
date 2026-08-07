@@ -8,6 +8,7 @@ import {
   renderStatusLocale,
   renderUseCaseBlueprintLocale,
   renderUseCaseCodexPetLocale,
+  renderUseCaseGhfindLocale,
   renderUseCaseGoGymLocale,
   renderUseCasePitchPilotLocale,
   renderUseCasesLocale,
@@ -77,6 +78,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/use-cases/codex-pet",
     "https://mosoo.ai/zh/use-cases/codex-pet",
     "https://mosoo.ai/ja/use-cases/codex-pet",
+    "https://mosoo.ai/en/use-cases/ghfind",
+    "https://mosoo.ai/zh/use-cases/ghfind",
+    "https://mosoo.ai/ja/use-cases/ghfind",
   ]);
 });
 
@@ -236,6 +240,7 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   assert.match(source, /href="\/en\/use-cases\/pitchpilot"/);
   assert.match(source, /href="\/en\/use-cases\/go-gym"/);
   assert.match(source, /href="\/en\/use-cases\/codex-pet"/);
+  assert.match(source, /href="\/en\/use-cases\/ghfind"/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
   assert.match(zh, /<title>mosoo — 用例<\/title>/);
@@ -243,6 +248,7 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   assert.match(zh, /href="\/zh\/use-cases\/pitchpilot"/);
   assert.match(zh, /href="\/zh\/use-cases\/go-gym"/);
   assert.match(zh, /href="\/zh\/use-cases\/codex-pet"/);
+  assert.match(zh, /href="\/zh\/use-cases\/ghfind"/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases"/);
   assertInitialSiteLinks(zh, "zh");
@@ -356,5 +362,26 @@ test("the codex-pet case page keeps its canonical, screenshot, and outbound link
   assert.match(source, /href="https:\/\/app-01kwc37q6ejfnjvvk3g192x5x7\.apps\.mosoo\.ai\/"/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/);
   assert.match(zh, /<title>mosoo — Codex Pet：Agent as API<\/title>/);
+  assertInitialSiteLinks(zh, "zh");
+});
+
+test("the ghfind case page keeps its canonical, screenshot, and outbound links", () => {
+  const source = read("apps/landing/use-cases/ghfind.html");
+  const zh = renderUseCaseGhfindLocale(source, "zh");
+
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/ghfind"/);
+  assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/ghfind-app\.png"/);
+  assert.match(source, /href="https:\/\/github\.com\/hikariming\/ghfind"/);
+  assert.match(source, /href="https:\/\/ghfind\.com"/);
+  assert.equal(
+    existsSync(new URL("../apps/landing/public/landing/use-cases/ghfind-app.png", import.meta.url)),
+    true,
+  );
+  assert.equal(
+    existsSync(new URL("../apps/landing/public/landing/use-cases/asperformias.png", import.meta.url)),
+    true,
+  );
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/ghfind"/);
+  assert.match(zh, /<title>mosoo — ghfind：深度项目评测估值引擎<\/title>/);
   assertInitialSiteLinks(zh, "zh");
 });
