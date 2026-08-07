@@ -42,7 +42,7 @@ You are an agent integrating Mosoo from a trusted backend. Mosoo does not suppor
 
 ## Identity boundary
 
-- A Mosoo Personal Access Token has no scopes and represents the Mosoo account and App owner that created it.
+- A Mosoo Personal Access Token has no selectable scopes; it carries full account access and represents the Mosoo account and App owner that created it.
 - It cannot represent an App end user. The integrating product must authenticate and authorize its own users, then pass an opaque userId when it creates a Thread.
 - Keep the token on a trusted backend. Do not expose it to browsers, mobile clients, logs, or source control.
 
@@ -55,15 +55,15 @@ You are an agent integrating Mosoo from a trusted backend. Mosoo does not suppor
 Human-assisted registration metadata:
 
 - \`register_uri\`: https://cloud.mosoo.ai/settings/access-tokens (open with GET; do not POST)
-- \`identity_types_supported\`: \`account_owner\`
-- \`credential_types_supported\`: \`personal_access_token\`
+- \`identity_types_supported\`: \`anonymous\` (the uncredentialed agent is claimed when the account owner provisions a token)
+- \`credential_types_supported\`: \`mosoo_personal_access_token\`
 - \`revocation_uri\`: https://cloud.mosoo.ai/settings/access-tokens
 
 1. Sign in at https://cloud.mosoo.ai/settings/access-tokens.
 2. Create an Access Token and copy the mst_... value when it is shown.
 3. Store it as a backend secret, such as MOSOO_API_TOKEN.
 
-The account owner authorizes the integration by creating this token. Tokens have no scopes.
+The account owner authorizes the integration by creating this token. Tokens have no selectable scopes and carry full account access.
 
 ## Credential exchange
 
@@ -81,7 +81,12 @@ Authorization: Bearer mst_...
 
 The owner can revoke the token from https://cloud.mosoo.ai/settings/access-tokens. Requests using a revoked token are no longer authorized.
 
-Mosoo does not currently publish OAuth authorization-server metadata for this API. Use the out-of-band token provisioning flow above.
+Discovery metadata:
+
+- Protected resource: https://cloud.mosoo.ai/.well-known/oauth-protected-resource
+- Agent authentication: https://cloud.mosoo.ai/.well-known/oauth-authorization-server
+
+These documents describe the human-assisted PAT flow above; they do not provide an OAuth authorization-code or token exchange.
 
 API base: https://cloud.mosoo.ai/api/v1
 
