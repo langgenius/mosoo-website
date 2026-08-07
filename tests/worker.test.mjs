@@ -199,12 +199,15 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
   assert.match(auth, /Supported registration method: Personal Access Token/);
   assert.match(auth, /Credential provisioning endpoint \(human-operated\)/);
   assert.match(auth, /register_uri/);
-  assert.match(auth, /identity_types_supported/);
-  assert.match(auth, /credential_types_supported/);
+  assert.match(auth, /identity_types_supported\`: \`anonymous\`/);
+  assert.match(auth, /credential_types_supported\`: \`mosoo_personal_access_token\`/);
   assert.match(auth, /revocation_uri/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
   assert.match(auth, /Authorization: Bearer mst_\.\.\./);
+  assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-protected-resource/);
+  assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-authorization-server/);
+  assert.doesNotMatch(auth, /does not currently publish/);
   assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
 });
 
