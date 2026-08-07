@@ -25,7 +25,6 @@ export const TIERS: readonly Tier[] = [
       t("3 agents in one App"),
       t("OpenAI Codex · Claude Agent SDK · OpenCode"),
       t("10 sandbox hours every month"),
-      t("Concurrent sandboxes: 3 per Agent · 10 per App · 20 per account"),
       t("Durable Threads and session replay"),
       t("BYOK provider keys"),
     ],
