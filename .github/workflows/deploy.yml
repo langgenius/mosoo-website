@@ -1,0 +1,50 @@
+name: Deploy website
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: website-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://mosoo.ai/
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate
+        run: npm run validate
+
+      - name: Deploy
+        run: npx --yes --package wrangler@4.115.0 wrangler deploy --env prod --message "GitHub ${GITHUB_SHA}"
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Smoke test
+        run: |
+          curl --fail --location --retry 4 --retry-all-errors --silent --show-error \
+            https://mosoo.ai/ --output /dev/null
+          curl --fail --location --retry 4 --retry-all-errors --silent --show-error \
+            https://mosoo.ai/status.json --output /dev/null

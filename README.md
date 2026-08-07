@@ -104,6 +104,12 @@ policy live in
 
 ## Deployment
 
+Pushes to `main` are validated and deployed to the `mosoo-website-prod`
+Cloudflare Worker by GitHub Actions. The production environment is
+[mosoo.ai](https://mosoo.ai/).
+
+For a local preview or manual deployment:
+
 Preview the Worker locally:
 
 ```bash
