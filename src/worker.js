@@ -52,6 +52,13 @@ You are an agent integrating Mosoo from a trusted backend. Mosoo does not suppor
 - Credential provisioning endpoint (human-operated): https://cloud.mosoo.ai/settings/access-tokens
 - Supported credential type: Personal Access Token with the \`mst_\` prefix
 
+Human-assisted registration metadata:
+
+- \`register_uri\`: https://cloud.mosoo.ai/settings/access-tokens (open with GET; do not POST)
+- \`identity_types_supported\`: \`account_owner\`
+- \`credential_types_supported\`: \`personal_access_token\`
+- \`revocation_uri\`: https://cloud.mosoo.ai/settings/access-tokens
+
 1. Sign in at https://cloud.mosoo.ai/settings/access-tokens.
 2. Create an Access Token and copy the mst_... value when it is shown.
 3. Store it as a backend secret, such as MOSOO_API_TOKEN.
