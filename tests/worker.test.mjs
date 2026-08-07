@@ -42,7 +42,7 @@ test("worker selects the landing locale by cookie, then country", async () => {
     assert.equal(response.status, 307);
     assert.equal(response.headers.get("location"), `https://mosoo.ai/${entry.locale}${suffix}`);
     assert.equal(response.headers.get("cache-control"), "private, no-store");
-    assert.equal(response.headers.get("vary"), "Cookie");
+    assert.equal(response.headers.get("vary"), "Cookie, Accept");
   }
 });
 
@@ -118,7 +118,7 @@ test("worker serves localized pricing pages from assets", async () => {
   assert.equal(await response.text(), "pricing page");
 });
 
-test("worker advertises answer-engine docs from HTML assets", async () => {
+test("worker advertises agent discovery resources from HTML assets", async () => {
   const response = await worker.fetch(
     new Request("https://mosoo.ai/blog"),
     {
@@ -132,10 +132,62 @@ test("worker advertises answer-engine docs from HTML assets", async () => {
     },
   );
 
-  assert.equal(
-    response.headers.get("link"),
-    '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"',
+  const link = response.headers.get("link");
+  assert.match(link, /<\/docs\/llms\.txt>; rel="llms-txt"/);
+  assert.match(link, /<\/docs\/llms-full\.txt>; rel="llms-full-txt"/);
+  assert.match(link, /<\/\.well-known\/api-catalog>; rel="api-catalog"/);
+  assert.match(link, /rel="service-desc"/);
+  assert.match(link, /rel="service-doc"/);
+  assert.match(link, /<\/auth\.md>; rel="describedby"/);
+  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=no");
+});
+
+test("worker negotiates homepage HTML to clean Markdown", async () => {
+  const response = await worker.fetch(
+    new Request("https://mosoo.ai/en", { headers: { accept: "text/markdown" } }),
+    envFor({}),
   );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.match(response.headers.get("vary"), /Accept/);
+  const markdown = await response.text();
+  assert.match(markdown, /^# Mosoo$/m);
+  assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.doesNotMatch(markdown, /<html/i);
+
+  const declined = await worker.fetch(
+    new Request("https://mosoo.ai/", { headers: { accept: "text/markdown;q=0" } }),
+    envFor({}),
+  );
+  assert.equal(declined.status, 307);
+});
+
+test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {
+  const catalogResponse = await worker.fetch(
+    new Request("https://mosoo.ai/.well-known/api-catalog"),
+    envFor({}),
+  );
+  const catalog = await catalogResponse.json();
+  const [entry] = catalog.linkset;
+
+  assert.match(catalogResponse.headers.get("content-type"), /^application\/linkset\+json/);
+  assert.equal(entry.anchor, "https://cloud.mosoo.ai/api/v1");
+  assert.equal(entry["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
+  assert.equal(entry["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
+  assert.equal(entry.status[0].href, "https://cloud.mosoo.ai/api/health");
+
+  const authResponse = await worker.fetch(new Request("https://mosoo.ai/auth.md"), envFor({}));
+  const auth = await authResponse.text();
+
+  assert.equal(authResponse.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.match(auth, /^# .*auth\.md/m);
+  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
+  assert.match(auth, /Google or an email one-time passcode \(OTP\)/);
+  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
+  assert.match(auth, /Authorization: Bearer mst_\.\.\./);
+  assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
 });
 
 test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {
