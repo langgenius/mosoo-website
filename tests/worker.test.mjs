@@ -195,11 +195,10 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
   assert.match(auth, /^# .*auth\.md/m);
   assert.match(auth, /You are an agent/);
   assert.match(auth, /agentic registration/);
-  assert.match(auth, /agent_auth/);
-  assert.match(auth, /register_uri/);
-  assert.match(auth, /Step 1.*Register[\s\S]*Step 2.*Authorize[\s\S]*Step 3.*Exchange[\s\S]*Step 5.*Revocation/);
+  assert.match(auth, /issued by the Mosoo App owner out of band/);
+  assert.match(auth, /Supported registration method: Personal Access Token/);
+  assert.match(auth, /Credential provisioning endpoint \(human-operated\)/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
-  assert.match(auth, /Google or an email one-time passcode \(OTP\)/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
   assert.match(auth, /Authorization: Bearer mst_\.\.\./);
   assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
