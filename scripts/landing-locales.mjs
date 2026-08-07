@@ -277,6 +277,36 @@ const USE_CASE_CODEX_PET_SEO = {
   },
 };
 
+const USE_CASE_GHFIND_SEO = {
+  en: {
+    lang: "en",
+    title: "mosoo — ghfind: Deep project valuation engine",
+    description:
+      "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score — the deep project valuation runs on one published mosoo Agent behind the ghfind backend, through the Thread API.",
+    socialDescription:
+      "One published mosoo Agent powers ghfind's deep project valuation through the Thread API.",
+    imageAlt: "The ghfind app built on mosoo",
+  },
+  zh: {
+    lang: "zh-CN",
+    title: "mosoo — ghfind：深度项目评测估值引擎",
+    description:
+      "ghfind 为任意公开开源项目做深度评测估值，也为任意 GitHub 账号打出毫不留情的 0–100 分——深度项目评测估值由 ghfind 后端通过一个已发布的 mosoo Agent、经 Thread API 完成。",
+    socialDescription:
+      "一个已发布的 mosoo Agent 通过 Thread API 支撑 ghfind 的深度项目评测估值。",
+    imageAlt: "用 mosoo 构建的 ghfind 应用",
+  },
+  ja: {
+    lang: "ja",
+    title: "mosoo — ghfind：プロジェクト評価・バリュエーションエンジン",
+    description:
+      "ghfind は任意の公開オープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに容赦ない 0〜100 スコアを出します——詳細な評価は ghfind バックエンドから公開済み mosoo Agent を Thread API 経由で呼び出して実行します。",
+    socialDescription:
+      "公開済みの mosoo Agent 1 つが Thread API 経由で ghfind の詳細なプロジェクト評価・バリュエーションを支えます。",
+    imageAlt: "mosoo でつくられた ghfind アプリ",
+  },
+};
+
 function replaceRequired(html, search, replacement) {
   if (!html.includes(search)) {
     throw new Error(`Landing locale build could not find: ${search}`);
@@ -375,6 +405,7 @@ export function renderUseCasesLocale(source, locale) {
     ['href="/en/use-cases/pitchpilot">', `href="/${locale}/use-cases/pitchpilot">`],
     ['href="/en/use-cases/go-gym">', `href="/${locale}/use-cases/go-gym">`],
     ['href="/en/use-cases/codex-pet">', `href="/${locale}/use-cases/codex-pet">`],
+    ['href="/en/use-cases/ghfind">', `href="/${locale}/use-cases/ghfind">`],
   ]);
 }
 
@@ -406,6 +437,13 @@ export function renderUseCaseCodexPetLocale(source, locale) {
   return localizeSubpageHtml(source, locale, USE_CASE_CODEX_PET_SEO, "/use-cases/codex-pet");
 }
 
+export function renderUseCaseGhfindLocale(source, locale) {
+  if (!USE_CASE_GHFIND_SEO[locale]) {
+    throw new Error(`Unsupported use-case locale: ${locale}`);
+  }
+  return localizeSubpageHtml(source, locale, USE_CASE_GHFIND_SEO, "/use-cases/ghfind");
+}
+
 export async function buildLandingLocales(landingDist) {
   const source = await readFile(join(landingDist, "index.html"), "utf8");
   const pricingSource = await readFile(join(landingDist, "pricing.html"), "utf8");
@@ -413,6 +451,7 @@ export async function buildLandingLocales(landingDist) {
   const useCasesSource = await readFile(join(landingDist, "use-cases.html"), "utf8");
   const goGymSource = await readFile(join(landingDist, "use-cases", "go-gym.html"), "utf8");
   const codexPetSource = await readFile(join(landingDist, "use-cases", "codex-pet.html"), "utf8");
+  const ghfindSource = await readFile(join(landingDist, "use-cases", "ghfind.html"), "utf8");
   const blueprintSource = await readFile(
     join(landingDist, "use-cases", "blueprint.html"),
     "utf8",
@@ -445,6 +484,10 @@ export async function buildLandingLocales(landingDist) {
       await writeFile(
         join(landingDist, locale, "use-cases", "codex-pet.html"),
         renderUseCaseCodexPetLocale(codexPetSource, locale),
+      );
+      await writeFile(
+        join(landingDist, locale, "use-cases", "ghfind.html"),
+        renderUseCaseGhfindLocale(ghfindSource, locale),
       );
       await writeFile(
         join(landingDist, locale, "use-cases", "blueprint.html"),

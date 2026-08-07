@@ -174,6 +174,32 @@ const ZH_MESSAGES = {
     "PitchPilot 工作区与 Runtime 幻灯片并列，展示 Mosoo 内的 Thread、Run、Harness Selection、MCP Tools、Delegated End-User Context、Normalized Events 与 Artifacts。",
   "Runtime boundary: one Thread contains Runs, tools, delegated identity, events, and Artifacts.":
     "Runtime 边界：一个 Thread 承载 Runs、工具、委托身份、事件与 Artifacts。",
+  "The ghfind homepage: deep valuation for any open-source project, honest 0–100 scores for any GitHub account.":
+    "ghfind 首页：为任意开源项目做深度评测估值，为任意 GitHub 账号打出诚实的 0–100 分。",
+  "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score. The deep project valuation runs on one published mosoo Agent, called from the ghfind backend through the Thread API.":
+    "ghfind 为任意公开开源项目做深度评测估值，也为任意 GitHub 账号打出毫不留情的 0–100 分。深度项目评测估值由一个已发布的 mosoo Agent 完成，ghfind 后端通过 Thread API 调用。",
+  "The roast is instant. The valuation is an Agent.": "锐评即刻出结果，估值由 Agent 完成。",
+  "ghfind turns any public open-source project into a deep evaluation and valuation — real demand, effectiveness, onboarding experience, and value density distilled into a product-value verdict people actually read. It also turns any GitHub account into a 0–100 value and trust score. The deep project valuation is produced by one published mosoo Agent — the ghfind backend opens a Thread per evaluation, follows the Run, and renders the committed artifact as a native page.":
+    "ghfind 把任意公开开源项目变成一份深度评测估值——真实需求、解决效果、上手体验与价值密度，凝练成人们真的会读完的产品价值评判。它也能把任意 GitHub 账号打成 0–100 的价值与信任评分。深度项目评测估值由一个已发布的 mosoo Agent 完成——ghfind 后端为每次评测创建一个 Thread，跟踪 Run，并把提交的 artifact 渲染成原生页面。",
+  "Publish the analyst Agent": "发布分析 Agent",
+  "A mosoo Agent carrying the project-evaluation skill is published once. Publishing mints the agent id ghfind calls, while mosoo keeps the harness, environment, and lifecycle managed.":
+    "在 mosoo 上发布一次配备项目评测 skill 的 Agent。发布会生成 ghfind 要调用的 agent id，harness、environment 与生命周期由 mosoo 托管。",
+  "One Thread per evaluation": "一次评测一个 Thread",
+  "The ghfind backend calls POST /agents/{id}/threads for each requested project evaluation, then tracks the Run from queued through running to completed. The mosoo token never leaves the backend.":
+    "ghfind 后端为每次请求的项目评测调用 POST /agents/{id}/threads，并把 Run 从 queued 跟踪到 completed。mosoo token 从不离开后端。",
+  "Render the committed artifact": "渲染提交的 artifact",
+  "When the Run completes, ghfind downloads the committed analysis JSON from the Thread files and renders it as a native analysis page. Every mosoo response is validated with zod before it reaches the UI.":
+    "Run 完成后，ghfind 从 Thread 文件下载已提交的分析 JSON，并渲染成原生的分析页面。每个 mosoo 响应都先经 zod 校验再进入 UI。",
+  "The token stays in the ghfind backend. The browser only ever sees the rendered analysis.":
+    "token 始终留在 ghfind 后端，浏览器只会看到渲染好的分析结果。",
+  "A structured project valuation — score, evidence, and verdict — committed as a Thread artifact and rendered as a native ghfind page.":
+    "一份结构化的项目评测估值——评分、证据与结论——作为 Thread artifact 提交，并渲染成原生 ghfind 页面。",
+  "Where the Agent stops": "Agent 的边界",
+  "The headline roast score is a deterministic scoring core locked by unit tests — no Agent involved. mosoo runs only the deep project evaluation and valuation behind the Projects section.":
+    "首页的锐评评分是确定性评分内核，由单元测试锁定——不经过任何 Agent。mosoo 只负责 Projects 板块背后的深度项目评测估值。",
+  "Put an Agent behind your own product.": "把 Agent 放到你的产品背后。",
+  "Publish an Agent on mosoo, call it through the Public Thread API, and ship the result as a feature your users already understand.":
+    "在 mosoo 上发布一个 Agent，通过 Public Thread API 调用它，把结果做成用户已经理解的产品功能。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -354,6 +380,32 @@ const JA_MESSAGES = {
     "PitchPilot ワークスペースと、Mosoo 内の Thread、Run、Harness Selection、MCP Tools、Delegated End-User Context、Normalized Events、Artifacts を示すスライド。",
   "Runtime boundary: one Thread contains Runs, tools, delegated identity, events, and Artifacts.":
     "Runtime 境界：1 つの Thread が Runs、ツール、委任 ID、イベント、Artifacts を保持します。",
+  "The ghfind homepage: deep valuation for any open-source project, honest 0–100 scores for any GitHub account.":
+    "ghfind トップページ：任意のオープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに正直な 0〜100 スコアを出す。",
+  "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score. The deep project valuation runs on one published mosoo Agent, called from the ghfind backend through the Thread API.":
+    "ghfind は任意の公開オープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに容赦ない 0〜100 スコアを出します。詳細なプロジェクト評価・バリュエーションは公開済みの mosoo Agent 1 つが担当し、ghfind バックエンドから Thread API 経由で呼び出されます。",
+  "The roast is instant. The valuation is an Agent.": "酷評は一瞬。バリュエーションは Agent が担当。",
+  "ghfind turns any public open-source project into a deep evaluation and valuation — real demand, effectiveness, onboarding experience, and value density distilled into a product-value verdict people actually read. It also turns any GitHub account into a 0–100 value and trust score. The deep project valuation is produced by one published mosoo Agent — the ghfind backend opens a Thread per evaluation, follows the Run, and renders the committed artifact as a native page.":
+    "ghfind は任意の公開オープンソースプロジェクトを詳細な評価・バリュエーションに変えます——実在する需要、解決効果、オンボーディング体験、価値密度を、実際に読まれるプロダクト価値の評決に凝縮します。任意の GitHub アカウントを 0〜100 の価値・信頼スコアに変えることもできます。詳細なプロジェクト評価・バリュエーションは公開済みの mosoo Agent 1 つが生成し、ghfind バックエンドが評価ごとに Thread を作成し、Run を追跡して、コミットされた artifact をネイティブページとして描画します。",
+  "Publish the analyst Agent": "分析 Agent を公開する",
+  "A mosoo Agent carrying the project-evaluation skill is published once. Publishing mints the agent id ghfind calls, while mosoo keeps the harness, environment, and lifecycle managed.":
+    "プロジェクト評価 skill を載せた mosoo Agent を一度公開します。公開で ghfind が呼び出す agent id が発行され、harness・environment・ライフサイクルは mosoo が管理します。",
+  "One Thread per evaluation": "評価ごとに 1 つの Thread",
+  "The ghfind backend calls POST /agents/{id}/threads for each requested project evaluation, then tracks the Run from queued through running to completed. The mosoo token never leaves the backend.":
+    "ghfind バックエンドは要求されたプロジェクト評価ごとに POST /agents/{id}/threads を呼び、Run を queued から completed まで追跡します。mosoo token はバックエンドから出ません。",
+  "Render the committed artifact": "コミット済み artifact を描画する",
+  "When the Run completes, ghfind downloads the committed analysis JSON from the Thread files and renders it as a native analysis page. Every mosoo response is validated with zod before it reaches the UI.":
+    "Run が完了すると、ghfind は Thread ファイルからコミット済みの分析 JSON をダウンロードし、ネイティブな分析ページとして描画します。mosoo のレスポンスはすべて zod で検証されてから UI に渡ります。",
+  "The token stays in the ghfind backend. The browser only ever sees the rendered analysis.":
+    "token は ghfind バックエンドに留まり、ブラウザに届くのは描画済みの分析だけです。",
+  "A structured project valuation — score, evidence, and verdict — committed as a Thread artifact and rendered as a native ghfind page.":
+    "スコア・証拠・評決を含む構造化されたプロジェクトバリュエーションが Thread artifact としてコミットされ、ghfind のネイティブページとして描画されます。",
+  "Where the Agent stops": "Agent の守備範囲",
+  "The headline roast score is a deterministic scoring core locked by unit tests — no Agent involved. mosoo runs only the deep project evaluation and valuation behind the Projects section.":
+    "トップの酷評スコアは単体テストで固定された決定論的スコアリングコアで、Agent は関与しません。mosoo が担うのは Projects セクション背後の詳細なプロジェクト評価・バリュエーションだけです。",
+  "Put an Agent behind your own product.": "あなたのプロダクトの背後に Agent を。",
+  "Publish an Agent on mosoo, call it through the Public Thread API, and ship the result as a feature your users already understand.":
+    "mosoo で Agent を公開し、Public Thread API 経由で呼び出し、その結果をユーザーが理解できる機能として出荷しましょう。",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
