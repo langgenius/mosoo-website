@@ -183,6 +183,11 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
 
   assert.equal(authResponse.headers.get("content-type"), "text/markdown; charset=utf-8");
   assert.match(auth, /^# .*auth\.md/m);
+  assert.match(auth, /You are an agent/);
+  assert.match(auth, /agentic registration/);
+  assert.match(auth, /agent_auth/);
+  assert.match(auth, /register_uri/);
+  assert.match(auth, /Step 1.*Register[\s\S]*Step 2.*Authorize[\s\S]*Step 3.*Exchange[\s\S]*Step 5.*Revocation/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
   assert.match(auth, /Google or an email one-time passcode \(OTP\)/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);

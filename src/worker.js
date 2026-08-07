@@ -33,9 +33,13 @@ Mosoo is an open-source platform for building and running persistent cloud Agent
 - API documentation: https://mosoo.ai/docs/api-reference/
 - Documentation index: https://mosoo.ai/docs/llms.txt
 `;
-const AUTH_MARKDOWN = `# Mosoo auth.md
+const AUTH_MARKDOWN = `# Mosoo auth.md — Agent Registration
 
 Mosoo's Public Thread API is for backend agents and server-side integrations operated by a Mosoo App owner.
+
+You are an agent integrating Mosoo from a trusted backend. Mosoo's current **agentic registration** is a human-assisted account and Personal Access Token flow; follow these steps in order.
+
+Mosoo does not publish an \`agent_auth\` block or autonomous \`register_uri\`. Do not invent or POST to one.
 
 ## Identity boundary
 
@@ -43,25 +47,35 @@ Mosoo's Public Thread API is for backend agents and server-side integrations ope
 - It cannot represent an App end user. The integrating product must authenticate and authorize its own users, then pass an opaque userId when it creates a Thread.
 - Keep the token on a trusted backend. Do not expose it to browsers, mobile clients, logs, or source control.
 
-## Register or sign in
+## Step 1 — Register or sign in
 
 Open https://cloud.mosoo.ai/login and continue with Google or an email one-time passcode (OTP).
 
-## Provision a token
+## Step 2 — Authorize and provision a token
 
 1. Sign in at https://cloud.mosoo.ai/settings/access-tokens.
 2. Create an Access Token and copy the mst_... value when it is shown.
 3. Store it as a backend secret, such as MOSOO_API_TOKEN.
 
-Mosoo does not currently publish OAuth authorization-server metadata for this API. Use the self-service token page above; do not invent or probe an OAuth token endpoint.
+The account owner authorizes the integration by creating this token. Tokens have no scopes.
 
-## Supported API authentication
+## Step 3 — Exchange
+
+There is no OAuth authorization-code or token exchange. The authenticated settings page issues the mst_... token once after the owner creates it.
+
+## Step 4 — Use the access token
 
 Send the token as an HTTP Bearer credential:
 
 ~~~http
 Authorization: Bearer mst_...
 ~~~
+
+## Step 5 — Revocation
+
+The owner can revoke the token from https://cloud.mosoo.ai/settings/access-tokens. Requests using a revoked token are no longer authorized.
+
+Mosoo does not currently publish OAuth authorization-server metadata for this API. Use the human-assisted registration and token provisioning flow above.
 
 API base: https://cloud.mosoo.ai/api/v1
 
