@@ -8,7 +8,7 @@ const PUBLIC_API_DESCRIPTION = `${PUBLIC_API_BASE}/openapi.json`;
 const PUBLIC_API_DOCUMENTATION = "https://mosoo.ai/docs/api-reference/";
 const PUBLIC_API_STATUS = `${CONSOLE_ORIGIN}/api/health`;
 const PROTECTED_RESOURCE_METADATA = `${CONSOLE_ORIGIN}/.well-known/oauth-protected-resource`;
-const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=no";
+const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=yes";
 const LOCALE_COOKIE = "mosoo_locale";
 const LLMS_LINK_HEADER =
   '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"';

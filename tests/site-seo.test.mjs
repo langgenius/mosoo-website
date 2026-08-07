@@ -99,7 +99,7 @@ test("robots advertises the aggregate sitemap", () => {
   const robots = read("apps/landing/public/robots.txt");
   const sitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)$/gm)].map((match) => match[1]);
 
-  assert.match(robots, /^Content-Signal: ai-train=no, search=yes, ai-input=no$/m);
+  assert.match(robots, /^Content-Signal: ai-train=no, search=yes, ai-input=yes$/m);
   assert.deepEqual(sitemaps, ["https://mosoo.ai/sitemap.xml"]);
 });
 
