@@ -139,7 +139,7 @@ test("worker advertises agent discovery resources from HTML assets", async () =>
   assert.match(link, /rel="service-desc"/);
   assert.match(link, /rel="service-doc"/);
   assert.match(link, /<\/auth\.md>; rel="describedby"/);
-  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=no");
+  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
 });
 
 test("worker negotiates homepage HTML to clean Markdown", async () => {
