@@ -51,8 +51,7 @@ const ZH_MESSAGES = {
   "Publish an Agent on mosoo, hand its Instruction for LLM to a coding agent, and ship the integration in an afternoon.":
     "在 mosoo 上发布一个 Agent，把它的 Instruction for LLM 交给 coding agent，一个下午就能完成集成上线。",
   "Read the docs": "阅读文档",
-  "One Agent for every user. Their data stays isolated.":
-    "一个 Agent 服务所有用户，数据彼此隔离。",
+  "One Agent for every user. Their data stays isolated.": "一个 Agent 服务所有用户，数据彼此隔离。",
   "Go Gym is a production fitness tracker. Users describe meals, workouts, and body measurements in chat; the app turns them into structured records, durable dashboards, and progress summaries.":
     "Go Gym 是一款生产环境中的健身追踪应用。用户在对话中描述饮食、训练和身体指标，应用会把它们转化为结构化记录、持久仪表盘和进度总结。",
   "Read the API docs": "阅读 API 文档",
@@ -98,8 +97,7 @@ const ZH_MESSAGES = {
   "Use the production app and try a meal or workout log.":
     "使用生产应用，尝试记录一顿饭或一次训练。",
   "Try Go Gym": "体验 Go Gym",
-  "Create Threads and Runs from an application backend.":
-    "从应用后端创建 Thread 与 Run。",
+  "Create Threads and Runs from an application backend.": "从应用后端创建 Thread 与 Run。",
   "Thread API reference": "Thread API 参考",
   "Inspect the open-source Agent runtime behind this case.":
     "查看这个案例背后的开源 Agent runtime。",
@@ -116,8 +114,7 @@ const ZH_MESSAGES = {
   "Prompt in, shippable site out — a cattle mosoo Agent runs the Blueprint CLI, and trybp.page publishes each successful artifact to a stable hostname.":
     "提示词进，可上线站点出——一个 cattle mosoo Agent 运行 Blueprint CLI，trybp.page 把每次成功产物发布到稳定主机名。",
   "The Blueprint control surface on trybp.page.": "trybp.page 上的 Blueprint 控制台。",
-  "From a brief to a live site. Mosoo runs the Agent.":
-    "从一句话到线上站点。Mosoo 负责跑 Agent。",
+  "From a brief to a live site. Mosoo runs the Agent.": "从一句话到线上站点。Mosoo 负责跑 Agent。",
   "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint inside a cattle sandbox, and publishes validated artifacts — without ever exposing the Mosoo token to the browser.":
     "Blueprint 把对话式 brief 变成确定的页面。线上产品 trybp.page 把每个项目映射到一个 mosoo Thread，在 cattle sandbox 里运行 Blueprint，并发布经校验的产物——Mosoo token 从不进入浏览器。",
   "A shared cattle Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.":
@@ -148,8 +145,7 @@ const ZH_MESSAGES = {
   "PitchPilot reads Thread events and committed files through Mosoo's public API, then presents the Agent's HTML artifact in a sandboxed in-app preview with an explicit download.":
     "PitchPilot 读取 Public Thread API 的事件与已提交文件，再把 Agent 的 HTML artifact 作为 sandboxed 应用内预览呈现，并提供明确的下载入口。",
   "Return a product-native artifact": "返回产品原生的产物",
-  "Keep the product UI. Put the managed Agent behind it.":
-    "保留产品 UI，把托管 Agent 放在背后。",
+  "Keep the product UI. Put the managed Agent behind it.": "保留产品 UI，把托管 Agent 放在背后。",
   "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent for long-running work, then turns the returned files and events into a normal product experience.":
     "PitchPilot 是完整的演示文稿 Web 应用，而不是 Agent 控制台。后端调用一个已发布的 mosoo Agent 执行长任务，再把返回的文件和事件转化为普通用户可理解的产品体验。",
   "The application owns the user experience. Mosoo owns published Agent execution, Thread and Run lifecycle, event delivery, and Agent-produced files.":
@@ -200,6 +196,32 @@ const ZH_MESSAGES = {
   "Put an Agent behind your own product.": "把 Agent 放到你的产品背后。",
   "Publish an Agent on mosoo, call it through the Public Thread API, and ship the result as a feature your users already understand.":
     "在 mosoo 上发布一个 Agent，通过 Public Thread API 调用它，把结果做成用户已经理解的产品功能。",
+  "The ghfind Projects page, where a published mosoo Agent evaluates public GitHub repositories.":
+    "ghfind 项目评估页：一个已发布的 mosoo Agent 在这里评估公开 GitHub 仓库。",
+  "ghfind keeps its deterministic GitHub account score separate from its Agent-powered repository evaluation. For the latter, its Go worker calls one published mosoo Agent through the Thread API and turns three committed artifacts into a native result page.":
+    "ghfind 把确定性的 GitHub 账号评分与 Agent 驱动的仓库评估分开。仓库评估由 Go worker 通过 Thread API 调用一个已发布的 mosoo Agent，再把三份已提交的 artifact 变成原生结果页。",
+  "One ghfind feature runs on a published mosoo Agent.":
+    "ghfind 的一项功能运行在已发布的 mosoo Agent 上。",
+  "ghfind has two distinct products: a deterministic 0–100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.":
+    "ghfind 有两条独立能力：为 GitHub 账号计算确定性的 0–100 价值与信任分，以及深度评估公开仓库。mosoo 只驱动仓库评估：已发布的 Agent 在 sandbox 中检查项目并返回结构化 artifact；rubric、任务流程、校验、存储和结果页由 ghfind 负责。",
+  "Publish one project analyst": "发布一个项目分析 Agent",
+  "ghfind publishes one cattle Agent with its project-evaluation skill. mosoo runs that Agent in an isolated sandbox and manages the harness, environment, and execution lifecycle.":
+    "ghfind 发布一个配备项目评估 Skill 的 cattle Agent。mosoo 在隔离 sandbox 中运行它，并管理 harness、environment 与执行生命周期。",
+  "Create one Thread per repository": "每个仓库创建一个 Thread",
+  "For each repository, ghfind's Go worker creates a Thread with a stable idempotency key, persists the Thread and Run ids, and follows the Run to a terminal state. The mosoo token never reaches the browser.":
+    "ghfind 的 Go worker 为每个仓库用稳定幂等键创建 Thread，保存 Thread 与 Run ID，并跟踪 Run 到终态。mosoo token 永远不会进入浏览器。",
+  "Render three committed artifacts": "渲染三份已提交的 artifact",
+  "The Agent commits analysis JSON, evidence JSON, and a Markdown report. ghfind downloads those artifacts, validates its own product schema, stores the result, and renders a native evaluation page.":
+    "Agent 提交分析 JSON、证据 JSON 与 Markdown 报告。ghfind 下载这些 artifact，按自己的产品 Schema 校验并存储结果，再渲染原生评估页。",
+  "The browser submits to ghfind. Only the ghfind backend talks to mosoo, and the browser receives ghfind's validated product result.":
+    "浏览器只向 ghfind 提交请求。只有 ghfind 后端会调用 mosoo，浏览器收到的是 ghfind 校验后的产品结果。",
+  "What mosoo does": "mosoo 负责什么",
+  "mosoo runs the published Agent: isolated sandbox, harness and tool execution, Run lifecycle, public events, and committed Thread artifacts.":
+    "mosoo 负责运行已发布的 Agent：隔离 sandbox、harness 与工具执行、Run 生命周期、公开事件和已提交的 Thread artifact。",
+  "What ghfind owns": "ghfind 负责什么",
+  "The project rubric, queue durability, schema validation, storage, and UI stay in ghfind. Its headline account score is deterministic and does not use the Agent.":
+    "项目 rubric、队列持久化、Schema 校验、存储和 UI 都留在 ghfind。首页账号评分是确定性的，不使用 Agent。",
+  "Feature wiring": "功能链路",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -365,8 +387,7 @@ const JA_MESSAGES = {
   "Explicit boundary": "明確な範囲",
   "This case proves HTML artifact preview and download. It does not claim native PitchPilot version history or PPTX parity.":
     "この事例が検証するのは HTML artifact のプレビューとダウンロードです。PitchPilot ネイティブのバージョン履歴や PPTX との完全な同等性は主張しません。",
-  "Put a managed Agent behind your product UI.":
-    "プロダクト UI の背後に managed Agent を置く。",
+  "Put a managed Agent behind your product UI.": "プロダクト UI の背後に managed Agent を置く。",
   "Publish the Agent once, call it through Threads, and turn its events and files into the experience your users already understand.":
     "Agent を一度公開し、Thread 経由で呼び出し、そのイベントとファイルをユーザーが理解できる体験に変換します。",
   "See the architecture the Agent delivered.": "Agent が納品したアーキテクチャを見る。",
@@ -384,7 +405,8 @@ const JA_MESSAGES = {
     "ghfind トップページ：任意のオープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに正直な 0〜100 スコアを出す。",
   "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score. The deep project valuation runs on one published mosoo Agent, called from the ghfind backend through the Thread API.":
     "ghfind は任意の公開オープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに容赦ない 0〜100 スコアを出します。詳細なプロジェクト評価・バリュエーションは公開済みの mosoo Agent 1 つが担当し、ghfind バックエンドから Thread API 経由で呼び出されます。",
-  "The roast is instant. The valuation is an Agent.": "酷評は一瞬。バリュエーションは Agent が担当。",
+  "The roast is instant. The valuation is an Agent.":
+    "酷評は一瞬。バリュエーションは Agent が担当。",
   "ghfind turns any public open-source project into a deep evaluation and valuation — real demand, effectiveness, onboarding experience, and value density distilled into a product-value verdict people actually read. It also turns any GitHub account into a 0–100 value and trust score. The deep project valuation is produced by one published mosoo Agent — the ghfind backend opens a Thread per evaluation, follows the Run, and renders the committed artifact as a native page.":
     "ghfind は任意の公開オープンソースプロジェクトを詳細な評価・バリュエーションに変えます——実在する需要、解決効果、オンボーディング体験、価値密度を、実際に読まれるプロダクト価値の評決に凝縮します。任意の GitHub アカウントを 0〜100 の価値・信頼スコアに変えることもできます。詳細なプロジェクト評価・バリュエーションは公開済みの mosoo Agent 1 つが生成し、ghfind バックエンドが評価ごとに Thread を作成し、Run を追跡して、コミットされた artifact をネイティブページとして描画します。",
   "Publish the analyst Agent": "分析 Agent を公開する",
@@ -406,6 +428,32 @@ const JA_MESSAGES = {
   "Put an Agent behind your own product.": "あなたのプロダクトの背後に Agent を。",
   "Publish an Agent on mosoo, call it through the Public Thread API, and ship the result as a feature your users already understand.":
     "mosoo で Agent を公開し、Public Thread API 経由で呼び出し、その結果をユーザーが理解できる機能として出荷しましょう。",
+  "The ghfind Projects page, where a published mosoo Agent evaluates public GitHub repositories.":
+    "公開済み mosoo Agent が公開 GitHub リポジトリを評価する ghfind Projects ページ。",
+  "ghfind keeps its deterministic GitHub account score separate from its Agent-powered repository evaluation. For the latter, its Go worker calls one published mosoo Agent through the Thread API and turns three committed artifacts into a native result page.":
+    "ghfind は決定論的な GitHub アカウントスコアと Agent 駆動のリポジトリ評価を分離しています。後者では Go worker が Thread API 経由で公開済み mosoo Agent を呼び、3 つのコミット済み artifact をネイティブ結果ページに変換します。",
+  "One ghfind feature runs on a published mosoo Agent.":
+    "ghfind の 1 機能が公開済み mosoo Agent 上で動いています。",
+  "ghfind has two distinct products: a deterministic 0–100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.":
+    "ghfind には、GitHub アカウント向けの決定論的な 0〜100 価値・信頼スコアと、公開リポジトリ向けの詳細評価があります。mosoo が担うのはリポジトリ評価だけです。公開済み Agent が sandbox でプロジェクトを調査して構造化 artifact を返し、rubric、ジョブフロー、検証、保存、結果ページは ghfind が担います。",
+  "Publish one project analyst": "プロジェクト分析 Agent を 1 つ公開する",
+  "ghfind publishes one cattle Agent with its project-evaluation skill. mosoo runs that Agent in an isolated sandbox and manages the harness, environment, and execution lifecycle.":
+    "ghfind はプロジェクト評価 Skill を持つ cattle Agent を 1 つ公開します。mosoo は隔離 sandbox で Agent を実行し、harness、environment、実行ライフサイクルを管理します。",
+  "Create one Thread per repository": "リポジトリごとに Thread を 1 つ作成する",
+  "For each repository, ghfind's Go worker creates a Thread with a stable idempotency key, persists the Thread and Run ids, and follows the Run to a terminal state. The mosoo token never reaches the browser.":
+    "ghfind の Go worker はリポジトリごとに安定した冪等キーで Thread を作成し、Thread と Run の ID を保存して終端状態まで追跡します。mosoo token がブラウザに渡ることはありません。",
+  "Render three committed artifacts": "3 つのコミット済み artifact を描画する",
+  "The Agent commits analysis JSON, evidence JSON, and a Markdown report. ghfind downloads those artifacts, validates its own product schema, stores the result, and renders a native evaluation page.":
+    "Agent は分析 JSON、証拠 JSON、Markdown レポートをコミットします。ghfind はそれらをダウンロードし、独自の製品 Schema で検証・保存して、ネイティブ評価ページを描画します。",
+  "The browser submits to ghfind. Only the ghfind backend talks to mosoo, and the browser receives ghfind's validated product result.":
+    "ブラウザは ghfind にだけ送信します。mosoo と通信するのは ghfind backend だけで、ブラウザには ghfind が検証した製品結果が返ります。",
+  "What mosoo does": "mosoo が担うこと",
+  "mosoo runs the published Agent: isolated sandbox, harness and tool execution, Run lifecycle, public events, and committed Thread artifacts.":
+    "mosoo は公開済み Agent を実行し、隔離 sandbox、harness とツール実行、Run ライフサイクル、公開イベント、コミット済み Thread artifact を担います。",
+  "What ghfind owns": "ghfind が担うこと",
+  "The project rubric, queue durability, schema validation, storage, and UI stay in ghfind. Its headline account score is deterministic and does not use the Agent.":
+    "プロジェクト rubric、キュー永続性、Schema 検証、保存、UI は ghfind に残ります。トップのアカウントスコアは決定論的で、Agent を使いません。",
+  "Feature wiring": "機能の接続",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };

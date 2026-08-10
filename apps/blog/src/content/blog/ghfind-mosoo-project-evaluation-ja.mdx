@@ -1,0 +1,69 @@
+---
+title: "ghfind が Mosoo Agent をプロジェクト評価機能にするまで"
+titleAccent: "Mosoo Agent"
+description: "ghfind は GitHub プロジェクト評価を公開済み Mosoo Agent に委ね、rubric、ジョブキュー、結果検証、製品 UI はアプリケーション側に残しています。"
+date: 2026-08-10
+category: "Customer Stories"
+author: "mosoo team"
+locale: "ja"
+permalink: "ghfind-mosoo-project-evaluation"
+translationKey: "ghfind-mosoo-project-evaluation"
+heroImage: "/blog/blog/ghfind-mosoo/ghfind-projects.png"
+heroAlt: "Powered by mosoo と表示された ghfind のプロジェクト評価入口。"
+---
+
+[ghfind](https://ghfind.com) は製品全体を Agent に任せているわけではありません。公開 GitHub リポジトリの詳細評価という、オープンエンドな調査が本当に必要な機能だけを、公開済み Mosoo Agent に委ねています。GitHub アカウントのスコアリング、ジョブの編成、結果検証、製品 UI は引き続き ghfind が担当します。
+
+この境界は、Agent 導入で最も重要な問いに答えます。Mosoo はアプリケーションのビジネスロジックを作り直すのではなく、ツール、sandbox、管理されたライフサイクルを持つ Agent を backend capability として呼び出せるようにします。
+
+## ghfind とは？
+
+ghfind は GitHub 開発者の価値と信頼性をスコアリングするオープンソース製品です。トップページの「酷評」は公開 GitHub データから再現可能なアカウントスコアを計算し、Agent は使いません。
+
+![ghfind トップページの GitHub アカウントスコア入口](/blog/blog/ghfind-mosoo/ghfind-home.png)
+
+ghfind にはプロジェクト評価機能もあります。ユーザーが公開リポジトリと、任意の branch、tag、commit を送ると、実在する需要、解決効果、オンボーディング体験、価値密度について構造化された判断を返します。ソースコード、文書、履歴を読み、一部のプロジェクトではインストール、build、主要フローも検証するため、Agent に適した仕事です。
+
+![Powered by mosoo と表示された ghfind のプロジェクト評価入口](/blog/blog/ghfind-mosoo/ghfind-projects.png)
+
+## ここで Mosoo は何をするのか？
+
+ghfind はプロジェクト評価 Skill を持つ cattle Agent を Mosoo で公開しています。Mosoo は隔離 sandbox、Agent harness、ツール実行、Run ライフサイクル、公開イベント、出力ファイルという再利用可能な runtime capability を提供します。ghfind が独自の model loop、tool runner、sandbox scheduler を維持する必要はありません。
+
+1 回の評価は、実際には次の経路を通ります。
+
+1. ブラウザがリポジトリ URL を ghfind に送信します。
+2. ghfind の Go worker が安定した冪等キーで `POST /agents/{agentId}/threads` を呼び、Thread と Run の ID を保存します。
+3. Mosoo が隔離 sandbox で公開済み Agent を起動します。Agent は ghfind の rubric に沿ってリポジトリを調査し、Run とツールイベントを生成します。
+4. Agent が分析 JSON、証拠 JSON、Markdown レポートの 3 ファイルをコミットします。
+5. ghfind がファイルをダウンロードし、独自の business schema で検証・保存して、ネイティブ結果ページを描画します。
+
+Mosoo token は ghfind backend に留まります。ブラウザが見るのは ghfind が検証した製品結果であり、Mosoo の内部 runtime data ではありません。
+
+![Mosoo Agent が生成し、ghfind が描画したプロジェクト評価](/blog/blog/ghfind-mosoo/ghfind-project-analysis.png)
+
+## Agent とアプリケーションの境界
+
+この設計では、Mosoo が再利用可能な Agent runtime を、ghfind が製品定義を担います。
+
+プロジェクト rubric、リポジトリ送信と認可、RabbitMQ ジョブの永続性と並行数、business retry policy、artifact サイズ上限、結果 schema、ランキング、UI は ghfind に残すべき責務です。特にトップページのアカウントスコアは、単体テストで固定された決定論的な scoring core で、Mosoo Agent とは無関係です。
+
+Mosoo が吸収すべきなのは、各 Agent App が繰り返し書くことになる protocol glue です。Thread、Run、イベント、ファイルの型、認証と error envelope、冪等リクエスト、再開可能な Run watcher、そして Run と出力 artifact の安定した関連付けが該当します。
+
+## 現在の統合コスト
+
+ghfind の実装は、Mosoo が今後提供すべきものも示しています。[`b7eee13`](https://github.com/hikariming/ghfind/tree/b7eee13f547807c0be36f9f3c0c4c4457b699fdd) 時点で、本番 Go backend は [564 行の手書き Public Thread client](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/internal/backend/mosoo.go) を維持しています。そのファイルは、別の [427 行の TypeScript 実装](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/src/lib/mosoo-project-analysis.ts) を mirror していると明記しています。
+
+特に目立つ workaround は 3 つあります。
+
+- client は最新 100 イベントだけを取得します。`truncated` は parse しますが、古い履歴を page せず、呼び出し側にも truncation を伝えません。
+- worker が Thread を poll し、終端状態を判定し、backoff を予定し、queue の再配信後に Run を復元します。
+- 完了後、client は Thread の全ファイルを scan し、合意した 3 つのファイル名から結果を探します。Run から構造化 artifact ID を直接取得できません。
+
+これらの観察は、第二の SDK を作らず既存 Public Thread client を公開・拡張する Mosoo [#489](https://github.com/langgenius/mosoo/issues/489) に追記しました。Run と artifact の安定した関連付けは [#505](https://github.com/langgenius/mosoo/issues/505) で別に追跡されています。
+
+## 再利用できる教訓
+
+Agent を製品に追加する最も安全な方法は、アプリケーション全体を Agent に任せることではありません。オープンエンドな推論、ツール利用、隔離実行が本当に必要な機能を見つけ、その仕事を公開済み Mosoo Agent に置きます。ユーザー ID、ビジネス状態、決定論的ルール、最終表示はアプリケーションに残します。
+
+ghfind のプロジェクト評価はこの境界を示しています。Mosoo は Agent を実行可能、観測可能、ファイル納品可能にし、ghfind はその能力をユーザーが理解して選べる製品機能に変えています。

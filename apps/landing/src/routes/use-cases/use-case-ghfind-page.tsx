@@ -23,23 +23,23 @@ const STEPS = [
   {
     body: () =>
       t(
-        "A mosoo Agent carrying the project-evaluation skill is published once. Publishing mints the agent id ghfind calls, while mosoo keeps the harness, environment, and lifecycle managed.",
+        "ghfind publishes one cattle Agent with its project-evaluation skill. mosoo runs that Agent in an isolated sandbox and manages the harness, environment, and execution lifecycle.",
       ),
-    title: () => t("Publish the analyst Agent"),
+    title: () => t("Publish one project analyst"),
   },
   {
     body: () =>
       t(
-        "The ghfind backend calls POST /agents/{id}/threads for each requested project evaluation, then tracks the Run from queued through running to completed. The mosoo token never leaves the backend.",
+        "For each repository, ghfind's Go worker creates a Thread with a stable idempotency key, persists the Thread and Run ids, and follows the Run to a terminal state. The mosoo token never reaches the browser.",
       ),
-    title: () => t("One Thread per evaluation"),
+    title: () => t("Create one Thread per repository"),
   },
   {
     body: () =>
       t(
-        "When the Run completes, ghfind downloads the committed analysis JSON from the Thread files and renders it as a native analysis page. Every mosoo response is validated with zod before it reaches the UI.",
+        "The Agent commits analysis JSON, evidence JSON, and a Markdown report. ghfind downloads those artifacts, validates its own product schema, stores the result, and renders a native evaluation page.",
       ),
-    title: () => t("Render the committed artifact"),
+    title: () => t("Render three committed artifacts"),
   },
 ] as const;
 
@@ -47,8 +47,9 @@ const PIPELINE = [
   "Browser",
   "ghfind backend",
   "mosoo Public Thread API",
-  "Agent sandbox",
-  "analysis.json artifact",
+  "cattle Agent sandbox",
+  "analysis + evidence + report",
+  "native ghfind result",
 ] as const;
 
 function CaseHeader(): ReactElement {
@@ -68,11 +69,11 @@ function CaseHeader(): ReactElement {
         </span>
       </div>
       <h1 className="text-fg-1 mt-5 max-w-[820px] [text-wrap:balance]" style={PAGE_HEADLINE_STYLE}>
-        {t("The roast is instant. The valuation is an Agent.")}
+        {t("One ghfind feature runs on a published mosoo Agent.")}
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
-          "ghfind turns any public open-source project into a deep evaluation and valuation — real demand, effectiveness, onboarding experience, and value density distilled into a product-value verdict people actually read. It also turns any GitHub account into a 0–100 value and trust score. The deep project valuation is produced by one published mosoo Agent — the ghfind backend opens a Thread per evaluation, follows the Run, and renders the committed artifact as a native page.",
+          "ghfind has two distinct products: a deterministic 0–100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.",
         )}
       </p>
       <div className="mt-6 flex items-center gap-2.5">
@@ -180,7 +181,9 @@ function RequestPath(): ReactElement {
         </div>
       </div>
       <p className="text-fg-3 mt-3 text-[13px] leading-[1.6]">
-        {t("The token stays in the ghfind backend. The browser only ever sees the rendered analysis.")}
+        {t(
+          "The browser submits to ghfind. Only the ghfind backend talks to mosoo, and the browser receives ghfind's validated product result.",
+        )}
       </p>
     </Reveal>
   );
@@ -192,29 +195,29 @@ function Facts(): ReactElement {
       <div className="grid gap-x-10 gap-y-8 md:grid-cols-3">
         <Reveal>
           <div className="border-border-strong border-t pt-5">
-            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("What comes out")}</h3>
+            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("What mosoo does")}</h3>
             <p className="text-fg-2 mt-2.5 text-[14px] leading-[1.6] [text-wrap:pretty]">
               {t(
-                "A structured project valuation — score, evidence, and verdict — committed as a Thread artifact and rendered as a native ghfind page.",
+                "mosoo runs the published Agent: isolated sandbox, harness and tool execution, Run lifecycle, public events, and committed Thread artifacts.",
               )}
             </p>
           </div>
         </Reveal>
         <Reveal delay={0.06}>
           <div className="border-border-strong border-t pt-5">
-            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("Where the Agent stops")}</h3>
+            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("What ghfind owns")}</h3>
             <p className="text-fg-2 mt-2.5 text-[14px] leading-[1.6] [text-wrap:pretty]">
               {t(
-                "The headline roast score is a deterministic scoring core locked by unit tests — no Agent involved. mosoo runs only the deep project evaluation and valuation behind the Projects section.",
+                "The project rubric, queue durability, schema validation, storage, and UI stay in ghfind. Its headline account score is deterministic and does not use the Agent.",
               )}
             </p>
           </div>
         </Reveal>
         <Reveal delay={0.12}>
           <div className="border-border-strong border-t pt-5">
-            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("Stack")}</h3>
+            <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("Feature wiring")}</h3>
             <ul className="mt-3 flex flex-wrap gap-2">
-              {[...GHFIND.tags, "zod API client"].map((tag) => (
+              {GHFIND.tags.map((tag) => (
                 <li
                   key={tag}
                   className="border-border-default text-fg-2 rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium"
