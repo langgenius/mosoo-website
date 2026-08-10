@@ -11,7 +11,7 @@ const PROTECTED_RESOURCE_METADATA = `${CONSOLE_ORIGIN}/.well-known/oauth-protect
 const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=yes";
 const LOCALE_COOKIE = "mosoo_locale";
 const LLMS_LINK_HEADER =
-  '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"';
+  '</llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"';
 const API_CATALOG_LINK =
   '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"';
 const DISCOVERY_LINK_HEADER = `${LLMS_LINK_HEADER}, ${API_CATALOG_LINK}, <${PUBLIC_API_DESCRIPTION}>; rel="service-desc"; type="application/json", <${PUBLIC_API_DOCUMENTATION}>; rel="service-doc"; type="text/html", </auth.md>; rel="describedby"; type="text/markdown"`;
@@ -32,7 +32,60 @@ Mosoo is an open-source platform for building and running persistent cloud Agent
 - Public Thread API base: https://cloud.mosoo.ai/api/v1
 - OpenAPI 3.1: https://cloud.mosoo.ai/api/v1/openapi.json
 - API documentation: https://mosoo.ai/docs/api-reference/
+- Product and content index: https://mosoo.ai/llms.txt
 - Documentation index: https://mosoo.ai/docs/llms.txt
+`;
+const LLMS_MARKDOWN = `# Mosoo
+
+> Mosoo is an open-source Agent runtime and API for developers extending coding agents into products and automations. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.
+
+Mosoo is currently in alpha. The Public Thread API is designed for trusted application backends: Mosoo App-owner credentials must not be exposed to browsers or end users.
+
+## Product
+
+- [Homepage](https://mosoo.ai/en): Product overview and current positioning.
+- [Pricing](https://mosoo.ai/en/pricing): Current cloud plans and included runtime resources.
+- [Runtime status](https://mosoo.ai/en/status): Production canaries for supported runtimes.
+- [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
+- [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
+
+## Build and integrate
+
+- [Documentation](https://mosoo.ai/docs/): Build, run, publish, and integrate managed Agents.
+- [Documentation index for LLMs](https://mosoo.ai/docs/llms.txt): Concise index of all documentation pages.
+- [Full documentation for LLMs](https://mosoo.ai/docs/llms-full.txt): Complete documentation corpus.
+- [Product tour](https://mosoo.ai/docs/product-tour/): Apps, Agents, Threads, Runs, and delivery surfaces.
+- [Create your first Agent](https://mosoo.ai/docs/first-agent/): Configure, test, and publish an Agent.
+- [Skills and MCP servers](https://mosoo.ai/docs/skills-and-mcp/): Attach reusable instructions and authorized external tools.
+- [Publish and API access](https://mosoo.ai/docs/publish-and-api-access/): Publish an Agent and enable backend access.
+- [API quickstart](https://mosoo.ai/docs/quickstart/): Call a published Agent with curl.
+- [API reference](https://mosoo.ai/docs/api-reference/): Public Thread API request and response schemas.
+- [CLI](https://mosoo.ai/docs/cli/overview/): Install, authenticate, inspect, and operate Mosoo from a terminal or coding agent.
+
+## Examples
+
+- [Blueprint](https://mosoo.ai/en/use-cases/blueprint): A site builder backed by a published Agent.
+- [PitchPilot](https://mosoo.ai/en/use-cases/pitchpilot): Long-running presentation generation surfaced as a normal web product.
+- [Go Gym](https://mosoo.ai/en/use-cases/go-gym): Per-user Threads created by a trusted application backend.
+- [Codex Pet](https://mosoo.ai/en/use-cases/codex-pet): File-in, artifact-out generation through the Thread API.
+- [ghfind](https://mosoo.ai/en/use-cases/ghfind): Deep project evaluation produced by a published Agent.
+
+## Source and trust
+
+- [GitHub](https://github.com/langgenius/mosoo): Source code, issues, releases, and license.
+- [Security](https://github.com/langgenius/mosoo/security): Security policy and private vulnerability reporting.
+- [Machine-readable status](https://mosoo.ai/status.json): Current runtime canary results.
+- [Authentication guide for agents](https://mosoo.ai/auth.md): Credential and identity boundaries.
+- [OpenAPI 3.1](https://cloud.mosoo.ai/api/v1/openapi.json): Machine-readable Public Thread API contract.
+- [API catalog](https://mosoo.ai/.well-known/api-catalog): Discovery links for the API, documentation, and status.
+- [Blog](https://mosoo.ai/blog): Product and engineering articles.
+- [Blog RSS](https://mosoo.ai/blog/rss.xml): Published article feed.
+
+## Languages
+
+- [English](https://mosoo.ai/en)
+- [简体中文](https://mosoo.ai/zh)
+- [日本語](https://mosoo.ai/ja)
 `;
 const AUTH_MARKDOWN = `# Mosoo auth.md — Agent Registration
 
@@ -182,7 +235,6 @@ function isLegacyDocsRootPath(pathname) {
     pathname.startsWith("/cli/") ||
     pathname === "/zh-Hans" ||
     pathname.startsWith("/zh-Hans/") ||
-    pathname === "/llms.txt" ||
     pathname === "/llms-full.txt" ||
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/images/") ||
@@ -224,6 +276,16 @@ function homepageMarkdown(request) {
       "content-type": "text/markdown; charset=utf-8",
       link: DISCOVERY_LINK_HEADER,
       vary: "Accept",
+    },
+  });
+}
+
+function llmsMarkdownResponse(request) {
+  return new Response(request.method === "HEAD" ? null : LLMS_MARKDOWN, {
+    headers: {
+      "content-signal": CONTENT_SIGNAL,
+      "content-type": "text/markdown; charset=utf-8",
+      link: DISCOVERY_LINK_HEADER,
     },
   });
 }
@@ -302,6 +364,11 @@ export default {
     if (!forceHttps && !dropTrailingSlash && pathname === "/auth.md") {
       if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed();
       return authMarkdownResponse(request);
+    }
+
+    if (!forceHttps && !dropTrailingSlash && pathname === "/llms.txt") {
+      if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed();
+      return llmsMarkdownResponse(request);
     }
 
     if (
