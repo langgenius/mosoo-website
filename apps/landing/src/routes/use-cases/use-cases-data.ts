@@ -51,9 +51,7 @@ export const GO_GYM: UseCase = {
   author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
   detailPath: `/${locale}/use-cases/go-gym`,
   image: "/landing/use-cases/go-gym-dashboard.png",
-  imageAlt: t(
-    "The Go Gym dashboard after the Agent recorded a day of meals and training.",
-  ),
+  imageAlt: t("The Go Gym dashboard after the Agent recorded a day of meals and training."),
   kicker: "Multi-user Agent Backend",
   name: "Go Gym",
   productUrl: "https://go-gym-prod.wh-2099.workers.dev/",
@@ -86,16 +84,16 @@ export const GHFIND: UseCase = {
   detailPath: `/${locale}/use-cases/ghfind`,
   image: "/landing/use-cases/ghfind-app.png",
   imageAlt: t(
-    "The ghfind homepage: deep valuation for any open-source project, honest 0–100 scores for any GitHub account.",
+    "The ghfind Projects page, where a published mosoo Agent evaluates public GitHub repositories.",
   ),
   kicker: "Deep project valuation engine",
   name: "ghfind",
   productUrl: "https://ghfind.com",
   repoUrl: "https://github.com/hikariming/ghfind",
   summary: t(
-    "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score. The deep project valuation runs on one published mosoo Agent, called from the ghfind backend through the Thread API.",
+    "ghfind keeps its deterministic GitHub account score separate from its Agent-powered repository evaluation. For the latter, its Go worker calls one published mosoo Agent through the Thread API and turns three committed artifacts into a native result page.",
   ),
-  tags: ["Thread API", "Artifacts", "GitHub API"],
+  tags: ["Go worker", "Thread API", "Cattle sandbox", "Artifacts"],
 };
 
 export const USE_CASES: readonly UseCase[] = [BLUEPRINT, PITCHPILOT, GO_GYM, CODEX_PET, GHFIND];

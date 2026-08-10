@@ -150,7 +150,8 @@ const USE_CASES_SEO = {
     title: "mosoo — ユースケース",
     description:
       "mosoo でつくられた実プロダクト：ライブプロダクト、mosoo が提供する機能、スタック全体の連携を紹介します。",
-    socialDescription: "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
+    socialDescription:
+      "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
     imageAlt: "mosoo ユースケース",
   },
 };
@@ -201,8 +202,7 @@ const USE_CASE_PITCHPILOT_SEO = {
     title: "mosoo — PitchPilot：Agent 驱动的 Web 应用",
     description:
       "PitchPilot 如何保留自己的产品 UI，同时让一个已发布的 mosoo Agent 处理附件、Run、事件与已提交的 HTML artifact，并提供预览和下载。",
-    socialDescription:
-      "一个完整的 Web 应用，把已发布的 mosoo Agent 放在自己的产品体验背后。",
+    socialDescription: "一个完整的 Web 应用，把已发布的 mosoo Agent 放在自己的产品体验背后。",
     imageAlt: "PitchPilot 正在预览由已发布 mosoo Agent 生成并提交的 HTML artifact",
   },
   ja: {
@@ -212,8 +212,7 @@ const USE_CASE_PITCHPILOT_SEO = {
       "PitchPilot が独自のプロダクト UI を保ちながら、公開済み mosoo Agent に添付ファイル、Run、イベント、コミット済み HTML artifact を処理させ、プレビューとダウンロードを提供する方法。",
     socialDescription:
       "完成した Web アプリが、公開済み mosoo Agent を独自のプロダクト体験の背後に置きます。",
-    imageAlt:
-      "公開済み mosoo Agent が生成・コミットした HTML artifact をプレビューする PitchPilot",
+    imageAlt: "公開済み mosoo Agent が生成・コミットした HTML artifact をプレビューする PitchPilot",
   },
 };
 
@@ -232,8 +231,7 @@ const USE_CASE_GO_GYM_SEO = {
     title: "mosoo — Go Gym：多用户 Agent Backend",
     description:
       "Go Gym 如何在生产级多用户健身应用中使用一个共享的 mosoo Agent、用户范围内的 Thread、委托 MCP 身份与隔离 sandbox。",
-    socialDescription:
-      "一个共享的 mosoo Agent 把健身对话转化为隔离、持久的用户记录。",
+    socialDescription: "一个共享的 mosoo Agent 把健身对话转化为隔离、持久的用户记录。",
     imageAlt: "Agent 记录饮食与训练后的 Go Gym 仪表盘",
   },
   ja: {
@@ -262,8 +260,7 @@ const USE_CASE_CODEX_PET_SEO = {
     title: "mosoo — Codex Pet：Agent as API",
     description:
       "一个已发布的 mosoo Agent 如何把一张上传的头像变成全部九个 Codex 宠物动画状态——由 Codex 通过 Thread API 完成集成。",
-    socialDescription:
-      "一个已发布的 mosoo Agent 把一张上传的头像变成全部九个 Codex 宠物动画状态。",
+    socialDescription: "一个已发布的 mosoo Agent 把一张上传的头像变成全部九个 Codex 宠物动画状态。",
     imageAlt: "用 mosoo 构建的 Codex Pet 应用",
   },
   ja: {
@@ -282,28 +279,28 @@ const USE_CASE_GHFIND_SEO = {
     lang: "en",
     title: "mosoo — ghfind: Deep project valuation engine",
     description:
-      "ghfind gives any public open-source project a deep evaluation and valuation, and any GitHub account a brutally honest 0–100 score — the deep project valuation runs on one published mosoo Agent behind the ghfind backend, through the Thread API.",
+      "ghfind keeps its deterministic GitHub account score separate from its repository evaluation, where one published mosoo Agent inspects each project and returns structured artifacts through the Thread API.",
     socialDescription:
-      "One published mosoo Agent powers ghfind's deep project valuation through the Thread API.",
-    imageAlt: "The ghfind app built on mosoo",
+      "One published mosoo Agent powers ghfind's repository evaluation; ghfind owns the rubric, job workflow, validation, storage, and UI.",
+    imageAlt: "The ghfind Projects page powered by mosoo",
   },
   zh: {
     lang: "zh-CN",
     title: "mosoo — ghfind：深度项目评测估值引擎",
     description:
-      "ghfind 为任意公开开源项目做深度评测估值，也为任意 GitHub 账号打出毫不留情的 0–100 分——深度项目评测估值由 ghfind 后端通过一个已发布的 mosoo Agent、经 Thread API 完成。",
+      "ghfind 把确定性的 GitHub 账号评分与仓库评估分开；仓库评估由一个已发布的 mosoo Agent 检查项目，并通过 Thread API 返回结构化 artifact。",
     socialDescription:
-      "一个已发布的 mosoo Agent 通过 Thread API 支撑 ghfind 的深度项目评测估值。",
-    imageAlt: "用 mosoo 构建的 ghfind 应用",
+      "一个已发布的 mosoo Agent 驱动 ghfind 的仓库评估；rubric、任务流程、校验、存储与 UI 由 ghfind 负责。",
+    imageAlt: "由 mosoo 驱动的 ghfind Projects 页面",
   },
   ja: {
     lang: "ja",
     title: "mosoo — ghfind：プロジェクト評価・バリュエーションエンジン",
     description:
-      "ghfind は任意の公開オープンソースプロジェクトを詳細に評価・バリュエーションし、任意の GitHub アカウントに容赦ない 0〜100 スコアを出します——詳細な評価は ghfind バックエンドから公開済み mosoo Agent を Thread API 経由で呼び出して実行します。",
+      "ghfind は決定論的な GitHub アカウントスコアとリポジトリ評価を分離し、後者では公開済み mosoo Agent がプロジェクトを調査して Thread API から構造化 artifact を返します。",
     socialDescription:
-      "公開済みの mosoo Agent 1 つが Thread API 経由で ghfind の詳細なプロジェクト評価・バリュエーションを支えます。",
-    imageAlt: "mosoo でつくられた ghfind アプリ",
+      "公開済み mosoo Agent が ghfind のリポジトリ評価を担い、rubric、ジョブフロー、検証、保存、UI は ghfind が担います。",
+    imageAlt: "mosoo が支える ghfind Projects ページ",
   },
 };
 
@@ -344,8 +341,14 @@ function localizeHtml(source, locale, copy) {
     [EN.imageAlt, copy.imageAlt],
     [EN.structuredDescription, copy.structuredDescription],
     [EN.subcategory, copy.subcategory],
-    ['<link rel="canonical" href="https://mosoo.ai/en" />', `<link rel="canonical" href="${url}" />`],
-    ['<meta property="og:url" content="https://mosoo.ai/en" />', `<meta property="og:url" content="${url}" />`],
+    [
+      '<link rel="canonical" href="https://mosoo.ai/en" />',
+      `<link rel="canonical" href="${url}" />`,
+    ],
+    [
+      '<meta property="og:url" content="https://mosoo.ai/en" />',
+      `<meta property="og:url" content="${url}" />`,
+    ],
     ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
     ...navReplacements(locale),
@@ -452,10 +455,7 @@ export async function buildLandingLocales(landingDist) {
   const goGymSource = await readFile(join(landingDist, "use-cases", "go-gym.html"), "utf8");
   const codexPetSource = await readFile(join(landingDist, "use-cases", "codex-pet.html"), "utf8");
   const ghfindSource = await readFile(join(landingDist, "use-cases", "ghfind.html"), "utf8");
-  const blueprintSource = await readFile(
-    join(landingDist, "use-cases", "blueprint.html"),
-    "utf8",
-  );
+  const blueprintSource = await readFile(join(landingDist, "use-cases", "blueprint.html"), "utf8");
   const pitchPilotSource = await readFile(
     join(landingDist, "use-cases", "pitchpilot.html"),
     "utf8",

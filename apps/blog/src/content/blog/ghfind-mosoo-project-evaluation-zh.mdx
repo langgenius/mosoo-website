@@ -1,0 +1,69 @@
+---
+title: "ghfind 如何把 Mosoo Agent 变成项目评估功能"
+titleAccent: "Mosoo Agent"
+description: "ghfind 把 GitHub 项目评估交给一个已发布的 Mosoo Agent，同时把评分规则、任务队列、结果校验和产品界面留在自己的应用里。"
+date: 2026-08-10
+category: "Customer Stories"
+author: "mosoo team"
+locale: "zh"
+permalink: "ghfind-mosoo-project-evaluation"
+translationKey: "ghfind-mosoo-project-evaluation"
+heroImage: "/blog/blog/ghfind-mosoo/ghfind-projects.png"
+heroAlt: "ghfind 项目评估入口，页面标注 Powered by mosoo。"
+---
+
+[ghfind](https://ghfind.com) 并没有把整个产品交给 Agent。它把最需要开放式研究能力的一条功能——公开 GitHub 仓库的深度项目评估——交给一个已发布的 Mosoo Agent；GitHub 账号的 0–100 评分、任务队列、结果校验和产品界面仍由 ghfind 自己负责。
+
+这条边界正好回答了接入 Agent 时最重要的问题：Mosoo 不是替应用重新做一遍业务，而是让应用能把一个具备工具、沙箱和生命周期的 Agent，当成后端能力来调用。
+
+## ghfind 是什么？
+
+ghfind 是一个开源的 GitHub 开发者价值与可信度评分产品。首页的“锐评”从公开 GitHub 数据计算账号分数，结果可复现，不需要 Agent。
+
+![ghfind 首页的 GitHub 账号评分入口](/blog/blog/ghfind-mosoo/ghfind-home.png)
+
+它还有另一条产品线：项目评估。用户提交公开仓库以及可选的分支、Tag 或 Commit，ghfind 会从需求是否真实、解决效果、上手体验和价值密度等维度给出结构化判断。这个过程需要读源码、文档和项目历史，部分项目还要验证安装、构建和核心流程，因此更适合由 Agent 执行。
+
+![ghfind 的项目评估入口，标注 Powered by mosoo](/blog/blog/ghfind-mosoo/ghfind-projects.png)
+
+## Mosoo 在这里有什么用？
+
+ghfind 在 Mosoo 上发布了一个带项目评估 Skill 的 cattle Agent。Mosoo 负责运行 Agent 所需的通用能力：隔离沙箱、Agent harness、工具执行、Run 生命周期、公开事件和输出文件。ghfind 不需要自己维护模型循环、工具 runner 或沙箱调度。
+
+一次评估的真实路径是：
+
+1. 浏览器把仓库地址提交给 ghfind。
+2. ghfind 的 Go worker 使用稳定的幂等键调用 `POST /agents/{agentId}/threads`，并保存 Thread 与 Run ID。
+3. Mosoo 在独立沙箱中启动已发布的 Agent。Agent 按 ghfind 的 rubric 检查仓库，并持续产生 Run 与工具事件。
+4. Agent 最终提交三份文件：分析 JSON、证据 JSON 和 Markdown 报告。
+5. ghfind 下载文件，按自己的业务 Schema 校验并持久化，再渲染为原生结果页。
+
+Mosoo token 始终留在 ghfind 后端。浏览器看到的是 ghfind 校验过的产品结果，而不是 Mosoo 的内部运行数据。
+
+![由 Mosoo Agent 产出、由 ghfind 渲染的项目评估结果](/blog/blog/ghfind-mosoo/ghfind-project-analysis.png)
+
+## Agent 与应用的边界
+
+这套实现里，Mosoo 承接的是可复用的 Agent runtime；ghfind 承接的是产品定义。
+
+应该留在 ghfind 的部分包括：项目 rubric、仓库提交与权限、RabbitMQ 任务持久化和并发、业务重试策略、artifact 大小限制、结果 Schema、榜单以及 UI。尤其是首页的账号评分，它是被单元测试锁定的确定性评分核心，和 Mosoo Agent 无关。
+
+应该由 Mosoo 承接的部分，是每个 Agent App 都会重复写的协议胶水：Thread、Run、事件与文件类型，鉴权和错误包络，幂等请求，可恢复的 Run watcher，以及 Run 与输出 artifact 的稳定关联。
+
+## 目前的集成代价
+
+ghfind 的当前实现也暴露了 Mosoo 需要补齐的地方。在 [`b7eee13`](https://github.com/hikariming/ghfind/tree/b7eee13f547807c0be36f9f3c0c4c4457b699fdd) 中，生产 Go 后端维护了一份 [564 行的手写 Public Thread 客户端](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/internal/backend/mosoo.go)，并明确说明它镜像另一份 [427 行的 TypeScript 实现](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/src/lib/mosoo-project-analysis.ts)。
+
+其中有三类明显的 workaround：
+
+- 客户端只拉取最新 100 个事件，虽然解析了 `truncated`，却没有继续分页或把截断状态暴露给调用方。
+- worker 自己轮询 Thread、判断终态、安排退避重试，并在队列重新投递后恢复 Run。
+- Run 完成后，客户端扫描完整文件列表，再用三个约定文件名寻找结果；它无法直接从 Run 得到结构化 artifact ID。
+
+这些观察已补充到 Mosoo [#489](https://github.com/langgenius/mosoo/issues/489)：发布并扩展现有 Public Thread client，而不是再造第二套 SDK。Run 与 artifact 的稳定关联则由 [#505](https://github.com/langgenius/mosoo/issues/505) 单独跟踪。
+
+## 可复用的结论
+
+把 Agent 接进产品，最稳妥的方式不是让 Agent 接管整个应用。先找出真正需要开放式推理、工具调用和隔离执行的那条功能，把它放进一个已发布的 Mosoo Agent；应用继续掌握用户身份、业务状态、确定性规则和最终呈现。
+
+ghfind 的项目评估展示了这条边界：Mosoo 让 Agent 可运行、可追踪、可交付文件，ghfind 让这些能力成为用户看得懂、愿意使用的产品功能。
