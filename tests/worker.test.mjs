@@ -133,7 +133,7 @@ test("worker advertises agent discovery resources from HTML assets", async () =>
   );
 
   const link = response.headers.get("link");
-  assert.match(link, /<\/docs\/llms\.txt>; rel="llms-txt"/);
+  assert.match(link, /<\/llms\.txt>; rel="llms-txt"/);
   assert.match(link, /<\/docs\/llms-full\.txt>; rel="llms-full-txt"/);
   assert.match(link, /<\/\.well-known\/api-catalog>; rel="api-catalog"/);
   assert.match(link, /rel="service-desc"/);
@@ -154,6 +154,7 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   const markdown = await response.text();
   assert.match(markdown, /^# Mosoo$/m);
   assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/llms\.txt/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
   assert.doesNotMatch(markdown, /<html/i);
 
@@ -162,6 +163,32 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
     envFor({}),
   );
   assert.equal(declined.status, 307);
+});
+
+test("worker serves a product-wide llms.txt index", async () => {
+  const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
+  const markdown = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
+  assert.match(markdown, /^# Mosoo$/m);
+  assert.match(markdown, /^## Product$/m);
+  assert.match(markdown, /^## Build and integrate$/m);
+  assert.match(markdown, /^## Examples$/m);
+  assert.match(markdown, /^## Source and trust$/m);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/pricing/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/use-cases\/ghfind/);
+  assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo\/security/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.doesNotMatch(markdown, /<html/i);
+
+  const head = await worker.fetch(
+    new Request("https://mosoo.ai/llms.txt", { method: "HEAD" }),
+    envFor({}),
+  );
+  assert.equal(head.status, 200);
+  assert.equal(await head.text(), "");
 });
 
 test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {
@@ -246,11 +273,8 @@ test("worker serves existing static assets before SPA fallback", async () => {
   }
 });
 
-test("worker redirects llms entrypoints to the docs app", async () => {
-  for (const [from, to] of [
-    ["/llms.txt", "/docs/llms.txt"],
-    ["/llms-full.txt", "/docs/llms-full.txt"],
-  ]) {
+test("worker redirects the legacy full llms entrypoint to the docs app", async () => {
+  for (const [from, to] of [["/llms-full.txt", "/docs/llms-full.txt"]]) {
     const response = await worker.fetch(new Request(`https://mosoo.ai${from}`), envFor({}));
 
     assert.equal(response.status, 308);
