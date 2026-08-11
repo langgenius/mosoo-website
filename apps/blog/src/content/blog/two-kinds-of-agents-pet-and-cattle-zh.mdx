@@ -1,0 +1,100 @@
+---
+title: "Agent 的两个分野：Pet 与 Cattle"
+titleAccent: "Pet 与 Cattle"
+description: "人们对 Agent 正在形成两种完全不同的期待：一种有身份、有记忆，需要被长期培养；另一种无状态、可替换，用更自由的推理管道取代固定 workflow。"
+date: 2026-08-11
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "zh"
+permalink: "two-kinds-of-agents-pet-and-cattle"
+translationKey: "two-kinds-of-agents-pet-and-cattle"
+draft: false
+---
+
+我越来越相信，Agent 最后会出现两个分野。
+
+它们不是同一种产品的轻重版本，也不是 autonomous 程度的高低。人们期待它们成为完全不同的东西：一种要成为“谁”，另一种只要把某一类事情做完。
+
+mosoo 把这两类 Agent 叫作 **Pet** 和 **Cattle**。
+
+## 这组词从哪里来
+
+Pet 与 Cattle 不是 Anthropic 发明的词，它原本是基础设施行业里一个很老的比喻。我们是在 Anthropic 2026 年的文章 [Scaling Managed Agents: Decoupling the brain from the hands](https://www.anthropic.com/engineering/managed-agents) 里重新看到它：Pet 是一个有名字、需要被专门照料、不能轻易失去的个体；Cattle 则可以互相替换。
+
+Anthropic 在那篇文章里讨论的是 Agent infrastructure。它的结论是把 brain、hands 和 session 拆开，让 container 和 harness 都可以被替换，不要把一切状态绑在一台需要被“救活”的机器上。
+
+mosoo 借用了这组词，但把问题往产品层又推了一步：我们不是在问服务器应该怎么管理，而是在问，人们究竟期待一个 Agent 成为什么。
+
+Anthropic 更早的 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) 还区分了 workflow 与 agent：workflow 让 LLM 和工具沿着预先写好的路径运行；agent 则自己决定过程和工具怎么用。这个区别很重要，因为 Cattle 并不是传统 workflow 换了一个名字。它仍然是 Agent。
+
+## 第一类：Pet，一位需要被培养的 Agent
+
+从理解上来说，这类 Agent 以 2026 年初爆发的 [OpenClaw](https://openclaw.ai/) 为代表。人们对它的期待更接近 Jarvis：一个 personal assistant，一个有 identity 的 Agent。
+
+它有自己的 special memory。你和它交互的过程，其实是在培养它。人们常常用“带一个实习生”来描述这种体验，也会非常自然地把它视为一个数字员工。
+
+这类 Agent 的状态很重。它往往已经是一台 computer 的代理，甚至可以说，它就是一台 machine 的代理。大量外部状态通过工具和 memory 保存；MCP 和 skills 扩展它的能力；文件系统里的 memory 成为它的一部分。
+
+使用者不会轻易把它泛化成另一个实例。就像一台用了两年的 MacBook Pro 通常会比刚买的更顺手：不是因为硬件发生了变化，而是里面已经有了你的软件、登录态、文件、习惯和工作方式。这也是为什么电脑和手机都需要提供 clone、迁移和恢复的能力。Pet Agent 最终也会需要。
+
+我们长期认为，这一类 Agent 应该被 delivery，或者说被 distribution 到各个 channel 里。你在 GitHub 里和它聊，切到 Linear、Email、Slack 或 Discord，它仍然知道此前发生了什么。Channel 是入口，背后应该还是同一个 Agent。
+
+以一个 FAQ 客户代理为例：它在 Discord 里解决过的客户问题、在 GitHub 上处理过的 issue、在 Zendesk 或 Slack 里留下的工作记录，应该共同塑造它接下来怎么回答。这不是给每个 channel 各放一个 bot，而是把同一个有身份、有记忆的 Agent 分发到不同地方。
+
+这种 Agent 还会获得接近自然人或社会公民的权限。用户可能给它独立的邮箱，授予它自己的凭据，让它访问支付、邮件、日历或内部系统。它拥有的可能只是这个人的一部分权限，也可能非常接近完整权限。
+
+因此，Pet 用户会在意 token 开销，会研究 subscription 能不能降低长期使用成本，也会在意 memory 能否迁移、凭据是否安全、换一台机器后“它还是不是它”。这些不是部署细节，而是这个产品的核心体验。
+
+## 第二类：Cattle，一条取代 workflow 的 Agent pipeline
+
+要理解 Cattle，先要回到 workflow。
+
+Workflow 是一种 process pipeline：人提前为某类问题预置处理工序，并规定每个节点应该怎么做。它往往来自一个经验丰富的人对自己方法的总结，再用 n8n、Dify 之类的 low-code 工具编排出来。中间可以放几个 LLM node，处理需要 reasoning 的步骤，但整体仍然是一条 fixed process。
+
+Cattle 想替代的就是上一阶段的 workflow。
+
+它是一个无状态的 Agent。这里的“无状态”不是说一次任务里没有上下文，而是它不依赖一个不可替换的长期身份。它消费的任务、任务类型和输入都高度一致；所需工具是 fixed 的；遇到的是一个受控域问题。一次执行结束后，下一次可以由一个全新的实例继续处理同类任务。
+
+它表现为一条更灵活、更自由、推理程度更高，也更不受固定路径约束的处理管道。PR 审计、ticket triage、refund 请求都是典型例子：我们可以规定权限、输入和最终结果，却不必提前穷举它完成任务的每一步。
+
+它的心智模型更接近自动驾驶的终局想象：不是继续用 if-else 写满“红灯停、绿灯行”的 rule-based 流程，而是让一个基于 vision model 的 E2E 系统在边界内完成驾驶。这个比喻不是说 Agent 不需要 guardrail，而是说核心能力从“人把路径写完”，变成“模型在受控域里决定路径”。
+
+Cattle 用户不想培养它，也不关心这一次任务由哪个实例完成。他们关心吞吐、可重复的结果、失败能否重跑、权限是否收敛，以及每个任务花多少钱。它天然更适合基于 API token 被调用，作为某个系统里的加工环节。
+
+## 同一个客户代理，也可能是两种完全不同的产品
+
+Pet 和 Cattle 不是由行业、模型或任务名称决定的。决定它们的是用户期待的连续性，以及系统愿意授予的权限。
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| 用户关系 | 我在长期培养“它” | 我在反复调用一种能力 |
+| 状态 | 身份、记忆和环境持续积累 | 每个任务从受控输入开始 |
+| 分发 | 同一个 Agent 出现在多个 channel | 作为 pipeline 嵌入一个系统节点 |
+| 权限 | 接近个人的委托权限，可能很宽 | 完成单类任务所需的最小权限 |
+| 成本心智 | token、subscription 与长期拥有成本 | API 用量、单次任务或结果成本 |
+| 失败恢复 | clone、迁移、恢复“同一个它” | 丢弃实例，重跑同一个任务 |
+
+所以，前面的 FAQ 客户代理如果需要记住 Discord、GitHub、Slack 和 Zendesk 的长期工作，它更像 Pet；一个只根据订单、退款政策和客户请求处理单次 refund 的执行单元，则更像 Cattle。看起来都叫“客服 Agent”，产品却不是一回事。
+
+## mosoo 为什么同时实现两种 Agent Type
+
+mosoo 目前把它们实现为两种 Agent Type：**Assistant Agent（Pet）** 与 **Task Agent（Cattle）**。
+
+Pet 保留稳定的工作环境，让多个 session 可以共享持续积累的状态；Cattle 为每次 run 创建干净的工作环境，任务结束后就释放。更完整的当前边界写在 [mosoo 的 Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md) 里。
+
+我也知道，把两者直接放在同一个 Agent Type 选择器里，不会是最终正确的 product design。它们实际上服务的是两类用户，购买方式、授权方式、部署方式和成本心智都不同。mosoo 目前先把这条 runtime 边界实现出来，产品边界会在未来继续拆清楚。
+
+## 这会成为 Agent 行业的两个分野
+
+我相信，这个问题会在 2026 年开始被整个行业反复探索，并慢慢变得清晰。
+
+在投资的 mapping 里会出现两个分野。在 agent infra 里会出现两个分野，在 agent-native apps 里也会出现两个分野。
+
+面向 Pet 的公司，需要解决 identity、长期 memory、凭据委托、跨 channel distribution、备份与 clone，以及人与 Agent 之间逐渐累积的信任。它们更像在交付一个数字员工。
+
+面向 Cattle 的公司，需要解决 isolation、eval、可重复执行、并发、API、最小权限、审计和单次任务的 unit economics。它们更像在提供一种新的计算与加工能力。
+
+这两条路没有谁比谁更“Agent”。Pet 的价值会随着相处和使用的时间积累；Cattle 的价值则来自它可以被一次次替换，而结果仍然可靠。
+
+以后再判断一个 Agent 产品，也许不该只问它能做什么。更应该先问：用户期待它成为谁，还是只期待它完成什么？

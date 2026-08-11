@@ -1,0 +1,100 @@
+---
+title: "Agent は二つに分かれていく：Pet と Cattle"
+titleAccent: "Pet と Cattle"
+description: "人々が Agent に抱く期待は二つに分かれつつある。一つは identity と memory を持ち、時間をかけて育てる存在。もう一つは stateless で交換可能、固定 workflow をより自由な推論 pipeline で置き換える存在だ。"
+date: 2026-08-11
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "ja"
+permalink: "two-kinds-of-agents-pet-and-cattle"
+translationKey: "two-kinds-of-agents-pet-and-cattle"
+draft: false
+---
+
+Agent は最終的に二つに分かれていく。私はそう考えるようになった。
+
+これは同じ製品の軽量版と重量版ではなく、自律性の高低でもない。人々が期待しているもの自体が違う。一方には「誰か」になることを期待し、もう一方には、ある種類の仕事を終えることだけを期待する。
+
+mosoo では、この二種類の Agent を **Pet** と **Cattle** と呼んでいる。
+
+## この言葉はどこから来たのか
+
+Pet と Cattle は Anthropic が作った言葉ではない。もともとは infrastructure の世界で古くから使われてきた比喩だ。私たちは Anthropic が 2026 年に公開した [Scaling Managed Agents: Decoupling the brain from the hands](https://www.anthropic.com/engineering/managed-agents) で、この言葉に改めて出会った。Pet は名前を持ち、特別な世話が必要で、簡単には失えない個体。Cattle は互いに交換できる個体を指す。
+
+Anthropic がその記事で論じているのは Agent infrastructure だ。brain、hands、session を分離し、container と harness を交換可能にする。すべての state を、壊れたら人が救命しなければならない一台の machine に結びつけない、という結論だった。
+
+mosoo はこの言葉を借り、問いを product のレイヤーまで進めた。server をどう管理するかではなく、人々は Agent に何になってほしいのかを問うている。
+
+Anthropic の以前の記事 [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) では、workflow と agent も区別されている。workflow では LLM と tool があらかじめ書かれた path に沿って動く。一方、agent は process と tool の使い方を自ら決める。この区別は重要だ。Cattle は従来の workflow に新しい名前を付けただけのものではない。Cattle も Agent である。
+
+## 一つ目：Pet、育てていく Agent
+
+この種類の Agent を理解するうえで、2026 年初めに大きく広がった [OpenClaw](https://openclaw.ai/) は分かりやすい例だ。人々が期待しているのは Jarvis に近い personal assistant、identity を持つ Agent である。
+
+それには固有の special memory がある。対話を重ねることは、実際には Agent を育てることでもある。人々はこの体験を「インターンを育てること」によくたとえ、ごく自然に Agent を digital employee として見るようになる。
+
+この Agent が抱える state は重い。すでに computer の proxy であり、さらに言えば一台の machine の proxy そのものになっていることも多い。大量の外部 state が tool と memory に保存され、MCP と skills が能力を拡張し、filesystem 上の memory が Agent の一部になる。
+
+ユーザーは、それを自由に別の instance へ置き換えられるものとは考えない。二年間使った MacBook Pro は、買ったばかりの一台よりたいてい使いやすい。hardware が良くなったのではなく、自分の software、login state、file、習慣、仕事のやり方が積み重なっているからだ。computer や phone に clone、migration、restore が必要なのもそのためだ。Pet Agent にも同じ能力が必要になる。
+
+私たちは以前から、この種類の Agent はさまざまな channel に delivery、あるいは distribution されるべきだと考えている。GitHub で話したあと Linear、Email、Slack、Discord に移っても、それまでに何が起きたかを知っている。Channel は入口であり、その奥にいる Agent は同じであるべきだ。
+
+FAQ の customer support Agent を例にしよう。Discord で解決した問題、GitHub で対応した issue、Zendesk や Slack に残した仕事の記録が、その後の回答を形作っていく。channel ごとに bot を一つずつ置くのではない。identity と memory を持つ同じ Agent を、複数の場所へ配るということだ。
+
+この Agent には、自然人や社会の一員に近い permission が与えられることもある。専用の email address と credential を持ち、payment、email、calendar、社内 system にアクセスする。権限はユーザーの一部だけかもしれないし、ほぼすべてかもしれない。
+
+だから Pet のユーザーは token cost を気にし、subscription で長期的な利用コストを抑えられるかを考える。memory を移行できるか、credential は安全か、別の machine に移したあとも「同じ Agent」なのかを気にする。これらは deployment の細部ではない。product experience の中心だ。
+
+## 二つ目：Cattle、workflow を置き換える Agent pipeline
+
+Cattle を理解するには、まず workflow に戻る必要がある。
+
+Workflow は一種の process pipeline だ。人がある種類の問題に対する手順をあらかじめ用意し、各 node でどう処理するかを決める。経験豊富な人が自分の方法を整理し、n8n や Dify のような low-code tool で組み立てることが多い。途中に reasoning を担う LLM node がいくつか入っていても、全体は fixed process のままだ。
+
+Cattle が置き換えようとしているのは、この前世代の workflow である。
+
+Cattle は stateless な Agent だ。ここでいう stateless は、一回の task に context がないという意味ではない。交換不能な長期 identity に依存しない、という意味だ。消費する task、その種類、input は非常に似ている。必要な tool は fixed で、扱うのは controlled domain の問題だ。一回の run が終われば、次の同種 task は新しい instance が処理できる。
+
+それは、より柔軟で自由に推論でき、固定 path に縛られにくい processing pipeline として振る舞う。PR audit、ticket triage、refund request は典型的な例だ。permission、input、最終 outcome は制約しても、task を終えるまでの一手一手を人が列挙する必要はない。
+
+その mental model は、自動運転の終局イメージに近い。「赤なら止まる、青なら進む」という rule-based の if-else を増やし続けるのではなく、vision model を中心とする E2E system が境界内で運転を完了する。この比喩は Agent に guardrail が不要だという意味ではない。中核が「人が path をすべて書く」ことから、「model が controlled domain の中で path を決める」ことへ移るという意味だ。
+
+Cattle のユーザーは Agent を育てたいわけではなく、今回の task をどの instance が終えたかにも関心がない。重視するのは throughput、結果の再現性、失敗時に rerun できるか、permission が絞られているか、task 一件あたりの cost だ。API token を通じて呼び出し、別の system の processing step として埋め込むのが自然な使い方になる。
+
+## 同じ customer support Agent でも、まったく別の product になり得る
+
+Pet と Cattle は、業界、model、task の名前で決まるものではない。ユーザーが期待する continuity と、system が与える permission によって決まる。
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| ユーザーとの関係 | 長期的に「それ」を育てる | 同じ能力を繰り返し呼び出す |
+| State | identity、memory、environment が積み重なる | 各 task は controlled input から始まる |
+| Distribution | 同じ Agent が複数の channel に現れる | system の一工程に pipeline として埋め込まれる |
+| Permission | 個人から委任され、広くなり得る | 単一種類の task に必要な最小権限 |
+| Cost の見方 | token、subscription、長期保有コスト | API usage、task または outcome 単位のコスト |
+| 障害からの復帰 | clone、migration、restore で「同じ Agent」を戻す | instance を捨て、同じ task を rerun する |
+
+先ほどの FAQ Agent が Discord、GitHub、Slack、Zendesk をまたぐ長期の仕事を覚える必要があるなら、それは Pet に近い。一方、order、refund policy、customer request を入力として一件の refund を処理する execution unit は Cattle に近い。どちらも「customer support Agent」と呼べるが、同じ product ではない。
+
+## mosoo が二つの Agent Type を実装している理由
+
+mosoo は現在、二つを **Assistant Agent（Pet）** と **Task Agent（Cattle）** という Agent Type として実装している。
+
+Pet は安定した working environment を保ち、複数の session をまたいで state を蓄積できる。Cattle は run ごとに clean な working environment を作り、task が終わると解放する。現在の境界は [mosoo の Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md) に詳しく記している。
+
+二つを一つの Agent Type selector に並べることが、最終的に正しい product design ではないとも分かっている。実際には異なる二種類のユーザーに向けたもので、購入、authorization、deployment、cost の考え方が違う。mosoo はまず runtime の境界を実装した。product の境界はこれからさらに整理していく。
+
+## Agent 業界にも二つの分岐が生まれる
+
+この問いは 2026 年を通じて業界で繰り返し探究され、区別は少しずつ明確になると考えている。
+
+投資の mapping に二つの分岐が現れる。agent infra にも二つの分岐が現れ、agent-native apps にも二つの分岐が現れる。
+
+Pet を作る会社は、identity、long-term memory、credential の委任、channel をまたぐ distribution、backup と clone、そして人と Agent の間に少しずつ積み重なる信頼を解決しなければならない。届けるものは digital employee に近い。
+
+Cattle を作る会社は、isolation、eval、再現可能な execution、concurrency、API、least privilege、audit、task 単位の unit economics を解決しなければならない。提供するものは、新しい computation と processing capacity に近い。
+
+どちらがより「Agent らしい」という話ではない。Pet の価値は、共に過ごし、使い続ける時間とともに積み重なる。Cattle の価値は、何度交換されても結果の信頼性を保てることにある。
+
+これから Agent product を評価するとき、何ができるかだけを問うべきではないのかもしれない。まず問うべきなのは、ユーザーはそれに「誰か」になってほしいのか、それとも「何か」を完了してほしいだけなのか、ということだ。
