@@ -15,22 +15,33 @@ function envFor(paths) {
   };
 }
 
-function requestFor(pathname, { cookie, country, countryHeader } = {}) {
+function requestFor(pathname, { acceptLanguage, cookie, country, countryHeader } = {}) {
   const headers = new Headers();
   if (cookie) headers.set("cookie", cookie);
+  if (acceptLanguage) headers.set("accept-language", acceptLanguage);
   if (countryHeader) headers.set("CF-IPCountry", countryHeader);
   const request = new Request(`https://mosoo.ai${pathname}`, { headers });
   if (country) Object.defineProperty(request, "cf", { value: { country } });
   return request;
 }
 
-test("worker selects the landing locale by cookie, then country", async () => {
+test("worker selects the landing locale by cookie, then browser language", async () => {
   const cases = [
-    { pathname: "/?ref=launch", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
-    { pathname: "/", cookie: "mosoo_locale=invalid", country: "CN", locale: "zh" },
-    { pathname: "/", country: "JP", locale: "ja" },
-    { pathname: "/", country: "US", countryHeader: "CN", locale: "en" },
-    { pathname: "/", countryHeader: "CN", locale: "zh" },
+    {
+      pathname: "/?ref=launch",
+      acceptLanguage: "zh-CN,zh;q=0.9",
+      cookie: "mosoo_locale=ja",
+      locale: "ja",
+    },
+    {
+      pathname: "/",
+      acceptLanguage: "zh-CN,zh;q=0.9,en;q=0.5",
+      cookie: "mosoo_locale=invalid",
+      locale: "zh",
+    },
+    { pathname: "/", acceptLanguage: "fr-FR,ja-JP;q=0.7", locale: "ja" },
+    { pathname: "/", acceptLanguage: "ja;q=0,zh;q=0.8,en;q=0.6", locale: "zh" },
+    { pathname: "/", country: "JP", countryHeader: "CN", locale: "en" },
     { pathname: "/", country: "US", locale: "en" },
     { pathname: "/", locale: "en" },
   ];
@@ -42,15 +53,16 @@ test("worker selects the landing locale by cookie, then country", async () => {
     assert.equal(response.status, 307);
     assert.equal(response.headers.get("location"), `https://mosoo.ai/${entry.locale}${suffix}`);
     assert.equal(response.headers.get("cache-control"), "private, no-store");
-    assert.equal(response.headers.get("vary"), "Cookie, Accept");
+    assert.equal(response.headers.get("vary"), "Cookie, Accept, Accept-Language");
   }
 });
 
-test("worker redirects bare /pricing to the locale pricing page", async () => {
+test("worker redirects bare /pricing to the locale pricing page without GeoIP", async () => {
   const cases = [
     { pathname: "/pricing", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
-    { pathname: "/pricing", country: "JP", locale: "ja" },
-    { pathname: "/pricing", countryHeader: "CN", locale: "zh" },
+    { pathname: "/pricing", acceptLanguage: "ja-JP,ja;q=0.9", locale: "ja" },
+    { pathname: "/pricing", acceptLanguage: "zh-CN,zh;q=0.9", locale: "zh" },
+    { pathname: "/pricing", country: "JP", countryHeader: "CN", locale: "en" },
     { pathname: "/pricing?ref=launch", locale: "en" },
   ];
 
@@ -64,7 +76,7 @@ test("worker redirects bare /pricing to the locale pricing page", async () => {
       `https://mosoo.ai/${entry.locale}/pricing${suffix}`,
     );
     assert.equal(response.headers.get("cache-control"), "private, no-store");
-    assert.equal(response.headers.get("vary"), "Cookie");
+    assert.equal(response.headers.get("vary"), "Cookie, Accept-Language");
   }
 });
 
