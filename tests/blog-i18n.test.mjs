@@ -5,6 +5,7 @@ import {
   getIndexHreflangAlternates,
   getPostHreflangAlternates,
 } from "../apps/blog/src/lib/seo.mjs";
+import { blogSitemapI18n, serializeBlogSitemapItem } from "../apps/blog/src/lib/sitemap.mjs";
 import {
   categoryLabel,
   footerCopyByLocale,
@@ -43,6 +44,37 @@ test("unpaired posts do not claim unavailable translations", () => {
     data: { locale: "en", permalink: "standalone", translationKey: "standalone" },
   };
   assert.equal(getPostHreflangAlternates(single, [single], "/blog"), undefined);
+});
+
+test("blog sitemap emits canonical localized alternates with an English default", () => {
+  assert.deepEqual(blogSitemapI18n, {
+    defaultLocale: "en",
+    locales: {
+      en: "en",
+      zh: "zh-CN",
+      ja: "ja",
+    },
+  });
+
+  assert.deepEqual(
+    serializeBlogSitemapItem({
+      url: "https://mosoo.ai/blog/",
+      links: [
+        { lang: "en", url: "https://mosoo.ai/blog/" },
+        { lang: "zh-CN", url: "https://mosoo.ai/blog/zh" },
+        { lang: "ja", url: "https://mosoo.ai/blog/ja" },
+      ],
+    }),
+    {
+      url: "https://mosoo.ai/blog",
+      links: [
+        { lang: "en", url: "https://mosoo.ai/blog" },
+        { lang: "zh-CN", url: "https://mosoo.ai/blog/zh" },
+        { lang: "ja", url: "https://mosoo.ai/blog/ja" },
+        { hreflang: "x-default", url: "https://mosoo.ai/blog" },
+      ],
+    },
+  );
 });
 
 test("localized blog chrome uses localized visible copy", () => {
