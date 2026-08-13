@@ -25,6 +25,7 @@ const API_CATALOG = {
     },
   ],
 };
+const SUPPORTED_LOCALES = new Set(["en", "zh", "ja"]);
 const HOMEPAGE_MARKDOWN = `# Mosoo
 
 Mosoo is an open-source platform for building and running persistent cloud Agents in isolated sandboxes.
@@ -160,6 +161,13 @@ function shouldDropTrailingSlash(pathname) {
   return pathname.length > 1 && pathname.endsWith("/") && !pathname.startsWith("/docs/");
 }
 
+function localeForLanguageTag(tag) {
+  if (tag === "zh" || tag.startsWith("zh-")) return "zh";
+  if (tag === "ja" || tag.startsWith("ja-")) return "ja";
+  if (tag === "en" || tag.startsWith("en-")) return "en";
+  return undefined;
+}
+
 function preferredLocale(request) {
   const prefix = `${LOCALE_COOKIE}=`;
   const locale = request.headers
@@ -169,13 +177,27 @@ function preferredLocale(request) {
     .find((cookie) => cookie.startsWith(prefix))
     ?.slice(prefix.length);
 
-  if (locale === "en" || locale === "zh" || locale === "ja") {
+  if (SUPPORTED_LOCALES.has(locale)) {
     return locale;
   }
 
-  const country = request.cf?.country ?? request.headers.get("CF-IPCountry");
-  if (country === "CN") return "zh";
-  if (country === "JP") return "ja";
+  const preferredBrowserLocale = request.headers
+    .get("accept-language")
+    ?.split(",")
+    .map((languageRange, index) => {
+      const [tag = "", ...parameters] = languageRange
+        .trim()
+        .toLowerCase()
+        .split(";")
+        .map((part) => part.trim());
+      const quality = parameters.find((parameter) => parameter.startsWith("q="));
+      const score = quality ? Number(quality.slice(2)) : 1;
+      return { index, locale: localeForLanguageTag(tag), score };
+    })
+    .filter((entry) => entry.locale && Number.isFinite(entry.score) && entry.score > 0)
+    .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.locale;
+
+  if (preferredBrowserLocale) return preferredBrowserLocale;
   return "en";
 }
 
@@ -188,7 +210,7 @@ function localeRedirect(request, url, subpath = "") {
       "content-signal": CONTENT_SIGNAL,
       link: DISCOVERY_LINK_HEADER,
       location: url.toString(),
-      vary: subpath === "" ? "Cookie, Accept" : "Cookie",
+      vary: subpath === "" ? "Cookie, Accept, Accept-Language" : "Cookie, Accept-Language",
     },
   });
 }
