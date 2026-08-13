@@ -1,4 +1,4 @@
-import { runStatusCanary, statusJsonResponse } from "./status.js";
+import { recordStatusTailEvents, statusJsonResponse } from "./status.js";
 
 export { StatusStore } from "./status.js";
 
@@ -61,7 +61,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 
 - [Homepage](https://mosoo.ai/en): Product overview and current positioning.
 - [Pricing](https://mosoo.ai/en/pricing): Current cloud plans and included runtime resources.
-- [Runtime status](https://mosoo.ai/en/status): Production canaries for supported runtimes.
+- [Runtime status](https://mosoo.ai/en/status): Observed production service and Run health.
 - [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
 - [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
 
@@ -90,7 +90,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 
 - [GitHub](https://github.com/langgenius/mosoo): Source code, issues, releases, and license.
 - [Security](https://github.com/langgenius/mosoo/security): Security policy and private vulnerability reporting.
-- [Machine-readable status](https://mosoo.ai/status.json): Current runtime canary results.
+- [Machine-readable status](https://mosoo.ai/status.json): Current production service and Run health.
 - [Authentication guide for agents](https://mosoo.ai/auth.md): Credential and identity boundaries.
 - [OpenAPI 3.1](https://cloud.mosoo.ai/api/v1/openapi.json): Machine-readable Public Thread API contract.
 - [API catalog](https://mosoo.ai/.well-known/api-catalog): Discovery links for the API, documentation, and status.
@@ -490,7 +490,7 @@ export default {
       headers: { "content-type": "text/plain; charset=utf-8" },
     });
   },
-  async scheduled(controller, env) {
-    await runStatusCanary(env, controller.scheduledTime);
+  tail(events, env, ctx) {
+    ctx.waitUntil(recordStatusTailEvents(env, events));
   },
 };

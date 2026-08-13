@@ -1,9 +1,18 @@
 const DAY_MS = 86_400_000;
 const HISTORY_DAYS = 90;
-const STALE_AFTER_MS = 12 * 60_000;
-const FOLLOW_UP_DELAY_MS = 6_000;
+const PLATFORM_STALE_AFTER_MS = 5 * 60_000;
+const RUNTIME_STALE_AFTER_MS = DAY_MS;
 const FAILURE_THRESHOLD = 3;
-const REQUEST_TIMEOUT_MS = 15_000;
+const SEEN_RUN_LIMIT = 1_000;
+
+const FAILED_WORKER_OUTCOMES = new Set([
+  "exception",
+  "exceededCpu",
+  "exceededMemory",
+  "scriptNotFound",
+  "unknown",
+]);
+const USER_FACING_SESSION_TYPES = new Set(["api_channel", "ui"]);
 
 export const STATUS_COMPONENTS = [
   { id: "openai-runtime", name: "OpenAI Codex" },
@@ -11,27 +20,35 @@ export const STATUS_COMPONENTS = [
   { id: "acp-fallback", name: "OpenCode (ACP)" },
 ];
 
-class CanaryFailure extends Error {
-  constructor(code) {
-    super(code);
-    this.code = code;
-  }
-}
-
 function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function timestampMs(value, fallback = Date.now()) {
+  const parsed = new Date(value ?? fallback).getTime();
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function isoTimestamp(value, fallback) {
+  return new Date(timestampMs(value, fallback)).toISOString();
 }
 
 function dateKey(value) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
-function emptyComponent(component) {
+function emptySignal() {
   return {
     consecutiveFailures: 0,
     history: {},
-    id: component.id,
     latest: null,
+  };
+}
+
+function emptyComponent(component) {
+  return {
+    ...emptySignal(),
+    id: component.id,
     name: component.name,
   };
 }
@@ -42,368 +59,252 @@ export function createEmptyStatusState() {
       STATUS_COMPONENTS.map((component) => [component.id, emptyComponent(component)]),
     ),
     observedSince: null,
+    platform: emptySignal(),
+    seenRunIds: [],
     updatedAt: null,
-    version: 1,
+    version: 2,
   };
 }
 
-export function mergeStatusSnapshot(previous, snapshot) {
-  const state = previous ?? createEmptyStatusState();
+function currentState(previous) {
+  return isRecord(previous) && previous.version === 2 ? previous : createEmptyStatusState();
+}
+
+function mergeSignal(signal, observation) {
+  const history = { ...signal.history };
+  const day = dateKey(observation.observedAt);
+  const daily = history[day] ?? { succeeded: 0, total: 0 };
+  const cutoff = dateKey(
+    timestampMs(observation.observedAt) - (HISTORY_DAYS - 1) * DAY_MS,
+  );
+
+  history[day] = {
+    succeeded: daily.succeeded + (observation.succeeded ? 1 : 0),
+    total: daily.total + 1,
+  };
+  for (const key of Object.keys(history)) {
+    if (key < cutoff) delete history[key];
+  }
+
+  return {
+    ...signal,
+    consecutiveFailures: observation.succeeded ? 0 : signal.consecutiveFailures + 1,
+    history,
+    latest: observation,
+  };
+}
+
+export function mergeStatusEvents(previous, incoming) {
+  const state = currentState(previous);
   const components = { ...state.components };
-  const cutoff = dateKey(new Date(snapshot.checkedAt).getTime() - (HISTORY_DAYS - 1) * DAY_MS);
-  const today = dateKey(snapshot.checkedAt);
+  let platform = state.platform;
+  const seenRunIds = new Set(Array.isArray(state.seenRunIds) ? state.seenRunIds : []);
+  let observedSince = state.observedSince;
+  let updatedAt = state.updatedAt;
 
-  for (const result of snapshot.results) {
-    const definition = STATUS_COMPONENTS.find((component) => component.id === result.id);
-    if (!definition) continue;
+  const events = Array.isArray(incoming) ? [...incoming] : [];
+  events.sort((left, right) => timestampMs(left?.observedAt) - timestampMs(right?.observedAt));
 
-    const current = components[result.id] ?? emptyComponent(definition);
-    const history = { ...current.history };
-    const daily = history[today] ?? { checks: 0, passed: 0 };
+  for (const event of events) {
+    if (!isRecord(event) || typeof event.observedAt !== "string") continue;
 
-    history[today] = {
-      checks: daily.checks + 1,
-      passed: daily.passed + (result.ok ? 1 : 0),
-    };
+    if (event.type === "invocation" && typeof event.succeeded === "boolean") {
+      platform = mergeSignal(platform, event);
+    } else if (
+      event.type === "run" &&
+      typeof event.runId === "string" &&
+      typeof event.runtimeId === "string" &&
+      USER_FACING_SESSION_TYPES.has(event.sessionType) &&
+      !seenRunIds.has(event.runId)
+    ) {
+      const definition = STATUS_COMPONENTS.find((component) => component.id === event.runtimeId);
+      const succeeded = event.status === "completed";
+      const failed = event.status === "failed" || event.status === "expired";
+      if (!definition || (!succeeded && !failed)) continue;
 
-    for (const key of Object.keys(history)) {
-      if (key < cutoff) delete history[key];
+      const component = components[event.runtimeId] ?? emptyComponent(definition);
+      components[event.runtimeId] = mergeSignal(component, { ...event, succeeded });
+      seenRunIds.add(event.runId);
+    } else {
+      continue;
     }
 
-    components[result.id] = {
-      ...current,
-      consecutiveFailures: result.ok ? 0 : current.consecutiveFailures + 1,
-      history,
-      latest: { ...result, checkedAt: snapshot.checkedAt },
-    };
+    observedSince =
+      observedSince === null || event.observedAt < observedSince
+        ? event.observedAt
+        : observedSince;
+    updatedAt = updatedAt === null || event.observedAt > updatedAt ? event.observedAt : updatedAt;
   }
 
   return {
     components,
-    observedSince: state.observedSince ?? snapshot.checkedAt,
-    updatedAt: snapshot.checkedAt,
-    version: 1,
+    observedSince,
+    platform,
+    seenRunIds: [...seenRunIds].slice(-SEEN_RUN_LIMIT),
+    updatedAt,
+    version: 2,
   };
 }
 
-function historyWindow(component, nowMs) {
+function historyWindow(signal, nowMs) {
   return Array.from({ length: HISTORY_DAYS }, (_, index) => {
     const date = dateKey(nowMs - (HISTORY_DAYS - 1 - index) * DAY_MS);
-    const day = component.history[date] ?? { checks: 0, passed: 0 };
-    return { date, ...day };
+    return { date, ...(signal.history[date] ?? { succeeded: 0, total: 0 }) };
   });
 }
 
-export function buildPublicStatus(state = createEmptyStatusState(), now = new Date()) {
+function summarizeHistory(history) {
+  const total = history.reduce((sum, day) => sum + day.total, 0);
+  const succeeded = history.reduce((sum, day) => sum + day.succeeded, 0);
+  return {
+    failed: total - succeeded,
+    successRate: total === 0 ? null : succeeded / total,
+    succeeded,
+    total,
+  };
+}
+
+function isFresh(latest, nowMs, staleAfterMs) {
+  if (latest === null) return false;
+  const age = nowMs - timestampMs(latest.observedAt, 0);
+  return age >= 0 && age <= staleAfterMs;
+}
+
+export function buildPublicStatus(previous = createEmptyStatusState(), now = new Date()) {
+  const state = currentState(previous);
   const nowMs = now.getTime();
+  const platformHistory = historyWindow(state.platform, nowMs);
+  const platformSummary = summarizeHistory(platformHistory);
+  const platformFresh = isFresh(state.platform.latest, nowMs, PLATFORM_STALE_AFTER_MS);
+  const platform = {
+    failedInvocations90d: platformSummary.failed,
+    history: platformHistory,
+    invocations90d: platformSummary.total,
+    lastObservedAt: state.platform.latest?.observedAt ?? null,
+    latestHttpStatus: state.platform.latest?.httpStatus ?? null,
+    latestOutcome: state.platform.latest?.outcome ?? null,
+    status: !platformFresh
+      ? "unknown"
+      : state.platform.latest.succeeded
+        ? "operational"
+        : "degraded",
+    successRate90d: platformSummary.successRate,
+  };
+
   const components = STATUS_COMPONENTS.map((definition) => {
     const component = state.components[definition.id] ?? emptyComponent(definition);
     const history = historyWindow(component, nowMs);
-    const checks = history.reduce((total, day) => total + day.checks, 0);
-    const passed = history.reduce((total, day) => total + day.passed, 0);
-    const latest = component.latest;
-    const fresh =
-      latest !== null &&
-      nowMs - new Date(latest.checkedAt).getTime() >= 0 &&
-      nowMs - new Date(latest.checkedAt).getTime() <= STALE_AFTER_MS;
-    const status = !fresh ? "unknown" : latest.ok ? "operational" : "degraded";
+    const summary = summarizeHistory(history);
+    const fresh = isFresh(component.latest, nowMs, RUNTIME_STALE_AFTER_MS);
 
     return {
-      availability90d: checks === 0 ? null : passed / checks,
-      checks90d: checks,
+      completedRuns90d: summary.succeeded,
       consecutiveFailures: component.consecutiveFailures,
-      driverReused: latest?.driverReused ?? null,
-      errorCode: latest?.errorCode ?? null,
-      firstTtftMs: latest?.firstTtftMs ?? null,
-      followUpTtftMs: latest?.followUpTtftMs ?? null,
+      failedRuns90d: summary.failed,
       history,
       id: definition.id,
-      lastCheckedAt: latest?.checkedAt ?? null,
+      lastObservedAt: component.latest?.observedAt ?? null,
+      latestDurationMs: component.latest?.durationMs ?? null,
+      latestErrorCode: component.latest?.errorCode ?? null,
+      latestStatus: component.latest?.status ?? null,
       name: definition.name,
-      status,
-      ttftBudgetMs: latest?.ttftBudgetMs ?? null,
+      runs90d: summary.total,
+      status: !fresh
+        ? "unknown"
+        : component.consecutiveFailures >= FAILURE_THRESHOLD
+          ? "degraded"
+          : "operational",
+      successRate90d: summary.successRate,
     };
   });
-  const status = components.some((component) => component.status === "degraded")
-    ? "degraded"
-    : components.some((component) => component.status === "unknown")
-      ? "unknown"
-      : "operational";
+  const status =
+    platform.status === "degraded" || components.some((component) => component.status === "degraded")
+      ? "degraded"
+      : platform.status === "unknown"
+        ? "unknown"
+        : "operational";
 
   return {
     components,
     generatedAt: now.toISOString(),
     observedSince: state.observedSince,
-    releasePolicyTriggered: components.some(
-      (component) => component.consecutiveFailures >= FAILURE_THRESHOLD,
-    ),
-    slo: {
-      failureThreshold: FAILURE_THRESHOLD,
-      target: 0.995,
-      windowDays: 30,
-    },
+    platform,
+    releasePolicyTriggered:
+      state.platform.consecutiveFailures >= FAILURE_THRESHOLD ||
+      components.some((component) => component.consecutiveFailures >= FAILURE_THRESHOLD),
     status,
     updatedAt: state.updatedAt,
-    version: 1,
+    version: 2,
   };
 }
 
-function parseCanaryTarget(value) {
-  if (
-    !isRecord(value) ||
-    typeof value.id !== "string" ||
-    typeof value.agentId !== "string" ||
-    !STATUS_COMPONENTS.some((component) => component.id === value.id) ||
-    !/^[0-9A-HJKMNP-TV-Z]{26}$/.test(value.agentId)
-  ) {
-    throw new Error("STATUS_CANARY_TARGETS contains an invalid target.");
-  }
-
-  const ttftBudgetMs = value.ttftBudgetMs ?? 20_000;
-  if (!Number.isInteger(ttftBudgetMs) || ttftBudgetMs < 1_000 || ttftBudgetMs > 120_000) {
-    throw new Error("STATUS_CANARY_TARGETS contains an invalid TTFT budget.");
-  }
-
-  return { agentId: value.agentId, id: value.id, ttftBudgetMs };
+function responseStatus(item) {
+  const status = item?.event?.response?.status;
+  return Number.isInteger(status) ? status : null;
 }
 
-export function parseCanaryConfig(raw) {
-  if (typeof raw !== "string" || raw.trim() === "") return null;
-
-  const value = JSON.parse(raw);
-  if (
-    !isRecord(value) ||
-    typeof value.token !== "string" ||
-    value.token.trim() === "" ||
-    !Array.isArray(value.targets)
-  ) {
-    throw new Error("STATUS_CANARY_TARGETS must contain token and targets.");
-  }
-
-  const targets = value.targets.map(parseCanaryTarget);
-  const ids = new Set(targets.map((target) => target.id));
-  if (targets.length !== STATUS_COMPONENTS.length || ids.size !== STATUS_COMPONENTS.length) {
-    throw new Error("STATUS_CANARY_TARGETS must configure every public runtime exactly once.");
-  }
-
-  return { targets, token: value.token };
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function requestJson(url, init) {
-  let response;
-
-  try {
-    response = await fetch(url, {
-      ...init,
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    });
-  } catch {
-    throw new CanaryFailure("api_unreachable");
-  }
-
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw new CanaryFailure("api_request_failed");
-  if (!isRecord(payload)) throw new CanaryFailure("invalid_api_response");
-  return payload;
-}
-
-function bearerHeaders(token, idempotencyKey) {
-  return {
-    authorization: `Bearer ${token}`,
-    "content-type": "application/json",
-    ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {}),
-  };
-}
-
-function requireRun(payload, source) {
-  const run =
-    source === "create"
-      ? payload.run
-      : Array.isArray(payload.events)
-        ? payload.events.find((event) => isRecord(event) && isRecord(event.run))?.run
-        : null;
-
-  if (!isRecord(run) || typeof run.id !== "string") {
-    throw new CanaryFailure("missing_run_id");
-  }
-  return run.id;
-}
-
-async function waitForTurn({ apiOrigin, budgetMs, expectedToken, runId, startedAt, threadId, token }) {
-  const deadline = startedAt + Math.max(60_000, Math.min(180_000, budgetMs * 3));
-  const seen = new Set();
-  let output = "";
-  let firstTtftMs = null;
-  let completed = false;
-
-  while (Date.now() < deadline) {
-    const payload = await requestJson(
-      `${apiOrigin}/api/v1/threads/${encodeURIComponent(threadId)}/events?limit=100`,
-      { headers: bearerHeaders(token), method: "GET" },
-    );
-    if (!Array.isArray(payload.events)) throw new CanaryFailure("invalid_event_response");
-
-    for (const event of payload.events) {
-      if (
-        !isRecord(event) ||
-        event.runId !== runId ||
-        typeof event.id !== "string" ||
-        seen.has(event.id)
-      ) {
-        continue;
-      }
-
-      seen.add(event.id);
-      if (event.type === "run.failed" || event.type === "run.cancelled") {
-        throw new CanaryFailure("turn_failed");
-      }
-      if (event.type === "run.completed") completed = true;
-      if (
-        typeof event.type === "string" &&
-        event.type.startsWith("agent.message") &&
-        typeof event.content === "string" &&
-        event.content.length > 0
-      ) {
-        firstTtftMs ??= Date.now() - startedAt;
-        output += event.content;
-      }
+function structuredLogEntries(log) {
+  const messages = Array.isArray(log?.message) ? log.message : [log?.message];
+  return messages.flatMap((message) => {
+    if (typeof message !== "string" || !message.startsWith("{")) return [];
+    try {
+      const entry = JSON.parse(message);
+      return isRecord(entry) ? [entry] : [];
+    } catch {
+      return [];
     }
-
-    if (completed && firstTtftMs !== null && output.includes(expectedToken)) {
-      return firstTtftMs;
-    }
-    await sleep(500);
-  }
-
-  throw new CanaryFailure("turn_timeout");
+  });
 }
 
-async function runCanaryTarget(env, config, target) {
-  const apiOrigin = env.STATUS_API_ORIGIN.replace(/\/$/, "");
-  const firstToken = `MOSOO_CANARY_${crypto.randomUUID().slice(0, 8)}`;
-  const followUpToken = `MOSOO_FOLLOW_UP_${crypto.randomUUID().slice(0, 8)}`;
-  let threadId = null;
+export function statusEventsFromTailItems(items, nowMs = Date.now()) {
+  const events = [];
 
-  try {
-    const firstStartedAt = Date.now();
-    const created = await requestJson(
-      `${apiOrigin}/api/v1/agents/${encodeURIComponent(target.agentId)}/threads`,
-      {
-        body: JSON.stringify({
-          input: {
-            content: [
-              {
-                text: `Reply with exactly ${firstToken}. Do not use tools.`,
-                type: "text",
-              },
-            ],
-            type: "user.message",
-          },
-        }),
-        headers: bearerHeaders(config.token, `status-create-${crypto.randomUUID()}`),
-        method: "POST",
-      },
-    );
-
-    if (!isRecord(created.thread) || typeof created.thread.id !== "string") {
-      throw new CanaryFailure("missing_thread_id");
-    }
-    threadId = created.thread.id;
-    const firstRunId = requireRun(created, "create");
-    const firstTtftMs = await waitForTurn({
-      apiOrigin,
-      budgetMs: target.ttftBudgetMs,
-      expectedToken: firstToken,
-      runId: firstRunId,
-      startedAt: firstStartedAt,
-      threadId,
-      token: config.token,
+  for (const item of Array.isArray(items) ? items : []) {
+    if (!isRecord(item)) continue;
+    const observedAt = isoTimestamp(item.eventTimestamp, nowMs);
+    const httpStatus = responseStatus(item);
+    const outcome = typeof item.outcome === "string" ? item.outcome : "unknown";
+    events.push({
+      httpStatus,
+      observedAt,
+      outcome,
+      succeeded:
+        !FAILED_WORKER_OUTCOMES.has(outcome) && (httpStatus === null || httpStatus < 500),
+      type: "invocation",
     });
 
-    await sleep(FOLLOW_UP_DELAY_MS);
+    for (const log of Array.isArray(item.logs) ? item.logs : []) {
+      for (const entry of structuredLogEntries(log)) {
+        const metadata = entry.metadata;
+        if (
+          entry.message !== "session.run.terminal" ||
+          !isRecord(metadata) ||
+          typeof metadata.runId !== "string" ||
+          typeof metadata.runtimeId !== "string" ||
+          typeof metadata.sessionType !== "string" ||
+          typeof metadata.status !== "string"
+        ) {
+          continue;
+        }
 
-    const followUpStartedAt = Date.now();
-    const followedUp = await requestJson(
-      `${apiOrigin}/api/v1/threads/${encodeURIComponent(threadId)}/events`,
-      {
-        body: JSON.stringify({
-          events: [
-            {
-              text: `Reply with exactly ${followUpToken}. Do not use tools.`,
-              type: "user_message",
-            },
-          ],
-        }),
-        headers: bearerHeaders(config.token, `status-follow-up-${crypto.randomUUID()}`),
-        method: "POST",
-      },
-    );
-    const followUpRunId = requireRun(followedUp, "follow-up");
-    const followUpTtftMs = await waitForTurn({
-      apiOrigin,
-      budgetMs: target.ttftBudgetMs,
-      expectedToken: followUpToken,
-      runId: followUpRunId,
-      startedAt: followUpStartedAt,
-      threadId,
-      token: config.token,
-    });
-    const diagnostic = await requestJson(
-      `${apiOrigin}/api/v1/internal/status-canary/driver-reuse`,
-      {
-        body: JSON.stringify({ runIds: [firstRunId, followUpRunId], threadId }),
-        headers: {
-          "content-type": "application/json",
-          "x-status-canary-auth": env.STATUS_CANARY_SECRET,
-        },
-        method: "POST",
-      },
-    );
-
-    if (typeof diagnostic.sameDriver !== "boolean") {
-      throw new CanaryFailure("invalid_driver_diagnostic");
-    }
-
-    const withinBudget =
-      firstTtftMs <= target.ttftBudgetMs && followUpTtftMs <= target.ttftBudgetMs;
-    const ok = withinBudget && diagnostic.sameDriver;
-
-    return {
-      driverReused: diagnostic.sameDriver,
-      errorCode: ok
-        ? null
-        : diagnostic.sameDriver
-          ? "ttft_budget_exceeded"
-          : "driver_not_reused",
-      firstTtftMs,
-      followUpTtftMs,
-      id: target.id,
-      ok,
-      ttftBudgetMs: target.ttftBudgetMs,
-    };
-  } catch (error) {
-    return {
-      driverReused: null,
-      errorCode: error instanceof CanaryFailure ? error.code : "check_failed",
-      firstTtftMs: null,
-      followUpTtftMs: null,
-      id: target.id,
-      ok: false,
-      ttftBudgetMs: target.ttftBudgetMs,
-    };
-  } finally {
-    if (threadId !== null) {
-      await fetch(`${apiOrigin}/api/v1/threads/${encodeURIComponent(threadId)}`, {
-        headers: bearerHeaders(config.token),
-        method: "DELETE",
-        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      }).catch(() => undefined);
+        events.push({
+          durationMs:
+            typeof metadata.durationMs === "number" && Number.isFinite(metadata.durationMs)
+              ? Math.max(0, metadata.durationMs)
+              : null,
+          errorCode: typeof metadata.errorCode === "string" ? metadata.errorCode : null,
+          observedAt: isoTimestamp(entry.timestamp, timestampMs(observedAt)),
+          runId: metadata.runId,
+          runtimeId: metadata.runtimeId,
+          sessionType: metadata.sessionType,
+          status: metadata.status,
+          type: "run",
+        });
+      }
     }
   }
+
+  return events;
 }
 
 function storeStub(env) {
@@ -411,23 +312,17 @@ function storeStub(env) {
   return env.STATUS_STORE.get(id);
 }
 
-export async function runStatusCanary(env, checkedAtMs = Date.now()) {
-  const config = parseCanaryConfig(env.STATUS_CANARY_TARGETS);
-  if (config === null) return;
-  if (!env.STATUS_CANARY_SECRET || !env.STATUS_API_ORIGIN || !env.STATUS_STORE) {
-    throw new Error("Status canary bindings are incomplete.");
-  }
+export async function recordStatusTailEvents(env, items) {
+  if (!env.STATUS_STORE) return;
+  const events = statusEventsFromTailItems(items);
+  if (events.length === 0) return;
 
-  const results = await Promise.all(
-    config.targets.map((target) => runCanaryTarget(env, config, target)),
-  );
-  await storeStub(env).fetch("https://status.internal/snapshot", {
-    body: JSON.stringify({
-      checkedAt: new Date(checkedAtMs).toISOString(),
-      results,
-    }),
+  const response = await storeStub(env).fetch("https://status.internal/events", {
+    body: JSON.stringify({ events }),
+    headers: { "content-type": "application/json" },
     method: "POST",
   });
+  if (!response.ok) throw new Error(`Status store rejected Tail events: ${response.status}`);
 }
 
 export async function statusJsonResponse(env) {
@@ -459,10 +354,13 @@ export class StatusStore {
   async fetch(request) {
     const url = new URL(request.url);
 
-    if (request.method === "POST" && url.pathname === "/snapshot") {
-      const snapshot = await request.json();
+    if (request.method === "POST" && url.pathname === "/events") {
+      const payload = await request.json();
+      if (!isRecord(payload) || !Array.isArray(payload.events)) {
+        return Response.json({ error: "Invalid status events." }, { status: 400 });
+      }
       const previous = await this.state.storage.get("status");
-      await this.state.storage.put("status", mergeStatusSnapshot(previous, snapshot));
+      await this.state.storage.put("status", mergeStatusEvents(previous, payload.events));
       return Response.json({ ok: true });
     }
 
