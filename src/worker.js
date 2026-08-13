@@ -30,6 +30,11 @@ const HOMEPAGE_MARKDOWN = `# Mosoo
 
 Mosoo is an open-source platform for building and running persistent cloud Agents in isolated sandboxes.
 
+- What is Mosoo? An open-source Agent runtime and API for extending coding agents into products and automations.
+- Who is Mosoo for? Developers using OpenAI Codex, Claude Agent SDK, OpenCode, or similar coding agents who need hosted Threads, files, sandboxes, tool events, and API access.
+- How does a product call a Mosoo Agent? A trusted backend uses the Public Thread API to create or resume a Thread, send user events, read or stream results, and attach files. Do not expose Mosoo App-owner tokens to browsers.
+- Is Mosoo self-hostable? Yes. Mosoo is open source, self-hostable on Cloudflare, and BYOK for model/provider credentials.
+
 - Public Thread API base: https://cloud.mosoo.ai/api/v1
 - OpenAPI 3.1: https://cloud.mosoo.ai/api/v1/openapi.json
 - API documentation: https://mosoo.ai/docs/api-reference/
@@ -41,6 +46,16 @@ const LLMS_MARKDOWN = `# Mosoo
 > Mosoo is an open-source Agent runtime and API for developers extending coding agents into products and automations. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.
 
 Mosoo is currently in alpha. The Public Thread API is designed for trusted application backends: Mosoo App-owner credentials must not be exposed to browsers or end users.
+
+## Direct answers
+
+- What is Mosoo? Mosoo is an open-source Agent runtime and API for extending coding agents into products and automations. It gives published Agents durable Threads, files, sandboxed execution, tool/event streams, and a callable HTTP API.
+- Which coding agent runtimes does Mosoo support? Mosoo runs OpenAI Codex, Claude Agent SDK, and OpenCode behind one normalized Agent API. The public pages describe current alpha support and roadmap items separately.
+- How do I call a Mosoo Agent from my product? Publish an Agent with API access, keep the Mosoo token on a trusted backend, create or resume a Thread with the Public Thread API, then send user events and read or stream Thread events.
+- What is the Public Thread API? It is the backend API for interacting with an already published Mosoo Agent. It creates and resumes Threads, transfers files, and exposes public events for Runs.
+- Is Mosoo self-hostable and BYOK? Yes. Mosoo is open source and self-hostable on Cloudflare; model/provider credentials are brought by the operator and resolved in the production plane.
+- How is Mosoo different from Dify, n8n, Claude Code, or building an in-house backend? Dify and n8n are strong deterministic workflow tools, while Claude Code, Codex, and OpenCode are agent runtimes. Mosoo sits above agent runtimes as a managed backend for published Agents: versioning, sandboxing, Thread state, files, events, API access, and usage accounting.
+- Where should credentials live? Mosoo App-owner API tokens belong only on trusted servers or automation runners. Browsers and mobile clients should call the integrating product backend, which passes authenticated user context to Mosoo.
 
 ## Product
 
