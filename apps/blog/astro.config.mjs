@@ -2,6 +2,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import { blogSitemapI18n, serializeBlogSitemapItem } from "./src/lib/sitemap.mjs";
 
 // Blog is mounted at https://mosoo.ai/blog/*. apps/blog builds a static
 // site that gets embedded into apps/web's deploy: `apps/web` build runs
@@ -21,7 +22,13 @@ export default defineConfig({
     // so /blog/why-mosoo serves this file at the same URL Astro marks canonical.
     format: "directory",
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      i18n: blogSitemapI18n,
+      serialize: serializeBlogSitemapItem,
+    }),
+  ],
   vite: {
     plugins: [tailwind()],
   },
