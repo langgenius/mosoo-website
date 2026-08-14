@@ -150,6 +150,11 @@ test("landing and blog metadata never point at a missing default image", () => {
     /rel="alternate" hreflang="x-default" href="https:\/\/mosoo\.ai\/en"/,
   );
   assert.match(landing, /"@id": "https:\/\/mosoo\.ai\/#organization"/);
+  assert.match(landing, /"@type": "FAQPage"/);
+  assert.match(landing, /"@id": "https:\/\/mosoo\.ai\/en#faq"/);
+  assert.match(landing, /Direct answers/);
+  assert.match(landing, /Where can I verify Mosoo's source and API contract\?/);
+  assert.match(landing, /href="https:\/\/cloud\.mosoo\.ai\/api\/v1\/openapi\.json"/);
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
   assert.match(blogLayout, /\/landing\/invoke-gradient\.jpg/);
   assert.equal(
@@ -171,12 +176,20 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh"/);
   assert.match(zh, /<title>mosoo — 面向 Coding Agent 的开源 Agent runtime<\/title>/);
+  assert.match(zh, /"@id": "https:\/\/mosoo\.ai\/zh#faq"/);
+  assert.match(zh, /直接答案/);
+  assert.match(zh, /产品如何调用 mosoo Agent？/);
+  assert.doesNotMatch(zh, /Who is mosoo for\?/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
   assert.match(
     ja,
     /<title>mosoo — Coding Agent 向けオープンソース Agent runtime<\/title>/,
   );
+  assert.match(ja, /"@id": "https:\/\/mosoo\.ai\/ja#faq"/);
+  assert.match(ja, /直接回答/);
+  assert.match(ja, /プロダクトから mosoo Agent を呼ぶには？/);
+  assert.doesNotMatch(ja, /Who is mosoo for\?/);
   assertInitialSiteLinks(zh, "zh");
   assert.match(zh, />文档<\/a>/);
   assert.match(zh, />快速开始<\/a>/);

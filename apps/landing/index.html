@@ -79,6 +79,56 @@
             "inLanguage": "en",
             "publisher": { "@id": "https://mosoo.ai/#organization" },
             "about": { "@id": "https://mosoo.ai/#software" }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://mosoo.ai/en#faq",
+            "url": "https://mosoo.ai/en",
+            "inLanguage": "en",
+            "isPartOf": { "@id": "https://mosoo.ai/#website" },
+            "about": { "@id": "https://mosoo.ai/#software" },
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is mosoo?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Who is mosoo for?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does a product call a Mosoo Agent?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is mosoo self-hostable?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Where can I verify Mosoo's source and API contract?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery."
+                }
+              }
+            ]
           }
         ]
       }
@@ -117,6 +167,55 @@
           Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated
           sandboxes. Open source, self-hostable, and built for coding agents.
         </p>
+        <section
+          aria-label="Direct answers"
+          style="max-width: 760px; margin-top: 40px; font-size: 16px; line-height: 1.6"
+        >
+          <h2 style="margin: 0 0 16px; font-size: 24px; line-height: 1.2">Direct answers</h2>
+          <dl style="display: grid; gap: 16px; margin: 0">
+            <div>
+              <dt style="font-weight: 700">What is mosoo?</dt>
+              <dd style="margin: 4px 0 0">
+                mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.
+              </dd>
+            </div>
+            <div>
+              <dt style="font-weight: 700">Who is mosoo for?</dt>
+              <dd style="margin: 4px 0 0">
+                mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.
+              </dd>
+            </div>
+            <div>
+              <dt style="font-weight: 700">How does a product call a Mosoo Agent?</dt>
+              <dd style="margin: 4px 0 0">
+                A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.
+              </dd>
+            </div>
+            <div>
+              <dt style="font-weight: 700">Is mosoo self-hostable?</dt>
+              <dd style="margin: 4px 0 0">
+                Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane.
+              </dd>
+            </div>
+            <div>
+              <dt style="font-weight: 700">
+                Where can I verify Mosoo's source and API contract?
+              </dt>
+              <dd style="margin: 4px 0 0">
+                Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery.
+              </dd>
+            </div>
+          </dl>
+          <h2 style="margin: 32px 0 12px; font-size: 24px; line-height: 1.2">
+            Sources and verification
+          </h2>
+          <ul style="display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 0; padding-left: 20px">
+            <li><a href="https://github.com/langgenius/mosoo">GitHub source</a></li>
+            <li><a href="https://mosoo.ai/docs/api-reference/">API docs</a></li>
+            <li><a href="https://cloud.mosoo.ai/api/v1/openapi.json">OpenAPI 3.1</a></li>
+            <li><a href="https://mosoo.ai/llms.txt">llms.txt</a></li>
+          </ul>
+        </section>
       </main>
     </div>
     <script type="module" src="/src/main.tsx"></script>
