@@ -368,9 +368,12 @@ test("the codex-pet case page keeps its canonical, screenshot, and outbound link
 test("the ghfind case page keeps its canonical, screenshot, and outbound links", () => {
   const source = read("apps/landing/use-cases/ghfind.html");
   const zh = renderUseCaseGhfindLocale(source, "zh");
+  const description = /<meta\s+name="description"\s+content="([^"]+)"/.exec(source)?.[1] ?? "";
 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/ghfind"/);
   assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/ghfind-app\.png"/);
+  assert.ok(description.length <= 160);
+  assert.match(description, /deep repository evaluation/);
   assert.match(source, /href="https:\/\/github\.com\/hikariming\/ghfind"/);
   assert.match(source, /href="https:\/\/ghfind\.com"/);
   assert.equal(
