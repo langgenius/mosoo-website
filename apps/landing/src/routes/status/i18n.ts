@@ -42,11 +42,13 @@ const ZH_MESSAGES = {
   "Cloudflare + Mosoo": "Cloudflare + Mosoo",
   "Cloudflare supplies invocation outcomes; Mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
     "Cloudflare 提供调用结果；Mosoo 现有结构化业务日志提供 runtime、终态、耗时与错误码。",
-  "Synthetic traffic": "Synthetic 流量",
-  "0 Agent Runs": "0 次 Agent Run",
-  "The status pipeline does not create Threads, invoke models, or consume tokens. Runtime status becomes Unknown after 24 hours without real traffic.":
-    "状态链路不会创建 Thread、调用模型或消耗 token。某 runtime 24 小时没有真实流量后会显示为未知。",
-  "Incident record": "事故记录",
+  "Incident records": "事故记录",
+  "Resolved · 15 Aug 2026 — 54 user-facing Runs for one account failed when stranded Cattle sandboxes exhausted its concurrency capacity. Lifecycle repair reclaimed the capacity.":
+    "已恢复 · 2026 年 8 月 15 日 — 滞留的 Cattle sandbox 占满一个账号的并发容量，导致 54 次用户 Run 失败。生命周期修复已回收容量。",
+  "Read the account capacity incident postmortem": "查看账号容量事故复盘",
+  "Resolved · 13 Aug 2026 — 8 user-facing ACP Runs across two accounts failed when streamed tool arguments conflicted with durable tool-call identity. The hotfix restored tool execution.":
+    "已恢复 · 2026 年 8 月 13 日 — 流式工具参数与持久化 Tool Call 身份冲突，导致两个账号的 8 次 ACP 用户 Run 失败。热修已恢复工具执行。",
+  "Read the streamed tool identity incident postmortem": "查看流式工具身份事故复盘",
   "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.":
     "已恢复 · 2026 年 7 月 29 日 — OpenAI Runtime 在生成回复前失败。生产热修已恢复 sandbox 启动、provider 路由和生命周期收敛。",
   "Read the OpenAI Runtime incident postmortem": "查看 OpenAI Runtime 事故复盘",
@@ -99,11 +101,13 @@ const JA_MESSAGES = {
   "Cloudflare + Mosoo": "Cloudflare + Mosoo",
   "Cloudflare supplies invocation outcomes; Mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
     "Cloudflare が呼び出し結果を、Mosoo の既存構造化ビジネスログが runtime、終端状態、所要時間、エラーコードを提供します。",
-  "Synthetic traffic": "Synthetic トラフィック",
-  "0 Agent Runs": "Agent Run 0 回",
-  "The status pipeline does not create Threads, invoke models, or consume tokens. Runtime status becomes Unknown after 24 hours without real traffic.":
-    "ステータス処理は Thread の作成、モデル呼び出し、token 消費を行いません。実トラフィックが 24 時間ない runtime は不明になります。",
-  "Incident record": "インシデント記録",
+  "Incident records": "インシデント記録",
+  "Resolved · 15 Aug 2026 — 54 user-facing Runs for one account failed when stranded Cattle sandboxes exhausted its concurrency capacity. Lifecycle repair reclaimed the capacity.":
+    "復旧済み · 2026 年 8 月 15 日 — 滞留した Cattle sandbox が 1 アカウントの同時実行枠を使い切り、ユーザー向け Run 54 件が失敗しました。ライフサイクル修復により枠を回収しました。",
+  "Read the account capacity incident postmortem": "アカウント容量インシデントのポストモーテムを読む",
+  "Resolved · 13 Aug 2026 — 8 user-facing ACP Runs across two accounts failed when streamed tool arguments conflicted with durable tool-call identity. The hotfix restored tool execution.":
+    "復旧済み · 2026 年 8 月 13 日 — ストリーミング中のツール引数が永続化された Tool Call ID と衝突し、2 アカウントの ACP Run 8 件が失敗しました。ホットフィックスでツール実行を復旧しました。",
+  "Read the streamed tool identity incident postmortem": "ストリーミング Tool Call ID インシデントのポストモーテムを読む",
   "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.":
     "復旧済み · 2026 年 7 月 29 日 — OpenAI Runtime が応答生成前に失敗しました。本番ホットフィックスにより sandbox 起動、provider ルーティング、ライフサイクル復旧を回復しました。",
   "Read the OpenAI Runtime incident postmortem": "OpenAI Runtime のポストモーテムを読む",

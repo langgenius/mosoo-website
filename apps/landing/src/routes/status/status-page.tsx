@@ -418,7 +418,7 @@ export function StatusPage(): ReactElement {
       </section>
 
       <section className="border-border-soft bg-paper-200/45 border-y px-4 py-16 md:px-6 md:py-20">
-        <div className="mx-auto grid max-w-[1040px] gap-px overflow-hidden rounded-[10px] border border-border-strong bg-border-strong md:grid-cols-2">
+        <div className="mx-auto max-w-[1040px] overflow-hidden rounded-[10px] border border-border-strong bg-border-strong">
           <article className="bg-paper-50 p-7 md:p-9">
             <p className="text-fg-3 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
               {t("Signal source")}
@@ -432,19 +432,6 @@ export function StatusPage(): ReactElement {
               )}
             </p>
           </article>
-          <article className="bg-paper-50 p-7 md:p-9">
-            <p className="text-fg-3 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
-              {t("Synthetic traffic")}
-            </p>
-            <p className="text-fg-1 mt-4 font-mono text-[28px] font-semibold tracking-[-0.04em]">
-              {t("0 Agent Runs")}
-            </p>
-            <p className="text-fg-2 mt-4 text-[14px] leading-[1.65]">
-              {t(
-                "The status pipeline does not create Threads, invoke models, or consume tokens. Runtime status becomes Unknown after 24 hours without real traffic.",
-              )}
-            </p>
-          </article>
         </div>
       </section>
 
@@ -452,21 +439,55 @@ export function StatusPage(): ReactElement {
         <div className="mx-auto grid max-w-[1040px] gap-12 md:grid-cols-2">
           <article>
             <p className="text-fg-3 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
-              {t("Incident record")}
+              {t("Incident records")}
             </p>
-            <p className="text-fg-2 mt-4 text-[14px] leading-[1.65]">
-              {t(
-                "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.",
-              )}
-            </p>
-            <a
-              href="https://github.com/langgenius/mosoo/blob/main/docs/operations/incidents/2026-07-29-openai-runtime-unavailable.md"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="text-green-800 focus-visible:ring-ring mt-5 inline-flex rounded-sm text-[13px] font-semibold underline decoration-green-800/30 underline-offset-4 outline-none hover:decoration-green-800 focus-visible:ring-2"
-            >
-              {t("Read the OpenAI Runtime incident postmortem")} ↗
-            </a>
+            <div className="mt-4 space-y-7">
+              <div>
+                <p className="text-fg-2 text-[14px] leading-[1.65]">
+                  {t(
+                    "Resolved · 15 Aug 2026 — 54 user-facing Runs for one account failed when stranded Cattle sandboxes exhausted its concurrency capacity. Lifecycle repair reclaimed the capacity.",
+                  )}
+                </p>
+                <a
+                  href="https://github.com/langgenius/mosoo/blob/main/docs/operations/incidents/2026-08-15-stranded-cattle-account-capacity.md"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-green-800 focus-visible:ring-ring mt-3 inline-flex rounded-sm text-[13px] font-semibold underline decoration-green-800/30 underline-offset-4 outline-none hover:decoration-green-800 focus-visible:ring-2"
+                >
+                  {t("Read the account capacity incident postmortem")} ↗
+                </a>
+              </div>
+              <div>
+                <p className="text-fg-2 text-[14px] leading-[1.65]">
+                  {t(
+                    "Resolved · 13 Aug 2026 — 8 user-facing ACP Runs across two accounts failed when streamed tool arguments conflicted with durable tool-call identity. The hotfix restored tool execution.",
+                  )}
+                </p>
+                <a
+                  href="https://github.com/langgenius/mosoo/blob/main/docs/operations/incidents/2026-08-13-acp-tool-call-identity-conflict.md"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-green-800 focus-visible:ring-ring mt-3 inline-flex rounded-sm text-[13px] font-semibold underline decoration-green-800/30 underline-offset-4 outline-none hover:decoration-green-800 focus-visible:ring-2"
+                >
+                  {t("Read the streamed tool identity incident postmortem")} ↗
+                </a>
+              </div>
+              <div>
+                <p className="text-fg-2 text-[14px] leading-[1.65]">
+                  {t(
+                    "Resolved · 29 Jul 2026 — OpenAI Runtime runs failed before producing a response. Production hotfixes restored sandbox startup, provider routing, and lifecycle recovery.",
+                  )}
+                </p>
+                <a
+                  href="https://github.com/langgenius/mosoo/blob/main/docs/operations/incidents/2026-07-29-openai-runtime-unavailable.md"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-green-800 focus-visible:ring-ring mt-3 inline-flex rounded-sm text-[13px] font-semibold underline decoration-green-800/30 underline-offset-4 outline-none hover:decoration-green-800 focus-visible:ring-2"
+                >
+                  {t("Read the OpenAI Runtime incident postmortem")} ↗
+                </a>
+              </div>
+            </div>
           </article>
           <article>
             <p className="text-fg-3 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
