@@ -15,22 +15,33 @@ function envFor(paths) {
   };
 }
 
-function requestFor(pathname, { cookie, country, countryHeader } = {}) {
+function requestFor(pathname, { acceptLanguage, cookie, country, countryHeader } = {}) {
   const headers = new Headers();
   if (cookie) headers.set("cookie", cookie);
+  if (acceptLanguage) headers.set("accept-language", acceptLanguage);
   if (countryHeader) headers.set("CF-IPCountry", countryHeader);
   const request = new Request(`https://mosoo.ai${pathname}`, { headers });
   if (country) Object.defineProperty(request, "cf", { value: { country } });
   return request;
 }
 
-test("worker selects the landing locale by cookie, then country", async () => {
+test("worker selects the landing locale by cookie, then browser language", async () => {
   const cases = [
-    { pathname: "/?ref=launch", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
-    { pathname: "/", cookie: "mosoo_locale=invalid", country: "CN", locale: "zh" },
-    { pathname: "/", country: "JP", locale: "ja" },
-    { pathname: "/", country: "US", countryHeader: "CN", locale: "en" },
-    { pathname: "/", countryHeader: "CN", locale: "zh" },
+    {
+      pathname: "/?ref=launch",
+      acceptLanguage: "zh-CN,zh;q=0.9",
+      cookie: "mosoo_locale=ja",
+      locale: "ja",
+    },
+    {
+      pathname: "/",
+      acceptLanguage: "zh-CN,zh;q=0.9,en;q=0.5",
+      cookie: "mosoo_locale=invalid",
+      locale: "zh",
+    },
+    { pathname: "/", acceptLanguage: "fr-FR,ja-JP;q=0.7", locale: "ja" },
+    { pathname: "/", acceptLanguage: "ja;q=0,zh;q=0.8,en;q=0.6", locale: "zh" },
+    { pathname: "/", country: "JP", countryHeader: "CN", locale: "en" },
     { pathname: "/", country: "US", locale: "en" },
     { pathname: "/", locale: "en" },
   ];
@@ -42,15 +53,16 @@ test("worker selects the landing locale by cookie, then country", async () => {
     assert.equal(response.status, 307);
     assert.equal(response.headers.get("location"), `https://mosoo.ai/${entry.locale}${suffix}`);
     assert.equal(response.headers.get("cache-control"), "private, no-store");
-    assert.equal(response.headers.get("vary"), "Cookie");
+    assert.equal(response.headers.get("vary"), "Cookie, Accept, Accept-Language");
   }
 });
 
-test("worker redirects bare /pricing to the locale pricing page", async () => {
+test("worker redirects bare /pricing to the locale pricing page without GeoIP", async () => {
   const cases = [
     { pathname: "/pricing", cookie: "mosoo_locale=ja", country: "CN", locale: "ja" },
-    { pathname: "/pricing", country: "JP", locale: "ja" },
-    { pathname: "/pricing", countryHeader: "CN", locale: "zh" },
+    { pathname: "/pricing", acceptLanguage: "ja-JP,ja;q=0.9", locale: "ja" },
+    { pathname: "/pricing", acceptLanguage: "zh-CN,zh;q=0.9", locale: "zh" },
+    { pathname: "/pricing", country: "JP", countryHeader: "CN", locale: "en" },
     { pathname: "/pricing?ref=launch", locale: "en" },
   ];
 
@@ -64,7 +76,7 @@ test("worker redirects bare /pricing to the locale pricing page", async () => {
       `https://mosoo.ai/${entry.locale}/pricing${suffix}`,
     );
     assert.equal(response.headers.get("cache-control"), "private, no-store");
-    assert.equal(response.headers.get("vary"), "Cookie");
+    assert.equal(response.headers.get("vary"), "Cookie, Accept-Language");
   }
 });
 
@@ -118,7 +130,7 @@ test("worker serves localized pricing pages from assets", async () => {
   assert.equal(await response.text(), "pricing page");
 });
 
-test("worker advertises answer-engine docs from HTML assets", async () => {
+test("worker advertises agent discovery resources from HTML assets", async () => {
   const response = await worker.fetch(
     new Request("https://mosoo.ai/blog"),
     {
@@ -132,10 +144,115 @@ test("worker advertises answer-engine docs from HTML assets", async () => {
     },
   );
 
-  assert.equal(
-    response.headers.get("link"),
-    '</docs/llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"',
+  const link = response.headers.get("link");
+  assert.match(link, /<\/llms\.txt>; rel="llms-txt"/);
+  assert.match(link, /<\/docs\/llms-full\.txt>; rel="llms-full-txt"/);
+  assert.match(link, /<\/\.well-known\/api-catalog>; rel="api-catalog"/);
+  assert.match(link, /rel="service-desc"/);
+  assert.match(link, /rel="service-doc"/);
+  assert.match(link, /<\/auth\.md>; rel="describedby"/);
+  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
+});
+
+test("worker negotiates homepage HTML to clean Markdown", async () => {
+  const response = await worker.fetch(
+    new Request("https://mosoo.ai/en", { headers: { accept: "text/markdown" } }),
+    envFor({}),
   );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.match(response.headers.get("vary"), /Accept/);
+  const markdown = await response.text();
+  assert.match(markdown, /^# Mosoo$/m);
+  assert.match(markdown, /What is Mosoo\? An open-source Agent runtime/);
+  assert.match(markdown, /trusted backend uses the Public Thread API/);
+  assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/llms\.txt/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.doesNotMatch(markdown, /<html/i);
+
+  const declined = await worker.fetch(
+    new Request("https://mosoo.ai/", { headers: { accept: "text/markdown;q=0" } }),
+    envFor({}),
+  );
+  assert.equal(declined.status, 307);
+});
+
+test("worker serves a product-wide llms.txt index", async () => {
+  const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
+  const markdown = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
+  assert.match(markdown, /^# Mosoo$/m);
+  assert.match(markdown, /^## Direct answers$/m);
+  assert.match(markdown, /^## Product$/m);
+  assert.match(markdown, /^## Build and integrate$/m);
+  assert.match(markdown, /^## Examples$/m);
+  assert.match(markdown, /^## Source and trust$/m);
+  assert.match(markdown, /What is the Public Thread API\?/);
+  assert.match(markdown, /How is Mosoo different from Dify, n8n, Claude Code/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/pricing/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/use-cases\/ghfind/);
+  assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo\/security/);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.doesNotMatch(markdown, /<html/i);
+
+  const head = await worker.fetch(
+    new Request("https://mosoo.ai/llms.txt", { method: "HEAD" }),
+    envFor({}),
+  );
+  assert.equal(head.status, 200);
+  assert.equal(await head.text(), "");
+});
+
+test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {
+  const protectedResourceResponse = await worker.fetch(
+    new Request("https://mosoo.ai/.well-known/oauth-protected-resource"),
+    envFor({}),
+  );
+  assert.equal(protectedResourceResponse.status, 307);
+  assert.equal(
+    protectedResourceResponse.headers.get("location"),
+    "https://cloud.mosoo.ai/.well-known/oauth-protected-resource",
+  );
+
+  const catalogResponse = await worker.fetch(
+    new Request("https://mosoo.ai/.well-known/api-catalog"),
+    envFor({}),
+  );
+  const catalog = await catalogResponse.json();
+  const [entry] = catalog.linkset;
+
+  assert.match(catalogResponse.headers.get("content-type"), /^application\/linkset\+json/);
+  assert.equal(entry.anchor, "https://cloud.mosoo.ai/api/v1");
+  assert.equal(entry["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
+  assert.equal(entry["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
+  assert.equal(entry.status[0].href, "https://cloud.mosoo.ai/api/health");
+
+  const authResponse = await worker.fetch(new Request("https://mosoo.ai/auth.md"), envFor({}));
+  const auth = await authResponse.text();
+
+  assert.equal(authResponse.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.match(auth, /^# .*auth\.md/m);
+  assert.match(auth, /You are an agent/);
+  assert.match(auth, /agentic registration/);
+  assert.match(auth, /issued by the Mosoo App owner out of band/);
+  assert.match(auth, /Supported registration method: Personal Access Token/);
+  assert.match(auth, /Credential provisioning endpoint \(human-operated\)/);
+  assert.match(auth, /register_uri/);
+  assert.match(auth, /identity_types_supported\`: \`anonymous\`/);
+  assert.match(auth, /credential_types_supported\`: \`mosoo_personal_access_token\`/);
+  assert.match(auth, /revocation_uri/);
+  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
+  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
+  assert.match(auth, /Authorization: Bearer mst_\.\.\./);
+  assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-protected-resource/);
+  assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-authorization-server/);
+  assert.doesNotMatch(auth, /does not currently publish/);
+  assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
 });
 
 test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {
@@ -173,11 +290,8 @@ test("worker serves existing static assets before SPA fallback", async () => {
   }
 });
 
-test("worker redirects llms entrypoints to the docs app", async () => {
-  for (const [from, to] of [
-    ["/llms.txt", "/docs/llms.txt"],
-    ["/llms-full.txt", "/docs/llms-full.txt"],
-  ]) {
+test("worker redirects the legacy full llms entrypoint to the docs app", async () => {
+  for (const [from, to] of [["/llms-full.txt", "/docs/llms-full.txt"]]) {
     const response = await worker.fetch(new Request(`https://mosoo.ai${from}`), envFor({}));
 
     assert.equal(response.status, 308);

@@ -1,0 +1,102 @@
+---
+title: "Two kinds of agents: Pet and Cattle"
+titleAccent: "Pet and Cattle"
+description: "People are forming two very different expectations of agents: one has an identity and memory and is cultivated over time; the other is stateless and replaceable, using a freer reasoning pipeline to replace fixed workflows."
+date: 2026-08-11
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "en"
+permalink: "two-kinds-of-agents-pet-and-cattle"
+translationKey: "two-kinds-of-agents-pet-and-cattle"
+heroImage: "/blog/blog/two-kinds-of-agents-pet-and-cattle/hero.png"
+heroAlt: "A hand-drawn comparison: Pet accumulates identity, while Cattle resets replaceable instances for each run."
+draft: false
+---
+
+I increasingly believe that agents will split into two camps.
+
+They are not lighter and heavier versions of the same product, nor do they sit at different points on a scale of autonomy. People expect them to become entirely different things: one is expected to become “someone”; the other only needs to finish a certain kind of work.
+
+mosoo calls these two kinds of agents **Pet** and **Cattle**.
+
+## Where these terms came from
+
+Anthropic did not invent Pet and Cattle. The terms come from an old infrastructure analogy. We encountered them again in Anthropic’s 2026 article, [Scaling Managed Agents: Decoupling the brain from the hands](https://www.anthropic.com/engineering/managed-agents): a pet is a named individual that needs special care and cannot be easily lost, while cattle are interchangeable.
+
+Anthropic’s article is about agent infrastructure. Its conclusion is to separate the brain, hands, and session so that containers and harnesses can be replaced, rather than binding all state to a machine that has to be nursed back to health.
+
+mosoo borrowed the terms but pushed the question up to the product layer. We are not asking how servers should be managed. We are asking what people expect an agent to become.
+
+Anthropic’s earlier [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) also distinguishes workflows from agents. A workflow sends LLMs and tools down paths written in advance; an agent decides for itself how to proceed and which tools to use. This distinction matters because Cattle is not just a traditional workflow with a new name. It is still an agent.
+
+## Type one: Pet, an agent you cultivate
+
+The clearest example of this kind of agent is [OpenClaw](https://openclaw.ai/), which broke out in early 2026. People expect it to feel more like Jarvis: a personal assistant with an identity.
+
+It has its own special memory. Interacting with it is, in practice, a process of cultivating it. People often compare the experience to mentoring an intern, and they naturally start to see the agent as a digital employee.
+
+This kind of agent carries heavy state. It is often already a proxy for a computer—or, more directly, the proxy for a machine. A large amount of external state is preserved through tools and memory. MCP and skills extend its capabilities. Memory in the filesystem becomes part of the agent itself.
+
+Users do not treat it as an instance that can be freely generalized or replaced. A two-year-old MacBook Pro is usually more useful to you than one you just bought. The hardware did not become better; it accumulated your software, sign-ins, files, habits, and way of working. That is why computers and phones need cloning, migration, and restore. Pet agents will need the same things.
+
+We have long believed that this kind of agent should be delivered—or distributed—across channels. You can talk to it in GitHub, move to Linear, Email, Slack, or Discord, and it should still know what happened before. A channel is an entry point; the agent behind those entry points should remain the same.
+
+Take an FAQ support agent. The customer problems it solved in Discord, the issues it handled on GitHub, and the work it recorded in Zendesk or Slack should all shape how it responds next. This is not one bot per channel. It is one agent, with one identity and memory, distributed to many places.
+
+This agent may also receive permissions that resemble those of a natural person or social citizen. A user may give it a dedicated email address and its own credentials, then let it access payments, email, calendars, or internal systems. It may hold only a subset of that person’s permissions, or something close to the full set.
+
+Pet users therefore care about token spend and whether subscriptions can lower the cost of long-term use. They care whether memory can be migrated, whether credentials are safe, and whether the agent remains “the same one” after moving to another machine. These are not deployment details. They are the core product experience.
+
+## Type two: Cattle, an agent pipeline that replaces a workflow
+
+To understand Cattle, start with the workflow.
+
+A workflow is a process pipeline. A person defines the procedure for a recurring problem in advance and specifies what should happen at each node. It often begins as the method of an experienced operator, then gets assembled in a low-code tool such as n8n or Dify. A few LLM nodes may handle steps that need reasoning, but the whole thing remains a fixed process.
+
+Cattle is meant to replace that earlier generation of workflows.
+
+It is a stateless agent. “Stateless” does not mean a task has no context. It means the agent does not depend on an irreplaceable, long-lived identity. The jobs it consumes, their type, and their input are highly consistent. Its required tools are fixed, and it works inside a controlled problem domain. When one run ends, a fresh instance can handle the next job of the same kind.
+
+It behaves like a more flexible and free processing pipeline, with more room for reasoning and less dependence on a fixed path. PR audits, ticket triage, and refund requests are typical examples. We can constrain the permissions, input, and expected outcome without enumerating every step the agent must take.
+
+Its mental model is closer to the imagined end state of autonomous driving: instead of continuing to encode “stop on red, go on green” as a growing set of if-else rules, an end-to-end system built around a vision model drives within a defined boundary. This analogy does not mean agents need no guardrails. It means the core capability shifts from “a person wrote the full path” to “the model chooses a path inside a controlled domain.”
+
+Cattle users do not want to cultivate the agent, and they do not care which instance completed a particular job. They care about throughput, repeatable outcomes, whether failures can be rerun, whether permissions stay narrow, and how much each job costs. Its natural consumption model is an API token, with the agent embedded as a processing step inside another system.
+
+## The same support agent can be two entirely different products
+
+Pet and Cattle are not determined by the industry, the model, or the name of the task. They are determined by the continuity users expect and the permissions the system is prepared to grant.
+
+| | Pet | Cattle |
+| --- | --- | --- |
+| User relationship | I am cultivating “it” over time | I am repeatedly invoking a capability |
+| State | Identity, memory, and environment accumulate | Each job starts from controlled input |
+| Distribution | The same agent appears in many channels | A pipeline embedded at one system boundary |
+| Permissions | Delegated personal permissions, potentially broad | The minimum permissions for one class of work |
+| Cost model | Tokens, subscriptions, and long-term ownership | API usage and cost per job or outcome |
+| Failure recovery | Clone, migrate, and restore “the same one” | Discard the instance and rerun the job |
+
+The FAQ agent above is a Pet if it needs to remember its long-running work across Discord, GitHub, Slack, and Zendesk. An execution unit that processes a single refund from an order, a policy, and a customer request is closer to Cattle. Both may be called a “support agent,” but they are not the same product.
+
+## Why mosoo implements both Agent Types
+
+mosoo currently implements them as two Agent Types: **Assistant Agent (Pet)** and **Task Agent (Cattle)**.
+
+Pet keeps a stable working environment so that state can accumulate across sessions. Cattle creates a clean working environment for every run and releases it when the job ends. The current boundary is documented in the [mosoo Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md).
+
+I also know that putting both choices in a single Agent Type selector will not be the final, correct product design. They serve two different kinds of users, with different buying, authorization, deployment, and cost models. mosoo has implemented the runtime boundary first. We will keep clarifying the product boundary over time.
+
+## This will become a dividing line across the agent industry
+
+I believe the industry will explore this question repeatedly throughout 2026, and the distinction will gradually become clearer.
+
+It will create two camps in investment maps. It will create two camps in agent infrastructure, and two camps in agent-native apps.
+
+Companies building for Pets need to solve identity, long-term memory, delegated credentials, cross-channel distribution, backup and cloning, and the trust that gradually accumulates between a person and an agent. They are delivering something closer to a digital employee.
+
+Companies building for Cattle need to solve isolation, evals, reproducible execution, concurrency, APIs, least privilege, auditing, and unit economics per task. They are providing a new kind of computation and processing capacity.
+
+Neither path is more “agentic” than the other. The value of a Pet accumulates with time and use. The value of Cattle comes from being replaceable again and again while its outcomes remain reliable.
+
+The next time we evaluate an agent product, perhaps we should not ask only what it can do. We should first ask: do users expect it to become someone, or do they only expect it to complete something?

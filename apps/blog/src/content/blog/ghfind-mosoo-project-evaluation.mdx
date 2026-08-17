@@ -1,0 +1,69 @@
+---
+title: "How ghfind turns a Mosoo Agent into a project evaluation feature"
+titleAccent: "Mosoo Agent"
+description: "ghfind delegates GitHub project evaluation to one published Mosoo Agent while keeping its rubric, job queue, result validation, and product UI in the application."
+date: 2026-08-10
+category: "Customer Stories"
+author: "mosoo team"
+locale: "en"
+permalink: "ghfind-mosoo-project-evaluation"
+translationKey: "ghfind-mosoo-project-evaluation"
+heroImage: "/blog/blog/ghfind-mosoo/ghfind-projects.png"
+heroAlt: "The ghfind project evaluation entry point, labeled Powered by mosoo."
+---
+
+[ghfind](https://ghfind.com) does not hand its entire product to an Agent. It delegates one feature that genuinely needs open-ended research—the deep evaluation of public GitHub repositories—to a published Mosoo Agent. GitHub account scoring, job orchestration, result validation, and the product interface remain ghfind's responsibility.
+
+That boundary answers the most important question in Agent adoption: Mosoo does not rebuild the application's business logic. It lets the application call an Agent with tools, a sandbox, and a managed lifecycle as a backend capability.
+
+## What is ghfind?
+
+ghfind is an open-source product for scoring the value and trustworthiness of GitHub developers. The homepage roast calculates a reproducible account score from public GitHub data. It does not use an Agent.
+
+![The GitHub account scoring entry point on the ghfind homepage](/blog/blog/ghfind-mosoo/ghfind-home.png)
+
+ghfind also evaluates projects. A user submits a public repository and, optionally, a branch, tag, or commit. ghfind returns a structured judgment across real demand, effectiveness, onboarding experience, and value density. That work requires reading source code, documentation, and project history—and sometimes verifying installation, builds, and core flows—so it is a better fit for an Agent.
+
+![The ghfind project evaluation entry point, labeled Powered by mosoo](/blog/blog/ghfind-mosoo/ghfind-projects.png)
+
+## What does Mosoo do here?
+
+ghfind publishes a cattle Agent carrying its project-evaluation Skill on Mosoo. Mosoo supplies the reusable runtime capabilities: an isolated sandbox, Agent harness, tool execution, Run lifecycle, public events, and output files. ghfind does not need to maintain its own model loop, tool runner, or sandbox scheduler.
+
+The real path for one evaluation is:
+
+1. The browser submits a repository URL to ghfind.
+2. ghfind's Go worker calls `POST /agents/{agentId}/threads` with a stable idempotency key and persists the Thread and Run IDs.
+3. Mosoo starts the published Agent in an isolated sandbox. The Agent inspects the repository against ghfind's rubric while emitting Run and tool events.
+4. The Agent commits three files: analysis JSON, evidence JSON, and a Markdown report.
+5. ghfind downloads the files, validates them against its business schema, persists the result, and renders a native result page.
+
+The Mosoo token stays in the ghfind backend. The browser sees ghfind's validated product result, not Mosoo's internal runtime data.
+
+![A project evaluation produced by a Mosoo Agent and rendered by ghfind](/blog/blog/ghfind-mosoo/ghfind-project-analysis.png)
+
+## The boundary between Agent and application
+
+In this design, Mosoo owns the reusable Agent runtime. ghfind owns the product definition.
+
+The responsibilities that should stay in ghfind include the project rubric, repository submission and authorization, durable RabbitMQ jobs and concurrency, business retry policy, artifact size limits, result schema, leaderboards, and UI. Its headline account score is especially important: it is a deterministic scoring core locked down by unit tests and has nothing to do with the Mosoo Agent.
+
+The responsibilities Mosoo should absorb are the protocol glue every Agent App would otherwise repeat: Thread, Run, event, and file types; authentication and error envelopes; idempotent requests; a resumable Run watcher; and a stable association between a Run and its output artifacts.
+
+## The current integration cost
+
+ghfind's implementation also reveals what Mosoo still needs to provide. At [`b7eee13`](https://github.com/hikariming/ghfind/tree/b7eee13f547807c0be36f9f3c0c4c4457b699fdd), the production Go backend maintains a [564-line handwritten Public Thread client](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/internal/backend/mosoo.go). The file explicitly says it mirrors a separate [427-line TypeScript implementation](https://github.com/hikariming/ghfind/blob/b7eee13f547807c0be36f9f3c0c4c4457b699fdd/src/lib/mosoo-project-analysis.ts).
+
+Three workarounds stand out:
+
+- The client fetches only the latest 100 events. It parses `truncated` but neither pages older history nor surfaces truncation to the caller.
+- The worker polls the Thread, detects terminal states, schedules backoff, and restores a Run after queue redelivery.
+- After completion, the client scans the full Thread file list and finds results by three agreed filenames; it cannot obtain structured artifact IDs directly from the Run.
+
+These observations are now recorded in Mosoo [#489](https://github.com/langgenius/mosoo/issues/489), which tracks publishing and extending the existing Public Thread client instead of creating a second SDK. The stable Run-to-artifact association is tracked separately in [#505](https://github.com/langgenius/mosoo/issues/505).
+
+## The reusable lesson
+
+The safest way to add an Agent to a product is not to let the Agent take over the whole application. Find the feature that actually requires open-ended reasoning, tool use, and isolated execution, then put that work in a published Mosoo Agent. Keep user identity, business state, deterministic rules, and final presentation in the application.
+
+ghfind's project evaluation demonstrates that boundary: Mosoo makes the Agent runnable, observable, and able to deliver files; ghfind turns those capabilities into a product feature users can understand and choose to use.
