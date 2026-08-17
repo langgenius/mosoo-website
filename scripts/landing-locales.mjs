@@ -279,7 +279,7 @@ const USE_CASE_GHFIND_SEO = {
     lang: "en",
     title: "mosoo — ghfind: Deep project valuation engine",
     description:
-      "ghfind keeps its deterministic GitHub account score separate from its repository evaluation, where one published mosoo Agent inspects each project and returns structured artifacts through the Thread API.",
+      "ghfind uses one published mosoo Agent for deep repository evaluation while ghfind owns scoring, workflow, validation, storage, and UI.",
     socialDescription:
       "One published mosoo Agent powers ghfind's repository evaluation; ghfind owns the rubric, job workflow, validation, storage, and UI.",
     imageAlt: "The ghfind Projects page powered by mosoo",
