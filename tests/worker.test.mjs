@@ -108,7 +108,7 @@ test("worker redirects bare use-cases paths to the locale pages", async () => {
   }
 });
 
-test("worker publishes an unknown status feed before the first canary", async () => {
+test("worker publishes an unknown status feed before the first production signal", async () => {
   const response = await worker.fetch(requestFor("/status.json"), envFor({}));
   const payload = await response.json();
 
@@ -118,6 +118,49 @@ test("worker publishes an unknown status feed before the first canary", async ()
     payload.components.map((component) => component.id),
     ["openai-runtime", "claude-agent-sdk", "acp-fallback"],
   );
+});
+
+test("worker forwards Cloudflare Tail batches to the existing status store", async () => {
+  const writes = [];
+  const env = {
+    STATUS_STORE: {
+      get() {
+        return {
+          async fetch(_request, init) {
+            writes.push(JSON.parse(init.body));
+            return Response.json({ ok: true });
+          },
+        };
+      },
+      idFromName(name) {
+        return name;
+      },
+    },
+  };
+
+  const pending = [];
+  worker.tail(
+    [
+      {
+        event: { response: { status: 200 } },
+        eventTimestamp: Date.parse("2026-08-13T12:00:00.000Z"),
+        logs: [],
+        outcome: "ok",
+      },
+    ],
+    env,
+    { waitUntil: (promise) => pending.push(promise) },
+  );
+  await Promise.all(pending);
+
+  assert.equal(writes.length, 1);
+  assert.deepEqual(writes[0].events[0], {
+    httpStatus: 200,
+    observedAt: "2026-08-13T12:00:00.000Z",
+    outcome: "ok",
+    succeeded: true,
+    type: "invocation",
+  });
 });
 
 test("worker serves localized pricing pages from assets", async () => {

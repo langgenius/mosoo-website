@@ -33,8 +33,8 @@ Production currently uses this topology:
   blog.
 - `scripts/build-site.mjs` assembles the landing and blog outputs into one
   deployable directory.
-- `src/worker.js` serves the combined static assets, runs the five-minute
-  production canary, and handles route-specific behavior.
+- `src/worker.js` serves the combined static assets, consumes production API
+  Tail events for the status page, and handles route-specific behavior.
 - `wrangler.toml` configures the production Cloudflare Worker.
 
 ## Development
@@ -96,10 +96,9 @@ dist/
 The Cloudflare Worker uses strict 404 handling for `/blog/*` and SPA fallback
 behavior for landing-page routes.
 
-The status canary is dormant until the production Worker has
-`STATUS_CANARY_SECRET` and `STATUS_CANARY_TARGETS` secrets. The API Worker must
-hold the matching `MOSOO_STATUS_CANARY_SECRET`. Configuration and incident
-policy live in
+The status page consumes Cloudflare invocation outcomes and Mosoo's structured
+`session.run.terminal` business logs through a Tail Worker. It does not create
+Threads, invoke models, or require status secrets. Configuration and incident policy live in
 [`docs/operations/reliability.md`](https://github.com/langgenius/mosoo/blob/main/docs/operations/reliability.md).
 
 ## Deployment

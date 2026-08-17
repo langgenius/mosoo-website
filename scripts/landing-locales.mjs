@@ -168,25 +168,25 @@ const STATUS_SEO = {
     lang: "en",
     title: "mosoo — System Status",
     description:
-      "Live production canary status, measured availability, TTFT, and driver continuity for mosoo public agent runtimes.",
+      "Live service availability and real production Run completion rates for mosoo, derived from Cloudflare and Mosoo business logs.",
     socialDescription:
-      "Production canary status and measured availability for mosoo public agent runtimes.",
+      "Observed production service availability and Run completion rates for mosoo.",
     imageAlt: "mosoo system status",
   },
   zh: {
     lang: "zh-CN",
     title: "mosoo — 系统状态",
     description:
-      "查看 mosoo 公共 Agent runtime 的生产 canary 状态、实测可用率、TTFT 与 driver 连续性。",
-    socialDescription: "查看 mosoo 公共 Agent runtime 的生产 canary 状态与实测可用率。",
+      "基于 Cloudflare 调用结果与 Mosoo 业务日志，查看生产服务可用性和真实 Run 完成率。",
+    socialDescription: "查看 mosoo 生产服务可用性与真实 Run 完成率。",
     imageAlt: "mosoo 系统状态",
   },
   ja: {
     lang: "ja",
     title: "mosoo — システムステータス",
     description:
-      "mosoo の公開 Agent runtime に対する本番 canary、実測可用性、TTFT、driver 継続性を確認できます。",
-    socialDescription: "mosoo 公開 Agent runtime の本番 canary と実測可用性。",
+      "Cloudflare の実行結果と Mosoo のビジネスログから、本番サービス可用性と実 Run 完了率を確認できます。",
+    socialDescription: "mosoo の本番サービス可用性と実 Run 完了率。",
     imageAlt: "mosoo システムステータス",
   },
 };
