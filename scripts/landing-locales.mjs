@@ -12,6 +12,27 @@ const EN = {
   structuredDescription:
     "Open-source agent runtime and API for running coding agents in isolated sandboxes.",
   subcategory: "AI agent runtime",
+  directHeading: "Direct answers",
+  sourceHeading: "Sources and verification",
+  sourceGithub: "GitHub source",
+  sourceApiDocs: "API docs",
+  sourceOpenApi: "OpenAPI 3.1",
+  sourceLlmIndex: "llms.txt",
+  whatQuestion: "What is mosoo?",
+  whatAnswer:
+    "mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.",
+  whoQuestion: "Who is mosoo for?",
+  whoAnswer:
+    "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.",
+  callQuestion: "How does a product call a Mosoo Agent?",
+  callAnswer:
+    "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.",
+  selfHostQuestion: "Is mosoo self-hostable?",
+  selfHostAnswer:
+    "Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane.",
+  verifyQuestion: "Where can I verify Mosoo's source and API contract?",
+  verifyAnswer:
+    "Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery.",
 };
 
 const SEO = {
@@ -26,6 +47,27 @@ const SEO = {
     imageAlt: "mosoo 开源 Agent runtime",
     structuredDescription: "用于在隔离 sandbox 中运行 Coding Agent 的开源 Agent runtime 与 API。",
     subcategory: "AI Agent runtime",
+    directHeading: "直接答案",
+    sourceHeading: "来源与验证",
+    sourceGithub: "GitHub 源码",
+    sourceApiDocs: "API 文档",
+    sourceOpenApi: "OpenAPI 3.1",
+    sourceLlmIndex: "llms.txt",
+    whatQuestion: "mosoo 是什么？",
+    whatAnswer:
+      "mosoo 是面向 Coding Agent 的开源 Agent runtime 与 API。它在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode，跨 Run 保留 Thread 与文件，并可在 Cloudflare 上自行托管。",
+    whoQuestion: "mosoo 适合谁？",
+    whoAnswer:
+      "mosoo 面向把 Coding Agent 扩展到产品和自动化中的开发者；他们需要托管 Thread、文件、sandbox、工具事件和 API 访问，而不想为每个集成都重建一套 runtime。",
+    callQuestion: "产品如何调用 mosoo Agent？",
+    callAnswer:
+      "可信后端通过 Public Thread API 创建或恢复 Thread、发送用户事件、流式读取结果并挂载文件。mosoo App owner token 留在服务器上，不暴露给浏览器。",
+    selfHostQuestion: "mosoo 可以自行托管吗？",
+    selfHostAnswer:
+      "可以。mosoo 是开源的，并可在 Cloudflare 上自行托管。运营方在生产平面中带入自己的模型与服务商密钥。",
+    verifyQuestion: "在哪里验证 Mosoo 的源码和 API 合约？",
+    verifyAnswer:
+      "查看 GitHub 仓库、公开 API 文档和 OpenAPI 3.1 文档。产品也发布 llms.txt 与 auth.md，便于机器读取和发现。",
   },
   ja: {
     lang: "ja",
@@ -38,6 +80,27 @@ const SEO = {
     structuredDescription:
       "隔離された sandbox で Coding Agent を実行するための、オープンソース Agent runtime と API。",
     subcategory: "AI Agent runtime",
+    directHeading: "直接回答",
+    sourceHeading: "ソースと検証",
+    sourceGithub: "GitHub ソース",
+    sourceApiDocs: "API ドキュメント",
+    sourceOpenApi: "OpenAPI 3.1",
+    sourceLlmIndex: "llms.txt",
+    whatQuestion: "mosoo とは？",
+    whatAnswer:
+      "mosoo は Coding Agent 向けのオープンソース Agent runtime と API です。OpenAI Codex、Claude Agent SDK、OpenCode を隔離された sandbox で実行し、Run をまたいで Thread とファイルを保持し、Cloudflare 上でセルフホストできます。",
+    whoQuestion: "mosoo は誰向けですか？",
+    whoAnswer:
+      "mosoo は、Coding Agent をプロダクトや自動化に組み込みたい開発者向けです。integration ごとに runtime を作り直さず、ホストされた Thread、ファイル、sandbox、tool event、API access を使えます。",
+    callQuestion: "プロダクトから mosoo Agent を呼ぶには？",
+    callAnswer:
+      "信頼されたバックエンドが Public Thread API で Thread を作成または再開し、user event を送り、結果を stream し、ファイルを添付します。mosoo App owner token はサーバーに置き、ブラウザへ公開しません。",
+    selfHostQuestion: "mosoo はセルフホストできますか？",
+    selfHostAnswer:
+      "はい。mosoo はオープンソースで、Cloudflare 上にセルフホストできます。運用者は production plane で自分のモデルと provider key を持ち込みます。",
+    verifyQuestion: "Mosoo のソースと API contract はどこで確認できますか？",
+    verifyAnswer:
+      "GitHub repository、公開 API ドキュメント、OpenAPI 3.1 ドキュメントで確認できます。機械可読な discovery のために llms.txt と auth.md も公開しています。",
   },
 };
 
@@ -331,6 +394,27 @@ function navReplacements(locale) {
   ];
 }
 
+function directAnswerReplacements(copy) {
+  return [
+    "directHeading",
+    "sourceHeading",
+    "sourceGithub",
+    "sourceApiDocs",
+    "sourceOpenApi",
+    "sourceLlmIndex",
+    "whatQuestion",
+    "whatAnswer",
+    "whoQuestion",
+    "whoAnswer",
+    "callQuestion",
+    "callAnswer",
+    "selfHostQuestion",
+    "selfHostAnswer",
+    "verifyQuestion",
+    "verifyAnswer",
+  ].map((key) => [EN[key], copy[key]]);
+}
+
 function localizeHtml(source, locale, copy) {
   const url = `https://mosoo.ai/${locale}`;
   const replacements = [
@@ -341,6 +425,7 @@ function localizeHtml(source, locale, copy) {
     [EN.imageAlt, copy.imageAlt],
     [EN.structuredDescription, copy.structuredDescription],
     [EN.subcategory, copy.subcategory],
+    ...directAnswerReplacements(copy),
     [
       '<link rel="canonical" href="https://mosoo.ai/en" />',
       `<link rel="canonical" href="${url}" />`,
@@ -349,6 +434,7 @@ function localizeHtml(source, locale, copy) {
       '<meta property="og:url" content="https://mosoo.ai/en" />',
       `<meta property="og:url" content="${url}" />`,
     ],
+    ['"@id": "https://mosoo.ai/en#faq"', `"@id": "${url}#faq"`],
     ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
     ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
     ...navReplacements(locale),
