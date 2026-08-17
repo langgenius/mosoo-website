@@ -279,6 +279,22 @@ function isLegacyDocsRootPath(pathname) {
   );
 }
 
+function canonicalLegacyDocsPathname(pathname) {
+  const docsPathname = `/docs${pathname}`;
+  const lastSegment = docsPathname.split("/").at(-1) ?? "";
+  const isFile = lastSegment.includes(".");
+  const isAsset =
+    docsPathname.startsWith("/docs/_next/") ||
+    docsPathname.startsWith("/docs/images/") ||
+    docsPathname.startsWith("/docs/favicons/");
+
+  if (!docsPathname.endsWith("/") && !isFile && !isAsset) {
+    return `${docsPathname}/`;
+  }
+
+  return docsPathname;
+}
+
 function isHomepage(pathname) {
   return pathname === "/" || pathname === "/en" || pathname === "/zh" || pathname === "/ja";
 }
@@ -464,7 +480,7 @@ export default {
     }
 
     if (isLegacyDocsRootPath(pathname)) {
-      url.pathname = `/docs${pathname}`;
+      url.pathname = canonicalLegacyDocsPathname(pathname);
       return permanentRedirect(url);
     }
 

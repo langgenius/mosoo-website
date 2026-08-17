@@ -306,7 +306,20 @@ test("worker permanently redirects legacy extensionless docs paths", async () =>
   );
 
   assert.equal(response.status, 308);
-  assert.equal(response.headers.get("location"), "https://mosoo.ai/docs/quickstart");
+  assert.equal(response.headers.get("location"), "https://mosoo.ai/docs/quickstart/");
+});
+
+test("worker keeps legacy docs file and asset redirects extension-safe", async () => {
+  for (const [from, to] of [
+    ["/llms-full.txt", "/docs/llms-full.txt"],
+    ["/_next/static/chunk.js", "/docs/_next/static/chunk.js"],
+    ["/images/product/app.png", "/docs/images/product/app.png"],
+  ]) {
+    const response = await worker.fetch(new Request(`https://mosoo.ai${from}`), envFor({}));
+
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get("location"), `https://mosoo.ai${to}`);
+  }
 });
 
 test("worker permanently redirects old blog aliases", async () => {
