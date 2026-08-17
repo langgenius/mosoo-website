@@ -137,6 +137,16 @@ test("blog pages send explicit PostHog page views without the analytics SDK", ()
   assert.doesNotMatch(blogLayout, /posthog-js|autocapture|session[_-]replay/i);
 });
 
+test("blog chrome links back to canonical localized landing pages", () => {
+  const header = read("apps/blog/src/components/Header.astro");
+  const footer = read("apps/blog/src/components/Footer.astro");
+
+  assert.match(header, /const landingHref = `\/\$\{currentLocale\}`;/);
+  assert.match(footer, /const landingHref = `\/\$\{locale\}`;/);
+  assert.doesNotMatch(header, /href="\/"/);
+  assert.doesNotMatch(footer, /href="\/"/);
+});
+
 test("landing and blog metadata never point at a missing default image", () => {
   const landing = read("apps/landing/index.html");
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");

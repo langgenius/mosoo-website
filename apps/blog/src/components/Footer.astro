@@ -7,7 +7,9 @@ interface Props {
 
 const { lang = "en" } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const copy = footerCopyByLocale[localeFromLang(lang)] ?? footerCopyByLocale.en;
+const locale = localeFromLang(lang);
+const copy = footerCopyByLocale[locale] ?? footerCopyByLocale.en;
+const landingHref = `/${locale}`;
 ---
 
 <footer class="mt-24 border-t border-[color:var(--border)] bg-[color:var(--paper)]">
@@ -16,7 +18,7 @@ const copy = footerCopyByLocale[localeFromLang(lang)] ?? footerCopyByLocale.en;
       {copy}
     </p>
     <div class="flex items-center gap-6 text-[14px] text-[color:var(--fg-secondary)]">
-      <a href="/" class="transition-colors duration-150 hover:text-[color:var(--fg)]">mosoo.ai</a>
+      <a href={landingHref} class="transition-colors duration-150 hover:text-[color:var(--fg)]">mosoo.ai</a>
       <a href={`${base}/rss.xml`} class="transition-colors duration-150 hover:text-[color:var(--fg)]">RSS</a>
       <a
         href="https://github.com/langgenius/mosoo"
