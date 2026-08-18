@@ -1,0 +1,202 @@
+---
+title: "当 Cloud Agent 成为未来：什么样的基础设施必然会出现？"
+titleAccent: "基础设施"
+description: "如果 Cloud Agent 成为主流，开发者真正需要的不会只是更多 Agent CRUD，而是一套能解析、运行和治理 Environment 的中立控制面。本文从结果倒推这层基础设施为什么必然出现。"
+date: 2026-08-18
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "zh"
+permalink: "when-cloud-agents-become-the-future"
+translationKey: "when-cloud-agents-become-the-future"
+heroImage: "/blog/blog/when-cloud-agents-become-the-future/hero.jpg"
+heroAlt: "绿色手绘笔触从画面上方垂落，在暖白色纸张上形成不规则边缘与大面积留白。"
+draft: false
+---
+
+先做一个思想实验：假设六个月以后，Cloud Agent 已经成为开发者调用智能能力的主流方式。
+
+那时我们不会再惊讶于一个 Agent 能读文件、运行命令、浏览网页，或者连续工作几十分钟。这些会像今天的模型推理一样，逐渐变成供给侧的默认能力。
+
+真正值得追问的问题会变成：**为了让这个未来繁荣，哪些基础设施必然需要存在？**
+
+这篇文章不是在预测某一家 Sandbox 公司会赢，也不是 Mosoo 已上线功能的发布公告。它是一份产品备忘录：先把 Cloud Agent 成为主流当作“果”，再往回推，开发者最终一定会缺少什么。
+
+## 先把结论写在前面
+
+> 我说的“中立 Environment Control Plane”，不是 Mosoo 自己提供所有计算资源，而是：开发者只依赖 Mosoo 的 Environment 与 Run 协议，Harness 和底层 Sandbox 都可以替换。
+>
+> **One API to run and govern any harness inside a reusable cloud environment.**
+
+它不是一个更大的 Agent Builder，也不是要求开发者先 Publish 一个 Agent、部署一个 Repo，再获得运行能力的平台。
+
+它更像 2023 年的 OpenRouter：先给开发者一个足够薄的入口。只不过，模型时代被路由的是一次 Completion；Cloud Agent 时代被组织的是一次带环境、权限、过程和副作用的 Run。
+
+## 用户需要的不是一台空机器，而是机器的一个“切面”
+
+古早互联网有一种产品观：一个产品服务的不是完整的人，而是人处于某个意图下的切面。Dating 产品服务的，是“此刻想约会的你”。
+
+我们也可以把一台“满血”的用户本地机器看成一个完整个体。它有操作系统、软件、文件、登录态、网络、凭据和多年形成的使用习惯。但一个云端任务通常不需要复制这个人的全部机器。它只需要完成某个用途时的那一个切面。
+
+这就是 Environment 最有价值的产品抽象：
+
+- 做竞品研究时，它需要浏览器、搜索工具、若干数据源和输出目录。
+- 审计一个开源项目时，它可能需要一个公开 GitHub Repo、语言工具链、依赖缓存和只读网络权限。
+- 处理退款时，它需要订单与政策数据、受限的支付工具，以及严格收敛的写权限。
+
+因此，一个公开 GitHub Repo 可以是 Environment 使用的 Resource，却不应该成为所有任务都必须具备的“部署项目”。Repo 只是这个机器切面的一种材料，不是 Cloud Agent 的通用起点。
+
+## Sandbox 是原材料，Environment 才是产品地址
+
+今天，底层原材料已经快速丰富起来。[Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview)把 Agent、Environment、Session 和 Events 分成独立概念；[E2B](https://docs.e2b.dev/sandbox/snapshots)明确区分可重复构建的 Template 与运行中的 Snapshot；[Daytona](https://www.daytona.io/docs/sandboxes)把 Sandbox 提供成可编程的完整计算机；[Docker Kits](https://docs.docker.com/ai/sandboxes/customize/kits/)则尝试把工具、环境变量、网络、凭据和上下文打包成可分发的环境规格。
+
+它们共同证明了 Cloud Agent 对隔离计算的真实需求。但用户最终不会只问“给我一台 Sandbox”。他们会问：
+
+1. 应该启动一台什么样的机器？
+2. 这次任务可以访问什么？
+3. 它应该在哪里运行？
+4. 执行过程中发生了什么？
+5. 结果、费用和副作用如何追溯？
+
+回答这些问题的，才是 Environment Control Plane。
+
+这里的关键区别是：**Sandbox 是某次物理执行，Environment 是可以反复引用的产品地址。**
+
+## 最小对象关系
+
+如果不要求 `agentId`，一次 Cattle Run 可以被压缩成这条关系：
+
+```text
+Run = EnvironmentRevision × HarnessVersion × Input × Vaults × Resources
+```
+
+其中：
+
+- **Environment** 是稳定引用，例如 `mosoo/general` 或 `env_xxx`。
+- **EnvironmentRevision** 是不可变事实，记录系统、依赖、Setup、网络策略和默认能力引用。
+- **Harness** 是 Claude Code、Codex、OpenCode、Pi 这类直接执行任务的 Agent Harness。
+- **Vault** 保存 Secret 及授权策略；Secret 值不属于可复用的 Environment 定义。
+- **Resource** 是本次任务使用的文件、Repo、数据集或浏览器状态。
+- **Run** 是用户请求、计费、审计和复现的逻辑单位。
+- **Attempt** 是某个执行供应商上的一次物理尝试；重试会产生新的 Attempt。
+- **Artifact** 是报告、生成文件、日志或其他结果。
+
+这并不意味着首版要把八种对象都做成独立页面。对外产品面仍然可以只有 Environments、Runs、少量 Harnesses，以及 API Keys 与 Usage。
+
+## Environment 不等于镜像，也不等于一台暂停中的机器
+
+这是整个设计最容易走偏的地方。
+
+一个 Environment 应该有稳定地址，但每次修改都生成不可变 Revision。一次 Run 先把地址解析成具体 Revision，再把它编译成某个 Sandbox 供应商能启动的镜像、Template 或 Snapshot。
+
+```text
+Environment address
+        ↓ resolve
+Immutable EnvironmentRevision
+        ↓ compile / cache
+Provider image, template or snapshot
+        ↓ execute
+Run Attempt
+```
+
+**EnvironmentRevision 才是事实来源；供应商 Snapshot 只是编译产物或缓存。** 如果反过来把某家的 Snapshot ID 当作 Environment，产品会立刻被这家供应商的生命周期、区域和故障语义锁死。
+
+运行后产生的工作区、缓存、浏览器登录态和内存状态，也不应该悄悄回写 Environment。它们属于 Run、Workspace 或显式 Snapshot。否则同一个 Environment 将无法回答“下一次到底从哪里开始”。
+
+## “中立”不是第一天接入五家供应商
+
+中立首先是一条协议与数据边界，而不是供应商数量。
+
+- 不绑定 Harness：同一个 Environment 可以明确选择不同 Harness。
+- 不绑定 Sandbox：未来可以落到托管供应商或企业自托管计算。
+- 不绑定 Framework：Mastra、Eve、Flue、Deep Agents 可以调用 Mosoo，但 Mosoo 不必重新实现它们。
+- 不假设 Repo：任务也可以围绕文件、数据集、浏览器或业务 API 展开。
+- 不要求 Agent：身份、记忆、Channel 和发布属于更上层的 Mosoo Agents。
+
+所以，首版完全可以只使用一个 Sandbox 后端。只要公共 Run 协议、Environment Revision 和结果语义没有把这个后端写死，它就保留了以后成为 Router 的位置。
+
+## 从 2023 年的 OpenRouter 反推
+
+早期 OpenRouter 最重要的不是完整 Marketplace，而是降低第一次采用成本：开发者带着现有客户端，拿到一个 API Key，选择一个可用的模型名，然后发出兼容请求。他们不需要先发布一个模型，也不需要把应用部署到 OpenRouter。
+
+Cloud Agent 对应的最薄入口也应该如此：
+
+```ts
+const run = await mosoo.run({
+  environment: "mosoo/general",
+  harness: "claude-code",
+  input: "分析这些文件并生成报告",
+})
+```
+
+`mosoo/general` 对应的是一个开箱即用、由 Mosoo 维护的 Environment 地址。私有 `env_xxx` 是用户需要定制工具、网络和依赖时的升级路径，而不是第一次运行的门槛。
+
+但这个类比有一条不能越过的边界：模型请求通常不会修改外部世界，Agent Run 会。
+
+因此，Mosoo 未来可以根据地区、隔离等级、容量、冷启动、价格和历史成功率路由 Sandbox，却不能在 Agent 已经修改文件或调用外部 API 后，静默把任务切到另一台机器继续执行。安全的 Fallback 只能发生在首次副作用之前；否则必须从干净 Revision 创建一个用户可见的新 Attempt。
+
+## Gallery 不是起点，兼容数据才是
+
+Agent Gallery 很容易被想象成这个时代的 Model Gallery。但目录本身不是壁垒。真正困难的是长期积累这张兼容图谱：
+
+```text
+Environment × Harness × Provider
+```
+
+同一种组合启动要多久、失败在哪里、消耗多少资源、哪些权限会冲突、什么情况下能够安全重试，这些数据才会让 Mosoo 从统一入口逐渐变成有判断力的 Router。
+
+更可信的增长顺序是：
+
+```text
+Run API
+→ Environment 被反复复用
+→ 积累兼容性与可靠性数据
+→ Sandbox Router
+→ 企业权限与审计治理
+→ Verified Environment Gallery
+```
+
+Gallery 应该是被验证过的 Environment 自然形成的分发层，而不是第一天先建一个没有运行事实的目录。
+
+## 三条创业路径
+
+| 路径 | 看起来像什么 | 主要问题 |
+| --- | --- | --- |
+| 单供应商实现，中立协议 | 用一个后端把 Run API 与 Environment 做好 | 最小成本验证需求，同时保留 Router 位置 |
+| 首发多供应商 Broker | 同时连接多家 Sandbox，按价格与容量路由 | 很快陷入最低公分母、Snapshot 迁移和副作用语义 |
+| 只做 Environment Spec / Registry | 开源规格与环境目录 | 容易传播，但缺少执行数据、收入和控制权 |
+
+Mosoo 当前更应该选择第一条。先成为一个真正好用的运行入口，再根据实际需求获得 Broker 能力。
+
+## Mosoo 已经有什么，还缺什么
+
+这篇文章描述的是方向，不是当前产品现状。
+
+截至本文写作时，Mosoo 主干仍然按 `App → Agent → Session → Run` 组织：[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) 与 [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) 都要求 `agentId`，创建执行也从 [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) 开始。
+
+但可以复用的底座已经存在：不可变的 [Environment Revision](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/environment.schema.ts#L35-L60)、多种 Harness Driver、Sandbox Provisioning，以及 Run 的事件、审批、取消、Artifact、Usage 和清理链路。
+
+因此，[#546](https://github.com/langgenius/mosoo/issues/546) 提议的不是重写 Runtime，而是拆开产品边界：Mosoo Agents 继续承载 Pet 所需的 Agent 身份、发布、记忆、Channel 与长期状态；Mosoo Cattle 则让共享执行内核不再要求 Agent 身份。
+
+## 六个月内，应该刻意不做什么
+
+一个足够薄的首版只需要：
+
+- 一个公开 Environment：`mosoo/general`。
+- 私有、不可变的 Environment Revision。
+- 两到三个直接可执行的 Harness。
+- 一个 Sandbox 后端。
+- 不要求 `agentId` 的 Run API。
+- Stream、Approve、Cancel、Result、Artifacts 与 Usage。
+
+暂时不做多云 Router、Framework Adapter、Repo Deployment、Agent Gallery、自动 Harness 选择，也不承诺跨 Run 的隐式活状态。这些能力只有在真实使用暴露出共同阻塞时，才值得被加回来。
+
+## 最后的判断
+
+如果 Cloud Agent 真的成为主流，最稀缺的不会是又一个“创建 Agent”的页面。
+
+开发者会需要一个稳定地址，描述任务所需的那一小块世界；需要一套统一协议，把这个世界交给不同 Harness 执行；也需要一个控制面，约束权限、记录过程、管理副作用，并在底层计算变化时保留可复现性。
+
+换句话说，这个未来必然需要的，不只是 Sandbox，也不是更多 Agent CRUD。
+
+它需要的是：**Environment address + governed Run contract。**

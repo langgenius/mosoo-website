@@ -1,0 +1,202 @@
+---
+title: "When Cloud Agents Become the Future: What Infrastructure Must Exist?"
+titleAccent: "Infrastructure"
+description: "If Cloud Agents become mainstream, developers will need more than another layer of Agent CRUD. They will need a neutral control plane that can resolve, run, and govern Environments. This memo works backward from that future."
+date: 2026-08-18
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "en"
+permalink: "when-cloud-agents-become-the-future"
+translationKey: "when-cloud-agents-become-the-future"
+heroImage: "/blog/blog/when-cloud-agents-become-the-future/hero.jpg"
+heroAlt: "Hand-painted green brushstrokes descend across warm white paper, ending in irregular edges above generous negative space."
+draft: false
+---
+
+Start with a thought experiment: suppose that six months from now, Cloud Agents have become the mainstream way for developers to invoke intelligent capabilities.
+
+By then, no one will be surprised that an Agent can read files, run commands, browse the web, or work continuously for tens of minutes. Those capabilities will gradually become standard supply-side features, much like model inference is today.
+
+The more important question will be: **what infrastructure must exist for that future to flourish?**
+
+This article does not predict which Sandbox company will win, nor is it a launch announcement for functionality Mosoo has already shipped. It is a product memo. It assumes mainstream Cloud Agents as the outcome, then works backward to identify what developers will inevitably need.
+
+## The conclusion first
+
+> By a “neutral Environment Control Plane,” I do not mean that Mosoo must provide all compute resources itself. I mean that developers depend only on Mosoo’s Environment and Run protocol, while the Harness and underlying Sandbox remain replaceable.
+>
+> **One API to run and govern any harness inside a reusable cloud environment.**
+
+This is not a larger Agent Builder. Nor is it a platform that makes developers publish an Agent and deploy a Repo before they can run anything useful.
+
+It is closer to OpenRouter in 2023: give developers a sufficiently thin entry point first. The difference is that the model era routes a Completion, while the Cloud Agent era organizes a Run with an environment, permissions, a process, and side effects.
+
+## Users do not need an empty machine. They need a slice of one
+
+An old idea in internet product design says that a product does not serve the whole person. It serves one slice of that person at a particular moment of intent. A dating product serves the version of you that wants to date right now.
+
+We can think of a fully equipped local machine in the same way: as a complete individual. It has an operating system, software, files, login state, network access, credentials, and years of accumulated habits. But a cloud task rarely needs to clone the entire machine. It needs only the slice required for a particular purpose.
+
+That is the most useful product abstraction for an Environment:
+
+- For competitive research, it needs a browser, search tools, several data sources, and an output directory.
+- For auditing an open-source project, it may need a public GitHub Repo, a language toolchain, a dependency cache, and read-only network access.
+- For processing refunds, it needs order and policy data, a restricted payment tool, and tightly bounded write permissions.
+
+A public GitHub Repo can therefore be a Resource used by an Environment, but it should not become a required “deployment project” for every task. A Repo is one kind of material in this machine slice, not the universal starting point for a Cloud Agent.
+
+## A Sandbox is raw material. An Environment is a product address
+
+The underlying primitives are already expanding quickly. [Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) separates Agent, Environment, Session, and Events; [E2B](https://docs.e2b.dev/sandbox/snapshots) distinguishes reproducible Templates from live Snapshots; [Daytona](https://www.daytona.io/docs/sandboxes) offers a Sandbox as a programmable full computer; and [Docker Kits](https://docs.docker.com/ai/sandboxes/customize/kits/) packages tools, environment variables, network policy, credentials, and context into a distributable environment specification.
+
+Together, these products demonstrate real demand for isolated compute for Cloud Agents. But users will not stop at asking for “a Sandbox.” They will ask:
+
+1. What kind of machine should be started?
+2. What may this task access?
+3. Where should it run?
+4. What happened during execution?
+5. How can its results, cost, and side effects be traced?
+
+An Environment Control Plane answers those questions.
+
+The key distinction is simple: **a Sandbox is one physical execution; an Environment is a product address that can be referenced repeatedly.**
+
+## The smallest useful object model
+
+Without requiring an `agentId`, a Cattle Run can be reduced to this relationship:
+
+```text
+Run = EnvironmentRevision × HarnessVersion × Input × Vaults × Resources
+```
+
+Where:
+
+- **Environment** is a stable reference such as `mosoo/general` or `env_xxx`.
+- **EnvironmentRevision** is the immutable record of the system, dependencies, Setup, network policy, and default capability references.
+- **Harness** is a directly executable Agent Harness such as Claude Code, Codex, OpenCode, or Pi.
+- **Vault** stores Secrets and authorization policy; Secret values do not belong in a reusable Environment definition.
+- **Resource** is a file, Repo, dataset, or browser state supplied for this task.
+- **Run** is the logical unit for a user request, billing, auditing, and reproduction.
+- **Attempt** is one physical execution on a provider; a retry creates another Attempt.
+- **Artifact** is a report, generated file, log, or other output.
+
+This does not mean the first version needs eight separate pages. The public product surface can still consist of Environments, Runs, a small set of Harnesses, and API Keys and Usage.
+
+## An Environment is not an image or a paused machine
+
+This is where the design is easiest to get wrong.
+
+An Environment should have a stable address, while every change creates an immutable Revision. A Run first resolves that address to a specific Revision, then compiles it into an image, Template, or Snapshot that a Sandbox provider can start.
+
+```text
+Environment address
+        ↓ resolve
+Immutable EnvironmentRevision
+        ↓ compile / cache
+Provider image, template or snapshot
+        ↓ execute
+Run Attempt
+```
+
+**The EnvironmentRevision is the source of truth; a provider Snapshot is only a compiled artifact or cache.** If a provider’s Snapshot ID becomes the Environment itself, the product is immediately locked to that provider’s lifecycle, regions, and failure semantics.
+
+The workspace, cache, browser login state, and memory created during execution should not silently flow back into the Environment either. They belong to a Run, Workspace, or explicit Snapshot. Otherwise, the same Environment can no longer answer the question, “Where does the next execution begin?”
+
+## “Neutral” does not mean integrating five providers on day one
+
+Neutrality begins as a protocol and data boundary, not a provider count.
+
+- Do not bind to one Harness: the same Environment can explicitly select different Harnesses.
+- Do not bind to one Sandbox: execution can eventually land on a managed provider or enterprise self-hosted compute.
+- Do not bind to one Framework: Mastra, Eve, Flue, and Deep Agents can call Mosoo, but Mosoo does not need to reimplement them.
+- Do not assume a Repo: a task may instead revolve around files, datasets, a browser, or business APIs.
+- Do not require an Agent: identity, memory, Channels, and publishing belong to the higher-level Mosoo Agents product.
+
+The first version can therefore use only one Sandbox backend. As long as the public Run protocol, Environment Revision, and result semantics do not hard-code that backend, Mosoo preserves the option to become a Router later.
+
+## Working backward from OpenRouter in 2023
+
+The most important thing about early OpenRouter was not a complete Marketplace. It lowered the cost of first adoption: developers brought an existing client, obtained one API Key, chose an available model name, and sent a compatible request. They did not have to publish a model or deploy their application to OpenRouter first.
+
+The thinnest corresponding entry point for Cloud Agents should look similar:
+
+```ts
+const run = await mosoo.run({
+  environment: "mosoo/general",
+  harness: "claude-code",
+  input: "Analyze these files and produce a report",
+})
+```
+
+`mosoo/general` is a ready-to-use Environment address maintained by Mosoo. A private `env_xxx` becomes the upgrade path when users need custom tools, networks, and dependencies, not a prerequisite for the first Run.
+
+But this analogy has a hard limit: model requests do not usually modify the external world; Agent Runs do.
+
+Mosoo may eventually route Sandboxes by region, isolation level, capacity, cold start, price, and historical success rate. It cannot silently move a task to another machine after the Agent has already changed files or called an external API. A safe Fallback can happen only before the first side effect. Otherwise, the system must create a visible new Attempt from a clean Revision.
+
+## A Gallery is not the starting point. Compatibility data is
+
+It is easy to imagine an Agent Gallery as the Model Gallery of this era. But a directory is not a moat. The hard part is accumulating this compatibility graph over time:
+
+```text
+Environment × Harness × Provider
+```
+
+How long does each combination take to start? Where does it fail? How many resources does it consume? Which permissions conflict? When is a retry safe? This data is what allows Mosoo to grow from a unified entry point into a Router with informed judgment.
+
+A more credible growth sequence is:
+
+```text
+Run API
+→ Environments are reused repeatedly
+→ Compatibility and reliability data accumulates
+→ Sandbox Router
+→ Enterprise permissions and audit governance
+→ Verified Environment Gallery
+```
+
+The Gallery should become the distribution layer for Environments that have already been verified through execution, rather than a directory with no runtime facts built on day one.
+
+## Three startup paths
+
+| Path | What it looks like | Main tradeoff |
+| --- | --- | --- |
+| Single-provider implementation, neutral protocol | Use one backend to make the Run API and Environment excellent | Validates demand at the lowest cost while preserving the Router position |
+| Multi-provider Broker at launch | Connect several Sandbox providers and route by price and capacity | Quickly falls into lowest-common-denominator APIs, Snapshot migration, and side-effect semantics |
+| Environment Spec / Registry only | An open specification and environment directory | Easy to distribute, but lacks execution data, revenue, and real control |
+
+Mosoo should choose the first path for now: become a genuinely useful execution entry point, then acquire Broker capabilities in response to demonstrated demand.
+
+## What Mosoo already has, and what is still missing
+
+This article describes a direction, not the current product state.
+
+At the time of writing, Mosoo’s main branch is still organized as `App → Agent → Session → Run`: both [Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) and [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) require an `agentId`, and execution begins with [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307).
+
+The reusable substrate already exists: immutable [Environment Revisions](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/environment.schema.ts#L35-L60), multiple Harness Drivers, Sandbox Provisioning, and the event, approval, cancellation, Artifact, Usage, and cleanup path for Runs.
+
+That is why [#546](https://github.com/langgenius/mosoo/issues/546) proposes a product-boundary split rather than a Runtime rewrite. Mosoo Agents continues to own the Agent identity, publishing, memory, Channels, and long-lived state required by Pets. Mosoo Cattle allows the shared execution kernel to run without requiring an Agent identity.
+
+## What we should deliberately avoid for six months
+
+A sufficiently thin first version needs only:
+
+- One public Environment: `mosoo/general`.
+- Private, immutable Environment Revisions.
+- Two or three directly executable Harnesses.
+- One Sandbox backend.
+- A Run API that does not require `agentId`.
+- Stream, Approve, Cancel, Result, Artifacts, and Usage.
+
+For now, do not build a multi-cloud Router, Framework Adapters, Repo Deployment, an Agent Gallery, automatic Harness selection, or implicit live state across Runs. Add them back only when real usage reveals a shared blocker.
+
+## The final judgment
+
+If Cloud Agents truly become mainstream, the scarce resource will not be another “Create Agent” page.
+
+Developers will need a stable address that describes the small piece of the world a task requires. They will need a unified protocol that hands this world to different Harnesses. And they will need a control plane that constrains permissions, records the process, manages side effects, and preserves reproducibility as the underlying compute changes.
+
+In other words, this future will need more than Sandboxes, and it will not need more Agent CRUD.
+
+It will need: **Environment address + governed Run contract.**

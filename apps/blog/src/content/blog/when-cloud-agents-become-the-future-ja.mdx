@@ -1,0 +1,202 @@
+---
+title: "Cloud Agent が未来になったとき、必然的に現れるインフラとは？"
+titleAccent: "インフラ"
+description: "Cloud Agent が主流になれば、開発者が必要とするのは Agent CRUD の追加ではなく、Environment を解決・実行・統制する中立的な Control Plane だ。本稿は、その未来から逆算して必然となる基盤を考える。"
+date: 2026-08-18
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "ja"
+permalink: "when-cloud-agents-become-the-future"
+translationKey: "when-cloud-agents-become-the-future"
+heroImage: "/blog/blog/when-cloud-agents-become-the-future/hero.jpg"
+heroAlt: "暖かな白い紙の上に緑の手描きの筆跡が垂れ下がり、不規則な縁と大きな余白をつくっている。"
+draft: false
+---
+
+まず思考実験から始めよう。半年後、Cloud Agent が、開発者が知的能力を呼び出すための主流の手段になっていると仮定する。
+
+その頃には、Agent が file を読み、command を実行し、web を閲覧し、数十分にわたって働き続けても、誰も驚かない。それらは今日の model inference と同じように、供給側の標準機能になっていくだろう。
+
+より重要な問いはこうなる。**その未来を繁栄させるには、どのような infrastructure が必然的に必要になるのか。**
+
+この記事は、どの Sandbox 企業が勝つかを予測するものではない。また、Mosoo がすでに提供している機能のリリース告知でもない。これは product memo だ。Cloud Agent が主流になった未来を「結果」として置き、そこから逆算して、開発者が必ず必要とするものを考える。
+
+## 先に結論を書く
+
+> ここでいう「中立的な Environment Control Plane」とは、Mosoo がすべての compute resource を自前で提供することではない。開発者が依存するのは Mosoo の Environment と Run protocol だけで、Harness とその下の Sandbox は交換できる、という意味だ。
+>
+> **One API to run and govern any harness inside a reusable cloud environment.**
+
+これは、より大きな Agent Builder ではない。開発者に Agent の Publish と Repo の Deploy を先に要求し、それからようやく実行できる platform でもない。
+
+むしろ 2023 年の OpenRouter に近い。まず開発者へ、十分に薄い入口を渡す。ただし model の時代に route されるのは一回の Completion であり、Cloud Agent の時代に組み立てるのは、environment、permission、process、side effect を伴う一回の Run だ。
+
+## ユーザーが必要なのは空の machine ではなく、その一つの「断面」だ
+
+古い internet product の考え方に、product が対象とするのは人間全体ではなく、ある intent を持った瞬間の一つの断面だ、というものがある。Dating product が対象にするのは、「いま誰かと出会いたい自分」である。
+
+十分に使い込まれたユーザーの local machine も、一人の完全な個体として考えられる。そこには OS、software、file、login state、network、credential、長年積み重なった習慣がある。しかし cloud 上の一つの task が、machine 全体の clone を必要とすることはほとんどない。必要なのは、特定の用途に使う一つの断面だけだ。
+
+これが Environment の最も有用な product abstraction になる。
+
+- 競合調査なら、browser、search tool、いくつかの data source、output directory が必要になる。
+- open-source project の audit なら、public GitHub Repo、language toolchain、dependency cache、read-only の network access が必要かもしれない。
+- refund 処理なら、order と policy の data、制限された payment tool、厳密に絞られた write permission が必要になる。
+
+したがって public GitHub Repo は、Environment が利用する Resource にはなれる。しかし、すべての task に必須の「deployment project」であるべきではない。Repo はこの machine の断面を構成する材料の一つであり、Cloud Agent の普遍的な出発点ではない。
+
+## Sandbox は原材料であり、Environment が product address になる
+
+下層の原材料はすでに急速に増えている。[Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview) は Agent、Environment、Session、Events を分離し、[E2B](https://docs.e2b.dev/sandbox/snapshots) は再現可能な Template と実行中の Snapshot を区別する。[Daytona](https://www.daytona.io/docs/sandboxes) は Sandbox を programmable な full computer として提供し、[Docker Kits](https://docs.docker.com/ai/sandboxes/customize/kits/) は tool、environment variable、network、credential、context を配布可能な environment specification にまとめようとしている。
+
+これらは Cloud Agent に isolated compute への現実的な需要があることを示している。しかし、ユーザーの要求は「Sandbox を一台ほしい」だけでは終わらない。次のことを知りたくなる。
+
+1. どのような machine を起動すべきか。
+2. 今回の task は何に access できるのか。
+3. どこで実行すべきか。
+4. 実行中に何が起きたのか。
+5. 結果、cost、side effect をどう追跡するのか。
+
+これらに答えるのが Environment Control Plane だ。
+
+重要な違いは単純だ。**Sandbox は一回の物理的な execution であり、Environment は繰り返し参照できる product address である。**
+
+## 最小の object model
+
+`agentId` を要求しなければ、一回の Cattle Run は次の関係まで圧縮できる。
+
+```text
+Run = EnvironmentRevision × HarnessVersion × Input × Vaults × Resources
+```
+
+それぞれの意味は次のとおりだ。
+
+- **Environment** は `mosoo/general` や `env_xxx` のような安定した reference。
+- **EnvironmentRevision** は system、dependency、Setup、network policy、default capability reference を記録する immutable な事実。
+- **Harness** は Claude Code、Codex、OpenCode、Pi のように task を直接実行できる Agent Harness。
+- **Vault** は Secret と authorization policy を保持する。Secret の値は再利用可能な Environment definition には属さない。
+- **Resource** は今回の task で使う file、Repo、dataset、browser state。
+- **Run** は user request、billing、audit、reproduction の論理単位。
+- **Attempt** は一つの provider 上で行われる一回の物理 execution。retry は新しい Attempt を作る。
+- **Artifact** は report、生成 file、log、その他の output。
+
+だからといって、最初から八つの object にそれぞれ独立した画面を作る必要はない。公開する product surface は、Environments、Runs、少数の Harnesses、API Keys と Usage だけでよい。
+
+## Environment は image でも、pause された一台の machine でもない
+
+ここは設計を最も誤りやすい部分だ。
+
+Environment は安定した address を持ち、変更のたびに immutable な Revision を生成すべきだ。一回の Run はまず address を特定の Revision に resolve し、それを Sandbox provider が起動できる image、Template、Snapshot に compile する。
+
+```text
+Environment address
+        ↓ resolve
+Immutable EnvironmentRevision
+        ↓ compile / cache
+Provider image, template or snapshot
+        ↓ execute
+Run Attempt
+```
+
+**EnvironmentRevision が source of truth であり、provider の Snapshot は compiled artifact または cache にすぎない。** 逆に、特定 provider の Snapshot ID を Environment そのものにすると、product はその provider の lifecycle、region、failure semantics にすぐ lock-in される。
+
+実行によって生まれた workspace、cache、browser login state、memory も、暗黙に Environment へ書き戻すべきではない。それらは Run、Workspace、または明示的な Snapshot に属する。そうしなければ、同じ Environment が「次の execution はどこから始まるのか」に答えられなくなる。
+
+## 「中立」は、初日から五つの provider を接続することではない
+
+中立性は provider の数ではなく、protocol と data boundary から始まる。
+
+- 一つの Harness に bind しない。同じ Environment から異なる Harness を明示的に選べる。
+- 一つの Sandbox に bind しない。将来は managed provider または enterprise の self-hosted compute で実行できる。
+- 一つの Framework に bind しない。Mastra、Eve、Flue、Deep Agents は Mosoo を呼び出せるが、Mosoo がそれらを再実装する必要はない。
+- Repo を前提にしない。task は file、dataset、browser、business API を中心にしてもよい。
+- Agent を必須にしない。identity、memory、Channel、publishing は、上位の Mosoo Agents product に属する。
+
+したがって、最初の version が一つの Sandbox backend しか使わなくてもよい。公開 Run protocol、Environment Revision、result semantics にその backend を hard-code しなければ、Mosoo は将来 Router になる位置を保てる。
+
+## 2023 年の OpenRouter から逆算する
+
+初期の OpenRouter で最も重要だったのは、完成した Marketplace ではない。最初の adoption cost を下げたことだ。開発者は既存 client を持ち込み、一つの API Key を取得し、利用可能な model name を選び、compatible request を送った。先に model を publish したり、application を OpenRouter に deploy したりする必要はなかった。
+
+Cloud Agent に対応する最も薄い入口も、同じような形になるべきだ。
+
+```ts
+const run = await mosoo.run({
+  environment: "mosoo/general",
+  harness: "claude-code",
+  input: "これらの file を分析して report を作成する",
+})
+```
+
+`mosoo/general` は、すぐに使えて Mosoo が maintenance する Environment address だ。private な `env_xxx` は custom tool、network、dependency が必要になったときの upgrade path であり、最初の Run の前提条件ではない。
+
+ただし、この類推には越えてはならない境界がある。model request は通常、外部世界を変更しない。Agent Run は変更する。
+
+Mosoo は将来、region、isolation level、capacity、cold start、price、過去の success rate に基づいて Sandbox を route できる。しかし Agent がすでに file を変更したり外部 API を呼んだりしたあとで、task を別の machine に静かに移すことはできない。安全な Fallback は最初の side effect より前にしか行えない。それ以外では、clean な Revision から、ユーザーに見える新しい Attempt を作る必要がある。
+
+## Gallery は出発点ではない。互換性 data が出発点だ
+
+Agent Gallery をこの時代の Model Gallery と考えるのは簡単だ。しかし directory 自体は moat にならない。難しいのは、次の compatibility graph を時間をかけて蓄積することだ。
+
+```text
+Environment × Harness × Provider
+```
+
+同じ組み合わせでも、起動にどれほど時間がかかるのか。どこで失敗するのか。どれだけ resource を使うのか。どの permission が衝突するのか。どの条件なら安全に retry できるのか。こうした data があるからこそ、Mosoo は統一された入口から、判断力を持つ Router へ成長できる。
+
+より信頼できる成長順序は次のようになる。
+
+```text
+Run API
+→ Environment が繰り返し再利用される
+→ 互換性と reliability data が蓄積される
+→ Sandbox Router
+→ enterprise permission と audit governance
+→ Verified Environment Gallery
+```
+
+Gallery は、実際の execution で検証された Environment が自然に形成する distribution layer であるべきだ。初日から runtime の事実を持たない directory を先に作るべきではない。
+
+## 三つの startup path
+
+| Path | どのような形か | 主な tradeoff |
+| --- | --- | --- |
+| 単一 provider の実装、中立 protocol | 一つの backend で Run API と Environment を優れたものにする | 最小の cost で需要を検証しながら Router の位置を保てる |
+| 最初から multi-provider Broker | 複数の Sandbox を接続し、price と capacity で route する | lowest common denominator、Snapshot migration、side-effect semantics にすぐ陥る |
+| Environment Spec / Registry のみ | open specification と environment directory | 広がりやすいが、execution data、revenue、本当の control がない |
+
+Mosoo がいま選ぶべきなのは一つ目だ。まず本当に使いやすい execution entry point になり、実証された需要に応じて Broker capability を獲得する。
+
+## Mosoo にすでにあるもの、まだ足りないもの
+
+この記事が記しているのは direction であり、現在の product state ではない。
+
+執筆時点の Mosoo main branch は、まだ `App → Agent → Session → Run` という構造になっている。[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) と [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) はどちらも `agentId` を要求し、execution も [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) から始まる。
+
+一方、再利用できる基盤はすでに存在する。immutable な [Environment Revision](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/environment.schema.ts#L35-L60)、複数の Harness Driver、Sandbox Provisioning、そして Run の event、approval、cancellation、Artifact、Usage、cleanup の経路だ。
+
+だから [#546](https://github.com/langgenius/mosoo/issues/546) が提案するのは Runtime の rewrite ではなく、product boundary の分離である。Mosoo Agents は Pet に必要な Agent identity、publishing、memory、Channel、long-lived state を引き続き担う。Mosoo Cattle は shared execution kernel から Agent identity の必須条件を取り除く。
+
+## 半年間、意図的に作らないもの
+
+十分に薄い最初の version に必要なのは、これだけだ。
+
+- 一つの public Environment：`mosoo/general`。
+- private で immutable な Environment Revision。
+- 直接実行できる二つか三つの Harness。
+- 一つの Sandbox backend。
+- `agentId` を要求しない Run API。
+- Stream、Approve、Cancel、Result、Artifacts、Usage。
+
+当面は multi-cloud Router、Framework Adapter、Repo Deployment、Agent Gallery、自動 Harness selection、Run をまたぐ暗黙の live state を作らない。実際の利用から共通の blocker が見つかったときにだけ、これらを戻せばよい。
+
+## 最後の判断
+
+Cloud Agent が本当に主流になるなら、希少なのは新しい「Create Agent」画面ではない。
+
+開発者が必要とするのは、task に必要な世界の一部分を記述する安定した address だ。その世界を異なる Harness に渡す統一 protocol も必要になる。さらに、permission を制約し、process を記録し、side effect を管理し、下層の compute が変わっても reproducibility を保つ Control Plane が必要になる。
+
+つまり、この未来に必要なのは Sandbox だけではない。そして、Agent CRUD を増やすことでもない。
+
+必要なのは、**Environment address + governed Run contract** である。
