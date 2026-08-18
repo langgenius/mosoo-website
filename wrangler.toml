@@ -23,7 +23,7 @@ class_name = "StatusStore"
 
 [env.prod]
 name = "mosoo-website-prod"
-workers_dev = false
+workers_dev = true
 
 [env.prod.vars]
 STATUS_API_ORIGIN = "https://cloud.mosoo.ai"

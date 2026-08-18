@@ -111,6 +111,14 @@
   display: block;
   width: 100%;
   height: 100%;
+  filter: url("#bamboo-agent-palette");
+}
+
+.bambooWaveBackground__filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 .landing-config-card {
@@ -136,20 +144,26 @@
   margin-bottom: clamp(28px, 3vw, 42px);
 }
 
-.landing-config-card__eyebrow,
-.landing-config-card__status {
-  color: rgb(25 45 37 / 56%);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: normal;
-}
-
-.landing-config-card__status {
-  color: #168046;
+.landing-config-card__eyebrow {
+  color: #192d25;
+  font-family: "Cabinet Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .landing-config-card__group + .landing-config-card__group {
   margin-top: 28px;
+}
+
+.landing-config-card__section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.landing-config-card__section-heading .landing-config-card__label {
+  margin-bottom: 10px;
 }
 
 .landing-config-card__label {
@@ -203,7 +217,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 9px 0 0 auto;
+  margin: 0 0 0 auto;
   padding: 0;
   border: 0;
   color: rgb(25 45 37 / 52%);
@@ -231,6 +245,10 @@
   place-items: center;
   border-radius: 9px;
   background: rgb(25 45 37 / 6%);
+}
+
+.landing-config-option__icon img {
+  filter: none;
 }
 
 .landing-config-option__check {

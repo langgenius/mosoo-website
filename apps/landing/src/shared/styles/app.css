@@ -447,8 +447,8 @@
     letter-spacing: 0;
   }
   ::selection {
-    background: var(--green-200);
-    color: var(--ink-900);
+    background: rgb(102 198 2 / 80%);
+    color: var(--fg-on-accent);
   }
 }
 

@@ -53,6 +53,21 @@ export function BambooWaveBackground(): ReactElement {
 
   return (
     <div className="bambooWaveBackground" aria-hidden="true">
+      <svg className="bambooWaveBackground__filters" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="bamboo-agent-palette" colorInterpolationFilters="sRGB">
+            <feColorMatrix
+              type="matrix"
+              values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"
+            />
+            <feComponentTransfer>
+              <feFuncR type="table" tableValues="0.40 0.42 0.50 0.72 1" />
+              <feFuncG type="table" tableValues="0.78 0.78 0.80 0.90 1" />
+              <feFuncB type="table" tableValues="0.01 0.02 0.05 0.25 1" />
+            </feComponentTransfer>
+          </filter>
+        </defs>
+      </svg>
       <div className="bambooWaveBackground__wash" />
       <div className="bambooWaveBackground__columns">
         {Array.from({ length: COLUMN_COUNT }, (_, columnIndex) => {

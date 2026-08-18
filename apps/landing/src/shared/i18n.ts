@@ -17,6 +17,7 @@ const ZH_MESSAGES = {
   "for anyone to try.": "供任何人在线体验。",
   "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":
     "让任何人都能在隔离 sandbox 中，通过 Codex、Claude 或 OpenCode 在线使用你的 Skill。",
+  "But no model subscription required.": "但无需任何模型订阅。",
   "Star on GitHub": "在 GitHub 上加 Star",
   "Star mosoo on GitHub": "在 GitHub 上为 mosoo 加 Star",
   "Open source · Self-hostable · BYOK": "开源 · 可自行托管 · BYOK",
@@ -41,6 +42,7 @@ const JA_MESSAGES = {
   "for anyone to try.": "誰でも試せるように。",
   "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.":
     "誰でも隔離された sandbox で、Codex、Claude、OpenCode を使ってあなたの Skill をオンラインで利用できます。",
+  "But no model subscription required.": "ただし、モデルのサブスクリプションは必要ありません。",
   "Star on GitHub": "GitHub で Star",
   "Star mosoo on GitHub": "GitHub で mosoo に Star",
   "Open source · Self-hostable · BYOK": "オープンソース · セルフホスト可能 · BYOK",

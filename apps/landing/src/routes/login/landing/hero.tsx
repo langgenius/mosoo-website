@@ -24,7 +24,9 @@ const HERO_HEADLINE_STYLE = {
 } satisfies CSSProperties;
 
 const HERO_SUBHEAD_STYLE = {
+  fontFamily: '"Inter", "Geist", ui-sans-serif, system-ui, sans-serif',
   fontSize: "clamp(15px, 1.4vw, 17px)",
+  fontWeight: 500,
   lineHeight: 1.55,
 } satisfies CSSProperties;
 
@@ -68,11 +70,16 @@ function SkillConfigurationCard({ onContinue }: { onContinue: () => void }): Rea
     <div className="landing-config-card">
       <div className="landing-config-card__header">
         <span className="landing-config-card__eyebrow">New Agent</span>
-        <span className="landing-config-card__status">READY</span>
       </div>
 
       <div className="landing-config-card__group">
-        <div className="landing-config-card__label">Runtime</div>
+        <div className="landing-config-card__section-heading">
+          <div className="landing-config-card__label">Runtime</div>
+          <button type="button" className="landing-config-more" onClick={onContinue}>
+            <span>more</span>
+            <ArrowUpRight />
+          </button>
+        </div>
         <div className="landing-config-card__options">
           {RUNTIME_OPTIONS.map((option) => {
             const selected = runtime === option.value;
@@ -94,14 +101,16 @@ function SkillConfigurationCard({ onContinue }: { onContinue: () => void }): Rea
             );
           })}
         </div>
-        <button type="button" className="landing-config-more" onClick={onContinue}>
-          <span>more</span>
-          <ArrowUpRight />
-        </button>
       </div>
 
       <div className="landing-config-card__group">
-        <div className="landing-config-card__label">Model</div>
+        <div className="landing-config-card__section-heading">
+          <div className="landing-config-card__label">Model</div>
+          <button type="button" className="landing-config-more" onClick={onContinue}>
+            <span>more</span>
+            <ArrowUpRight />
+          </button>
+        </div>
         <div className="landing-config-card__options">
           {MODEL_OPTIONS.map((option) => {
             const selected = model === option.value;
@@ -125,17 +134,13 @@ function SkillConfigurationCard({ onContinue }: { onContinue: () => void }): Rea
             );
           })}
         </div>
-        <button type="button" className="landing-config-more" onClick={onContinue}>
-          <span>more</span>
-          <ArrowUpRight />
-        </button>
       </div>
 
       <div className="landing-config-card__group">
         <div className="landing-config-card__skill-grid">
           <div className="landing-config-card__label">Skill</div>
           <span className="landing-config-card__skill-divider" aria-hidden="true" />
-          <div className="landing-config-card__cli-label">CLI</div>
+          <div className="landing-config-card__cli-label">Quick Start with CLI</div>
           <button type="button" className="landing-config-upload" onClick={onContinue}>
             <ArrowUpRight />
             <span>Upload Skill</span>
@@ -175,7 +180,7 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
         className="relative z-10 mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-16 xl:px-8"
         style={HERO_CONTENT_STYLE}
       >
-        <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left">
+        <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:pl-6 lg:text-left xl:pl-10">
           <div className="landing-hero-reveal">
             <Eyebrow>{t("Open source · Agent runtime · On Cloud")}</Eyebrow>
           </div>
@@ -193,6 +198,8 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
             {t(
               "Let anyone use your Skill online with Codex, Claude, or OpenCode in an isolated sandbox.",
             )}
+            {" "}
+            {t("But no model subscription required.")}
           </p>
           <div className="landing-hero-reveal landing-hero-reveal-delay-3 mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <button
