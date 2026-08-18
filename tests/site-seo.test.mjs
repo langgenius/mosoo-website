@@ -163,6 +163,8 @@ test("landing and blog metadata never point at a missing default image", () => {
   assert.match(landing, /"@type": "FAQPage"/);
   assert.match(landing, /"@id": "https:\/\/mosoo\.ai\/en#faq"/);
   assert.match(landing, /Direct answers/);
+  assert.match(landing, /How is mosoo different from Dify, n8n, OpenClaw, Claude Code/);
+  assert.match(landing, /versioning, isolated sandboxes, durable Threads and files/);
   assert.match(landing, /Where can I verify Mosoo's source and API contract\?/);
   assert.match(landing, /href="https:\/\/cloud\.mosoo\.ai\/api\/v1\/openapi\.json"/);
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
@@ -188,6 +190,7 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, /<title>mosoo — 面向 Coding Agent 的开源 Agent runtime<\/title>/);
   assert.match(zh, /"@id": "https:\/\/mosoo\.ai\/zh#faq"/);
   assert.match(zh, /直接答案/);
+  assert.match(zh, /mosoo 与 Dify、n8n、OpenClaw、Claude Code 或自建方案有何不同？/);
   assert.match(zh, /产品如何调用 mosoo Agent？/);
   assert.doesNotMatch(zh, /Who is mosoo for\?/);
   assert.match(ja, /<html lang="ja">/);
@@ -198,6 +201,7 @@ test("landing locale pages receive localized canonical metadata", () => {
   );
   assert.match(ja, /"@id": "https:\/\/mosoo\.ai\/ja#faq"/);
   assert.match(ja, /直接回答/);
+  assert.match(ja, /mosoo は Dify、n8n、OpenClaw、Claude Code、自社構築と何が違いますか？/);
   assert.match(ja, /プロダクトから mosoo Agent を呼ぶには？/);
   assert.doesNotMatch(ja, /Who is mosoo for\?/);
   assertInitialSiteLinks(zh, "zh");

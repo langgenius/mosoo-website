@@ -209,6 +209,7 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   const markdown = await response.text();
   assert.match(markdown, /^# Mosoo$/m);
   assert.match(markdown, /What is Mosoo\? An open-source Agent runtime/);
+  assert.match(markdown, /How is Mosoo different from Dify, n8n, OpenClaw, Claude Code/);
   assert.match(markdown, /trusted backend uses the Public Thread API/);
   assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v1/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/llms\.txt/);
@@ -236,7 +237,7 @@ test("worker serves a product-wide llms.txt index", async () => {
   assert.match(markdown, /^## Examples$/m);
   assert.match(markdown, /^## Source and trust$/m);
   assert.match(markdown, /What is the Public Thread API\?/);
-  assert.match(markdown, /How is Mosoo different from Dify, n8n, Claude Code/);
+  assert.match(markdown, /How is Mosoo different from Dify, n8n, OpenClaw, Claude Code/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/en\/pricing/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/en\/use-cases\/ghfind/);
   assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo\/security/);

@@ -182,8 +182,8 @@ const ZH_MESSAGES = {
     "你需要设置 Agent 的 runtime、挂载 Skills、连接 Knowledge、绑定 Channels，并接入 API integrations。改动先累积在 Draft 中，只有发布后才生效，因此调用方始终访问已发布版本，而不是尚未完成的编辑。当前 alpha 中，builder 可绑定已有的 Skills、MCP servers 与 environments；直接在 builder 中创建这些资源的一等能力仍在补全。",
   "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?":
     "mosoo 与 Dify、n8n、OpenClaw、Claude Code 或自建方案有何不同？",
-  "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.":
-    "Dify 和 n8n 擅长确定性工作流；OpenClaw、Claude Code 和 Hermes 擅长通用 Agent runtime。mosoo 不替代它们，而是作为上层 backend，把两类方案都作为可部署服务运行，并代为处理版本管理、sandbox 与 App 用量，避免你自行重建整个平台层。",
+  "Dify and n8n are strong deterministic workflow tools; OpenClaw and Claude Code are agent runtimes. mosoo sits above those choices as the backend for published agents: it provides versioning, isolated sandboxes, durable Threads and files, API access, and usage accounting without rebuilding that platform layer in-house.":
+    "Dify 和 n8n 是强大的确定性 workflow 工具；OpenClaw 和 Claude Code 是 Agent runtime。mosoo 位于这些选择之上，作为已发布 Agent 的 backend，提供版本管理、隔离 sandbox、持久 Thread 和文件、API 访问与用量统计，避免团队自行重建这层平台。",
   "What's the license and cost, and is it production-ready?":
     "许可证和成本如何？可以用于生产了吗？",
   "mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.":
@@ -389,8 +389,8 @@ const JA_MESSAGES = {
     "Agent の runtime を設定し、Skills を追加し、Knowledge を接続し、Channels と API integrations を構成します。変更は Draft に蓄積され、公開時にのみ反映されるため、呼び出し側は編集中ではなく常に公開済みバージョンへ到達します。現在の alpha では既存の Skills、MCP servers、environments を builder から接続できますが、builder 内で直接作成する第一級機能は拡充中です。",
   "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?":
     "mosoo は Dify、n8n、OpenClaw、Claude Code、自社構築と何が違いますか？",
-  "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.":
-    "Dify と n8n は決定論的 workflow、OpenClaw、Claude Code、Hermes は汎用 Agent runtime に強みがあります。mosoo はそれらを置き換えません。上位の backend として両方をデプロイ可能なサービスとして実行し、バージョン管理、sandbox、App 使用量を担うため、その基盤を自分で再構築する必要がありません。",
+  "Dify and n8n are strong deterministic workflow tools; OpenClaw and Claude Code are agent runtimes. mosoo sits above those choices as the backend for published agents: it provides versioning, isolated sandboxes, durable Threads and files, API access, and usage accounting without rebuilding that platform layer in-house.":
+    "Dify と n8n は決定論的 workflow に強く、OpenClaw と Claude Code は Agent runtime です。mosoo はそれらの上にある公開 Agent 向け backend として、バージョン管理、隔離 sandbox、永続 Thread とファイル、API access、使用量管理を提供し、社内でその platform layer を再構築しなくて済むようにします。",
   "What's the license and cost, and is it production-ready?":
     "ライセンスとコストは？本番利用できますか？",
   "mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.":
