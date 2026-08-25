@@ -128,13 +128,10 @@ test("blog posts reference the landing page organization identity", () => {
   );
 });
 
-test("blog pages send explicit PostHog page views without the analytics SDK", () => {
+test("blog pages do not bypass edge-managed analytics consent", () => {
   const blogLayout = read("apps/blog/src/layouts/BaseLayout.astro");
 
-  assert.match(blogLayout, /event: "page_viewed"/);
-  assert.match(blogLayout, /article_slug:/);
-  assert.match(blogLayout, /surface: "blog"/);
-  assert.doesNotMatch(blogLayout, /posthog-js|autocapture|session[_-]replay/i);
+  assert.doesNotMatch(blogLayout, /posthog|page_viewed|\/capture\/|mosoo_posthog/i);
 });
 
 test("blog chrome links back to canonical localized landing pages", () => {
