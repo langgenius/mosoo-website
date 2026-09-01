@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for shipping on mosoo! Fill this in and a maintainer will build the
         localized page (en/zh/ja) at `mosoo.ai/{locale}/use-cases/<slug>`.
-        Live example: https://mosoo.ai/en/use-cases/codex-pet
+        Example case study: https://mosoo.ai/en/use-cases/codex-pet
   - type: input
     id: name
     attributes:
@@ -44,10 +44,8 @@ body:
   - type: input
     id: app
     attributes:
-      label: Live app URL
-      placeholder: https://app-….apps.mosoo.ai/
-    validations:
-      required: true
+      label: Live app URL (optional)
+      placeholder: https://your-product.example/
   - type: textarea
     id: summary
     attributes:
@@ -71,7 +69,7 @@ body:
     attributes:
       label: Screenshot and demo video
       description: >-
-        Drag in a 1440×900 screenshot of the live app (or just say "capture it for me").
+        Drag in a 1440×900 product screenshot (or just say "capture it for me").
         Optional: a demo video up to 60 s — it will be compressed and played inline on the page.
     validations:
       required: true

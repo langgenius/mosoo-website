@@ -251,7 +251,6 @@ function isConsolePath(pathname) {
     pathname.startsWith("/settings/") ||
     pathname === "/app-settings" ||
     pathname.startsWith("/app-settings/") ||
-    pathname === "/deployments" ||
     pathname === "/files" ||
     pathname === "/environment" ||
     pathname.startsWith("/environment/")

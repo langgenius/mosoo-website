@@ -108,6 +108,13 @@ test("worker redirects bare use-cases paths to the locale pages", async () => {
   }
 });
 
+test("worker does not forward the removed deployments route to the console", async () => {
+  const response = await worker.fetch(requestFor("/deployments"), envFor({}));
+
+  assert.equal(response.status, 404);
+  assert.equal(response.headers.get("location"), null);
+});
+
 test("worker publishes an unknown status feed before the first production signal", async () => {
   const response = await worker.fetch(requestFor("/status.json"), envFor({}));
   const payload = await response.json();

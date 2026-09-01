@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight, Play } from "lucide-react";
+import { ArrowLeft, Play } from "lucide-react";
 import { useRef, useState } from "react";
 import type { CSSProperties, ReactElement } from "react";
 
@@ -73,7 +73,7 @@ function CaseHeader(): ReactElement {
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
-          "Codex Pet shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.",
+          "The Codex Pet case study shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.",
         )}
       </p>
       <div className="mt-6 flex items-center gap-2.5">
@@ -88,15 +88,6 @@ function CaseHeader(): ReactElement {
         <span className="text-fg-1 text-[13.5px] font-semibold">{CODEX_PET.author.name}</span>
       </div>
       <div className="mt-7 flex flex-wrap items-center gap-3">
-        <a
-          href={CODEX_PET.productUrl}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring inline-flex h-11 items-center gap-2 rounded-md px-6 text-[14px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2"
-        >
-          {t("Open the live app")}
-          <ArrowUpRight aria-hidden="true" className="size-4" />
-        </a>
         <a
           href={CODEX_PET.repoUrl}
           target="_blank"
