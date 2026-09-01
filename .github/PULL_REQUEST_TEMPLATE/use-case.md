@@ -10,13 +10,13 @@ Reference implementation: the codex-pet files touched in #57.
 - Name / slug: `<name>` → `/{locale}/use-cases/<slug>`
 - Capability shown: <!-- e.g. Agent as API -->
 - Repository: <!-- url -->
-- Live app: <!-- url -->
+- Live app (optional): <!-- url -->
 
 ## Checklist
 
 ### Content
 
-- [ ] `apps/landing/use-cases/<slug>.html` — SEO head (canonical, hreflang, OG image) + crawlable fallback body with repo and live-app links
+- [ ] `apps/landing/use-cases/<slug>.html` — SEO head (canonical, hreflang, OG image) + crawlable fallback body with a repo link and an optional live-app link
 - [ ] Detail page component in `apps/landing/src/routes/use-cases/` + entry `apps/landing/src/use-case-<slug>-main.tsx`
 - [ ] Case registered in `apps/landing/src/routes/use-cases/use-cases-data.ts` (listing card)
 - [ ] en/zh/ja strings added to `apps/landing/src/routes/use-cases/i18n.ts` (keep Agent, API, Thread, Run, skill, sandbox untranslated)

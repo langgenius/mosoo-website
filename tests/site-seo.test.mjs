@@ -372,14 +372,14 @@ test("the go-gym case page keeps its localized metadata, screenshots, and outbou
   assertInitialSiteLinks(ja, "ja");
 });
 
-test("the codex-pet case page keeps its canonical, screenshot, and outbound links", () => {
+test("the codex-pet case page keeps its canonical, screenshot, and repository link", () => {
   const source = read("apps/landing/use-cases/codex-pet.html");
   const zh = renderUseCaseCodexPetLocale(source, "zh");
 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/use-cases\/codex-pet"/);
   assert.match(source, /content="https:\/\/mosoo\.ai\/landing\/use-cases\/codex-pet-app\.png"/);
   assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/mosoo-codex-pet"/);
-  assert.match(source, /href="https:\/\/app-01kwc37q6ejfnjvvk3g192x5x7\.apps\.mosoo\.ai\/"/);
+  assert.doesNotMatch(source, /apps\.mosoo\.ai/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/);
   assert.match(zh, /<title>mosoo — Codex Pet：Agent as API<\/title>/);
   assertInitialSiteLinks(zh, "zh");
