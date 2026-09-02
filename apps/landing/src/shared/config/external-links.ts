@@ -15,3 +15,8 @@ export const MOSOO_SECURITY_URL = `${MOSOO_GITHUB_URL}security`;
 // Cloudflare Worker (apps/blog). Use a plain <a href> so the browser leaves
 // the SPA and lets the blog worker take over.
 export const MOSOO_BLOG_URL = "https://mosoo.ai/blog";
+
+// Product entry points. Both are separate deployments from this site, so the
+// chrome links to them with plain <a href> tags.
+export const MOSOO_CLOUD_URL = "https://cloud.mosoo.ai";
+export const MOSOO_COMPUTER_URL = "https://computer.mosoo.ai";

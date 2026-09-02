@@ -195,6 +195,7 @@ const ZH_MESSAGES = {
   "Take root, and grow a bamboo sea.": "扎下根，长成一片竹海。",
   "Open-source agent runtime and API for coding agents.":
     "面向 Coding Agent 的开源 Agent runtime 与 API。",
+  Products: "产品",
   Resources: "资源",
   Docs: "文档",
   Releases: "版本发布",
@@ -402,6 +403,7 @@ const JA_MESSAGES = {
   "Take root, and grow a bamboo sea.": "根を張り、竹の海を育てよう。",
   "Open-source agent runtime and API for coding agents.":
     "Coding Agent 向けのオープンソース Agent runtime と API。",
+  Products: "プロダクト",
   Resources: "リソース",
   Docs: "ドキュメント",
   Releases: "リリース",

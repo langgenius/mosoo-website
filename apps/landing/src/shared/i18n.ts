@@ -2,6 +2,10 @@ import { locale } from "./locale";
 
 const ZH_MESSAGES = {
   Language: "语言",
+  Products: "产品",
+  "Open-source agent runtime and API for coding agents.":
+    "面向 Coding Agent 的开源 Agent runtime 与 API。",
+  "A persistent cloud computer for agents.": "为 Agent 准备的持久云端计算机。",
   Pricing: "定价",
   Status: "状态",
   "Use cases": "用例",
@@ -25,6 +29,10 @@ type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
   Language: "言語",
+  Products: "プロダクト",
+  "Open-source agent runtime and API for coding agents.":
+    "Coding Agent 向けのオープンソース Agent runtime と API。",
+  "A persistent cloud computer for agents.": "Agent のための永続的なクラウドコンピューター。",
   Pricing: "料金",
   Status: "稼働状況",
   "Use cases": "ユースケース",

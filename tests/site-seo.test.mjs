@@ -28,6 +28,8 @@ const sitemapEntries = (xml) =>
 
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
+  assert.match(html, /href="https:\/\/cloud\.mosoo\.ai">Mosoo<\/a>/);
+  assert.match(html, /href="https:\/\/computer\.mosoo\.ai">Mosoo Computer<\/a>/);
   assert.match(html, new RegExp(`href="/${locale}/pricing"`));
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
   assert.match(html, new RegExp(`href="/${locale}/status"`));

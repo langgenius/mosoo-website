@@ -13,11 +13,19 @@ import {
   MOSOO_SECURITY_URL,
   MOSOO_X_URL,
 } from "../links";
+import { PRODUCTS } from "../products";
 import { XMark } from "../x-mark";
 import { t } from "./i18n";
 import { DISPLAY_FONT } from "./typography";
 
 type FooterLink = { label: string; href: string; internal?: boolean };
+
+// Product entry points navigate in the same tab, like the rest of the chrome.
+const PRODUCT_LINKS: readonly FooterLink[] = PRODUCTS.map((product) => ({
+  label: product.name,
+  href: product.href,
+  internal: true,
+}));
 
 const RESOURCE_LINKS: readonly FooterLink[] = [
   { label: t("Pricing"), href: `/${locale}/pricing`, internal: true },
@@ -110,7 +118,7 @@ export function LandingFooter(): ReactElement {
         </div>
 
         <div className="border-paper-100/10 mt-12 border-t pt-12">
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
             <div>
               <img src="/brand/logo-wordmark-ondark.svg" alt="mosoo" className="block h-[22px]" />
               <p className="text-paper-100/55 mt-4 max-w-[260px] text-[13.5px] leading-[1.6]">
@@ -125,6 +133,7 @@ export function LandingFooter(): ReactElement {
                 </SocialLink>
               </div>
             </div>
+            <FooterColumn heading={t("Products")} links={PRODUCT_LINKS} />
             <FooterColumn heading={t("Resources")} links={RESOURCE_LINKS} />
             <FooterColumn heading={t("App")} links={APP_LINKS} />
           </div>

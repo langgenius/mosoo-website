@@ -245,6 +245,7 @@ test("worker serves a product-wide llms.txt index", async () => {
   assert.match(markdown, /What is the Public Thread API\?/);
   assert.match(markdown, /How is Mosoo different from Dify, n8n, Claude Code/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/en\/pricing/);
+  assert.match(markdown, /https:\/\/computer\.mosoo\.ai/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/en\/use-cases\/ghfind/);
   assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo\/security/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
