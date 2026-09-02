@@ -64,6 +64,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 - [Runtime status](https://mosoo.ai/en/status): Observed production service and Run health.
 - [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
 - [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
+- [Mosoo Computer](https://computer.mosoo.ai): A persistent cloud computer for agents, offered as a separate product.
 
 ## Build and integrate
 

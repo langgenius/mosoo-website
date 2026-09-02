@@ -14,6 +14,7 @@ import {
   MOSOO_GITHUB_URL,
   MOSOO_X_URL,
 } from "./links";
+import { PRODUCTS_TRIGGER_CLASS } from "./products";
 import { XMark } from "./x-mark";
 
 const ICON_LINK_CLASS =
@@ -29,11 +30,25 @@ const LazyLanguageMenu = lazy(async () => {
   return { default: mod.LanguageMenu };
 });
 
+const LazyProductsMenu = lazy(async () => {
+  const mod = await import("./products-menu");
+  return { default: mod.ProductsMenu };
+});
+
 function Brand(): ReactElement {
   return (
     <a href={`/${locale}`} aria-label="mosoo" className="inline-flex items-center">
       <img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" className="block h-[22px]" />
     </a>
+  );
+}
+
+function ProductsMenuFallback(): ReactElement {
+  return (
+    <button type="button" disabled className={`${PRODUCTS_TRIGGER_CLASS} cursor-default`}>
+      {t("Products")}
+      <ChevronDown aria-hidden="true" className="size-3" />
+    </button>
   );
 }
 
@@ -62,7 +77,7 @@ export function LoginLandingTopbar({
   onContinue: () => void;
   activeNav?: TopbarNav | undefined;
 }): ReactElement {
-  const loadLanguageMenu = useIdleReady();
+  const loadDeferredMenus = useIdleReady();
   const blogHref = locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`;
 
   return (
@@ -70,6 +85,13 @@ export function LoginLandingTopbar({
       <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-3 md:px-6">
         <Brand />
         <div className="flex items-center gap-1">
+          {loadDeferredMenus ? (
+            <Suspense fallback={<ProductsMenuFallback />}>
+              <LazyProductsMenu />
+            </Suspense>
+          ) : (
+            <ProductsMenuFallback />
+          )}
           <a
             href={`/${locale}/pricing`}
             aria-current={activeNav === "pricing" ? "page" : undefined}
@@ -98,7 +120,7 @@ export function LoginLandingTopbar({
           >
             {t("API docs")}
           </a>
-          {loadLanguageMenu ? (
+          {loadDeferredMenus ? (
             <Suspense fallback={<LanguageMenuFallback />}>
               <LazyLanguageMenu />
             </Suspense>
