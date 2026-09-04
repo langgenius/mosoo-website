@@ -263,6 +263,34 @@
   --shadow-inset: inset 0 0 0 1px rgba(11, 26, 20, 0.06);
 }
 
+/* ----------------------------------------------------------------------------
+   Status page — its status glyphs, uptime bars, percentages and the one focal
+   button read on the product brand ramp (the logo's bright shoot green) rather
+   than the landing's warm forest ramp, so they match the mark in the page
+   header. Scoped to the page so the surrounding chrome keeps the landing
+   palette.
+   --------------------------------------------------------------------------- */
+[data-theme="landing"] .status-brand {
+  --green-50: #f4fce4;
+  --green-100: #e7f8c4;
+  --green-200: #d3f195;
+  --green-300: #b6e85f;
+  --green-400: #95dd2c;
+  --green-500: #6fd305;
+  --green-600: #5cb300;
+  --green-700: #498c07;
+  --green-800: #3a6e0e;
+  --green-900: #2c5113;
+  --green-950: #1a310b;
+
+  --accent: var(--green-500);
+  --accent-hover: var(--green-600);
+  --accent-press: var(--green-800);
+  --accent-soft: var(--green-50);
+  --accent-soft-hover: var(--green-100);
+  --accent-ring: rgba(111, 211, 5, 0.45);
+}
+
 .dark,
 [data-theme="dark"] {
   --bg: var(--ink-900);
