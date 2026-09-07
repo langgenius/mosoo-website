@@ -220,7 +220,7 @@ export function buildPublicStatus(previous = createEmptyStatusState(), now = new
   const status =
     platform.status === "degraded" || components.some((component) => component.status === "degraded")
       ? "degraded"
-      : platform.status === "unknown"
+      : platform.status === "unknown" || components.some((component) => component.status === "unknown")
         ? "unknown"
         : "operational";
 

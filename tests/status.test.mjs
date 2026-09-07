@@ -10,6 +10,33 @@ import {
 
 const observedAt = "2026-08-13T12:00:00.000Z";
 
+test("overall health requires fresh observations for every runtime", () => {
+  const now = new Date("2026-09-07T10:25:00.000Z");
+  const healthyPlatform = {
+    type: "invocation", succeeded: true, observedAt: now.toISOString(), outcome: "ok",
+  };
+  const runtimeIds = ["openai-runtime", "claude-agent-sdk", "acp-fallback"];
+  const completed = runtimeIds.map((runtimeId) => ({
+    type: "run", runtimeId, runId: runtimeId, sessionType: "ui",
+    status: "completed", observedAt: now.toISOString(),
+  }));
+  for (const runs of [[], completed.slice(0, 1), completed]) {
+    const state = mergeStatusEvents(createEmptyStatusState(), [healthyPlatform, ...runs]);
+    const result = buildPublicStatus(state, now);
+    assert.equal(result.status, runs.length === runtimeIds.length ? "operational" : "unknown");
+    assert.equal(result.platform.status, "operational");
+  }
+  const staleFailure = {
+    ...completed[2], status: "failed", errorCode: "acp.turn_failed",
+    observedAt: "2026-09-05T17:46:17.117Z",
+  };
+  const staleState = mergeStatusEvents(createEmptyStatusState(), [staleFailure, healthyPlatform]);
+  const stale = buildPublicStatus(staleState, now);
+  assert.equal(stale.status, "unknown");
+  assert.equal(stale.components[2].latestErrorCode, "acp.turn_failed");
+  assert.equal(stale.components[2].failedRuns90d, 1);
+});
+
 function terminalLog(metadata) {
   return {
     message: [
