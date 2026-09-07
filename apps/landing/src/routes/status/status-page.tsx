@@ -533,14 +533,14 @@ function NoticeItem({ notice }: { notice: Notice }): ReactElement {
 function incidentNotice(incident: IncidentRecord): Notice {
   return {
     body: incident.summary,
-    eyebrow: `${t("Resolved")} · ${formatDay(incident.resolvedOn)}`,
+    eyebrow: `${t(incident.status)} · ${formatDay(incident.updatedOn)}`,
     key: incident.id,
     link: { href: incident.postmortemUrl, label: incident.postmortemLabel },
-    tone: "operational",
+    tone: incident.status === "Resolved" ? "operational" : "unknown",
   };
 }
 
-/** Live degradations from the feed, then incidents resolved within the last week. */
+/** Live degradations from the feed, then incident updates from the last week. */
 function recentNotices(
   payload: StatusPayload | null,
   feedUnavailable: boolean,
@@ -579,7 +579,7 @@ function recentNotices(
   }
 
   for (const incident of INCIDENTS) {
-    const age = now - Date.parse(`${incident.resolvedOn}T00:00:00Z`);
+    const age = now - Date.parse(`${incident.updatedOn}T00:00:00Z`);
     if (age >= 0 && age <= RECENT_NOTICE_WINDOW_MS) notices.push(incidentNotice(incident));
   }
 
