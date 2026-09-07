@@ -51,6 +51,10 @@ const ZH_MESSAGES = {
   "No notices reported for the past 7 days": "过去 7 天没有公告",
   Ongoing: "进行中",
   Resolved: "已恢复",
+  Monitoring: "观察中",
+  "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
+    "Qwen 与自定义 DeepSeek 配置共出现 6 次 OpenCode Run 失败。生产热修后，Qwen 与原生 DeepSeek 的工具执行已验证恢复；原租户的自定义 provider 路径仍待复验。",
+  "Read the OpenCode provider configuration incident report": "查看 OpenCode provider 配置事故报告",
   "Show notice history": "查看公告历史",
   "Hide notice history": "收起公告历史",
   "Notice history": "公告历史",
@@ -128,6 +132,10 @@ const JA_MESSAGES = {
   "No notices reported for the past 7 days": "過去 7 日間に通知はありません",
   Ongoing: "発生中",
   Resolved: "復旧済み",
+  Monitoring: "経過観察中",
+  "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
+    "Qwen とカスタム DeepSeek の設定で計 6 件の OpenCode Run が失敗しました。本番ホットフィックス後、Qwen とネイティブ DeepSeek のツール実行は復旧を確認しました。元のテナントのカスタム provider 経路は再検証待ちです。",
+  "Read the OpenCode provider configuration incident report": "OpenCode provider 設定の障害レポートを読む",
   "Show notice history": "通知履歴を表示",
   "Hide notice history": "通知履歴を閉じる",
   "Notice history": "通知履歴",
