@@ -61,7 +61,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 
 - [Homepage](https://mosoo.ai/en): Product overview and current positioning.
 - [Pricing](https://mosoo.ai/en/pricing): Current cloud plans and included runtime resources.
-- [Runtime status](https://health.mosoo.ai/en/status): Observed production service and Run health.
+- [Runtime status](https://mosoo.ai/health): Observed production service and Run health.
 - [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
 - [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
 - [Mosoo Computer](https://computer.mosoo.ai): A persistent cloud computer for agents, offered as a separate product.
@@ -91,7 +91,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 
 - [GitHub](https://github.com/langgenius/mosoo): Source code, issues, releases, and license.
 - [Security](https://github.com/langgenius/mosoo/security): Security policy and private vulnerability reporting.
-- [Machine-readable status](https://health.mosoo.ai/status.json): Current production service and Run health.
+- [Machine-readable status](https://mosoo.ai/status.json): Current production service and Run health.
 - [Authentication guide for agents](https://mosoo.ai/auth.md): Credential and identity boundaries.
 - [OpenAPI 3.1](https://cloud.mosoo.ai/api/v1/openapi.json): Machine-readable Public Thread API contract.
 - [API catalog](https://mosoo.ai/.well-known/api-catalog): Discovery links for the API, documentation, and status.
@@ -388,19 +388,19 @@ export default {
     if (forceHttps) url.protocol = "https:";
     if (dropTrailingSlash) url.pathname = pathname.slice(0, -1);
 
-    const statusPath = /^\/(?:en|zh|ja)\/status$/.test(url.pathname);
-    if (url.hostname === "health.mosoo.ai") {
-      if (url.pathname === "/" || url.pathname === "/status") {
-        return localeRedirect(request, url, "/status");
-      }
-      // Keep website navigation on the website; assets and the feed stay same-origin.
-      if (!statusPath && url.pathname !== "/status.json" && !url.pathname.includes(".")) {
-        url.hostname = "mosoo.ai";
-        return redirect(url);
-      }
-    } else if (statusPath || url.pathname === "/status") {
-      url.hostname = "health.mosoo.ai";
+    const oldStatusPath = url.pathname.match(/^\/(?:(en|zh|ja)\/)?status$/);
+    if (oldStatusPath || url.pathname === "/en/health") {
+      const locale = oldStatusPath?.[1] ?? "en";
+      url.pathname = locale === "en" ? "/health" : `/${locale}/health`;
       return permanentRedirect(url);
+    }
+
+    const healthPath = url.pathname.match(/^\/(?:(zh|ja)\/)?health$/);
+    if (healthPath) {
+      if (forceHttps || dropTrailingSlash) return permanentRedirect(url);
+      const assetUrl = new URL(url);
+      assetUrl.pathname = `/${healthPath[1] ?? "en"}/status`;
+      return env.ASSETS.fetch(new Request(assetUrl, request));
     }
 
     if (!forceHttps && !dropTrailingSlash && pathname === "/.well-known/oauth-protected-resource") {
@@ -441,10 +441,6 @@ export default {
     // localized pages live at /en/pricing, /zh/pricing, and /ja/pricing.
     if (pathname === "/pricing") {
       return localeRedirect(request, url, "/pricing");
-    }
-
-    if (pathname === "/status") {
-      return localeRedirect(request, url, "/status");
     }
 
     if (pathname === "/use-cases" || pathname.startsWith("/use-cases/")) {

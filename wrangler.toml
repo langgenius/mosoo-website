@@ -27,10 +27,6 @@ class_name = "StatusStore"
 pattern = "mosoo.ai"
 custom_domain = true
 
-[[env.prod.routes]]
-pattern = "health.mosoo.ai"
-custom_domain = true
-
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["StatusStore"]

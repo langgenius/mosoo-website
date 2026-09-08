@@ -637,7 +637,7 @@ function StatusHeader(): ReactElement {
       <div className={`${CONTENT_WIDTH_CLASS} flex items-center justify-between gap-4`}>
         <div className="flex min-w-0 items-center gap-3">
           <a
-            href={`https://mosoo.ai/${locale}`}
+            href={`/${locale}`}
             aria-label="mosoo"
             className="focus-visible:ring-paper-100/60 inline-flex shrink-0 rounded-full outline-none focus-visible:ring-2"
           >

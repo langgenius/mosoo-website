@@ -80,14 +80,14 @@ test("worker redirects bare /pricing to the locale pricing page without GeoIP", 
   }
 });
 
-test("worker redirects bare /status to the health domain", async () => {
+test("worker redirects bare /status to /health", async () => {
   const response = await worker.fetch(
     requestFor("/status?ref=incident", { cookie: "mosoo_locale=zh" }),
     envFor({}),
   );
 
   assert.equal(response.status, 308);
-  assert.equal(response.headers.get("location"), "https://health.mosoo.ai/status?ref=incident");
+  assert.equal(response.headers.get("location"), "https://mosoo.ai/health?ref=incident");
 });
 
 test("worker redirects bare use-cases paths to the locale pages", async () => {
@@ -404,22 +404,20 @@ test("worker returns a real 404 for unknown website paths", async () => {
 });
 
 
-test("health domain serves localized status pages, assets, and the shared feed", async () => {
+test("health paths serve status assets and legacy URLs retain their locale", async () => {
   for (const locale of ["en", "zh", "ja"]) {
-    const path = `/${locale}/status`;
-    const moved = await worker.fetch(requestFor(`${path}/?ref=old`), envFor({}));
-    assert.equal(moved.status, 308);
-    assert.equal(moved.headers.get("location"), `https://health.mosoo.ai${path}?ref=old`);
-    const page = await worker.fetch(new Request(`https://health.mosoo.ai${path}`), envFor({ [path]: "status page" }));
-    assert.equal(await page.text(), "status page");
+    const target = locale === "en" ? "/health" : `/${locale}/health`;
+    for (const suffix of ["", "/"]) {
+      const moved = await worker.fetch(requestFor(`/${locale}/status${suffix}?ref=old`), envFor({}));
+      assert.equal(moved.status, 308);
+      assert.equal(moved.headers.get("location"), `https://mosoo.ai${target}?ref=old`);
+    }
+    const response = await worker.fetch(requestFor(target), envFor({ [`/${locale}/status`]: `${locale} status page` }));
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), `${locale} status page`);
+    const slash = await worker.fetch(requestFor(`${target}/`), envFor({}));
+    assert.equal(slash.headers.get("location"), `https://mosoo.ai${target}`);
   }
-  const root = await worker.fetch(new Request("https://health.mosoo.ai/?ref=new", { headers: { "accept-language": "ja" } }), envFor({}));
-  assert.equal(root.headers.get("location"), "https://health.mosoo.ai/ja/status?ref=new");
-  assert.equal(root.headers.get("cache-control"), "private, no-store");
-  const feed = await worker.fetch(new Request("https://health.mosoo.ai/status.json"), envFor({}));
-  assert.equal((await feed.json()).status, "unknown");
-  const asset = await worker.fetch(new Request("https://health.mosoo.ai/assets/status.js"), envFor({ "/assets/status.js": "asset" }));
-  assert.equal(await asset.text(), "asset");
-  const home = await worker.fetch(new Request("https://health.mosoo.ai/en"), envFor({}));
-  assert.equal(home.headers.get("location"), "https://mosoo.ai/en");
+  const en = await worker.fetch(requestFor("/en/health"), envFor({}));
+  assert.equal(en.headers.get("location"), "https://mosoo.ai/health");
 });

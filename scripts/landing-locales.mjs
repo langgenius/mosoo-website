@@ -386,10 +386,7 @@ function navReplacements(locale) {
   return [
     ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
     ['href="/en/use-cases">Use cases</a>', `href="/${locale}/use-cases">${labels.useCases}</a>`],
-    [
-      'href="https://health.mosoo.ai/en/status">Status</a>',
-      `href="https://health.mosoo.ai/${locale}/status">${labels.status}</a>`,
-    ],
+    ['href="/health">Status</a>', `href="${locale === "en" ? "/health" : `/${locale}/health`}">${labels.status}</a>`],
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
@@ -451,9 +448,8 @@ function localizeHtml(source, locale, copy) {
 function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = []) {
   const en = seo.en;
   const copy = seo[locale];
-  const origin = subpath === "/status" ? "https://health.mosoo.ai" : "https://mosoo.ai";
-  const url = `${origin}/${locale}${subpath}`;
-  const enUrl = `${origin}/en${subpath}`;
+  const enUrl = subpath === "/health" ? "https://mosoo.ai/health" : `https://mosoo.ai/en${subpath}`;
+  const url = locale === "en" ? enUrl : `https://mosoo.ai/${locale}${subpath}`;
   const replacements = [
     [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
     [en.title, copy.title],
@@ -488,7 +484,7 @@ export function renderPricingLocale(source, locale) {
 
 export function renderStatusLocale(source, locale) {
   if (!STATUS_SEO[locale]) throw new Error(`Unsupported status locale: ${locale}`);
-  return localizeSubpageHtml(source, locale, STATUS_SEO, "/status");
+  return localizeSubpageHtml(source, locale, STATUS_SEO, "/health");
 }
 
 export function renderUseCasesLocale(source, locale) {
