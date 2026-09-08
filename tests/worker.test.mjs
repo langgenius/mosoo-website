@@ -80,14 +80,14 @@ test("worker redirects bare /pricing to the locale pricing page without GeoIP", 
   }
 });
 
-test("worker redirects bare /status to the locale status page", async () => {
+test("worker redirects bare /status to /health", async () => {
   const response = await worker.fetch(
     requestFor("/status?ref=incident", { cookie: "mosoo_locale=zh" }),
     envFor({}),
   );
 
-  assert.equal(response.status, 307);
-  assert.equal(response.headers.get("location"), "https://mosoo.ai/zh/status?ref=incident");
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), "https://mosoo.ai/health?ref=incident");
 });
 
 test("worker redirects bare use-cases paths to the locale pages", async () => {
@@ -401,4 +401,23 @@ test("worker returns a real 404 for unknown website paths", async () => {
   assert.equal(response.headers.get("location"), null);
   assert.equal(response.headers.get("content-type"), "text/plain; charset=utf-8");
   assert.equal(await response.text(), "Not found");
+});
+
+
+test("health paths serve status assets and legacy URLs retain their locale", async () => {
+  for (const locale of ["en", "zh", "ja"]) {
+    const target = locale === "en" ? "/health" : `/${locale}/health`;
+    for (const suffix of ["", "/"]) {
+      const moved = await worker.fetch(requestFor(`/${locale}/status${suffix}?ref=old`), envFor({}));
+      assert.equal(moved.status, 308);
+      assert.equal(moved.headers.get("location"), `https://mosoo.ai${target}?ref=old`);
+    }
+    const response = await worker.fetch(requestFor(target), envFor({ [`/${locale}/status`]: `${locale} status page` }));
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), `${locale} status page`);
+    const slash = await worker.fetch(requestFor(`${target}/`), envFor({}));
+    assert.equal(slash.headers.get("location"), `https://mosoo.ai${target}`);
+  }
+  const en = await worker.fetch(requestFor("/en/health"), envFor({}));
+  assert.equal(en.headers.get("location"), "https://mosoo.ai/health");
 });

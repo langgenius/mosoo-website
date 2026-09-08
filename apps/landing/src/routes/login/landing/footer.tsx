@@ -30,7 +30,7 @@ const PRODUCT_LINKS: readonly FooterLink[] = PRODUCTS.map((product) => ({
 const RESOURCE_LINKS: readonly FooterLink[] = [
   { label: t("Pricing"), href: `/${locale}/pricing`, internal: true },
   { label: t("Use cases"), href: `/${locale}/use-cases`, internal: true },
-  { label: t("Status"), href: `/${locale}/status`, internal: true },
+  { label: t("Status"), href: locale === "en" ? "/health" : `/${locale}/health`, internal: true },
   {
     label: t("Blog"),
     href: locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`,

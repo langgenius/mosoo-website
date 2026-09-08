@@ -48,3 +48,5 @@ jobs:
             https://mosoo.ai/ --output /dev/null
           curl --fail --location --retry 4 --retry-all-errors --silent --show-error \
             https://mosoo.ai/status.json --output /dev/null
+          curl --fail --location --retry 4 --retry-all-errors --silent --show-error \
+            https://mosoo.ai/health --output /dev/null

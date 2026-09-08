@@ -61,7 +61,7 @@ Mosoo is currently in alpha. The Public Thread API is designed for trusted appli
 
 - [Homepage](https://mosoo.ai/en): Product overview and current positioning.
 - [Pricing](https://mosoo.ai/en/pricing): Current cloud plans and included runtime resources.
-- [Runtime status](https://mosoo.ai/en/status): Observed production service and Run health.
+- [Runtime status](https://mosoo.ai/health): Observed production service and Run health.
 - [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
 - [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
 - [Mosoo Computer](https://computer.mosoo.ai): A persistent cloud computer for agents, offered as a separate product.
@@ -388,6 +388,21 @@ export default {
     if (forceHttps) url.protocol = "https:";
     if (dropTrailingSlash) url.pathname = pathname.slice(0, -1);
 
+    const oldStatusPath = url.pathname.match(/^\/(?:(en|zh|ja)\/)?status$/);
+    if (oldStatusPath || url.pathname === "/en/health") {
+      const locale = oldStatusPath?.[1] ?? "en";
+      url.pathname = locale === "en" ? "/health" : `/${locale}/health`;
+      return permanentRedirect(url);
+    }
+
+    const healthPath = url.pathname.match(/^\/(?:(zh|ja)\/)?health$/);
+    if (healthPath) {
+      if (forceHttps || dropTrailingSlash) return permanentRedirect(url);
+      const assetUrl = new URL(url);
+      assetUrl.pathname = `/${healthPath[1] ?? "en"}/status`;
+      return env.ASSETS.fetch(new Request(assetUrl, request));
+    }
+
     if (!forceHttps && !dropTrailingSlash && pathname === "/.well-known/oauth-protected-resource") {
       if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed();
       return redirect(PROTECTED_RESOURCE_METADATA);
@@ -426,10 +441,6 @@ export default {
     // localized pages live at /en/pricing, /zh/pricing, and /ja/pricing.
     if (pathname === "/pricing") {
       return localeRedirect(request, url, "/pricing");
-    }
-
-    if (pathname === "/status") {
-      return localeRedirect(request, url, "/status");
     }
 
     if (pathname === "/use-cases" || pathname.startsWith("/use-cases/")) {

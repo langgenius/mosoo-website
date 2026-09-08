@@ -120,3 +120,12 @@ Deploy the production Worker:
 ```bash
 npm run deploy
 ```
+
+### Public health page
+
+`https://mosoo.ai/health` serves the English status page; `/zh/health` and
+`/ja/health` serve the translated pages. Previous `/status` and localized status
+URLs permanently redirect to the corresponding health URL. The existing
+`/status.json` endpoint and `STATUS_STORE` history are unchanged.
+After deployment, verify the health pages, feed, and old-link redirects.
+Rollback uses the previous Worker version; no domain or data migration is required.

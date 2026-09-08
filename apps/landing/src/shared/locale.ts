@@ -28,6 +28,11 @@ export const htmlLanguage = {
 export function navigateToLocale(nextLocale: Locale): void {
   document.cookie = `mosoo_locale=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
 
+  if (/^\/(?:(en|zh|ja)\/)?health$/.test(window.location.pathname)) {
+    window.location.assign(nextLocale === "en" ? "/health" : `/${nextLocale}/health`);
+    return;
+  }
+
   // Keep the visitor on the current page (e.g. /en/pricing → /ja/pricing).
   const segments = window.location.pathname.split("/").filter(Boolean);
   const rest = isLocale(segments[0] ?? "") ? segments.slice(1) : segments;

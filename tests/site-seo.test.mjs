@@ -32,7 +32,7 @@ const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /href="https:\/\/computer\.mosoo\.ai">Mosoo Computer<\/a>/);
   assert.match(html, new RegExp(`href="/${locale}/pricing"`));
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
-  assert.match(html, new RegExp(`href="/${locale}/status"`));
+  assert.match(html, new RegExp(`href="${locale === "en" ? "/health" : `/${locale}/health`}"`));
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/blog"/);
@@ -62,9 +62,9 @@ test("the main-page sitemap contains every canonical landing locale", () => {
     "https://mosoo.ai/en/pricing",
     "https://mosoo.ai/zh/pricing",
     "https://mosoo.ai/ja/pricing",
-    "https://mosoo.ai/en/status",
-    "https://mosoo.ai/zh/status",
-    "https://mosoo.ai/ja/status",
+    "https://mosoo.ai/health",
+    "https://mosoo.ai/zh/health",
+    "https://mosoo.ai/ja/health",
     "https://mosoo.ai/en/use-cases",
     "https://mosoo.ai/zh/use-cases",
     "https://mosoo.ai/ja/use-cases",
@@ -91,12 +91,13 @@ test("the main-page sitemap exposes reciprocal landing hreflang alternates", () 
 
   assert.match(sitemap, /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
   for (const entry of sitemapEntries(sitemap)) {
-    const suffix = entry.loc.replace(/^https:\/\/mosoo\.ai\/(?:en|zh|ja)/, "");
+    const suffix = new URL(entry.loc).pathname.replace(/^\/(?:en|zh|ja)(?=\/|$)/, "");
+    const health = new URL(entry.loc).pathname.endsWith("/health");
     assert.deepEqual(entry.alternates, [
-      ["en", `https://mosoo.ai/en${suffix}`],
+      ["en", health ? "https://mosoo.ai/health" : `https://mosoo.ai/en${suffix}`],
       ["zh-CN", `https://mosoo.ai/zh${suffix}`],
       ["ja", `https://mosoo.ai/ja${suffix}`],
-      ["x-default", `https://mosoo.ai/en${suffix}`],
+      ["x-default", health ? "https://mosoo.ai/health" : `https://mosoo.ai/en${suffix}`],
     ]);
   }
 });
@@ -242,12 +243,12 @@ test("status pages expose localized canonical metadata and crawlable links", () 
   const zh = renderStatusLocale(source, "zh");
   const ja = renderStatusLocale(source, "ja");
 
-  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/en\/status"/);
+  assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/health"/);
   assert.match(zh, /<html lang="zh-CN">/);
-  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/status"/);
+  assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/health"/);
   assert.match(zh, /<title>mosoo — 系统状态<\/title>/);
   assert.match(ja, /<html lang="ja">/);
-  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/status"/);
+  assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/health"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });
