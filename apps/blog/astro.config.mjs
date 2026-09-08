@@ -1,4 +1,5 @@
 import mdx from "@astrojs/mdx";
+import { unified } from "@astrojs/markdown-remark";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
@@ -16,6 +17,12 @@ export default defineConfig({
   site: "https://mosoo.ai",
   base: "/blog",
   trailingSlash: "never",
+  // Preserve Astro 6 spacing between inline elements after the Astro 7 upgrade.
+  compressHTML: true,
+  // Keep the existing Markdown/MDX pipeline instead of switching renderers.
+  markdown: {
+    processor: unified(),
+  },
   build: {
     // `directory` writes each route as <path>/index.html so URLs stay clean
     // and extensionless. Cloudflare Workers Assets uses `drop-trailing-slash`
