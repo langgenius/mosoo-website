@@ -39,7 +39,7 @@ Production currently uses this topology:
 
 ## Development
 
-Use Node 24 or another supported Node.js version (`>=20`).
+Use Node 24 (as pinned in `.nvmrc` and CI), or Node.js `>=22.12.0`.
 
 Install dependencies:
 
