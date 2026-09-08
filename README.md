@@ -120,3 +120,13 @@ Deploy the production Worker:
 ```bash
 npm run deploy
 ```
+
+### Health domain
+
+`health.mosoo.ai` serves the public status page on the existing website Worker,
+using the same `STATUS_STORE` binding and history. Its root selects a locale;
+`mosoo.ai/status` and localized status URLs redirect to the health domain.
+The existing `mosoo.ai/status.json` endpoint remains available for consumers.
+Deploy the additional custom domain before checking HTTPS, localized pages,
+`/status.json`, and old-link redirects. Rollback restores the previous Worker
+version and routes; no status data migration is required.

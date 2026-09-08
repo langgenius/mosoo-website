@@ -46,25 +46,25 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/pricing" />
   </url>
   <url>
-    <loc>https://mosoo.ai/en/status</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
+    <loc>https://health.mosoo.ai/en/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://health.mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://health.mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://health.mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://health.mosoo.ai/en/status" />
   </url>
   <url>
-    <loc>https://mosoo.ai/zh/status</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
+    <loc>https://health.mosoo.ai/zh/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://health.mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://health.mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://health.mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://health.mosoo.ai/en/status" />
   </url>
   <url>
-    <loc>https://mosoo.ai/ja/status</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mosoo.ai/en/status" />
-    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh/status" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://mosoo.ai/ja/status" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en/status" />
+    <loc>https://health.mosoo.ai/ja/status</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://health.mosoo.ai/en/status" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://health.mosoo.ai/zh/status" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://health.mosoo.ai/ja/status" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://health.mosoo.ai/en/status" />
   </url>
   <url>
     <loc>https://mosoo.ai/en/use-cases</loc>

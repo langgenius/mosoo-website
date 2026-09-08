@@ -386,7 +386,10 @@ function navReplacements(locale) {
   return [
     ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
     ['href="/en/use-cases">Use cases</a>', `href="/${locale}/use-cases">${labels.useCases}</a>`],
-    ['href="/en/status">Status</a>', `href="/${locale}/status">${labels.status}</a>`],
+    [
+      'href="https://health.mosoo.ai/en/status">Status</a>',
+      `href="https://health.mosoo.ai/${locale}/status">${labels.status}</a>`,
+    ],
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
@@ -448,8 +451,9 @@ function localizeHtml(source, locale, copy) {
 function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = []) {
   const en = seo.en;
   const copy = seo[locale];
-  const url = `https://mosoo.ai/${locale}${subpath}`;
-  const enUrl = `https://mosoo.ai/en${subpath}`;
+  const origin = subpath === "/status" ? "https://health.mosoo.ai" : "https://mosoo.ai";
+  const url = `${origin}/${locale}${subpath}`;
+  const enUrl = `${origin}/en${subpath}`;
   const replacements = [
     [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
     [en.title, copy.title],
