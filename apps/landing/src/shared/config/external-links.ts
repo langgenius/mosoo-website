@@ -4,6 +4,8 @@ export const MOSOO_X_URL = "https://x.com/mosooagent";
 
 export const MOSOO_DOCS_URL = "https://mosoo.ai/docs/";
 export const MOSOO_API_REFERENCE_URL = `${MOSOO_DOCS_URL}api-reference/`;
+// Release-by-release product updates, kept with the docs (langgenius/mosoo-docs).
+export const MOSOO_CHANGELOG_URL = `${MOSOO_DOCS_URL}changelog/`;
 
 export const MOSOO_DEPLOY_URL = `https://deploy.workers.cloudflare.com/?url=${MOSOO_GITHUB_URL}`;
 
