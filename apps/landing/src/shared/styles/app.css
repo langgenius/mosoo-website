@@ -61,6 +61,12 @@
   --green-900: #2c5113;
   --green-950: #1a310b;
 
+  /* Signal lime — reserved for the single hero announcement chip. Deliberately
+     outside the bamboo-green ramp and theme-invariant: it must read as "new"
+     on the cool-gray root palette and on the warm landing palette alike, with
+     near-black ink on top (#050a08 on #c8ff00 ≈ 17:1). */
+  --lime: #c8ff00;
+
   /* Neutrals — true cool grays, GitHub-like. No green cast; the grays carry
      the UI and the green only punctuates it. */
   --ink-50: #f4f6f8;
@@ -342,6 +348,7 @@
   --color-primary-foreground: #ffffff;
   --color-primary-hover: var(--primary-hover);
   --color-on-accent: var(--fg-on-accent);
+  --color-lime: var(--lime);
 
   --color-secondary: var(--paper-200);
   --color-secondary-foreground: var(--fg-1);

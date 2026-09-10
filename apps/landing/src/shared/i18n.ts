@@ -16,6 +16,7 @@ const ZH_MESSAGES = {
   "mosoo on GitHub": "mosoo 的 GitHub 主页",
   "Log in": "登录",
   "Open source · Agent runtime and API": "开源 · Agent runtime 与 API",
+  "Mosoo Computer is live": "Mosoo Computer 已上线",
   "Open-source agent runtime": "开源 Agent runtime",
   "for coding agents.": "专为 Coding Agent 而生。",
   "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Stream work, keep durable Threads, and resume across Runs.":
@@ -43,6 +44,7 @@ const JA_MESSAGES = {
   "mosoo on GitHub": "mosoo の GitHub",
   "Log in": "ログイン",
   "Open source · Agent runtime and API": "オープンソース · Agent runtime と API",
+  "Mosoo Computer is live": "Mosoo Computer をリリースしました",
   "Open-source agent runtime": "オープンソースの Agent runtime",
   "for coding agents.": "Coding Agent のために。",
   "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Stream work, keep durable Threads, and resume across Runs.":

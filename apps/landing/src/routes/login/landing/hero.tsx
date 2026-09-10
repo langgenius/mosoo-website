@@ -1,4 +1,4 @@
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import { lazy, Suspense } from "react";
 import type { CSSProperties, ReactElement } from "react";
 
@@ -6,9 +6,8 @@ import { t } from "@/shared/i18n";
 import { useIdleReady } from "@/shared/lib/use-idle-ready";
 
 import { GithubMark } from "../github-mark";
-import { MOSOO_API_REFERENCE_URL, MOSOO_GITHUB_URL } from "../links";
+import { MOSOO_API_REFERENCE_URL, MOSOO_COMPUTER_URL, MOSOO_GITHUB_URL } from "../links";
 import { DISPLAY_FONT } from "./typography";
-import { Eyebrow } from "./ui";
 
 const HERO_SCENE_ID = "RasGv747UbFbFukg0cwh";
 
@@ -52,9 +51,24 @@ export function Hero({ onContinue }: { onContinue: () => void }): ReactElement {
       <div
         className="relative z-10 flex w-full max-w-[1080px] flex-col items-center text-center"
       >
-        <div className="landing-hero-reveal">
-          <Eyebrow>{t("Open source · Agent runtime and API")}</Eyebrow>
-        </div>
+        {/* Announcement pill (GitBook-style: label chip + one line + arrow).
+            It takes the eyebrow's slot above the headline; the lime chip is
+            the hero's single accent, so the eyebrow's green dot retired with
+            it. Same-tab link: Mosoo Computer is a product entry, not a
+            reference. */}
+        <a
+          href={MOSOO_COMPUTER_URL}
+          className="landing-hero-reveal group border-ink-900/10 bg-paper-50/80 text-ink-900 hover:border-ink-900/20 hover:bg-paper-50 focus-visible:ring-ring inline-flex h-9 items-center gap-2.5 rounded-full border py-1 pr-3.5 pl-1 text-[13.5px] font-semibold backdrop-blur-sm transition-colors outline-none focus-visible:ring-2"
+        >
+          <span className="bg-lime text-ink-900 inline-flex h-[26px] items-center rounded-full px-2.5 text-[11px] font-bold tracking-[0.1em] uppercase">
+            New
+          </span>
+          <span>{t("Mosoo Computer is live")}</span>
+          <ArrowRight
+            aria-hidden="true"
+            className="text-ink-500 size-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+          />
+        </a>
         <h1
           className="landing-hero-reveal landing-hero-reveal-delay-1 text-ink-900 mt-7 [text-wrap:balance]"
           style={HERO_HEADLINE_STYLE}
