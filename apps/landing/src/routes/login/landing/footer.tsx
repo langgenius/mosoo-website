@@ -6,6 +6,7 @@ import { GithubMark } from "../github-mark";
 import {
   MOSOO_API_REFERENCE_URL,
   MOSOO_BLOG_URL,
+  MOSOO_CHANGELOG_URL,
   MOSOO_DOCS_URL,
   MOSOO_GITHUB_URL,
   MOSOO_LICENSE_URL,
@@ -38,6 +39,7 @@ const RESOURCE_LINKS: readonly FooterLink[] = [
   },
   { label: t("Docs"), href: MOSOO_DOCS_URL },
   { label: t("API docs"), href: MOSOO_API_REFERENCE_URL },
+  { label: t("Changelog"), href: MOSOO_CHANGELOG_URL },
   { label: t("Releases"), href: MOSOO_RELEASES_URL },
 ];
 
