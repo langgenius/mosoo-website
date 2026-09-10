@@ -136,3 +136,24 @@ test("three consecutive observed Run failures degrade the runtime and exclude pr
   assert.equal(status.status, "degraded");
   assert.equal(status.releasePolicyTriggered, true);
 });
+
+test("Tail health distinguishes invocation failures from HTTP client errors and business logs", () => {
+  const items = [
+    { event: { request: {}, response: { status: 404 } }, outcome: "ok" },
+    { event: { request: {}, response: { status: 503 } }, outcome: "ok" },
+    { event: { cron: "* * * * *", scheduledTime: Date.parse(observedAt) }, outcome: "ok" },
+    { event: { cron: "* * * * *", scheduledTime: Date.parse(observedAt) }, outcome: "exception" },
+    { event: { consumedEvents: [{ scriptName: "producer" }] }, outcome: "exception" },
+    { event: { response: { status: 200 } }, outcome: "ok", logs: [terminalLog({
+      runId: "failed-run", runtimeId: "openai-runtime", sessionType: "ui",
+      status: "failed", errorCode: "provider_error",
+    })] },
+  ];
+  const events = statusEventsFromTailItems(items, Date.parse(observedAt));
+  assert.deepEqual(events.filter((event) => event.type === "invocation").map((event) => event.succeeded),
+    [true, false, true, false, false, true]);
+  const status = buildPublicStatus(mergeStatusEvents(createEmptyStatusState(), events), new Date(observedAt));
+  assert.equal(status.platform.failedInvocations90d, 3);
+  assert.equal(status.platform.invocations90d, 6);
+  assert.equal(status.components[0].failedRuns90d, 1);
+});
