@@ -4,6 +4,11 @@ name = "mosoo-website"
 compatibility_date = "2026-07-02"
 main = "src/worker.js"
 
+# This Worker serves HTTP and consumes API Tail events; it has no scheduled handler.
+# Omitting triggers preserves old remote schedules instead of removing them.
+[triggers]
+crons = []
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
@@ -18,6 +23,9 @@ class_name = "StatusStore"
 [env.prod]
 name = "mosoo-website-prod"
 workers_dev = false
+
+[env.prod.triggers]
+crons = []
 
 [[env.prod.durable_objects.bindings]]
 name = "STATUS_STORE"
