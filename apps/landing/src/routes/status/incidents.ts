@@ -28,10 +28,10 @@ export const INCIDENTS: readonly IncidentRecord[] = [
   },
   {
     id: "2026-09-07-opencode-provider-configuration",
-    status: "Monitoring",
-    updatedOn: "2026-09-07",
+    status: "Resolved",
+    updatedOn: "2026-09-17",
     summary: t(
-      "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.",
+      "Qwen recovery and matching OpenRouter DeepSeek canaries passed published and Preview tool execution. Sanitized proxy-rejection diagnostics are deployed. Canaries used an authorized operator key.",
     ),
     postmortemLabel: t("Read the OpenCode provider configuration incident report"),
     postmortemUrl: `${POSTMORTEM_BASE_URL}2026-09-07-opencode-provider-configuration.md`,

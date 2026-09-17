@@ -55,8 +55,8 @@ const ZH_MESSAGES = {
   "Fixed tool-title conflicts confirmed in three OpenCode Runs and a separate backup-storage authorization failure found during verification. Staging and production canaries passed with the affected configuration through an authorized OpenRouter StepFun route.":
     "已修复在 3 次 OpenCode Run 中确认的工具标题冲突，以及验证中发现的独立备份存储授权问题。使用受影响配置、经授权改走 OpenRouter StepFun 路由的测试及生产金丝雀均已通过。",
   "Read the running tool title incident report": "查看工具执行标题冲突事件报告",
-  "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
-    "Qwen 与自定义 DeepSeek 配置共出现 6 次 OpenCode Run 失败。生产热修后，Qwen 与原生 DeepSeek 的工具执行已验证恢复；原租户的自定义 provider 路径仍待复验。",
+  "Qwen recovery and matching OpenRouter DeepSeek canaries passed published and Preview tool execution. Sanitized proxy-rejection diagnostics are deployed. Canaries used an authorized operator key.":
+    "Qwen 路径已恢复；与受影响配置一致的 OpenRouter DeepSeek 金丝雀已通过正式调用和 Preview 的真实工具执行。脱敏的代理拒绝诊断已上线，金丝雀使用经授权的运维测试密钥。",
   "Read the OpenCode provider configuration incident report": "查看 OpenCode provider 配置事故报告",
   "Show notice history": "查看公告历史",
   "Hide notice history": "收起公告历史",
@@ -139,8 +139,8 @@ const JA_MESSAGES = {
   "Fixed tool-title conflicts confirmed in three OpenCode Runs and a separate backup-storage authorization failure found during verification. Staging and production canaries passed with the affected configuration through an authorized OpenRouter StepFun route.":
     "3 件の OpenCode Run で確認されたツールタイトルの競合と、検証中に見つかった別のバックアップストレージ認証問題を修正しました。影響を受けた設定を用い、許可を得て OpenRouter 経由の StepFun に切り替えたステージングと本番のカナリア検証が成功しました。",
   "Read the running tool title incident report": "実行中ツールのタイトル競合に関する障害レポートを読む",
-  "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
-    "Qwen とカスタム DeepSeek の設定で計 6 件の OpenCode Run が失敗しました。本番ホットフィックス後、Qwen とネイティブ DeepSeek のツール実行は復旧を確認しました。元のテナントのカスタム provider 経路は再検証待ちです。",
+  "Qwen recovery and matching OpenRouter DeepSeek canaries passed published and Preview tool execution. Sanitized proxy-rejection diagnostics are deployed. Canaries used an authorized operator key.":
+    "Qwen 経路の復旧と、影響を受けた設定と同じ OpenRouter DeepSeek カナリアで公開 Agent と Preview の実ツール実行を確認しました。サニタイズ済みのプロキシ拒否診断を本番反映し、カナリアには許可された運用者のキーを使用しました。",
   "Read the OpenCode provider configuration incident report": "OpenCode provider 設定の障害レポートを読む",
   "Show notice history": "通知履歴を表示",
   "Hide notice history": "通知履歴を閉じる",
