@@ -31,7 +31,7 @@ export function useIdleReady(timeout = 1200): boolean {
       };
     }
 
-    const timeoutId = window.setTimeout(markReady, 0);
+    const timeoutId = window.setTimeout(markReady, timeout);
     return () => {
       cancelled = true;
       window.clearTimeout(timeoutId);
