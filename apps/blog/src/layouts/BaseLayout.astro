@@ -36,7 +36,7 @@ const {
   robots = "index, follow, max-image-preview:large",
 } = Astro.props;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImageUrl = ogImage ?? new URL("/landing/invoke-gradient.jpg", Astro.site).href;
+const ogImageUrl = ogImage ?? new URL("/brand/social-card-geist-20260917.png", Astro.site).href;
 const hreflangEntries = (hreflang ? Object.entries(hreflang) : []).filter(
   (entry): entry is [string, string] => Boolean(entry[1]),
 );

@@ -166,9 +166,9 @@ test("landing and blog metadata never point at a missing default image", () => {
   assert.match(landing, /Where can I verify Mosoo's source and API contract\?/);
   assert.match(landing, /href="https:\/\/cloud\.mosoo\.ai\/api\/v1\/openapi\.json"/);
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
-  assert.match(blogLayout, /\/landing\/invoke-gradient\.jpg/);
+  assert.match(blogLayout, /\/brand\/social-card-geist-20260917\.png/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/landing/invoke-gradient.jpg", import.meta.url)),
+    existsSync(new URL("../apps/landing/public/brand/social-card-geist-20260917.png", import.meta.url)),
     true,
   );
 });
