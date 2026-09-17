@@ -17,6 +17,16 @@ const POSTMORTEM_BASE_URL = `${MOSOO_GITHUB_URL}blob/main/docs/operations/incide
 // truth; this list only mirrors their one-line summaries for the notice feed.
 export const INCIDENTS: readonly IncidentRecord[] = [
   {
+    id: "2026-09-14-acp-running-tool-title-conflict",
+    status: "Resolved",
+    updatedOn: "2026-09-17",
+    summary: t(
+      "Fixed tool-title conflicts confirmed in three OpenCode Runs and a separate backup-storage authorization failure found during verification. Staging and production canaries passed with the affected configuration through an authorized OpenRouter StepFun route.",
+    ),
+    postmortemLabel: t("Read the running tool title incident report"),
+    postmortemUrl: `${POSTMORTEM_BASE_URL}2026-09-14-acp-running-tool-title-conflict.md`,
+  },
+  {
     id: "2026-09-07-opencode-provider-configuration",
     status: "Monitoring",
     updatedOn: "2026-09-07",

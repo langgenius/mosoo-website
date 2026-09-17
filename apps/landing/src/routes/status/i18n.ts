@@ -52,6 +52,9 @@ const ZH_MESSAGES = {
   Ongoing: "进行中",
   Resolved: "已恢复",
   Monitoring: "观察中",
+  "Fixed tool-title conflicts confirmed in three OpenCode Runs and a separate backup-storage authorization failure found during verification. Staging and production canaries passed with the affected configuration through an authorized OpenRouter StepFun route.":
+    "已修复在 3 次 OpenCode Run 中确认的工具标题冲突，以及验证中发现的独立备份存储授权问题。使用受影响配置、经授权改走 OpenRouter StepFun 路由的测试及生产金丝雀均已通过。",
+  "Read the running tool title incident report": "查看工具执行标题冲突事件报告",
   "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
     "Qwen 与自定义 DeepSeek 配置共出现 6 次 OpenCode Run 失败。生产热修后，Qwen 与原生 DeepSeek 的工具执行已验证恢复；原租户的自定义 provider 路径仍待复验。",
   "Read the OpenCode provider configuration incident report": "查看 OpenCode provider 配置事故报告",
@@ -133,6 +136,9 @@ const JA_MESSAGES = {
   Ongoing: "発生中",
   Resolved: "復旧済み",
   Monitoring: "経過観察中",
+  "Fixed tool-title conflicts confirmed in three OpenCode Runs and a separate backup-storage authorization failure found during verification. Staging and production canaries passed with the affected configuration through an authorized OpenRouter StepFun route.":
+    "3 件の OpenCode Run で確認されたツールタイトルの競合と、検証中に見つかった別のバックアップストレージ認証問題を修正しました。影響を受けた設定を用い、許可を得て OpenRouter 経由の StepFun に切り替えたステージングと本番のカナリア検証が成功しました。",
+  "Read the running tool title incident report": "実行中ツールのタイトル競合に関する障害レポートを読む",
   "Six OpenCode Runs failed across Qwen and custom DeepSeek configurations. A production hotfix restored verified Qwen and native DeepSeek tool execution; the original custom-provider path awaits re-verification.":
     "Qwen とカスタム DeepSeek の設定で計 6 件の OpenCode Run が失敗しました。本番ホットフィックス後、Qwen とネイティブ DeepSeek のツール実行は復旧を確認しました。元のテナントのカスタム provider 経路は再検証待ちです。",
   "Read the OpenCode provider configuration incident report": "OpenCode provider 設定の障害レポートを読む",
