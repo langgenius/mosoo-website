@@ -24,6 +24,10 @@ const EN = {
   whoQuestion: "Who is mosoo for?",
   whoAnswer:
     "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.",
+  compareQuestion:
+    "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?",
+  compareAnswer:
+    "Dify and n8n are strong deterministic workflow tools; OpenClaw and Claude Code are agent runtimes. mosoo sits above those choices as the backend for published agents: it provides versioning, isolated sandboxes, durable Threads and files, API access, and usage accounting without rebuilding that platform layer in-house.",
   callQuestion: "How does a product call a Mosoo Agent?",
   callAnswer:
     "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.",
@@ -59,6 +63,9 @@ const SEO = {
     whoQuestion: "mosoo 适合谁？",
     whoAnswer:
       "mosoo 面向把 Coding Agent 扩展到产品和自动化中的开发者；他们需要托管 Thread、文件、sandbox、工具事件和 API 访问，而不想为每个集成都重建一套 runtime。",
+    compareQuestion: "mosoo 与 Dify、n8n、OpenClaw、Claude Code 或自建方案有何不同？",
+    compareAnswer:
+      "Dify 和 n8n 是强大的确定性 workflow 工具；OpenClaw 和 Claude Code 是 Agent runtime。mosoo 位于这些选择之上，作为已发布 Agent 的 backend，提供版本管理、隔离 sandbox、持久 Thread 和文件、API 访问与用量统计，避免团队自行重建这层平台。",
     callQuestion: "产品如何调用 mosoo Agent？",
     callAnswer:
       "可信后端通过 Public Thread API 创建或恢复 Thread、发送用户事件、流式读取结果并挂载文件。mosoo App owner token 留在服务器上，不暴露给浏览器。",
@@ -92,6 +99,9 @@ const SEO = {
     whoQuestion: "mosoo は誰向けですか？",
     whoAnswer:
       "mosoo は、Coding Agent をプロダクトや自動化に組み込みたい開発者向けです。integration ごとに runtime を作り直さず、ホストされた Thread、ファイル、sandbox、tool event、API access を使えます。",
+    compareQuestion: "mosoo は Dify、n8n、OpenClaw、Claude Code、自社構築と何が違いますか？",
+    compareAnswer:
+      "Dify と n8n は決定論的 workflow に強く、OpenClaw と Claude Code は Agent runtime です。mosoo はそれらの上にある公開 Agent 向け backend として、バージョン管理、隔離 sandbox、永続 Thread とファイル、API access、使用量管理を提供し、社内でその platform layer を再構築しなくて済むようにします。",
     callQuestion: "プロダクトから mosoo Agent を呼ぶには？",
     callAnswer:
       "信頼されたバックエンドが Public Thread API で Thread を作成または再開し、user event を送り、結果を stream し、ファイルを添付します。mosoo App owner token はサーバーに置き、ブラウザへ公開しません。",
@@ -406,6 +416,8 @@ function directAnswerReplacements(copy) {
     "whatAnswer",
     "whoQuestion",
     "whoAnswer",
+    "compareQuestion",
+    "compareAnswer",
     "callQuestion",
     "callAnswer",
     "selfHostQuestion",

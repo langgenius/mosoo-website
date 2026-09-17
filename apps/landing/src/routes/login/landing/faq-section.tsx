@@ -73,7 +73,7 @@ const FAQS: readonly Faq[] = [
       "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?",
     ),
     a: t(
-      "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.",
+      "Dify and n8n are strong deterministic workflow tools; OpenClaw and Claude Code are agent runtimes. mosoo sits above those choices as the backend for published agents: it provides versioning, isolated sandboxes, durable Threads and files, API access, and usage accounting without rebuilding that platform layer in-house.",
     ),
   },
   {
