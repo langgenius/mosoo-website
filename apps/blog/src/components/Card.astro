@@ -1,5 +1,8 @@
 ---
 import CardVisual from "./CardVisual.astro";
+import CoverControls from "./CoverControls.astro";
+import { getCover } from "../covers/registry";
+import { draftLabel } from "../lib/drafts";
 import { categoryLabel, dateLocaleByLocale } from "../lib/copy.mjs";
 
 interface Props {
@@ -12,8 +15,12 @@ interface Props {
   slug: string;
   heroImage?: string | undefined;
   heroAlt?: string | undefined;
+  heroCover?: string | undefined;
+  draft?: boolean;
 }
-const { href, title, category, date, locale = "en", description, slug, heroImage, heroAlt } = Astro.props;
+const { href, title, category, date, locale = "en", description, slug, heroImage, heroAlt, heroCover, draft = false } = Astro.props;
+const liveCover = getCover(heroCover);
+const coverUid = `cover-card-${slug}`;
 const dateLabel = date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US", {
   year: "numeric",
   month: "short",
@@ -22,9 +29,10 @@ const dateLabel = date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US",
 const displayCategory = categoryLabel(locale, category);
 ---
 
+<div class="cv-card relative" data-cover-zone={liveCover ? "" : undefined}>
 <a href={href} class="group flex flex-col gap-4">
   <div class="overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--border)]">
-    <CardVisual slug={slug} heroImage={heroImage} heroAlt={heroAlt} ratio="16/9" />
+    <CardVisual slug={slug} heroImage={heroImage} heroAlt={heroAlt ?? title} heroCover={heroCover} coverUid={coverUid} label={draft ? draftLabel[locale] : undefined} ratio="16/9" />
   </div>
   <div class="flex min-w-0 flex-1 flex-col gap-2">
     <div class="flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
@@ -44,3 +52,11 @@ const displayCategory = categoryLabel(locale, category);
     }
   </div>
 </a>
+{
+  liveCover && (
+    <div class="pointer-events-none absolute inset-x-0 top-0 aspect-[16/9]">
+      <CoverControls cover={liveCover.id} uid={coverUid} locale={locale} compact class="pointer-events-auto absolute left-2 top-2" />
+    </div>
+  )
+}
+</div>

@@ -47,6 +47,12 @@ const blog = defineCollection({
     // "/blog/blog/the-journey-begins-with-an-imagine-if/hero.jpg".
     heroImage: z.string().optional(),
     heroAlt: z.string().optional(),
+    // Optional live cover id (see `src/covers/registry.ts`). When set, the card
+    // and the article hero render the animated inline-SVG cover instead of the
+    // <img>. `heroImage` must still point at the static raster of the same
+    // cover: it remains the Open Graph image, the JSON-LD image and the
+    // fallback for feeds and crawlers.
+    heroCover: z.string().optional(),
   }),
 });
 

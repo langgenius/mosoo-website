@@ -1,11 +1,17 @@
 ---
 import { gradientFromSlug } from "../lib/gradient-from-slug";
+import { getCover } from "../covers/registry";
+import CoverVisual from "./CoverVisual.astro";
 
 interface Props {
   slug: string;
   ratio?: "16/9" | "4/3" | "3/2" | "21/9";
   heroImage?: string | undefined;
   heroAlt?: string | undefined;
+  /** Live cover id + a page-unique uid that pairs it with its CoverControls. */
+  heroCover?: string | undefined;
+  coverUid?: string | undefined;
+  eager?: boolean;
   label?: string;
 }
 const {
@@ -13,9 +19,13 @@ const {
   ratio = "16/9",
   heroImage,
   heroAlt,
+  heroCover,
+  coverUid,
+  eager = false,
   label,
 } = Astro.props;
 const visual = gradientFromSlug(slug);
+const liveCover = getCover(heroCover);
 const aspect =
   ratio === "16/9"
     ? "aspect-[16/9]"
@@ -28,7 +38,9 @@ const aspect =
 
 <div class:list={["relative w-full overflow-hidden bg-[color:var(--ink-50)]", aspect]}>
   {
-    heroImage ? (
+    liveCover ? (
+      <CoverVisual cover={liveCover.id} uid={coverUid ?? `cover-${slug}`} alt={heroAlt ?? ""} eager={eager} />
+    ) : heroImage ? (
       <img
         src={heroImage}
         alt={heroAlt ?? ""}

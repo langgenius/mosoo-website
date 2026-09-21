@@ -1,0 +1,74 @@
+---
+title: "Mosoo Computer：给你的 Agent 一台可以长期工作的电脑"
+titleAccent: "长期工作"
+description: "Mosoo Computer 给 Agent 一个可以持续积累状态的云端工作环境，并把它连接到你日常使用的聊天渠道，让下一次工作从上一次留下的基础开始。"
+date: 2026-09-21
+category: "Product"
+author: "mosoo team"
+locale: "zh"
+permalink: "introducing-mosoo-computer"
+translationKey: "introducing-mosoo-computer"
+heroImage: "/blog/blog/introducing-mosoo-computer/cover.jpg"
+heroAlt: "示意插图：柔和的 lime 光晕中，一块白色大方块上画着显示器，屏幕里是一个 lime 色文件夹；下方的深色状态条写着 awake，左侧一块带 lime 圆点的小聊天气泡方块用虚线连到这台电脑。"
+heroCover: "mosoo-computer"
+---
+
+你和一个 Agent 共事得越久，越希望它能接着上次的工作往下走。文件还在，工具已经配置好，你交代过的工作方式也不必一遍遍重讲。
+
+这正是我们构建 [Mosoo Computer](https://computer.mosoo.ai/) 的出发点：给 Agent 一个可以持续积累的云端工作环境，再把它连接到你日常使用的聊天渠道。
+
+## 从调用一种能力，到培养一个 Agent
+
+我们曾在[《两种 Agent：Pet 与 Cattle》](https://mosoo.ai/blog/zh/two-kinds-of-agents-pet-and-cattle)中讨论过两种期待。一种期待是反复调用一项能力，让新的执行实例处理下一项任务；另一种期待是长期与同一个 Agent 协作，让它逐步积累自己的工作上下文。
+
+Mosoo Computer 面向后者。
+
+一台用了两年的电脑，常常比一台刚开箱的新电脑更顺手。原因不只在硬件，而在于里面已经有了你的文件、工具和工作方式。对于长期协作的 Agent，这些积累同样重要。模型提供推理能力，工作环境则让它有地方保存结果、使用工具，并继续推进事情。
+
+这里的「培养」不是每次对话都在训练模型，而是让有用的状态留下来。文件、配置，以及运行时保存的记忆，可以成为后续工作的基础。具体如何使用这些记忆，取决于你选择的运行时。
+
+## 一台 Computer，承载持续的工作环境
+
+在 Mosoo Computer 中，你为 Agent 命名、选择运行时和机器规格，再配置它使用的模型。当前创建界面提供 Codex、Hermes 和 OpenClaw 三种运行时。
+
+Computer 的价值在于，工作环境不必随着每次对话重新搭建。文件和运行时状态有明确的存放位置，Session 记录一次次协作，渠道连接则提供进入这个环境的入口。
+
+持续存在，也不意味着容器进程永不停止。当前产品的休眠说明明确区分了两者：休眠时容器进程停止，工作区文件、运行时状态、Session 和渠道绑定保留；进程内存与临时磁盘不会保留。下一个 Web 或渠道请求会触发唤醒。
+
+我们希望保留下来的，是工作的连续性。
+
+## 从你熟悉的聊天入口开始
+
+Web Console 可以直接使用当前登录身份。需要把 Agent 带到日常沟通中时，可以进入 Channels，连接 Telegram、Slack、Discord 或飞书 / Lark。
+
+渠道负责消息从哪里来、回复到哪里去，背后连接的是你选定的 Agent 和工作环境。你不需要因为增加了一个聊天入口，就重新搭建一套 Computer。
+
+这里也有一个值得说清楚的边界：同一个 Agent 不等于所有聊天记录被合并成一条对话。当前产品为各个外部对话分别建立 Session。跨渠道协作时，应把需要复用的信息明确保存到工作区，或使用运行时支持的记忆机制，而不是假定另一个渠道会自动带上全部历史消息。
+
+## 选择运行时，也选择模型接入方式
+
+运行时负责组织推理、工具调用和任务循环；模型接入决定它使用哪一个模型，以及通过什么方式获得访问权限。
+
+Mosoo Computer 将这两个选择放在各自的位置。Model Access 用于管理你自己的模型服务 API Key，也就是 BYOK；每个 Agent 再在自己的 Settings 中选择模型来源和模型。支持订阅接入的运行时，还可以使用 Subscription 入口完成相应账号授权。
+
+这样，选择一个 Agent 的工作方式，不必与整个账号的模型设置绑在一起。订阅是否可用、能够选择哪些模型，仍取决于运行时支持和账号权限；接入已有订阅也不意味着没有额度限制，或免除 Computer 的其他费用。
+
+## 渠道、执行与模型之间的架构
+
+![Mosoo Computer 英文概念架构：聊天渠道经 Chat SDK、Agent Driver 连接云端 Harness 与模型订阅](/blog/blog/introducing-mosoo-computer/architecture-en.png)
+
+*概念架构保留了原图的结构。图中的订阅服务是架构示意，实际可用组合以产品界面和运行时支持为准。*
+
+从左向右看，聊天渠道通过 Vercel Chat SDK 统一消息与回复；Mosoo Agent Driver 统一输入、事件和 Session；Agent Harness 负责推理、调用工具，并推进任务循环。云端环境提供持久文件系统、Shell 和按需运行的 Linux 容器。模型访问则在运行时支持的范围内接入。
+
+这套划分让三个选择可以分别演进：你在哪里与 Agent 交流、Agent 如何执行工作，以及它使用什么模型。渠道变化不应该迫使用户重新建立工作环境，新的运行时也应该有统一的接入位置。
+
+## 从一次对话，开始长期协作
+
+Mosoo 面向把 Agent 能力嵌入应用的开发者；Mosoo Computer 则把入口交给直接使用 Agent 的人。它们服务于不同的使用方式，因此需要各自清晰的产品路径。
+
+你可以先创建一个 Agent，配置模型，在 Web Console 发出第一条消息，再连接一个常用渠道。之后，把值得留下的文件、工作约定和配置逐步积累在这个环境中。
+
+我们想让 Agent 的下一次工作，能够从上一次留下的基础开始。
+
+[打开 Mosoo Computer](https://computer.mosoo.ai/)

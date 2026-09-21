@@ -16,6 +16,7 @@
     "@mosoo/design-tokens": "file:../../pkgs/design-tokens",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^7.1.0",
+    "motion": "12.42.0",
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {

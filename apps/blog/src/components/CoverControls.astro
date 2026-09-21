@@ -1,0 +1,51 @@
+---
+// Play / pause / replay for a live cover. Rendered as a sibling of the cover so
+// it never sits inside the card's <a>. Native buttons, same conventions as
+// CategoryTabs. Hidden until the cover runtime is ready; without JS there is
+// nothing to control because the cover already shows its completed state.
+import { getCover } from "../covers/registry";
+
+interface Props {
+  cover: string;
+  uid: string;
+  locale?: "en" | "zh" | "ja";
+  compact?: boolean;
+  class?: string;
+}
+const { cover, uid, locale = "en", compact = false, class: className } = Astro.props;
+const entry = getCover(cover);
+const labels = {
+  en: { play: "Play cover animation", pause: "Pause cover animation", replay: "Replay cover animation", group: "Cover animation" },
+  zh: { play: "播放封面动画", pause: "暂停封面动画", replay: "重播封面动画", group: "封面动画" },
+  ja: { play: "カバーアニメーションを再生", pause: "カバーアニメーションを一時停止", replay: "カバーアニメーションをもう一度再生", group: "カバーアニメーション" },
+}[locale];
+---
+
+{
+  entry && (
+    <div
+      data-cover-controls={uid}
+      data-stages={JSON.stringify(entry.stages[locale] ?? entry.stages.en)}
+      data-label-play={labels.play}
+      data-label-pause={labels.pause}
+      role="group"
+      aria-label={labels.group}
+      hidden
+      class:list={["cv-controls", compact && "cv-controls--compact", className]}
+    >
+      <button type="button" data-cover-toggle data-icon="play" aria-label={labels.play} data-label-replay={labels.replay} class="cv-btn">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="cv-icon-play"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="cv-icon-replay" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5" /><path d="M4 4.5v4.2h4.2" /></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="cv-icon-pause"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor" /></svg>
+      </button>
+      {
+        !compact && (
+          <button type="button" data-cover-replay aria-label={labels.replay} class="cv-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12a7.5 7.5 0 1 0 2.4-5.5" /><path d="M4 4.5v4.2h4.2" /></svg>
+          </button>
+        )
+      }
+      {!compact && <span data-cover-stage aria-live="polite" class="cv-stage" />}
+    </div>
+  )
+}

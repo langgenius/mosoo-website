@@ -1,5 +1,7 @@
 ---
 import CardVisual from "./CardVisual.astro";
+import CoverControls from "./CoverControls.astro";
+import { getCover } from "../covers/registry";
 import { getPostHref } from "../lib/i18n";
 import { categoryLabel, dateLocaleByLocale } from "../lib/copy.mjs";
 import type { CollectionEntry } from "astro:content";
@@ -17,8 +19,13 @@ const dateLabel = featured.data.date.toLocaleDateString(dateLocaleByLocale[local
   day: "numeric",
 });
 const displayCategory = categoryLabel(locale, featured.data.category);
+// Live-cover controls are rendered in an overlay that mirrors the grid below, so
+// they sit on the visual without living inside the link.
+const liveCover = getCover(featured.data.heroCover);
+const coverUid = `cover-featured-${featured.id}`;
 ---
 
+<div class="cv-card relative" data-cover-zone={liveCover ? "" : undefined}>
 <a href={href} class="group block">
   <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-[0.95fr_1.05fr] lg:gap-12">
     <div class="overflow-hidden rounded-[var(--r-xl)] border border-[color:var(--border)] md:order-2">
@@ -26,6 +33,9 @@ const displayCategory = categoryLabel(locale, featured.data.category);
         slug={featured.id}
         heroImage={featured.data.heroImage}
         heroAlt={featured.data.heroAlt ?? featured.data.title}
+        heroCover={featured.data.heroCover}
+        coverUid={coverUid}
+        eager
         ratio="16/9"
       />
     </div>
@@ -47,3 +57,14 @@ const displayCategory = categoryLabel(locale, featured.data.category);
     </div>
   </div>
 </a>
+{
+  liveCover && (
+    <div class="pointer-events-none absolute inset-0 grid h-full grid-cols-1 items-center gap-8 md:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+      <div class="relative aspect-[16/9] self-start md:order-2 md:self-center">
+        <CoverControls cover={liveCover.id} uid={coverUid} locale={locale} compact class="pointer-events-auto absolute left-2.5 top-2.5" />
+      </div>
+      <div class="hidden md:order-1 md:block" />
+    </div>
+  )
+}
+</div>

@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import CardVisual from "../components/CardVisual.astro";
+import CoverControls from "../components/CoverControls.astro";
+import { getCover } from "../covers/registry";
+import { draftLabel } from "../lib/drafts";
 import { getIndexHref, getPostLocale, type Locale } from "../lib/i18n";
 import { categoryLabel, dateLocaleByLocale, postCopyByLocale } from "../lib/copy.mjs";
 import type { CollectionEntry } from "astro:content";
@@ -23,7 +26,11 @@ const {
   coAuthors,
   heroImage,
   heroAlt,
+  heroCover,
+  draft,
 } = post.data;
+const liveCover = getCover(heroCover);
+const coverUid = `cover-post-${post.id}`;
 const bylineAuthors = [{ name: author, avatar: authorAvatar }, ...coAuthors];
 const bylineNames = bylineAuthors.map((a) => a.name).join(" & ");
 const accentIndex = titleAccent ? title.indexOf(titleAccent) : -1;
@@ -83,6 +90,7 @@ const jsonLd = {
   lang={lang}
   hreflang={hreflang}
   availableLocales={availableLocales}
+  robots={draft ? "noindex, nofollow" : undefined}
 >
   <script
     is:inline
@@ -148,17 +156,26 @@ const jsonLd = {
       </div>
     </header>
 
-    <div
-      class="mb-14 overflow-hidden rounded-[var(--r-xl)] border border-[color:var(--border)]"
-      data-reveal
-      style="--reveal-i: 1"
-    >
-      <CardVisual
-        slug={post.id}
-        heroImage={heroImage}
-        heroAlt={heroAlt ?? title}
-        ratio="16/9"
-      />
+    <div class="mb-14" data-reveal style="--reveal-i: 1" data-cover-zone={liveCover ? "" : undefined}>
+      <div class="overflow-hidden rounded-[var(--r-xl)] border border-[color:var(--border)]">
+        <CardVisual
+          slug={post.id}
+          heroImage={heroImage}
+          heroAlt={heroAlt ?? title}
+          heroCover={heroCover}
+          coverUid={coverUid}
+          label={draft ? draftLabel[locale] : undefined}
+          eager
+          ratio="16/9"
+        />
+      </div>
+      {
+        liveCover && (
+          <div class="mt-3 flex justify-end">
+            <CoverControls cover={liveCover.id} uid={coverUid} locale={locale} class="cv-controls--caption" />
+          </div>
+        )
+      }
     </div>
 
     <div class="prose-mosoo" data-reveal style="--reveal-i: 2">

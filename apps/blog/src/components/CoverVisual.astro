@@ -1,0 +1,190 @@
+---
+// A live cover: baked material raster + inline SVG with real text, animated by
+// `src/covers/runtime.ts`. Rendered inside CardVisual's aspect box. The static
+// `heroImage` stays in frontmatter for Open Graph / JSON-LD / feeds.
+import { getCover } from "../covers/registry";
+
+interface Props {
+  cover: string;
+  uid: string;
+  alt: string;
+  eager?: boolean;
+}
+const { cover, uid, alt, eager = false } = Astro.props;
+const entry = getCover(cover);
+---
+
+{
+  entry && (
+    <div data-cover={entry.id} data-cover-uid={uid} data-state="static" role="img" aria-label={alt} class="cv-root" style={`background:${entry.ground}`}>
+      <img src={entry.material} alt="" aria-hidden="true" loading={eager ? "eager" : "lazy"} decoding="async" class="cv-material" />
+      <Fragment set:html={entry.svg} />
+    </div>
+  )
+}
+
+<script>
+  import "../covers/runtime";
+</script>
+
+<style is:global>
+  .cv-root {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .cv-material,
+  .cv-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .cv-material {
+    object-fit: cover;
+  }
+  .cv-svg text {
+    user-select: none;
+  }
+  .cv-mono {
+    font-family: var(--font-mono);
+  }
+  .cv-sans {
+    font-family: var(--font-sans);
+  }
+  .cv-display {
+    font-family: var(--font-display);
+  }
+  /* Hand lettering for the hand-drawn covers only (Shantell Sans, OFL, self-hosted). */
+  @font-face {
+    font-family: "Shantell Sans";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("../covers/fonts/ShantellSans-Latin-500.woff2") format("woff2");
+  }
+  .cv-hand {
+    font-family: "Shantell Sans", "Comic Sans MS", "Chalkboard SE", cursive;
+  }
+  .cv-pop,
+  .cv-packet g {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  /* Packets only exist while they travel. */
+  .cv-packet g {
+    opacity: 0;
+  }
+
+  /* Controls */
+  .cv-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(20, 23, 19, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #f1f2ea;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .cv-controls[hidden] {
+    display: none;
+  }
+  .cv-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    color: inherit;
+    background: transparent;
+    transition:
+      transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 120ms linear;
+  }
+  .cv-btn:active {
+    transform: scale(0.98);
+  }
+  .cv-btn:focus-visible {
+    outline: 2px solid #84de02;
+    outline-offset: 2px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cv-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+  .cv-controls--compact {
+    gap: 2px;
+    padding: 2px;
+    background: rgba(20, 23, 19, 0.5);
+    border-color: rgba(255, 255, 255, 0.22);
+    opacity: 0.78;
+    transition: opacity 150ms linear;
+  }
+  .cv-controls--compact .cv-btn {
+    width: 24px;
+    height: 24px;
+  }
+  .cv-controls--compact .cv-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+  /* With a mouse the button stays out of the artwork until the card is hovered or
+     the button itself is focused; on touch it stays, quietly. */
+  @media (hover: hover) and (pointer: fine) {
+    .cv-controls--compact {
+      opacity: 0;
+    }
+    .cv-card:hover .cv-controls--compact,
+    .cv-controls--compact:focus-within {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cv-controls--compact {
+      transition: none;
+    }
+  }
+  .cv-btn[data-icon="play"] .cv-icon-pause,
+  .cv-btn[data-icon="play"] .cv-icon-replay,
+  .cv-btn[data-icon="pause"] .cv-icon-play,
+  .cv-btn[data-icon="pause"] .cv-icon-replay,
+  .cv-btn[data-icon="replay"] .cv-icon-play,
+  .cv-btn[data-icon="replay"] .cv-icon-pause {
+    display: none;
+  }
+  /* Caption-row variant: sits under the artwork, on the page, not on the art. */
+  .cv-controls--caption {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--fg-secondary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .cv-controls--caption .cv-stage {
+    color: var(--fg-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cv-controls--caption .cv-btn:hover {
+      background: var(--ink-50);
+    }
+  }
+  .cv-stage {
+    padding: 0 12px 0 6px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: rgba(241, 242, 234, 0.86);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cv-btn {
+      transition: none;
+    }
+  }
+</style>
