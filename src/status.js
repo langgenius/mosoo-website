@@ -264,43 +264,53 @@ export function statusEventsFromTailItems(items, nowMs = Date.now()) {
     const observedAt = isoTimestamp(item.eventTimestamp, nowMs);
     const httpStatus = responseStatus(item);
     const outcome = typeof item.outcome === "string" ? item.outcome : "unknown";
+    const entries = (Array.isArray(item.logs) ? item.logs : []).flatMap(structuredLogEntries);
+    // ContainerProxy returns upstream statuses and intentional SDK policy
+    // denials (520). Only the API's explicit marker changes classification;
+    // an unmarked 520 or a failed Worker execution remains a platform failure.
+    const egressHttpResult = entries.some(
+      (entry) =>
+        entry.message === "runtime.sandbox.egress.http_error" &&
+        isRecord(entry.metadata) &&
+        entry.metadata.httpStatus === httpStatus,
+    );
     events.push({
       httpStatus,
       observedAt,
       outcome,
       succeeded:
-        !FAILED_WORKER_OUTCOMES.has(outcome) && (httpStatus === null || httpStatus < 500),
+        !FAILED_WORKER_OUTCOMES.has(outcome) &&
+        !(Array.isArray(item.exceptions) && item.exceptions.length > 0) &&
+        (httpStatus === null || httpStatus < 500 || (outcome === "ok" && egressHttpResult)),
       type: "invocation",
     });
 
-    for (const log of Array.isArray(item.logs) ? item.logs : []) {
-      for (const entry of structuredLogEntries(log)) {
-        const metadata = entry.metadata;
-        if (
-          entry.message !== "session.run.terminal" ||
-          !isRecord(metadata) ||
-          typeof metadata.runId !== "string" ||
-          typeof metadata.runtimeId !== "string" ||
-          typeof metadata.sessionType !== "string" ||
-          typeof metadata.status !== "string"
-        ) {
-          continue;
-        }
-
-        events.push({
-          durationMs:
-            typeof metadata.durationMs === "number" && Number.isFinite(metadata.durationMs)
-              ? Math.max(0, metadata.durationMs)
-              : null,
-          errorCode: typeof metadata.errorCode === "string" ? metadata.errorCode : null,
-          observedAt: isoTimestamp(entry.timestamp, timestampMs(observedAt)),
-          runId: metadata.runId,
-          runtimeId: metadata.runtimeId,
-          sessionType: metadata.sessionType,
-          status: metadata.status,
-          type: "run",
-        });
+    for (const entry of entries) {
+      const metadata = entry.metadata;
+      if (
+        entry.message !== "session.run.terminal" ||
+        !isRecord(metadata) ||
+        typeof metadata.runId !== "string" ||
+        typeof metadata.runtimeId !== "string" ||
+        typeof metadata.sessionType !== "string" ||
+        typeof metadata.status !== "string"
+      ) {
+        continue;
       }
+
+      events.push({
+        durationMs:
+          typeof metadata.durationMs === "number" && Number.isFinite(metadata.durationMs)
+            ? Math.max(0, metadata.durationMs)
+            : null,
+        errorCode: typeof metadata.errorCode === "string" ? metadata.errorCode : null,
+        observedAt: isoTimestamp(entry.timestamp, timestampMs(observedAt)),
+        runId: metadata.runId,
+        runtimeId: metadata.runtimeId,
+        sessionType: metadata.sessionType,
+        status: metadata.status,
+        type: "run",
+      });
     }
   }
 
