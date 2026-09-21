@@ -157,3 +157,33 @@ test("Tail health distinguishes invocation failures from HTTP client errors and 
   assert.equal(status.platform.invocations90d, 6);
   assert.equal(status.components[0].failedRuns90d, 1);
 });
+
+test("marked egress HTTP results do not hide actual API or Worker failures", () => {
+  const marker = (status) => ({ message: [JSON.stringify({
+    message: "runtime.sandbox.egress.http_error",
+    metadata: { httpStatus: status },
+  })] });
+  const events = statusEventsFromTailItems([
+    { event: { response: { status: 520 } }, outcome: "ok", logs: [marker(520)] },
+    { event: { response: { status: 503 } }, outcome: "ok", logs: [marker(503)] },
+    { event: { response: { status: 520 } }, outcome: "ok", logs: [] },
+    { event: { response: { status: 500 } }, outcome: "ok", logs: [marker(520)] },
+    { event: { response: { status: 520 } }, outcome: "exception", logs: [marker(520)] },
+    { event: { response: { status: 520 } }, outcome: "exceededCpu", logs: [marker(520)] },
+    { event: { response: { status: 520 } }, outcome: "ok", logs: [marker(520)], exceptions: [{ message: "waitUntil failed" }] },
+    { event: { response: { status: 520 } }, outcome: "unknown", logs: [marker(520)] },
+  ], Date.parse(observedAt));
+  assert.deepEqual(events.map((event) => event.succeeded), [true, true, false, false, false, false, false, false]);
+});
+
+test("egress classification preserves failed run terminal events", () => {
+  const events = statusEventsFromTailItems([{
+    event: { response: { status: 520 } }, outcome: "ok", logs: [
+      { message: [JSON.stringify({message: "runtime.sandbox.egress.http_error", metadata: { httpStatus: 520 }})] },
+      terminalLog({ durationMs: 1000, errorCode: "acp.turn_failed", runId: "denied-run", runtimeId: "acp-fallback", sessionType: "ui", status: "failed" }),
+    ],
+  }], Date.parse(observedAt));
+  assert.equal(events[0].succeeded, true);
+  assert.equal(events[1].type, "run");
+  assert.equal(events[1].status, "failed");
+});
