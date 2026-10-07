@@ -15,12 +15,12 @@ test("overall health requires fresh observations for every runtime", () => {
   const healthyPlatform = {
     type: "invocation", succeeded: true, observedAt: now.toISOString(), outcome: "ok",
   };
-  const runtimeIds = ["openai-runtime", "claude-agent-sdk", "acp-fallback"];
+  const runtimeIds = ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"];
   const completed = runtimeIds.map((runtimeId) => ({
     type: "run", runtimeId, runId: runtimeId, sessionType: "ui",
     status: "completed", observedAt: now.toISOString(),
   }));
-  for (const runs of [[], completed.slice(0, 1), completed]) {
+  for (const runs of [[], completed.slice(0, 1), completed.slice(0, 3), completed]) {
     const state = mergeStatusEvents(createEmptyStatusState(), [healthyPlatform, ...runs]);
     const result = buildPublicStatus(state, now);
     assert.equal(result.status, runs.length === runtimeIds.length ? "operational" : "unknown");
@@ -49,6 +49,74 @@ function terminalLog(metadata) {
     ],
   };
 }
+
+test("Pi stays unknown in existing status history until a real production Run is observed", () => {
+  const previous = mergeStatusEvents(createEmptyStatusState(), [{
+    type: "run", runtimeId: "openai-runtime", runId: "existing-run", sessionType: "ui",
+    status: "completed", observedAt,
+  }]);
+  // A deployed v2 store predates the Pi component. Its history needs no migration.
+  delete previous.components.pi;
+  const before = buildPublicStatus(previous, new Date(observedAt));
+  const piBefore = before.components.find((component) => component.id === "pi");
+  assert.equal(piBefore.name, "Pi");
+  assert.equal(piBefore.status, "unknown");
+  assert.equal(piBefore.runs90d, 0);
+  assert.equal(piBefore.successRate90d, null);
+  assert.equal(piBefore.lastObservedAt, null);
+  assert.ok(piBefore.history.every((day) => day.total === 0));
+
+  const events = statusEventsFromTailItems([{
+    event: { response: { status: 200 } },
+    eventTimestamp: Date.parse(observedAt),
+    outcome: "ok",
+    logs: [
+      terminalLog({ runId: "pi-preview", runtimeId: "pi", sessionType: "preview", status: "completed" }),
+      terminalLog({ runId: "pi-cancelled", runtimeId: "pi", sessionType: "ui", status: "cancelled" }),
+    ],
+  }], Date.parse(observedAt));
+  const excluded = mergeStatusEvents(previous, events);
+  assert.equal(buildPublicStatus(excluded, new Date(observedAt)).components.find(
+    (component) => component.id === "pi",
+  ).status, "unknown");
+
+  const completed = statusEventsFromTailItems([{
+    event: { response: { status: 200 } },
+    eventTimestamp: Date.parse(observedAt),
+    outcome: "ok",
+    logs: [terminalLog({
+      runId: "pi-run", runtimeId: "pi", sessionType: "api_channel", status: "completed",
+      durationMs: 2_500, errorCode: null,
+    })],
+  }], Date.parse(observedAt));
+  const state = mergeStatusEvents(excluded, [...completed, ...completed]);
+  const after = buildPublicStatus(state, new Date(observedAt));
+  const pi = after.components.find((component) => component.id === "pi");
+  assert.equal(pi.status, "operational");
+  assert.equal(pi.runs90d, 1);
+  assert.equal(pi.completedRuns90d, 1);
+  assert.equal(pi.successRate90d, 1);
+  assert.equal(pi.latestDurationMs, 2_500);
+  assert.equal(after.components.find((component) => component.id === "openai-runtime").runs90d, 1);
+  const stale = buildPublicStatus(state, new Date("2026-08-14T12:00:00.001Z"));
+  assert.equal(stale.components.find((component) => component.id === "pi").status, "unknown");
+});
+
+test("Pi failures and expiry trigger the same incident policy as other runtimes", () => {
+  const state = mergeStatusEvents(createEmptyStatusState(), ["failed", "expired", "failed"].map(
+    (status, index) => ({
+      type: "run", runtimeId: "pi", runId: `pi-failure-${index}`, sessionType: "ui",
+      status, observedAt, errorCode: "pi.turn_failed",
+    }),
+  ));
+  const status = buildPublicStatus(state, new Date(observedAt));
+  const pi = status.components.find((component) => component.id === "pi");
+  assert.equal(pi.status, "degraded");
+  assert.equal(pi.failedRuns90d, 3);
+  assert.equal(pi.successRate90d, 0);
+  assert.equal(pi.latestErrorCode, "pi.turn_failed");
+  assert.equal(status.releasePolicyTriggered, true);
+});
 
 test("Cloudflare Tail events reuse Mosoo terminal logs without synthetic traffic", () => {
   const events = statusEventsFromTailItems(
