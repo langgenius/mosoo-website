@@ -49,7 +49,7 @@ const availableLocales = hreflang
       hreflang["zh-CN"] ? "zh" : undefined,
       hreflang.ja ? "ja" : undefined,
     ].filter((candidate): candidate is Locale => candidate !== undefined))
-  : undefined;
+  : [locale];
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const indexHref = getIndexHref(locale, base);
 const copy = postCopyByLocale[locale] ?? postCopyByLocale.en;
@@ -178,7 +178,7 @@ const jsonLd = {
       }
     </div>
 
-    <div class="prose-mosoo" data-reveal style="--reveal-i: 2">
+    <div class="prose-mosoo">
       <slot />
     </div>
 
