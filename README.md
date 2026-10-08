@@ -129,3 +129,19 @@ URLs permanently redirect to the corresponding health URL. The existing
 `/status.json` endpoint and `STATUS_STORE` history are unchanged.
 After deployment, verify the health pages, feed, and old-link redirects.
 Rollback uses the previous Worker version; no domain or data migration is required.
+
+The feed includes Pi (`runtimeId: "pi"`, displayed as **Pi**) alongside the other
+runtimes. All three health-page locales render the same feed. Pi uses the existing
+`session.run.terminal` production observations; preview Runs and cancellations do
+not count. It remains **Unknown** with no completion rate until a user-facing Run
+is observed, and becomes Unknown again after 24 hours without a fresh observation.
+Three consecutive failed or expired Runs trigger the existing degraded status.
+Existing status history is preserved when adding Pi; no store migration or
+synthetic success record is needed.
+
+Publish this website change after the matched Pi Driver and Mosoo API have passed
+their rollout validation (see the Mosoo repository's `docs/pi-runtime.md`). After
+deployment, check `/status.json` for component `pi` and inspect `/health`,
+`/zh/health`, and `/ja/health`. Before a real production Pi Run, verify Unknown and
+no data; after one, verify the recorded terminal status and duration rather than
+assuming that deployment alone establishes availability.

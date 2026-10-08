@@ -18,6 +18,7 @@ export const STATUS_COMPONENTS = [
   { id: "openai-runtime", name: "OpenAI Codex" },
   { id: "claude-agent-sdk", name: "Claude Agent SDK" },
   { id: "acp-fallback", name: "OpenCode (ACP)" },
+  { id: "pi", name: "Pi" },
 ];
 
 function isRecord(value) {

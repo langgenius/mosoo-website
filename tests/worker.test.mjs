@@ -123,8 +123,9 @@ test("worker publishes an unknown status feed before the first production signal
   assert.equal(payload.status, "unknown");
   assert.deepEqual(
     payload.components.map((component) => component.id),
-    ["openai-runtime", "claude-agent-sdk", "acp-fallback"],
+    ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"],
   );
+  assert.ok(payload.components.every((component) => component.status === "unknown"));
 });
 
 test("worker forwards Cloudflare Tail batches to the existing status store", async () => {
