@@ -1,0 +1,347 @@
+{
+  "note": "Registry metadata retains the nine existing covers. Only human-time-beyond-expectations has its authoring source in this kit; regenerating it does not rebuild older assets.",
+  "site": "../..",
+  "covers": [
+    {
+      "order": 1,
+      "id": "journey-imagine-if",
+      "slug": "the-journey-begins-with-an-imagine-if",
+      "form": "component",
+      "stage": "paper",
+      "ground": "#F4F3EC",
+      "centralIdea": "Agent Work has a threshold, like a grayscale value between 0 and 255: below it a one-off delivery is right, above it the work needs a lifecycle.",
+      "visualForm": "One graphic component: a nine-step value scale named Agent Work, with a single slit of lime light at the threshold.",
+      "rationale": "The grayscale threshold is the author's own metaphor. The dark, flat steps carry 'one-off'; the light, lifted steps carry 'lifecycle'; the one line of small text is the article's four verbs for what the upper side needs.",
+      "motion": "A sprout marker travels up the scale; crossing the slit lifts the upper steps, brings 'lifecycle' forward and reveals the four verbs. About 4 s, once.",
+      "stages": {
+        "en": [
+          "One-off",
+          "Threshold",
+          "Lifecycle"
+        ],
+        "zh": [
+          "一次性交付",
+          "阈值",
+          "生命周期"
+        ],
+        "ja": [
+          "単発の納品",
+          "しきい値",
+          "ライフサイクル"
+        ]
+      },
+      "alt": {
+        "en": "Illustration: a nine-step grey scale named Agent Work runs from 0 to 255. A slit of lime light marks the threshold; the dark steps below it sit flat above the word one-off, the light steps above it are lifted above the word lifecycle, and a small line reads hosted, isolated, observed, reused.",
+        "zh": "示意插图：一条名为 Agent Work 的九级灰度色阶从 0 延伸到 255，一道 lime 色光缝标出阈值；阈值以下的深色色块平放，对应 one-off；阈值以上的浅色色块被抬起，对应 lifecycle，旁边一行小字写着 hosted、isolated、observed、reused。",
+        "ja": "説明用イラスト：Agent Work と名付けられた 9 段階のグレースケールが 0 から 255 まで並び、ライム色の光のスリットがしきい値を示す。しきい値より下の暗い段は平らで one-off、上の明るい段は持ち上げられて lifecycle を示し、小さな一行に hosted、isolated、observed、reused と書かれている。"
+      }
+    },
+    {
+      "order": 2,
+      "id": "headless-agent-api",
+      "slug": "why-we-need-a-headless-agent-api-in-the-cloud",
+      "form": "component",
+      "stage": "mist",
+      "centralIdea": "The next cloud abstraction is a managed agent task: work in, progress and artifacts out.",
+      "visualForm": "One enlarged task card cropped by the frame, plus one small result card.",
+      "rationale": "The title is the article's own example message; the three lines are the runtime duties the article lists; the state word and the named artifact show work going in and a result coming out.",
+      "motion": "queued → running, three lines check off, the artifact card rises in, completed. 3.95 s, once.",
+      "stages": {
+        "en": [
+          "Submitted",
+          "Running",
+          "Result"
+        ],
+        "zh": [
+          "已提交",
+          "执行中",
+          "产出"
+        ],
+        "ja": [
+          "送信済み",
+          "実行中",
+          "成果物"
+        ]
+      },
+      "alt": {
+        "en": "Illustration: a large dark task card, cropped by the frame, reads “Analyze the commits from last week.” Three checked lines say it runs in a sandbox, streams progress events and records artifacts as files; its state reads completed, and a small white card names the result, report.md.",
+        "zh": "示意插图：一张被画面裁切的深色任务卡片写着 “Analyze the commits from last week.”，三行已勾选的说明依次为：在 sandbox 中运行、流式返回进度事件、把产物记录为文件；状态显示 completed，旁边一张白色小卡片标出结果 report.md。",
+        "ja": "説明用イラスト：画面で切り取られた大きなダークのタスクカードに “Analyze the commits from last week.” と書かれ、チェック済みの 3 行が「sandbox で実行」「進捗イベントをストリーム」「成果物をファイルとして記録」を示す。状態は completed、横の白い小さなカードが成果物 report.md を示している。"
+      },
+      "ground": "#DEDFD7"
+    },
+    {
+      "order": 3,
+      "id": "responses-to-agents",
+      "slug": "from-responses-to-agents",
+      "form": "icon",
+      "stage": "mist",
+      "ground": "#DEDFD7",
+      "centralIdea": "More and more of the agent loop now lives inside the model runtime: state, tool programs and multi-agent coordination became API primitives.",
+      "visualForm": "Icon-led geometry: a small 'response' disc and three circles that share its tangent point and grow to the right — state, tools, agents.",
+      "rationale": "The title is read literally as growth. Each ring is one thing the article says the API absorbed; the outer ring exceeds the frame because the runtime is now bigger than a response.",
+      "motion": "The rings grow out of the response disc one after another, each word arriving with its ring. About 3 s, once.",
+      "stages": {
+        "en": [
+          "Response",
+          "State + tools",
+          "Agents"
+        ],
+        "zh": [
+          "响应",
+          "状态与工具",
+          "Agents"
+        ],
+        "ja": [
+          "レスポンス",
+          "状態とツール",
+          "Agents"
+        ]
+      },
+      "alt": {
+        "en": "Illustration: a small white disc labelled response sits at the left; three larger translucent circles share its left edge and grow to the right, labelled state, tools and agents. The outermost circle is lime and larger than the frame.",
+        "zh": "示意插图：左侧一个标着 response 的白色小圆，三个更大的半透明圆与它共用左侧切点并向右生长，依次标着 state、tools、agents；最外圈为 lime 色，大到超出画面。",
+        "ja": "説明用イラスト：左に response と書かれた小さな白い円があり、同じ左端で接する 3 つの大きな半透明の円が右へ広がって state、tools、agents と示されている。いちばん外側の円はライム色で、画面からはみ出すほど大きい。"
+      }
+    },
+    {
+      "order": 4,
+      "id": "state-not-process",
+      "slug": "agent-state-is-not-process-state",
+      "form": "hand-drawn",
+      "stage": "charcoal",
+      "ground": "#252824",
+      "centralIdea": "A durable abstraction still answers what happened, what the user owns and where the next execution begins after the process disappears.",
+      "visualForm": "Original hand-drawn chalk sketch: a long hatched slab lettered 'state', one box lettered 'process' tied to it, and the faint outline of a process that is gone.",
+      "rationale": "The title's two nouns are the only big words. The slab carries the article's product facts — sessions, events, artifacts — and never moves; the box is visibly the kind of thing that can be wiped and drawn again.",
+      "motion": "The process box is wiped away and leaves a dashed ghost; the slab and its joint stay lit; a fresh box is drawn and the lime thread reconnects. About 4.5 s, once.",
+      "stages": {
+        "en": [
+          "Running",
+          "Process gone",
+          "Next run"
+        ],
+        "zh": [
+          "运行中",
+          "进程消失",
+          "下一次运行"
+        ],
+        "ja": [
+          "実行中",
+          "プロセス消失",
+          "次の実行"
+        ]
+      },
+      "alt": {
+        "en": "Hand-drawn chalk illustration: a long slab hatched in lime is lettered state, with the note sessions, events, artifacts. Above it a box lettered process is tied to the slab by a lime line, and a faint dashed box lettered gone marks an earlier process.",
+        "zh": "粉笔手绘插图：一块用 lime 色影线填充的长条底座写着 state，并标注 sessions、events、artifacts；上方写着 process 的方框由一条 lime 线连到底座，旁边一个写着 gone 的淡虚线方框标出此前已消失的进程。",
+        "ja": "チョークの手描きイラスト：ライム色のハッチングで塗られた長い土台に state と書かれ、sessions・events・artifacts の注記がある。その上の process と書かれた箱はライムの線で土台につながり、横の薄い破線の箱には gone と書かれ、以前のプロセスがあった場所を示している。"
+      }
+    },
+    {
+      "order": 5,
+      "id": "api-cli-skill",
+      "slug": "api-cli-skill-development-paradigm",
+      "form": "component",
+      "stage": "paper",
+      "ground": "#F4F3EC",
+      "centralIdea": "In the coding-agent era the CLI and its skill should be the default development and testing contract from day one — a readable loop an agent can follow.",
+      "visualForm": "One terminal window, cropped by the left and bottom edges, listing the article's development loop with a lime block cursor on the active line and a small 'repeat' badge.",
+      "rationale": "The list is the article's own numbered loop, shortened. No command syntax is shown because the article prints none. The badge says repeat because the article's loop ends with 'Then repeat.'",
+      "motion": "The cursor steps down the loop line by line, then returns to line 1 while the repeat badge turns once. About 5 s, once.",
+      "stages": {
+        "en": [
+          "API + spec",
+          "CLI + tests",
+          "Repeat"
+        ],
+        "zh": [
+          "API 与规范",
+          "CLI 与测试",
+          "循环"
+        ],
+        "ja": [
+          "API と仕様",
+          "CLI とテスト",
+          "繰り返し"
+        ]
+      },
+      "alt": {
+        "en": "Illustration: a large dark terminal window, cropped by the frame, is titled the development loop and lists seven numbered steps from API and spec through CLI plus catalog plus skill, validation, workflows and end-to-end tests. A lime block cursor marks the first line and a round lime badge reads repeat.",
+        "zh": "示意插图：一个被画面裁切的深色终端窗口，标题为 the development loop，列出七个编号步骤：从 API、spec，到 CLI + catalog + skill、通过 CLI 验证、组合 workflows、集成与端到端测试；lime 色方块光标停在第一行，窗口边缘的圆形 lime 徽标写着 repeat。",
+        "ja": "説明用イラスト：画面で切り取られた大きなダークのターミナルウィンドウに the development loop というタイトルがあり、API、spec、CLI + catalog + skill、CLI での検証、workflows の組み立て、統合・E2E テストまで 7 つの番号付きステップが並ぶ。ライム色のブロックカーソルが 1 行目にあり、ウィンドウの端の丸いライムのバッジには repeat と書かれている。"
+      }
+    },
+    {
+      "order": 6,
+      "id": "ghfind-evaluation",
+      "slug": "ghfind-mosoo-project-evaluation",
+      "form": "component",
+      "stage": "ink",
+      "ground": "#141713",
+      "centralIdea": "ghfind delegates one open-ended feature — evaluating a GitHub repository — to a published Mosoo Agent and keeps the rubric, validation and UI in its own product.",
+      "visualForm": "One light evaluation card on a dark stage: a repository field, a four-axis judgment shape with the article's four rubric dimensions, and a small 'Powered by mosoo' tag.",
+      "rationale": "The article contrasts a structured judgment with a single popularity score, so the card shows a named four-sided shape and no number. The tag is the boundary the story is about: the page is ghfind's, the agent behind the feature is mosoo's.",
+      "motion": "The repository field answers a press, the judgment shape unfolds from the centre while the four names come forward, and the tag settles last. About 3.5 s, once.",
+      "stages": {
+        "en": [
+          "Repository",
+          "Evaluation",
+          "Judgment"
+        ],
+        "zh": [
+          "提交仓库",
+          "评估",
+          "结构化判断"
+        ],
+        "ja": [
+          "リポジトリ",
+          "評価",
+          "判断"
+        ]
+      },
+      "alt": {
+        "en": "Illustration, not a ghfind screenshot: a light card on a dark stage holds a repository field reading owner/repo and a small tag reading Powered by mosoo. Below them a four-axis chart names real demand, effectiveness, value density and onboarding with one lime shape and no numbers.",
+        "zh": "示意插图（并非 ghfind 截图）：深色背景上的浅色卡片里有一个写着 owner/repo 的仓库输入框，旁边的小标签写着 Powered by mosoo；下方四轴图标出 real demand、effectiveness、value density、onboarding 四个维度，只有一个 lime 色形状、没有任何分数。",
+        "ja": "説明用イラスト（ghfind のスクリーンショットではありません）：ダークな背景の上の明るいカードに owner/repo と書かれたリポジトリ入力欄と、Powered by mosoo と書かれた小さなタグがある。その下の 4 軸チャートには real demand、effectiveness、value density、onboarding の 4 つの観点が示され、ライム色の形がひとつあるだけで数値はない。"
+      }
+    },
+    {
+      "order": 7,
+      "id": "pet-and-cattle",
+      "slug": "two-kinds-of-agents-pet-and-cattle",
+      "form": "hand-drawn",
+      "stage": "paper",
+      "ground": "#F4F3EC",
+      "centralIdea": "People expect two different things from agents: a Pet with identity and memory that is cultivated over time, and Cattle that is stateless and replaceable run after run.",
+      "visualForm": "Original hand-drawn line illustration: a potted plant with a name tag on the left, three identical crates on a line on the right, one of them freshly replaced.",
+      "rationale": "The article's verb for a Pet is 'cultivate', so the Pet is something that grows and carries a name. Cattle is 'discard the instance and rerun the job', so it is identical crates where one has visibly been swapped. No 'vs' mark, because the article says neither kind wins.",
+      "motion": "The plant grows one more leaf; then the middle crate is wiped and a fresh one is drawn in its place while the discarded one lifts away. About 5 s, once.",
+      "stages": {
+        "en": [
+          "Cultivated",
+          "Replaced",
+          "Both"
+        ],
+        "zh": [
+          "培养",
+          "替换",
+          "两种期待"
+        ],
+        "ja": [
+          "育てる",
+          "入れ替える",
+          "二つの期待"
+        ]
+      },
+      "alt": {
+        "en": "Hand-drawn illustration: on the left a potted plant with lime-hatched leaves and a name tag, lettered Pet, cultivated; on the right three identical crates on a line, the middle one freshly drawn in lime with a faint discarded crate above it, lettered Cattle, replaceable.",
+        "zh": "手绘插图：左侧是一株带名牌、叶片用 lime 色影线填充的盆栽，写着 Pet、cultivated；右侧一条线上放着三只相同的箱子，中间一只是刚画上的、用 lime 色影线填充，上方一只淡虚线箱子表示被丢弃的实例，写着 Cattle、replaceable。",
+        "ja": "手描きイラスト：左にはライム色のハッチングの葉と名札が付いた鉢植えがあり、Pet、cultivated と書かれている。右には線の上に同じ形の箱が 3 つ並び、中央の箱はライムで描き直されたばかりで、その上に捨てられた箱が薄い破線で浮かび、Cattle、replaceable と書かれている。"
+      }
+    },
+    {
+      "order": 8,
+      "id": "cloud-agents-future",
+      "slug": "when-cloud-agents-become-the-future",
+      "form": "hand-drawn",
+      "stage": "ink",
+      "ground": "#141713",
+      "centralIdea": "If Cloud Agents become mainstream, developers need an Environment address plus a governed Run contract: a stable address for the slice of a machine a task needs.",
+      "visualForm": "Original hand-drawn floor plan on grid paper: a door plate reading mosoo/general, four rooms for the slice a research task needs, and one lime route — the Run — that stays inside the walls.",
+      "rationale": "The article calls an Environment 'a product address' and says users need 'a slice' of a machine, so the Environment is drawn as a place with an address. The rooms are the article's own research example. A pen sketch on grid paper keeps it a memo, not a shipped feature.",
+      "motion": "The walls are drawn, the room names arrive, then the lime route walks from the door through the rooms to the output. About 5 s, once.",
+      "stages": {
+        "en": [
+          "Address",
+          "Environment",
+          "Run"
+        ],
+        "zh": [
+          "地址",
+          "Environment",
+          "Run"
+        ],
+        "ja": [
+          "アドレス",
+          "Environment",
+          "Run"
+        ]
+      },
+      "alt": {
+        "en": "Hand-drawn illustration: a tilted sheet of grid paper on a dark desk shows a floor plan with four rooms lettered browser, search, data and output. A door plate reads mosoo/general, and one lime route lettered run enters by the door, passes through the rooms and ends at the output.",
+        "zh": "手绘插图：深色桌面上一张略微倾斜的方格纸，上面画着一张平面图，四个房间分别写着 browser、search、data、output；门牌写着 mosoo/general，一条标着 run 的 lime 色路线从门口进入，穿过各个房间，终点落在 output。",
+        "ja": "手描きイラスト：ダークな机の上に少し傾いた方眼紙があり、browser、search、data、output と書かれた 4 つの部屋の間取り図が描かれている。表札には mosoo/general とあり、run と書かれたライム色の一本のルートがドアから入り、部屋を通り抜けて output で終わる。"
+      }
+    },
+    {
+      "order": 9,
+      "id": "mosoo-computer",
+      "slug": "introducing-mosoo-computer",
+      "form": "icon",
+      "stage": "mist",
+      "ground": "#DEDFD7",
+      "centralIdea": "Give an agent a cloud workspace that keeps its state: the process can sleep, the workspace stays, and the next request from a familiar channel wakes it.",
+      "visualForm": "Icon-led: one big tile — a monitor with a lime folder on its screen — on a pale bloom, a state pill, and one chat bubble as the request that wakes it.",
+      "rationale": "The draft's sharpest product fact is that sleep stops the process but keeps the workspace, so the folder is the one thing that never dims. There is a single bubble because the article insists channels do not merge into one history.",
+      "motion": "On hover the computer goes to sleep (frame dims, moon appears, folder stays lit), one message arrives, and it wakes. About 4.5 s, once.",
+      "stages": {
+        "en": [
+          "Awake",
+          "Sleeping",
+          "Woken"
+        ],
+        "zh": [
+          "运行中",
+          "休眠",
+          "被唤醒"
+        ],
+        "ja": [
+          "稼働中",
+          "スリープ",
+          "復帰"
+        ]
+      },
+      "alt": {
+        "en": "Illustration: a large white tile in a soft lime bloom shows a monitor with a lime folder on its screen; a dark pill beneath reads awake, and a small chat bubble tile with a lime dot is joined to the computer by a dotted line.",
+        "zh": "示意插图：柔和的 lime 光晕中，一块白色大方块上画着显示器，屏幕里是一个 lime 色文件夹；下方的深色状态条写着 awake，左侧一块带 lime 圆点的小聊天气泡方块用虚线连到这台电脑。",
+        "ja": "説明用イラスト：やわらかなライムの光の中に大きな白いタイルがあり、画面にライム色のフォルダーを映したモニターが描かれている。下のダークなピルには awake とあり、ライムの点が付いた小さなチャット吹き出しのタイルが点線でコンピューターにつながっている。"
+      }
+    },
+    {
+      "order": 10,
+      "id": "human-time-beyond-expectations",
+      "slug": "human-time-beyond-expectations",
+      "module": "src/site-covers/human-time-beyond-expectations.mjs",
+      "locales": [
+        "zh"
+      ],
+      "form": "hand-drawn",
+      "stage": "paper",
+      "ground": "#F4F3EC",
+      "centralIdea": "The same human time can be seen or hidden; what an audience perceives shapes its expectation of a work.",
+      "visualForm": "A hand-drawn ruler partly covered by a soft curtain.",
+      "motion": "The curtain opens gently to reveal half the ruler, then rests.",
+      "stages": {
+        "en": [
+          "Hidden",
+          "Revealing",
+          "Seen / unseen"
+        ],
+        "zh": [
+          "遮住",
+          "揭开",
+          "可见与不可见"
+        ],
+        "ja": [
+          "隠れる",
+          "見えてくる",
+          "見える・見えない"
+        ]
+      },
+      "alt": {
+        "zh": "Human time: a hand-drawn ruler is half revealed and half covered by a softly folded curtain."
+      }
+    }
+  ]
+}
