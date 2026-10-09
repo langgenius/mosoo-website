@@ -314,7 +314,9 @@
       "slug": "human-time-beyond-expectations",
       "module": "src/site-covers/human-time-beyond-expectations.mjs",
       "locales": [
-        "zh"
+        "en",
+        "zh",
+        "ja"
       ],
       "form": "hand-drawn",
       "stage": "paper",
@@ -340,7 +342,9 @@
         ]
       },
       "alt": {
-        "zh": "Human time: a hand-drawn ruler is half revealed and half covered by a softly folded curtain."
+        "en": "Human time: a hand-drawn ruler is half revealed and half covered by a softly folded curtain.",
+        "zh": "Human time: a hand-drawn ruler is half revealed and half covered by a softly folded curtain.",
+        "ja": "人間の時間を表す手描きの定規。半分が見え、残り半分は柔らかなひだのカーテンに隠れている。"
       }
     }
   ]
