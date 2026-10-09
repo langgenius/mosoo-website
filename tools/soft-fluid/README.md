@@ -35,7 +35,7 @@ An explicit `--only` selection is required; the npm command supplies the new ID.
   static geometry, with only `Human time`, `Seen` and `Unseen` as labels.
 - `tokens/tokens.json`: inherited paper, grain, colour and type tokens; brand
   lime remains `#84DE02`.
-- `manifests/site-covers.json`: complete registry metadata, and `locales: ["zh"]`
+- `manifests/site-covers.json`: complete registry metadata, and `locales: ["en", "zh", "ja"]`
   for this article. A locale here controls frontmatter updates, not translation.
 - `apps/blog/src/covers/timelines/human-time-beyond-expectations.ts`: authored
   Motion timeline in the site's existing timeline directory.

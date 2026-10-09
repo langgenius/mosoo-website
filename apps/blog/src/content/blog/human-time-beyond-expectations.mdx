@@ -1,0 +1,155 @@
+---
+title: "How much human time does it take to exceed expectations?"
+titleAccent: "exceed expectations"
+description: "From the end credits of Avengers: Endgame to the making of PUBG: agents with clean context, useful deviations, and the human time it takes to exceed expectations."
+date: 2026-10-09
+category: "Product"
+author: "Evanchen"
+authorAvatar: "/blog/blog/authors/evanchen.jpg"
+locale: "en"
+permalink: "human-time-beyond-expectations"
+translationKey: "human-time-beyond-expectations"
+heroImage: "/blog/blog/human-time-beyond-expectations/cover.jpg"
+heroAlt: "Human time: a hand-drawn ruler is half revealed and half covered by a softly folded curtain."
+heroCover: "human-time-beyond-expectations"
+draft: false
+---
+
+I want to start with two examples: the end credits of *Avengers: Endgame*, and the work that goes into making PUBG.
+
+These two examples make me want to talk about why groups of agents still struggle with this kind of work, and where humans need to put in their time.
+
+## Movie engineering: the end credits of Avengers: Endgame
+
+<figure>
+  ![The end credits of Avengers: Endgame, showing departments and individual roles in the production.](/blog/blog/human-time-beyond-expectations/avengers-endgame-credits.png)
+  <figcaption>An excerpt from the end credits of Avengers: Endgame: cinematography, editing, post-production coordination, VFX production and editing, broken down into specific jobs and specific people. Original film © Marvel Studios / Disney; frame from <a href="https://www.youtube.com/watch?v=2YtJnrfh-VI&amp;t=89s">a Credits Rolling upload at approximately 01:30</a>. Department credits can be checked against <a href="https://www.marvel.com/movies/avengers-endgame/full-cast-and-credits">Marvel's official list</a>.</figcaption>
+</figure>
+
+The end credits of *Avengers: Endgame* show how an epic jewel of human art and civilization came from dividing up a complex problem: breaking it into its parts, putting the necessary human time into alignment at each stage, and working it into this level of craft.
+
+Directors, writers, cinematographers, production designers, costume designers, visual effects, editing, music. The credits keep rolling. Behind every line is a stretch of human time that went into it.
+
+You could call it “movie engineering.”
+
+This depends heavily on the first one: the person or core team that sets the direction and brings the resources together, with the ability to orchestrate the whole thing and raise what it needs. These are heterogeneous resources. People come from different cultures, professions, and histories, then make art through the production processes of the film industry. A lot of random collisions happen along the way.
+
+## PUBG: every detail a player might encounter
+
+<figure>
+  ![Behind the scenes at PUBG: a developer inspecting a clothing model and checkerboard texture in 3D software.](/blog/blog/human-time-beyond-expectations/pubg-production.png)
+  <figcaption>From PUBG's official <a href="https://www.youtube.com/watch?v=8VdreRVGBeE&amp;t=343s">The Making of Vikendi, at 05:43</a>: even camouflage clothing that helps players hide in the snow goes through character asset modeling and texture checks. Frame © PUBG Corporation / KRAFTON.</figcaption>
+</figure>
+
+Games are the same. In developing and operating PUBG, Bluehole broke the work down into a huge number of roles and elements, down to every detail a player might encounter.
+
+A map is more than terrain: where the houses sit, where you can hide, where you have to take a risk. Which direction the footsteps come from, how far away the gunshots are. Players turn what they see and hear into their own judgments.
+
+In PUBG's official [behind-the-scenes film about Vikendi](https://www.youtube.com/watch?v=8VdreRVGBeE&t=94s), the team discusses how to make snow “feel like snow,” and how different ground surfaces change the way vehicles behave. Even the camouflage clothing has to be considered in the snowy environment. At the [Friday Playday](https://www.youtube.com/watch?v=8VdreRVGBeE&t=484s), the whole office plays together, putting all these pieces back into a complete experience.
+
+Underneath that are servers, anti-cheat, and the work of operating the game across releases. Players cannot see those things. But once the game starts lagging, once cheating runs rampant, everything visible above them falls apart together.
+
+## An agent with clean context is not different enough
+
+Agents can do very difficult math. Take the [mathematical reasoning OpenAI has demonstrated](https://openai.com/index/learning-to-reason-with-llms/), spending more compute on reasoning and problem-solving. But organizing a work like a movie or a game brings up two more things.
+
+First, in [one common form of multi-agent orchestration](https://www.anthropic.com/engineering/multi-agent-research-system), a subagent gets a relatively independent, clean context. It has what I call a fresh first shot at attention: it focuses on this prompt first, without a long history in front of it to pull its attention elsewhere, isolated from large parts of the main long-term task's context.
+
+That makes it very useful for efficiency problems, or for subproblems in mathematics, materials, and protein research that already have clear constraints and results you can check. These fields also need insight and creativity. But when you can try something and verify it, it becomes easier to judge what counts as progress.
+
+At that point, it can feel as though actual progress simply follows token spending: the total amount of intelligent tokens you pile in. Of course, you still need tool feedback and verification, or you may just keep spinning your wheels.
+
+Second, an agent with clean context has not become a different being just because its context is clean. It may still not be different enough.
+
+You can tell one agent “you are a director,” another “you are a screenwriter,” and another “you are a cinematographer.” But if underneath they are still the same model with the same priors, a role written into a prompt does not come with someone's decades of cultural background, professional work, and life experience.
+
+It is also hard for a human to manufacture an ordered set of differences just by writing role prompts. Even if you could produce random differences, something like “infinite monkeys,” that would not mean much. Those differences have to be organized and aligned with the expectations of human society.
+
+## Useful deviations, and two objective functions
+
+There is another line of thinking here that makes a lot of sense. Something more fundamental, I suppose: the objective function.
+
+Art, or aesthetics, often comes from a niche school or something that is not all that mainstream. Of course, some art appeals to both connoisseurs and a broad audience. But you could think of most of what we call art as some deviation from the mean, or as outliers in a distribution with a lot of variance.
+
+When you make a movie or a game, the most important part is not to pile up these outliers endlessly. It is to arrange them well.
+
+These outliers may emerge anywhere in movie or game engineering: the division of roles, collaboration, workflows, random collisions, even ideas that come up in a conversation in the break room. They are useful deviations produced inside these very chaotic systems. And these useful deviations are often what turn a commonplace work into a masterpiece.
+
+For an engineer, though, many of the decisions and judgments that nobody sees are closer to regression toward the mean: favor methods that have already been proven. You do not need quite so many outliers.
+
+I am not saying either side should be piling up extreme outliers. But an engineer needs rigor. Things need to work most of the time, be stable, be robust. A lot of agents have excellent engineering intuition, and in that setting you do not need to make them deliberately stray from the norm.
+
+That is the difference: efficiency and emotion. One leans toward art; the other toward an engineer figuring things out. Even within the same PUBG, servers and anti-cheat prioritize reliability, while the tension of the final circle is emotion. These are fundamentally two different objective functions, and they are hard to quantify.
+
+## What gets left out of a one-sentence prompt
+
+Going back to the earlier point, I do not think “generate a movie or a game from one sentence” holds up yet as a way to reliably produce exceptional work.
+
+In a movie, every stage from script to storyboard, shooting, effects, and editing is another round of description, processing, and arrangement. Every time, someone is doing the alignment. If you look only at the sentence and the final result, it is easy to hide everything in between.
+
+Too few rounds of description, processing, and arrangement mean that a great deal of what you did not say has to be filled in by the model. My concern is that these outputs can settle into choices that are statistically common, familiar, unobjectionable, and not particularly different.
+
+The enormous number of decisions that one sentence leaves unspecified still have to be made during production, then arranged, selected, and tested against feedback.
+
+So, to reach that level with some direction, you need to divide the work into stages, put the necessary human time into the important places, and let those judgments become something the user can actually feel.
+
+## What about images?
+
+There is an apparent contradiction here. Images and paintings are art too, so why can they align so well with people after such a short amount of necessary human time?
+
+They went through a process too, as with the early “Will Smith eating spaghetti” video. Video generation will go through an even more interesting development, because video contains an enormous amount of information: characters have to stay consistent, the camera moves, actions have causes and consequences, and one second has to connect to the next. Writing down a formula may take only a few symbols, but accurately describing a specific video is very hard. The hard part is explaining the images, actions, rhythm, and connections all at once. Give it a reference image, for example, and you have already supplied an enormous number of information bits.
+
+Giving it few-shot examples also adds information that is difficult to convey in one sentence. Whether it is a language model or an image generation model such as Stable Diffusion, its architecture, training, parameters, and conditioning inputs all affect how much information it can use from a reference.
+
+I am not sure whether all these different kinds of models fit the idea that “compression is intelligence.” But the richer the input is in information that relates to the goal and that the model can use, the better the chance of producing output aligned with human expectations.
+
+## The difference is how much can stay hidden
+
+When we discuss the difference between image generation, video generation, and the longer-term work of making games and movies, the central issue is that different fields have completely different tolerances for what stays hidden.
+
+In a single image, the model fills in what you have not specified. If it looks decent, you take it. If you do not like it, a glance is enough to decide to try another. The human time involved is so short partly because the model already understands a lot, and partly because we allow it to decide a lot for us.
+
+A work that unfolds over time cannot tolerate so much remaining hidden. A door in concept art may only need to look like a door. A door in a game also has to answer whether it opens, how collisions work, and whether it blocks the line of sight. An action in a movie has to have its place in what happens later. Choices that can be filled in by default in an isolated piece start affecting one another when they become part of a longer work.
+
+Video is already running into this problem: whatever gets filled in by default in one second has to be accounted for in the next. In movies and games, these dependencies extend from a few seconds to hours, or across an entire map.
+
+What makes this harder is that people cannot see the hidden parts clearly at the beginning either.
+
+For example, when an engineer describes a complex software engineering task, they usually do not already have a perfect spec to hand over to an agent for pure execution. More often, they are thinking as they build. They also need a proof of concept at the start. Many details are unclear. Based on past experience, personal intelligence, and references already out there, they might be able to clear away 40% to 50% of the fog. That is my sense of it.
+
+When you are trying to supply the full set of information about a task accurately enough to meet human expectations, giving a repo or an example as a reference can make things much easier. It adds a large amount of input tokens that can effectively guide attention.
+
+Reference films and storyboards in filmmaking, and playable prototypes in games, do the same thing. But references only clear away part of the fog. The rest still has to be broken down and aligned, bit by bit, as you make it.
+
+## Being seen
+
+“Being seen” matters a lot in marketing, in connecting with public sentiment and collective emotion. The work has to exceed people's expectations. In terms of how it feels, not by 1.1 or 1.2 times, but by 3, 5, even 10 times.
+
+For example, people understand that you put in 3 to 5 days, but what comes out feels like 30 days of work. That gap beyond the group's expectations makes people want to share it with someone else. Exceptional movies and games address a higher level of enjoyment beyond efficiency.
+
+We can divide necessary human labor time into two kinds here: what can be seen, and what cannot. That door in PUBG, those footsteps, every shot in *Avengers: Endgame*: those are the kind that can be seen.
+
+<figure>
+  ![A ruler of human time, half visible and half covered by a curtain.](/blog/blog/human-time-beyond-expectations/labor-visibility.svg)
+  <figcaption>Necessary human labor time that can be seen, and necessary human labor time that cannot.</figcaption>
+</figure>
+
+Complex software engineering contains a great deal of unseen work. Software engineering has long been divided into frontend, backend, and other specialties, with necessary labor time put into each stage. In that respect, it is much like movie engineering. But it is hard for a broad audience to understand, so it does not spread as easily. A data migration that loses nothing, a failure caught by fault tolerance, a system that has gone a long time without an incident. These all matter, but they are hard for people to grasp at a glance.
+
+That work can create enormous economic value by cutting costs and reducing failures. It is just hard for a broad audience to feel directly, which makes it harder to spread.
+
+## With enough engineering intelligence, humans may be getting in the way
+
+Of course, this judgment may be a little sweeping. There really is a distinction between fields here, with the two kinds of problem serving different objective functions. And on the engineering side, things may go further.
+
+In a field concerned with efficiency or engineering, as intelligence develops, imagine hundreds of agents coordinated by a single overall director. Structurally, that is almost the same as movie engineering. If the agents still have to align with people at various human-in-the-loop stages, it becomes difficult to tell whether the humans are just getting in the way.
+
+At every human-in-the-loop stage, the context has to be translated for a person, followed by a wait for that person to make the call. And their call may not be better than the agent's own judgment.
+
+Once intelligence is high enough, once an agent's judgment on a specific task is better than most people's, it can get the information it needs, and its work can be tested and verified, you would prefer the whole process to run through more efficient communication between agents.
+
+Under that assumption, my projection for the era after Astra or Opus 5.5 is this: human contributions below P95 may all be getting in the way, pulling down the average. Many engineering implementations may not even match the agent's own engineering intuition. P95 here is only my estimate of a future distribution of engineering ability. I do not have measurements to support it yet.
+
+Humans would more often be filling in real needs from the real world when necessary, or redirecting the model's attention through prompts, references, and feedback. Put plainly, pulling its attention back to where it needs to look. In the parts where execution is already reliable enough, the alignment people can still contribute may be tiny. Across the whole distribution of engineering intelligence going into the work, the gap between humans and agents could be very large.
+
+But in artistic works such as games and movies, traditionally made by studios, the balance between humans and agents is gentler, more blended. Over there, people's feelings, experiences, and choices are themselves part of the objective function.

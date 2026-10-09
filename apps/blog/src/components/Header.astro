@@ -18,8 +18,8 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
 ---
 
 <header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--paper)]/85 backdrop-blur-md">
-  <div class="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-6 px-7 py-3.5">
-    <div class="flex items-center gap-3 text-[color:var(--fg)]">
+  <div class="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:flex-nowrap sm:gap-6 sm:px-7">
+    <div class="flex shrink-0 items-center gap-3 whitespace-nowrap text-[color:var(--fg)]">
       <a href={landingHref} aria-label="mosoo home">
         <img src={`${base}/brand-wordmark.svg`} alt="mosoo" class="h-5 w-auto" />
       </a>
@@ -31,7 +31,7 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
         {copy.blog}
       </a>
     </div>
-    <nav class="flex items-center gap-6 text-[14px] text-[color:var(--fg-secondary)]">
+    <nav class="ml-auto flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)] sm:gap-6">
       <a href={landingHref} class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline">{copy.backToMosoo}</a>
       <a
         href={`${base}/rss.xml`}
@@ -40,7 +40,7 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
         >RSS</a
       >
       <div
-        class="flex items-center overflow-hidden rounded-[var(--r-sm)] border border-[color:var(--border)] font-mono text-[12px] font-semibold uppercase tracking-[0.08em]"
+        class="flex shrink-0 items-center overflow-hidden whitespace-nowrap rounded-[var(--r-sm)] border border-[color:var(--border)] font-mono text-[12px] font-semibold uppercase tracking-[0.08em]"
         aria-label={copy.languageLabel}
       >
         {
@@ -62,7 +62,7 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
       </div>
       <a
         href="https://github.com/langgenius/mosoo"
-        class="inline-flex items-center gap-2 rounded-[var(--r-md)] bg-[color:var(--ink-900)] px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[color:var(--ink-800)]"
+        class="hidden items-center gap-2 whitespace-nowrap rounded-[var(--r-md)] bg-[color:var(--ink-900)] px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[color:var(--ink-800)] sm:inline-flex"
       >
         {copy.learnMore}
       </a>
