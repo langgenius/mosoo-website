@@ -1,117 +1,165 @@
 import { ArrowUpRight } from "lucide-react";
-import type { CSSProperties, ReactElement } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 
 import { GithubMark } from "../login/github-mark";
 import { Reveal } from "../login/landing/motion";
 import { DISPLAY_FONT } from "../login/landing/typography";
-import { Eyebrow } from "../login/landing/ui";
 import { MOSOO_GITHUB_URL } from "../login/links";
 import { t } from "./i18n";
 import { USE_CASES } from "./use-cases-data";
 import type { UseCase } from "./use-cases-data";
 
-const PAGE_HEADLINE_STYLE = {
+// Headings use Cabinet Grotesk (the blog's display face) via an inline style:
+// the landing app's --font-display token is Geist, so the blog look only comes
+// through when the family is set explicitly.
+const HERO_TITLE_STYLE = {
   fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(38px, 5vw, 64px)",
-  fontWeight: 500,
-  letterSpacing: "-0.032em",
-  lineHeight: 1.04,
-} satisfies CSSProperties;
-
-const CASE_NAME_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(28px, 3vw, 40px)",
-  fontWeight: 500,
-  letterSpacing: "-0.025em",
-  lineHeight: 1.08,
-} satisfies CSSProperties;
-
-const GRID_CASE_NAME_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(24px, 2vw, 28px)",
+  fontSize: "clamp(40px, 5vw, 56px)",
   fontWeight: 500,
   letterSpacing: "-0.022em",
-  lineHeight: 1.08,
+  lineHeight: 1.06,
 } satisfies CSSProperties;
 
-function UseCasesHeader(): ReactElement {
+const FEATURED_TITLE_STYLE = {
+  fontFamily: DISPLAY_FONT,
+  fontSize: "clamp(30px, 3.4vw, 38px)",
+  fontWeight: 500,
+  letterSpacing: "-0.02em",
+  lineHeight: 1.1,
+} satisfies CSSProperties;
+
+const SECTION_TITLE_STYLE = {
+  fontFamily: DISPLAY_FONT,
+  fontSize: "clamp(24px, 2.4vw, 28px)",
+  fontWeight: 500,
+  letterSpacing: "-0.015em",
+  lineHeight: 1.2,
+} satisfies CSSProperties;
+
+const CARD_TITLE_STYLE = {
+  fontFamily: DISPLAY_FONT,
+  fontSize: "19px",
+  fontWeight: 500,
+  letterSpacing: "-0.015em",
+  lineHeight: 1.3,
+} satisfies CSSProperties;
+
+// The "culm" texture from the blog hero — a barely-there vertical hairline every
+// 64px, pulled back to ~2.5% opacity so it reads as paper grain, not stripes.
+const CULM_BACKGROUND =
+  "repeating-linear-gradient(90deg, transparent 0 64px, rgba(15, 20, 12, 0.025) 64px 65px)";
+
+const INK_950 = "text-[color:var(--ink-950)]";
+const TITLE_HOVER =
+  "underline decoration-transparent decoration-2 underline-offset-4 transition-[text-decoration-color] duration-200 group-hover:decoration-green-500";
+// Same box as the topbar, so the logo, headline, and cards share one left edge
+// at every width — the alignment the blog has between its header and content.
+const CONTAINER = "mx-auto w-full max-w-[1280px] px-4 md:px-6";
+// Keyboard focus in the brand green (design tokens' --focus-ring), following
+// the card's rounded corners instead of the browser's square blue outline.
+const FOCUS_RING =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-600";
+
+// Each meta chunk leads with its own "·" in a 20px slot. The row is pulled left
+// by one slot inside a clipping box, so a separator that would start a line is
+// hidden — narrow three-column cards (~1024px) wrap between chunks without
+// leaving "engine ·" dangling at the end of the first line.
+function MetaChunk({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}): ReactElement {
   return (
-    <section className="px-4 pt-16 pb-12 md:px-6 md:pt-20 md:pb-14">
-      <Reveal className="mx-auto flex max-w-[760px] flex-col items-center text-center">
-        <Eyebrow>{t("Use cases")}</Eyebrow>
-        <h1
-          className="text-fg-1 mt-5 [text-wrap:balance]"
-          style={PAGE_HEADLINE_STYLE}
-        >
-          {t("Built on mosoo.")}
-        </h1>
-        <p className="text-fg-2 mt-5 max-w-[600px] text-[15px] leading-[1.6] [text-wrap:pretty]">
-          {t(
-            "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.",
-          )}
-        </p>
-      </Reveal>
+    <span className={`inline-flex items-center whitespace-nowrap ${className}`}>
+      <span aria-hidden="true" className="w-5 shrink-0 text-center font-normal text-ink-500">
+        ·
+      </span>
+      {children}
+    </span>
+  );
+}
+
+function CaseMeta({ useCase }: { useCase: UseCase }): ReactElement {
+  return (
+    <div className="overflow-hidden text-[13px] text-ink-500">
+      <div className="-ml-5 flex flex-wrap items-center gap-y-1">
+        <MetaChunk className="font-semibold text-green-800">{useCase.kicker}</MetaChunk>
+        <MetaChunk>
+          <span className="inline-flex items-center gap-1.5">
+            <img
+              src={useCase.author.avatar}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 rounded-[4px] object-cover"
+            />
+            {useCase.author.name}
+          </span>
+        </MetaChunk>
+      </div>
+    </div>
+  );
+}
+
+function HeroBand(): ReactElement {
+  return (
+    <section
+      className="border-b border-ink-100"
+      style={{ backgroundImage: CULM_BACKGROUND }}
+    >
+      <div className={`${CONTAINER} pt-14 pb-12 md:pt-20 md:pb-16`}>
+        <Reveal>
+          <p className="text-[13px] font-semibold tracking-[-0.01em] text-green-800">
+            {t("Use cases")}
+          </p>
+          <h1 className={`mt-3 max-w-3xl ${INK_950} [text-wrap:balance]`} style={HERO_TITLE_STYLE}>
+            {t("Built on mosoo.")}
+          </h1>
+          <p className="mt-4 max-w-xl text-[17px] leading-[1.6] text-ink-700 [text-wrap:pretty]">
+            {t(
+              "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.",
+            )}
+          </p>
+        </Reveal>
+      </div>
     </section>
   );
 }
 
-function UseCaseCard({ useCase }: { useCase: UseCase }): ReactElement {
+function FeaturedCaseBody({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <Reveal>
-      <a
-        href={useCase.detailPath}
-        className="group border-border-default bg-paper-50 hover:border-border-strong focus-visible:ring-ring grid overflow-hidden rounded-[20px] border shadow-[var(--shadow-xs)] transition-[border-color,box-shadow] duration-200 outline-none hover:shadow-[var(--shadow-md)] focus-visible:ring-2 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
-      >
-        <div className="flex flex-col p-7 md:p-10">
-          <p className="text-green-700 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
-            {useCase.kicker}
-          </p>
-          <h2 className="text-fg-1 mt-4" style={CASE_NAME_STYLE}>
-            {useCase.name}
-          </h2>
-          <p className="text-fg-2 mt-4 max-w-[440px] text-[14.5px] leading-[1.6] [text-wrap:pretty]">
-            {useCase.summary}
-          </p>
-          <ul className="mt-6 flex flex-wrap gap-2">
-            {useCase.tags.map((tag) => (
-              <li
-                key={tag}
-                className="border-border-default text-fg-2 rounded-full border px-2.5 py-1 font-mono text-[11px] font-medium"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-          <span className="mt-8 flex items-center justify-between gap-3 md:mt-auto md:pt-8">
-            <span className="text-fg-2 inline-flex items-center gap-2 text-[13px] font-medium">
+      <a href={useCase.detailPath} className={`group block rounded-[16px] ${FOCUS_RING}`}>
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+          <div className="overflow-hidden rounded-[16px] border border-ink-100 md:order-2">
+            <div className="aspect-[16/10] bg-ink-50">
               <img
-                src={useCase.author.avatar}
-                alt=""
-                width={20}
-                height={20}
-                className="size-5 rounded-[4px]"
+                src={useCase.image}
+                alt={useCase.imageAlt}
+                width={1440}
+                height={900}
+                loading="eager"
+                className="h-full w-full object-cover object-top"
               />
-              {useCase.author.name}
-            </span>
-            <span className="text-fg-1 inline-flex items-center gap-1.5 text-[13.5px] font-semibold">
+            </div>
+          </div>
+          <div className="flex min-w-0 flex-col gap-4 md:order-1">
+            <CaseMeta useCase={useCase} />
+            <h2 className={`${INK_950} ${TITLE_HOVER}`} style={FEATURED_TITLE_STYLE}>
+              {useCase.name}
+            </h2>
+            <p className="max-w-[52ch] text-[16px] leading-[1.6] text-ink-700 [text-wrap:pretty]">
+              {useCase.summary}
+            </p>
+            <span className="mt-1 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-[color:var(--ink-950)]">
               {t("Read the case")}
               <ArrowUpRight
                 aria-hidden="true"
                 className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </span>
-          </span>
-        </div>
-        <div className="bg-paper-200/70 border-border-soft border-t p-3 md:border-t-0 md:border-l md:p-4">
-          <div className="ring-border-default h-full overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow-sm)] ring-1 transition-transform duration-200 group-hover:-translate-y-0.5">
-            <img
-              src={useCase.image}
-              alt={useCase.imageAlt}
-              width={1440}
-              height={900}
-              loading="eager"
-              className="h-full w-full object-cover object-top"
-            />
           </div>
         </div>
       </a>
@@ -119,49 +167,43 @@ function UseCaseCard({ useCase }: { useCase: UseCase }): ReactElement {
   );
 }
 
-function UseCaseGridCard({ useCase }: { useCase: UseCase }): ReactElement {
+function FeaturedCase({ useCase }: { useCase: UseCase }): ReactElement {
+  return (
+    <section className="border-b border-ink-100">
+      <div className={`${CONTAINER} py-12 md:py-16`}>
+        <FeaturedCaseBody useCase={useCase} />
+      </div>
+    </section>
+  );
+}
+
+function GridCard({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <Reveal className="h-full">
       <a
         href={useCase.detailPath}
-        className="group border-border-default bg-paper-50 hover:border-border-strong focus-visible:ring-ring flex h-full flex-col overflow-hidden rounded-[18px] border shadow-[var(--shadow-xs)] transition-[border-color,box-shadow,transform] duration-200 outline-none hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)] focus-visible:ring-2"
+        className={`group flex h-full flex-col gap-4 rounded-[12px] ${FOCUS_RING}`}
       >
-        <div className="bg-paper-200/70 aspect-[16/10] overflow-hidden border-b border-border-soft">
-          <img
-            src={useCase.image}
-            alt={useCase.imageAlt}
-            width={1440}
-            height={900}
-            loading="lazy"
-            className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.015]"
-          />
+        <div className="overflow-hidden rounded-[12px] border border-ink-100">
+          <div className="aspect-[16/10] bg-ink-50">
+            <img
+              src={useCase.image}
+              alt={useCase.imageAlt}
+              width={1440}
+              height={900}
+              loading="lazy"
+              className="h-full w-full object-cover object-top"
+            />
+          </div>
         </div>
-        <div className="flex flex-1 flex-col p-6">
-          <p className="text-green-700 font-mono text-[10.5px] font-semibold tracking-[0.16em] uppercase">
-            {useCase.kicker}
-          </p>
-          <h2 className="text-fg-1 mt-3" style={GRID_CASE_NAME_STYLE}>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <CaseMeta useCase={useCase} />
+          <h3 className={`${INK_950} ${TITLE_HOVER}`} style={CARD_TITLE_STYLE}>
             {useCase.name}
-          </h2>
-          <p className="text-fg-2 mt-3 text-[13.5px] leading-[1.6] [text-wrap:pretty]">
+          </h3>
+          <p className="line-clamp-2 text-[14px] leading-[1.6] text-ink-700 [text-wrap:pretty]">
             {useCase.summary}
           </p>
-          <span className="border-border-soft text-fg-2 mt-6 flex items-center justify-between gap-3 border-t pt-4 text-[12.5px] font-medium">
-            <span className="inline-flex items-center gap-2">
-              <img
-                src={useCase.author.avatar}
-                alt=""
-                width={20}
-                height={20}
-                className="size-5 rounded-[4px]"
-              />
-              {useCase.author.name}
-            </span>
-            <ArrowUpRight
-              aria-hidden="true"
-              className="text-fg-1 size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </span>
         </div>
       </a>
     </Reveal>
@@ -170,22 +212,20 @@ function UseCaseGridCard({ useCase }: { useCase: UseCase }): ReactElement {
 
 function MoreCasesBand(): ReactElement {
   return (
-    <Reveal className="border-border-soft mt-16 border-t pt-10 pb-4 md:mt-20">
+    <Reveal className="mt-16 border-t border-ink-100 pt-10 md:mt-20">
       <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
         <div>
-          <p className="text-fg-1 text-[15px] font-semibold">
+          <p className="text-[15px] font-semibold text-[color:var(--ink-950)]">
             {t("More cases are being written up.")}
           </p>
-          <p className="text-fg-2 mt-1 text-[13.5px] leading-[1.6]">
-            {t(
-              "Shipping something on mosoo? We want the next case to be yours.",
-            )}
+          <p className="mt-1 text-[13.5px] leading-[1.6] text-ink-700">
+            {t("Shipping something on mosoo? We want the next case to be yours.")}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <a
             href="https://cloud.mosoo.ai/login"
-            className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring inline-flex h-10 items-center rounded-md px-5 text-[13.5px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2"
+            className="bg-ink-900 focus-visible:ring-ring inline-flex h-10 items-center rounded-md px-5 text-[13.5px] font-semibold text-white transition-colors outline-none hover:bg-ink-800 focus-visible:ring-2"
           >
             {t("Start on mosoo Cloud")}
           </a>
@@ -193,7 +233,7 @@ function MoreCasesBand(): ReactElement {
             href={MOSOO_GITHUB_URL}
             target="_blank"
             rel="noreferrer noopener"
-            className="text-ink-900 ring-ink-900/15 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-10 items-center gap-2 rounded-md px-4 text-[13.5px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
+            className="text-[color:var(--ink-950)] ring-ink-900/15 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-10 items-center gap-2 rounded-md px-4 text-[13.5px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
           >
             <GithubMark className="size-4" />
             GitHub
@@ -205,32 +245,53 @@ function MoreCasesBand(): ReactElement {
 }
 
 export function UseCasesPage(): ReactElement {
-  const [featuredCase, ...gridCases] = USE_CASES;
+  const [featuredCase] = USE_CASES;
 
-  return (
-    <div className="pb-20 md:pb-24">
-      <UseCasesHeader />
-      <div className="mx-auto max-w-[1120px] px-4 md:px-6">
-        {USE_CASES.length < 3 ? (
-          <div className="flex flex-col gap-8">
-            {USE_CASES.map((useCase) => (
-              <UseCaseCard key={useCase.detailPath} useCase={useCase} />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-6 md:gap-8">
-            {featuredCase ? <UseCaseCard useCase={featuredCase} /> : null}
-            <div
-              className={`grid gap-5 md:grid-cols-2 ${gridCases.length >= 3 ? "lg:grid-cols-3" : ""}`}
-            >
-              {gridCases.map((useCase) => (
-                <UseCaseGridCard key={useCase.detailPath} useCase={useCase} />
+  // With only a couple of cases, a featured block over a sparse grid reads as
+  // broken; stack them as full-width features instead. At three or more, use
+  // the blog index layout: the first case is featured, and the grid below is
+  // the complete index (featured case included, as on the blog), so the count
+  // in its header always matches the cards shown.
+  if (USE_CASES.length < 3) {
+    return (
+      <div className="pb-4">
+        <HeroBand />
+        <section>
+          <div className={`${CONTAINER} py-12 md:py-14`}>
+            <div className="flex flex-col gap-14">
+              {USE_CASES.map((useCase) => (
+                <FeaturedCaseBody key={useCase.detailPath} useCase={useCase} />
               ))}
             </div>
+            <MoreCasesBand />
           </div>
-        )}
-        <MoreCasesBand />
+        </section>
       </div>
+    );
+  }
+
+  return (
+    <div className="pb-4">
+      <HeroBand />
+      {featuredCase ? <FeaturedCase useCase={featuredCase} /> : null}
+      <section>
+        <div className={`${CONTAINER} py-12 md:py-14`}>
+          <div className="mb-8 flex items-baseline justify-between gap-4">
+            <h2 className={INK_950} style={SECTION_TITLE_STYLE}>
+              {t("All use cases")}
+            </h2>
+            <span className="text-[13px] tabular-nums text-ink-500">
+              {USE_CASES.length} {t("cases")}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+            {USE_CASES.map((useCase) => (
+              <GridCard key={useCase.detailPath} useCase={useCase} />
+            ))}
+          </div>
+          <MoreCasesBand />
+        </div>
+      </section>
     </div>
   );
 }

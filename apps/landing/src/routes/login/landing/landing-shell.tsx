@@ -37,10 +37,14 @@ function subscribeViewportHeight(listener: () => void): () => void {
 export function LandingShell({
   onContinue,
   activeNav,
+  theme = "landing",
   children,
 }: {
   onContinue: () => void;
   activeNav?: TopbarNav;
+  // "landing" keeps the warm forest palette; "brand" drops it to inherit the
+  // cool/bright :root palette the blog uses, so a page can match the blog.
+  theme?: "landing" | "brand";
   children: ReactNode;
 }): ReactElement {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -89,7 +93,7 @@ export function LandingShell({
 
   return (
     <div
-      data-theme="landing"
+      data-theme={theme === "landing" ? "landing" : undefined}
       className="bg-paper-100 fixed inset-0 overflow-x-hidden overflow-y-auto"
     >
       <div

@@ -5,6 +5,8 @@ const ZH_MESSAGES = {
   "Built on mosoo.": "用 mosoo 构建。",
   "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.":
     "这些产品使用 mosoo 作为 Agent backend。每个案例都会说明产品、mosoo 提供的价值与集成路径。",
+  "All use cases": "全部用例",
+  cases: "个用例",
   "A production fitness app where users log meals and workouts in natural language. One shared mosoo Agent turns every conversation into isolated, persistent user data.":
     "一款生产环境中的健身应用，用户可用自然语言记录饮食和训练。一个共享的 mosoo Agent 会把每次对话转化为隔离、持久的用户数据。",
   "The Go Gym dashboard after the Agent recorded a day of meals and training.":
@@ -229,6 +231,8 @@ const JA_MESSAGES = {
   "Built on mosoo.": "mosoo でつくられたもの。",
   "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.":
     "mosoo を Agent backend として使うプロダクト。各ケースでは、プロダクト、mosoo が提供する価値、統合経路を紹介します。",
+  "All use cases": "すべてのユースケース",
+  cases: "ケース",
   "A production fitness app where users log meals and workouts in natural language. One shared mosoo Agent turns every conversation into isolated, persistent user data.":
     "食事やトレーニングを自然言語で記録できる本番フィットネスアプリ。共有された 1 つの mosoo Agent が、各会話を隔離された永続ユーザーデータに変換します。",
   "The Go Gym dashboard after the Agent recorded a day of meals and training.":

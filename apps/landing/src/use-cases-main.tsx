@@ -24,7 +24,7 @@ createRoot(container).render(
   <StrictMode>
     <LazyMotion features={domAnimation} strict>
       <MotionConfig reducedMotion="user">
-        <LandingShell onContinue={openAuth} activeNav="use-cases">
+        <LandingShell onContinue={openAuth} activeNav="use-cases" theme="brand">
           <UseCasesPage />
         </LandingShell>
       </MotionConfig>
