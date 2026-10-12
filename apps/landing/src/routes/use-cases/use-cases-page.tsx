@@ -58,7 +58,16 @@ function CaseMeta({ useCase }: { useCase: UseCase }): ReactElement {
     <div className="flex items-center gap-2 text-[13px] text-ink-500">
       <span className="font-semibold text-green-800">{useCase.kicker}</span>
       <span aria-hidden="true">·</span>
-      <span>{useCase.author.name}</span>
+      <span className="inline-flex items-center gap-1.5">
+        <img
+          src={useCase.author.avatar}
+          alt=""
+          width={20}
+          height={20}
+          className="size-5 rounded-[4px] object-cover"
+        />
+        {useCase.author.name}
+      </span>
     </div>
   );
 }
