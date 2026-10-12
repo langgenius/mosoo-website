@@ -283,7 +283,7 @@ test("the use-cases gallery switches to a featured grid at three cases", () => {
 
   assert.match(source, /USE_CASES\.length < 3/);
   assert.match(source, /md:grid-cols-2/);
-  assert.match(source, /gridCases\.length >= 3 \? "lg:grid-cols-3"/);
+  assert.match(source, /lg:grid-cols-3/);
 });
 
 test("the blueprint case page keeps its canonical, screenshot, and outbound links", () => {

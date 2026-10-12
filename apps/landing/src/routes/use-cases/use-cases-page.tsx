@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import type { CSSProperties, ReactElement } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
 
 import { GithubMark } from "../login/github-mark";
 import { Reveal } from "../login/landing/motion";
@@ -52,22 +52,53 @@ const CULM_BACKGROUND =
 const INK_950 = "text-[color:var(--ink-950)]";
 const TITLE_HOVER =
   "underline decoration-transparent decoration-2 underline-offset-4 transition-[text-decoration-color] duration-200 group-hover:decoration-green-500";
+// Same box as the topbar, so the logo, headline, and cards share one left edge
+// at every width — the alignment the blog has between its header and content.
+const CONTAINER = "mx-auto w-full max-w-[1280px] px-4 md:px-6";
+// Keyboard focus in the brand green (design tokens' --focus-ring), following
+// the card's rounded corners instead of the browser's square blue outline.
+const FOCUS_RING =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-600";
+
+// Each meta chunk leads with its own "·" in a 20px slot. The row is pulled left
+// by one slot inside a clipping box, so a separator that would start a line is
+// hidden — narrow three-column cards (~1024px) wrap between chunks without
+// leaving "engine ·" dangling at the end of the first line.
+function MetaChunk({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}): ReactElement {
+  return (
+    <span className={`inline-flex items-center whitespace-nowrap ${className}`}>
+      <span aria-hidden="true" className="w-5 shrink-0 text-center font-normal text-ink-500">
+        ·
+      </span>
+      {children}
+    </span>
+  );
+}
 
 function CaseMeta({ useCase }: { useCase: UseCase }): ReactElement {
   return (
-    <div className="flex items-center gap-2 text-[13px] text-ink-500">
-      <span className="font-semibold text-green-800">{useCase.kicker}</span>
-      <span aria-hidden="true">·</span>
-      <span className="inline-flex items-center gap-1.5">
-        <img
-          src={useCase.author.avatar}
-          alt=""
-          width={20}
-          height={20}
-          className="size-5 rounded-[4px] object-cover"
-        />
-        {useCase.author.name}
-      </span>
+    <div className="overflow-hidden text-[13px] text-ink-500">
+      <div className="-ml-5 flex flex-wrap items-center gap-y-1">
+        <MetaChunk className="font-semibold text-green-800">{useCase.kicker}</MetaChunk>
+        <MetaChunk>
+          <span className="inline-flex items-center gap-1.5">
+            <img
+              src={useCase.author.avatar}
+              alt=""
+              width={20}
+              height={20}
+              className="size-5 rounded-[4px] object-cover"
+            />
+            {useCase.author.name}
+          </span>
+        </MetaChunk>
+      </div>
     </div>
   );
 }
@@ -78,7 +109,7 @@ function HeroBand(): ReactElement {
       className="border-b border-ink-100"
       style={{ backgroundImage: CULM_BACKGROUND }}
     >
-      <div className="mx-auto w-full max-w-[1180px] px-6 pt-14 pb-12 md:px-7 md:pt-20 md:pb-16">
+      <div className={`${CONTAINER} pt-14 pb-12 md:pt-20 md:pb-16`}>
         <Reveal>
           <p className="text-[13px] font-semibold tracking-[-0.01em] text-green-800">
             {t("Use cases")}
@@ -100,10 +131,10 @@ function HeroBand(): ReactElement {
 function FeaturedCaseBody({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <Reveal>
-      <a href={useCase.detailPath} className="group block">
+      <a href={useCase.detailPath} className={`group block rounded-[16px] ${FOCUS_RING}`}>
         <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[0.95fr_1.05fr] lg:gap-12">
           <div className="overflow-hidden rounded-[16px] border border-ink-100 md:order-2">
-            <div className="aspect-[16/9] bg-ink-50">
+            <div className="aspect-[16/10] bg-ink-50">
               <img
                 src={useCase.image}
                 alt={useCase.imageAlt}
@@ -139,7 +170,7 @@ function FeaturedCaseBody({ useCase }: { useCase: UseCase }): ReactElement {
 function FeaturedCase({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <section className="border-b border-ink-100">
-      <div className="mx-auto w-full max-w-[1180px] px-6 py-12 md:px-7 md:py-16">
+      <div className={`${CONTAINER} py-12 md:py-16`}>
         <FeaturedCaseBody useCase={useCase} />
       </div>
     </section>
@@ -149,9 +180,12 @@ function FeaturedCase({ useCase }: { useCase: UseCase }): ReactElement {
 function GridCard({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <Reveal className="h-full">
-      <a href={useCase.detailPath} className="group flex h-full flex-col gap-4">
+      <a
+        href={useCase.detailPath}
+        className={`group flex h-full flex-col gap-4 rounded-[12px] ${FOCUS_RING}`}
+      >
         <div className="overflow-hidden rounded-[12px] border border-ink-100">
-          <div className="aspect-[16/9] bg-ink-50">
+          <div className="aspect-[16/10] bg-ink-50">
             <img
               src={useCase.image}
               alt={useCase.imageAlt}
@@ -211,18 +245,19 @@ function MoreCasesBand(): ReactElement {
 }
 
 export function UseCasesPage(): ReactElement {
-  const [featuredCase, ...gridCases] = USE_CASES;
+  const [featuredCase] = USE_CASES;
 
   // With only a couple of cases, a featured block over a sparse grid reads as
-  // broken; stack them as full-width features instead. At three or more, switch
-  // to the blog-style featured + card grid, and only let the grid go to three
-  // columns once there are enough cards to fill a row.
+  // broken; stack them as full-width features instead. At three or more, use
+  // the blog index layout: the first case is featured, and the grid below is
+  // the complete index (featured case included, as on the blog), so the count
+  // in its header always matches the cards shown.
   if (USE_CASES.length < 3) {
     return (
       <div className="pb-4">
         <HeroBand />
         <section>
-          <div className="mx-auto w-full max-w-[1180px] px-6 py-12 md:px-7 md:py-14">
+          <div className={`${CONTAINER} py-12 md:py-14`}>
             <div className="flex flex-col gap-14">
               {USE_CASES.map((useCase) => (
                 <FeaturedCaseBody key={useCase.detailPath} useCase={useCase} />
@@ -240,7 +275,7 @@ export function UseCasesPage(): ReactElement {
       <HeroBand />
       {featuredCase ? <FeaturedCase useCase={featuredCase} /> : null}
       <section>
-        <div className="mx-auto w-full max-w-[1180px] px-6 py-12 md:px-7 md:py-14">
+        <div className={`${CONTAINER} py-12 md:py-14`}>
           <div className="mb-8 flex items-baseline justify-between gap-4">
             <h2 className={INK_950} style={SECTION_TITLE_STYLE}>
               {t("All use cases")}
@@ -249,10 +284,8 @@ export function UseCasesPage(): ReactElement {
               {USE_CASES.length} {t("cases")}
             </span>
           </div>
-          <div
-            className={`grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 ${gridCases.length >= 3 ? "lg:grid-cols-3" : ""}`}
-          >
-            {gridCases.map((useCase) => (
+          <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+            {USE_CASES.map((useCase) => (
               <GridCard key={useCase.detailPath} useCase={useCase} />
             ))}
           </div>
