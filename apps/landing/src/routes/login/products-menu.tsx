@@ -11,16 +11,16 @@ import { productHost, PRODUCTS, PRODUCTS_TRIGGER_CLASS } from "./products";
 // its own data-theme to pick up the landing palette.
 export function ProductsMenu(): ReactElement {
   return (
-    <NavigationMenu.Root aria-label={t("Products")} className="hidden sm:block">
+    <NavigationMenu.Root aria-label={t("Products")}>
       <NavigationMenu.List className="flex">
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={PRODUCTS_TRIGGER_CLASS}>
             {t("Products")}
-            <NavigationMenu.Icon className="transition-transform duration-200 ease-out group-data-[open]:rotate-180">
-              <ChevronDown aria-hidden="true" className="size-3" />
+            <NavigationMenu.Icon className="transition-transform duration-200 ease-out group-data-[open]:rotate-180 motion-reduce:transition-none">
+              <ChevronDown aria-hidden="true" className="size-3.5" />
             </NavigationMenu.Icon>
           </NavigationMenu.Trigger>
-          <NavigationMenu.Content className="w-[380px] max-w-[calc(100vw-32px)] p-1.5 transition-opacity duration-150 ease-out data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+          <NavigationMenu.Content className="w-[400px] max-w-[calc(100vw-32px)] p-1.5 transition-opacity duration-150 ease-out data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
             <ul className="flex flex-col gap-0.5">
               {PRODUCTS.map((product) => (
                 <li key={product.id}>
@@ -29,12 +29,14 @@ export function ProductsMenu(): ReactElement {
                     className="hover:bg-paper-200/70 focus-visible:bg-paper-200/70 focus-visible:ring-ring block rounded-md px-3 py-2.5 transition-colors outline-none focus-visible:ring-2"
                   >
                     <span className="flex items-baseline justify-between gap-4">
-                      <span className="text-fg-1 text-[13.5px] font-semibold">{product.name}</span>
-                      <span className="text-fg-3 font-mono text-[10.5px] tracking-[0.06em]">
+                      <span translate="no" className="text-fg-1 text-[15px] font-semibold">
+                        {product.name}
+                      </span>
+                      <span translate="no" className="text-ink-500 font-mono text-[13px]">
                         {productHost(product)}
                       </span>
                     </span>
-                    <span className="text-fg-2 mt-1 block text-[12.5px] leading-[1.5]">
+                    <span className="text-ink-500 mt-1 block text-[14px] leading-[1.5]">
                       {product.description}
                     </span>
                   </NavigationMenu.Link>

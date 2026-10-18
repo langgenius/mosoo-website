@@ -21,7 +21,7 @@ const openAuth = (): void => {
 
 createRoot(container).render(
   <StrictMode>
-    <LandingShell onContinue={openAuth}>
+    <LandingShell>
       <LoginLanding onContinue={openAuth} />
     </LandingShell>
   </StrictMode>,

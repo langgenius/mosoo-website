@@ -21,7 +21,7 @@ const openAuth = (): void => {
 
 createRoot(container).render(
   <StrictMode>
-    <LandingShell onContinue={openAuth} activeNav="pricing">
+    <LandingShell>
       <PricingPage onGetStarted={openAuth} />
     </LandingShell>
   </StrictMode>,

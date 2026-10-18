@@ -712,7 +712,8 @@ export function StatusPage(): ReactElement {
   const notices = recentNotices(payload, feedUnavailable, Date.now());
 
   return (
-    <main className="status-brand">
+    // The shared LandingShell provides the page's <main> landmark.
+    <div className="status-brand">
       <StatusHeader />
 
       <div className="px-4 pb-16 md:px-6 md:pb-24">
@@ -846,6 +847,6 @@ export function StatusPage(): ReactElement {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -136,6 +136,10 @@
   --accent-soft: var(--green-50);
   --accent-soft-hover: var(--green-100);
   --accent-ring: rgba(111, 211, 5, 0.45);
+  /* Keyboard focus indicator. Solid, so it clears the 3:1 non-text contrast
+     floor on paper (green-800 on #fbfbfc is 5.9:1); the translucent
+     --accent-ring stays for decorative halos only. */
+  --focus-ring: var(--green-800);
 
   --success: var(--green-700);
   --info: var(--sky);
@@ -260,6 +264,8 @@
   --accent-soft: var(--green-50);
   --accent-soft-hover: var(--green-100);
   --accent-ring: rgba(8, 96, 48, 0.22);
+  /* green-600 on paper-100 is 5.9:1 (the old 22% ring was 1.4:1). */
+  --focus-ring: var(--green-600);
 
   --shadow-xs: 0 1px 0 rgba(11, 26, 20, 0.04), 0 1px 2px rgba(11, 26, 20, 0.04);
   --shadow-sm: 0 1px 2px rgba(11, 26, 20, 0.04), 0 2px 6px rgba(11, 26, 20, 0.04);
@@ -364,7 +370,7 @@
 
   --color-border: var(--border-default);
   --color-input: var(--border-strong);
-  --color-ring: var(--accent-ring);
+  --color-ring: var(--focus-ring);
 
   --color-sidebar: var(--bg-sidebar);
   --color-sidebar-foreground: var(--fg-2);
@@ -566,6 +572,48 @@
   .t-link:hover {
     color: var(--accent-hover);
     border-bottom-color: var(--accent-hover);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Site shell (LandingShell). The document itself scrolls: no fixed inner
+   scroll container, so browser scroll restoration, anchor links and the
+   status-bar tap-to-top all work. The footer is in normal flow from the first
+   render; on large viewports it is pinned under the content layer with
+   position: sticky, so the content "peels up" to reveal it without any
+   measurement (and without the layout shift the old lazily measured, fixed
+   footer caused). Smaller or shorter viewports keep a plain in-flow footer,
+   because a pinned footer taller than the viewport would hide its own top.
+   --------------------------------------------------------------------------- */
+html {
+  scroll-padding-top: 5rem;
+}
+
+html:has(.landing-shell[data-theme="landing"]) {
+  background-color: #f7f6f1;
+}
+
+.landing-shell {
+  overflow-x: clip;
+}
+
+.landing-footer {
+  position: relative;
+  z-index: 0;
+}
+
+@media (min-width: 1024px) and (min-height: 820px) {
+  .landing-footer {
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-header {
+    background-color: var(--paper-100);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 

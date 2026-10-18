@@ -1,29 +1,42 @@
-import { ArrowLeft, ChevronDown } from "lucide-react";
-import { lazy, Suspense } from "react";
-import type { ReactElement } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import { lazy, Suspense, useId, useRef, useState } from "react";
+import type { KeyboardEvent, ReactElement } from "react";
 
 import { t } from "@/shared/i18n";
+import { cn } from "@/shared/lib/class-names";
 import { useIdleReady } from "@/shared/lib/use-idle-ready";
-import { locale, LOCALE_LABELS } from "@/shared/locale";
-
-import { GithubMarkLink } from "./github-mark";
 import {
-  MOSOO_API_REFERENCE_URL,
-  MOSOO_BLOG_URL,
-  MOSOO_DOCS_URL,
+  htmlLanguage,
+  locale,
+  LOCALE_LABELS,
+  LOCALES,
+  localeHref,
+  rememberLocale,
+} from "@/shared/locale";
+
+import { GithubMark } from "./github-mark";
+import {
+  blogUrl,
+  docsUrl,
+  MOSOO_CLOUD_URL,
   MOSOO_GITHUB_URL,
-  MOSOO_X_URL,
+  MOSOO_LOGIN_URL,
+  pathToUseCases,
 } from "./links";
-import { PRODUCTS_TRIGGER_CLASS } from "./products";
-import { XMark } from "./x-mark";
+import { productHost, PRODUCTS, PRODUCTS_TRIGGER_CLASS } from "./products";
+
+export type TopbarNav = "use-cases";
+
+const NAV_LINK_CLASS =
+  "hover:text-fg-1 focus-visible:ring-ring inline-flex h-9 items-center rounded-md px-3 text-[14px] font-semibold transition-colors outline-none focus-visible:ring-2";
 
 const ICON_LINK_CLASS =
   "text-fg-2 hover:bg-paper-200/70 hover:text-fg-1 focus-visible:ring-ring flex size-9 items-center justify-center rounded-md transition-colors outline-none focus-visible:ring-2";
 
-const TEXT_LINK_CLASS =
-  "hover:text-fg-1 focus-visible:ring-ring hidden rounded-md px-3 text-[13.5px] font-semibold transition-colors outline-none focus-visible:ring-2 sm:inline-flex";
-
-export type TopbarNav = "pricing" | "use-cases";
+// One label per intent across the site: "Try mosoo" is the only filled button,
+// "Sign in" stays a quieter text link (copy deck §1, D7, D11).
+const PRIMARY_BUTTON_CLASS =
+  "bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring focus-visible:ring-offset-paper-100 inline-flex shrink-0 items-center justify-center rounded-md px-4 font-semibold whitespace-nowrap transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
 
 const LazyLanguageMenu = lazy(async () => {
   const mod = await import("./language-menu");
@@ -37,8 +50,18 @@ const LazyProductsMenu = lazy(async () => {
 
 function Brand(): ReactElement {
   return (
-    <a href={`/${locale}`} aria-label="mosoo" className="inline-flex items-center">
-      <img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" className="block h-[22px]" />
+    <a
+      href={`/${locale}`}
+      aria-label={t("mosoo home")}
+      className="focus-visible:ring-ring inline-flex shrink-0 items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-4"
+    >
+      <img
+        src="/brand/logo-wordmark-onlight.svg"
+        alt=""
+        width={102}
+        height={22}
+        className="block h-[22px] w-auto"
+      />
     </a>
   );
 }
@@ -47,127 +70,268 @@ function ProductsMenuFallback(): ReactElement {
   return (
     <button type="button" disabled className={`${PRODUCTS_TRIGGER_CLASS} cursor-default`}>
       {t("Products")}
-      <ChevronDown aria-hidden="true" className="size-3" />
+      <ChevronDown aria-hidden="true" className="size-3.5" />
     </button>
   );
 }
 
 function LanguageMenuFallback(): ReactElement {
-  const currentLanguage = LOCALE_LABELS[locale];
-
   return (
     <button
       type="button"
-      aria-label={t("Language")}
-      title={t("Language")}
+      aria-label={t("Change language")}
       disabled
-      className="text-fg-2 inline-flex h-11 min-w-[64px] cursor-default items-center justify-center gap-2 rounded-md border border-transparent px-2.5 font-mono text-[11px] font-semibold tracking-[0.08em] opacity-80 outline-none sm:h-9"
+      className="text-fg-2 inline-flex h-9 min-w-[64px] cursor-default items-center justify-center gap-2 rounded-md border border-transparent px-2.5 font-mono text-[13px] font-semibold outline-none"
     >
       <span aria-hidden="true" className="bg-green-500 size-1.5 rounded-[1px]" />
-      {currentLanguage.short}
+      {LOCALE_LABELS[locale].short}
       <ChevronDown aria-hidden="true" className="size-3" />
     </button>
   );
 }
 
-export function LoginLandingTopbar({
-  onContinue,
-  activeNav,
-}: {
-  onContinue: () => void;
-  activeNav?: TopbarNav | undefined;
-}): ReactElement {
-  const loadDeferredMenus = useIdleReady();
-  const blogHref = locale === "en" ? MOSOO_BLOG_URL : `${MOSOO_BLOG_URL}/${locale}`;
+function navLinks(activeNav: TopbarNav | undefined): readonly {
+  href: string;
+  label: string;
+  current: boolean;
+}[] {
+  return [
+    { href: docsUrl(), label: t("Docs"), current: false },
+    { href: pathToUseCases(), label: t("Use cases"), current: activeNav === "use-cases" },
+    { href: blogUrl(), label: t("Blog"), current: false },
+  ];
+}
 
+/**
+ * Below the lg breakpoint the links move into a disclosure panel under the
+ * bar. It is a plain disclosure (button + region), not a modal: Escape and
+ * the backdrop close it, and focus returns to the toggle.
+ */
+function MobileMenu({
+  id,
+  open,
+  activeNav,
+  onClose,
+}: {
+  id: string;
+  open: boolean;
+  activeNav: TopbarNav | undefined;
+  onClose: () => void;
+}): ReactElement {
+  // Always rendered (hidden while closed) so the toggle's aria-controls
+  // always points at a real element.
   return (
-    <div className="border-border-soft/70 bg-paper-100/80 sticky top-0 z-50 border-b backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-3 md:px-6">
-        <Brand />
-        <div className="flex items-center gap-1">
-          {loadDeferredMenus ? (
-            <Suspense fallback={<ProductsMenuFallback />}>
-              <LazyProductsMenu />
-            </Suspense>
-          ) : (
-            <ProductsMenuFallback />
-          )}
+    <nav
+      id={id}
+      hidden={!open}
+      className="border-border-strong bg-paper-100 absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b shadow-[var(--shadow-lg)] lg:hidden"
+    >
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-6 px-4 py-5 md:px-6">
+        <div>
+          <p className="text-ink-500 px-3 text-[14px] font-semibold">{t("Products")}</p>
+          <ul className="mt-1 flex flex-col">
+            {PRODUCTS.map((product) => (
+              <li key={product.id}>
+                <a
+                  href={product.href}
+                  className="hover:bg-paper-200/70 focus-visible:ring-ring block rounded-md px-3 py-3 transition-colors outline-none focus-visible:ring-2"
+                >
+                  <span className="flex items-baseline justify-between gap-4">
+                    <span translate="no" className="text-fg-1 text-[16px] font-semibold">
+                      {product.name}
+                    </span>
+                    <span translate="no" className="text-ink-500 font-mono text-[13px]">
+                      {productHost(product)}
+                    </span>
+                  </span>
+                  <span className="text-ink-500 mt-1 block text-[14px] leading-[1.5]">
+                    {product.description}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <ul className="border-border-soft flex flex-col border-t pt-4">
+          {navLinks(activeNav).map((link) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                aria-current={link.current ? "page" : undefined}
+                className="text-fg-1 hover:bg-paper-200/70 focus-visible:ring-ring flex min-h-11 items-center rounded-md px-3 text-[16px] font-semibold transition-colors outline-none focus-visible:ring-2"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a
+              href={MOSOO_GITHUB_URL}
+              className="text-fg-1 hover:bg-paper-200/70 focus-visible:ring-ring flex min-h-11 items-center gap-2.5 rounded-md px-3 text-[16px] font-semibold transition-colors outline-none focus-visible:ring-2"
+            >
+              <GithubMark className="size-[18px]" />
+              <span>{t("mosoo on GitHub")}</span>
+            </a>
+          </li>
+        </ul>
+
+        <div className="border-border-soft border-t pt-4">
+          <p className="text-ink-500 px-3 text-[14px] font-semibold">{t("Change language")}</p>
+          <ul className="mt-2 flex flex-wrap gap-2 px-1">
+            {LOCALES.map((nextLocale) => (
+              <li key={nextLocale}>
+                <a
+                  href={localeHref(nextLocale)}
+                  lang={htmlLanguage[nextLocale]}
+                  hrefLang={htmlLanguage[nextLocale]}
+                  aria-current={nextLocale === locale ? "true" : undefined}
+                  onClick={() => {
+                    rememberLocale(nextLocale);
+                    onClose();
+                  }}
+                  className={cn(
+                    "focus-visible:ring-ring inline-flex min-h-11 items-center rounded-md border px-3.5 text-[15px] font-semibold transition-colors outline-none focus-visible:ring-2",
+                    nextLocale === locale
+                      ? "border-ink-900 text-fg-1"
+                      : "border-border-strong text-fg-2 hover:text-fg-1",
+                  )}
+                >
+                  {LOCALE_LABELS[nextLocale].native}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-border-soft flex flex-wrap gap-3 border-t pt-5">
           <a
-            href={`/${locale}/pricing`}
-            aria-current={activeNav === "pricing" ? "page" : undefined}
-            className={`${TEXT_LINK_CLASS} ${activeNav === "pricing" ? "text-fg-1" : "text-fg-2"}`}
+            href={MOSOO_LOGIN_URL}
+            className="border-border-strong text-fg-1 hover:bg-paper-200 focus-visible:ring-ring inline-flex min-h-11 flex-1 items-center justify-center rounded-md border px-4 text-[15px] font-semibold transition-colors outline-none focus-visible:ring-2"
           >
-            {t("Pricing")}
+            {t("Sign in")}
           </a>
-          <a
-            href={`/${locale}/use-cases`}
-            aria-current={activeNav === "use-cases" ? "page" : undefined}
-            className={`${TEXT_LINK_CLASS} ${activeNav === "use-cases" ? "text-fg-1" : "text-fg-2"}`}
-          >
-            {t("Use cases")}
+          <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "min-h-11 flex-1 text-[15px]")}>
+            {t("Try mosoo")}
           </a>
-          <a href={blogHref} className={`${TEXT_LINK_CLASS} text-fg-2`}>
-            {t("Blog")}
-          </a>
-          <a href={MOSOO_DOCS_URL} className={`${TEXT_LINK_CLASS} text-fg-2`}>
-            {t("Docs")}
-          </a>
-          <a
-            href={MOSOO_API_REFERENCE_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={`${TEXT_LINK_CLASS} text-fg-2`}
-          >
-            {t("API docs")}
-          </a>
-          {loadDeferredMenus ? (
-            <Suspense fallback={<LanguageMenuFallback />}>
-              <LazyLanguageMenu />
-            </Suspense>
-          ) : (
-            <LanguageMenuFallback />
-          )}
-          <a
-            href={MOSOO_X_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            aria-label={t("mosoo on X")}
-            title={t("mosoo on X")}
-            className={`${ICON_LINK_CLASS} max-[380px]:hidden`}
-          >
-            <XMark className="size-4" />
-          </a>
-          <GithubMarkLink
-            href={MOSOO_GITHUB_URL}
-            className={ICON_LINK_CLASS}
-            label={t("mosoo on GitHub")}
-          />
-          <button
-            type="button"
-            onClick={onContinue}
-            className="border-border-strong bg-card text-foreground hover:bg-paper-200 focus-visible:border-ring focus-visible:ring-ring active:scale-[0.98] ml-1 inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border px-4 py-2 text-sm font-semibold tracking-[0.01em] whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[2px]"
-          >
-            {t("Log in")}
-          </button>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
 
-export function LoginAuthTopbar({ onBack }: { onBack: () => void }): ReactElement {
+export function LoginLandingTopbar({
+  activeNav,
+}: {
+  activeNav?: TopbarNav | undefined;
+}): ReactElement {
+  const loadDeferredMenus = useIdleReady();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuId = useId();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  const closeMenu = (): void => {
+    setMenuOpen(false);
+  };
+
+  const closeMenuOnEscape = (event: KeyboardEvent<HTMLElement>): void => {
+    if (event.key === "Escape" && menuOpen) {
+      event.stopPropagation();
+      setMenuOpen(false);
+      toggleRef.current?.focus();
+    }
+  };
+
   return (
-    <div className="flex items-center justify-between px-10 py-[22px]">
-      <button
-        type="button"
-        onClick={onBack}
-        className="text-fg-2 hover:text-fg-1 flex items-center gap-1.5 text-[13px] font-semibold transition-colors"
+    <>
+      <header
+        onKeyDown={closeMenuOnEscape}
+        className="site-header border-border-soft bg-paper-100/85 sticky top-0 z-50 border-b backdrop-blur-md"
       >
-        <ArrowLeft className="size-3.5" />
-        Back
-      </button>
-      <Brand />
-      <div className="w-[60px]" />
-    </div>
+        <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 md:px-6">
+          <Brand />
+
+          <div className="hidden min-w-0 flex-1 items-center justify-between gap-4 lg:flex">
+            <div className="flex items-center gap-1 pl-4">
+              {loadDeferredMenus ? (
+                <Suspense fallback={<ProductsMenuFallback />}>
+                  <LazyProductsMenu />
+                </Suspense>
+              ) : (
+                <ProductsMenuFallback />
+              )}
+              {navLinks(activeNav).map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  aria-current={link.current ? "page" : undefined}
+                  className={cn(NAV_LINK_CLASS, link.current ? "text-fg-1" : "text-fg-2")}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1">
+              {loadDeferredMenus ? (
+                <Suspense fallback={<LanguageMenuFallback />}>
+                  <LazyLanguageMenu />
+                </Suspense>
+              ) : (
+                <LanguageMenuFallback />
+              )}
+              <a
+                href={MOSOO_GITHUB_URL}
+                aria-label={t("mosoo on GitHub")}
+                title={t("mosoo on GitHub")}
+                className={ICON_LINK_CLASS}
+              >
+                <GithubMark className="size-[18px]" />
+              </a>
+              <a href={MOSOO_LOGIN_URL} className={cn(NAV_LINK_CLASS, "text-fg-2")}>
+                {t("Sign in")}
+              </a>
+              <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "ml-1 h-9 text-[14px]")}>
+                {t("Try mosoo")}
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 lg:hidden">
+            <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "h-11 text-[15px]")}>
+              {t("Try mosoo")}
+            </a>
+            <button
+              ref={toggleRef}
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls={menuId}
+              aria-label={menuOpen ? t("Close menu") : t("Open menu")}
+              onClick={() => {
+                setMenuOpen((open) => !open);
+              }}
+              className="text-fg-1 hover:bg-paper-200/70 focus-visible:ring-ring inline-flex size-11 items-center justify-center rounded-md transition-colors outline-none focus-visible:ring-2"
+            >
+              {menuOpen ? (
+                <X aria-hidden="true" className="size-5" />
+              ) : (
+                <Menu aria-hidden="true" className="size-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <MobileMenu id={menuId} open={menuOpen} activeNav={activeNav} onClose={closeMenu} />
+      </header>
+      {menuOpen ? (
+        // Click-away layer under the sticky header; the header itself stays
+        // interactive above it.
+        <div
+          aria-hidden="true"
+          onClick={closeMenu}
+          className="bg-ink-900/20 fixed inset-0 z-40 lg:hidden"
+        />
+      ) : null}
+    </>
   );
 }
