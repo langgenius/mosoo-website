@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, relative } from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const kit = join(root, "apps/landing/src/product-kit");
+const landing = join(root, "apps/landing");
+const kit = join(landing, "src/product-kit");
 const read = (path) => readFileSync(join(kit, path), "utf8");
 
 // langgenius/mosoo pkgs/contracts/src/session/session.contract.ts at the
@@ -42,13 +44,14 @@ function csvTotal(text) {
     .reduce((sum, line) => sum + Number(line.split(",")[1]), 0);
 }
 
-// The universe module has no runtime imports, so Node's type stripping loads
-// it (on by default from Node 22.18 / 23.6; CI runs 24).
-async function loadUniverse(t) {
+// Kit modules without runtime imports load through Node's type stripping (on
+// by default from Node 22.18 / 23.6; CI runs 24). Only an older local Node may
+// skip these tests; in CI they must run.
+async function loadTs(t, path) {
   try {
-    return await import(join(kit, "data/example-universe.ts"));
+    return await import(pathToFileURL(join(kit, path)).href);
   } catch (error) {
-    if (error?.code === "ERR_UNKNOWN_FILE_EXTENSION") {
+    if (error?.code === "ERR_UNKNOWN_FILE_EXTENSION" && !process.env.CI) {
       t.skip("this Node cannot strip TypeScript types");
       return null;
     }
@@ -56,8 +59,20 @@ async function loadUniverse(t) {
   }
 }
 
+// Tailwind's compiler and scanner, resolved the way the landing build gets
+// them: from @tailwindcss/vite, a declared landing dependency. Never skipped.
+async function loadTailwind() {
+  const landingRequire = createRequire(join(landing, "package.json"));
+  const viteRequire = createRequire(landingRequire.resolve("@tailwindcss/vite"));
+  const { compile, optimize } = await import(pathToFileURL(viteRequire.resolve("@tailwindcss/node")).href);
+  const { Scanner } = await import(pathToFileURL(viteRequire.resolve("@tailwindcss/oxide")).href);
+  return { compile, optimize, Scanner };
+}
+
+// --- The example universe ------------------------------------------------------
+
 test("the CSV story adds up: 230, then 250, with one private nonce hash", async (t) => {
-  const u = await loadUniverse(t);
+  const u = await loadTs(t, "data/example-universe.ts");
   if (u === null) return;
 
   assert.equal(csvTotal(u.INPUT_CSV), 230);
@@ -80,7 +95,7 @@ test("the CSV story adds up: 230, then 250, with one private nonce hash", async 
 });
 
 test("events use only real event types and tool names, in the product's shapes", async (t) => {
-  const u = await loadUniverse(t);
+  const u = await loadTs(t, "data/example-universe.ts");
   if (u === null) return;
 
   for (const turn of u.TURNS) {
@@ -129,15 +144,93 @@ test("events use only real event types and tool names, in the product's shapes",
   assert.ok(u.TOOL_CALLS.turn2Recompute.input.includes(".private/nonce"));
 });
 
-test("the API call stays within 80 columns", async (t) => {
-  const u = await loadUniverse(t);
+// The body between -d ' and the closing ' of a curl command.
+function curlBody(request) {
+  const start = request.indexOf("-d '");
+  assert.ok(start !== -1, "the request sends a JSON body");
+  return JSON.parse(request.slice(start + 4, request.lastIndexOf("'")));
+}
+
+test("the API calls start the same story: upload input.csv, then create its thread", async (t) => {
+  const u = await loadTs(t, "data/example-universe.ts");
+  if (u === null) return;
+  const { create, upload } = u.API_CALLS;
+
+  // Copy deck D15: the docs quickstart's and the setup prompt's variable names.
+  for (const call of [create, upload]) {
+    assert.match(call.request, /\/projects\/\$MOSOO_PROJECT_ID\//);
+    assert.match(call.request, /Bearer \$MOSOO_API_TOKEN"/);
+    assert.doesNotMatch(call.request, /\$PROJECT_ID|\$MOSOO_API_KEY/);
+    assert.equal(call.status, "201 Created");
+  }
+
+  assert.match(upload.request, /\/files \\\n/);
+  assert.match(upload.request, /-F "file=@input\.csv"$/);
+  const uploaded = JSON.parse(upload.response);
+  assert.equal(uploaded.file.id, u.EXAMPLE_IDS.inputFile);
+  assert.equal(uploaded.file.name, u.OUTPUTS.inputCsv.name);
+  assert.equal(ulidTime(u.EXAMPLE_IDS.inputFile), Date.parse(u.INPUT_FILE_UPLOADED_AT));
+  assert.ok(Date.parse(u.INPUT_FILE_UPLOADED_AT) < Date.parse(u.THREAD_CREATED_AT), "uploaded first");
+
+  const body = curlBody(create.request);
+  assert.deepEqual(body.configuration, { ...u.CONFIGURATION });
+  assert.deepEqual(body.input, { content: [{ text: u.PROMPTS.turn1, type: "text" }], type: "user.message" });
+  assert.deepEqual(body.resources, [{ file_id: u.EXAMPLE_IDS.inputFile, type: "file" }]);
+
+  const created = JSON.parse(create.response);
+  assert.equal(created.thread.id, u.EXAMPLE_IDS.thread);
+  assert.equal(created.thread.agent_id, null, "inline configuration, no Agent");
+  assert.equal(created.run.id, u.TURN_1.runId);
+  assert.equal(created.run.status, "queued");
+});
+
+test("the API calls stay within 80 columns, except the two prose strings", async (t) => {
+  const u = await loadTs(t, "data/example-universe.ts");
   if (u === null) return;
 
-  for (const line of `${u.API_CALL.curl}\n${u.API_CALL.response}`.split("\n")) {
-    assert.ok(line.length <= 80, `too long: ${line}`);
+  // These lines hold one prose string each, which the page wraps at spaces.
+  const prose = /^ *"(?:instructions": "[^"]+"|content": \[\{ "type": "text", "text": "[^"]+" \}\])$/;
+
+  for (const call of Object.values(u.API_CALLS)) {
+    for (const line of `${call.request}\n${call.response}`.split("\n")) {
+      assert.ok(line.length <= 80 || prose.test(line), `too long: ${line}`);
+    }
   }
-  assert.doesNotThrow(() => JSON.parse(u.API_CALL.response));
 });
+
+// --- The setup prompt ----------------------------------------------------------
+
+test("the copied setup prompt is the copy deck's: no publish step, v2 docs links", async (t) => {
+  const { SETUP_PROMPT } = (await loadTs(t, "data/setup-prompt.ts")) ?? {};
+  if (SETUP_PROMPT === undefined) return;
+
+  assert.deepEqual(Object.keys(SETUP_PROMPT).sort(), ["en", "ja", "zh"]);
+  for (const [locale, prompt] of Object.entries(SETUP_PROMPT)) {
+    assert.doesNotMatch(prompt, /publish|发布|公開/i, `${locale} asks to publish`);
+    assert.match(prompt, /MOSOO_DOCS_URL\/quickstart\b/, `${locale} links the quickstart`);
+    assert.match(prompt, /MOSOO_DOCS_URL\/api-reference-v2\b/, `${locale} links the v2 API reference`);
+    assert.doesNotMatch(prompt, /MOSOO_DOCS_URL\/(?:coding-agents|api-reference(?!-v2))/, `${locale} links v1 docs`);
+    assert.doesNotMatch(prompt, /threads\?compose=1/, `${locale} sends to the published-Agent composer`);
+    assert.match(prompt, /^MOSOO_CONSOLE_URL=https:\/\/cloud\.mosoo\.ai$/m);
+    assert.match(prompt, /^MOSOO_DOCS_URL=https:\/\/mosoo\.ai\/docs$/m);
+    assert.match(prompt, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
+    assert.match(prompt, /MOSOO_API_TOKEN/);
+  }
+
+  // The console's version is no longer in the kit's strings.
+  const strings = JSON.parse(read("data/console-strings.snapshot.json"));
+  assert.equal(strings.strings.en["projectOverview.setupPrompt"], undefined);
+  assert.doesNotMatch(read("index.ts"), /buildSetupPrompt/);
+});
+
+// --- Snapshots -----------------------------------------------------------------
+
+function kitFiles(directory) {
+  return readdirSync(directory).flatMap((name) => {
+    const path = join(directory, name);
+    return statSync(path).isDirectory() ? kitFiles(path) : [path];
+  });
+}
 
 test("snapshots name their source commit and agree across locales", () => {
   const strings = JSON.parse(read("data/console-strings.snapshot.json"));
@@ -179,7 +272,19 @@ test("snapshots name their source commit and agree across locales", () => {
   assert.equal(catalog.availability.needsKey.statusLabel, "Provider key required");
 });
 
-// --- Island isolation -------------------------------------------------------
+test("every console string the snapshot carries is used by the kit", () => {
+  const strings = JSON.parse(read("data/console-strings.snapshot.json"));
+  const sources = kitFiles(kit)
+    .filter((path) => /\.tsx?$/.test(path) && !path.includes(`${join("product-kit", "preview")}`))
+    .map((path) => readFileSync(path, "utf8"))
+    .join("\n");
+
+  for (const key of Object.keys(strings.strings.en)) {
+    assert.ok(sources.includes(`"${key}"`), `${key} is exported but unused; drop it from CONSOLE_KEYS`);
+  }
+});
+
+// --- Island isolation ----------------------------------------------------------
 
 function stripComments(css) {
   return css.replaceAll(/\/\*[\s\S]*?\*\//g, "");
@@ -260,14 +365,12 @@ test("console-island.css scopes every rule to the island", () => {
       assert.ok(!value.includes(`var(${name})`), `${name} must not read itself`);
     }
   }
-});
 
-function kitFiles(directory) {
-  return readdirSync(directory).flatMap((name) => {
-    const path = join(directory, name);
-    return statSync(path).isDirectory() ? kitFiles(path) : [path];
-  });
-}
+  // The root's text styles sit in the base layer, under any utility on the root.
+  const base = topLevel(css).find(([prelude]) => prelude === "@layer base");
+  assert.ok(base !== undefined, "an @layer base block");
+  assert.match(base[1], /\[data-surface="console"\] \{[^}]*font-size:/);
+});
 
 test("kit sources never spell a Tailwind theme variable", () => {
   // Tailwind's scanner treats such a string as a use and emits the variable
@@ -279,16 +382,8 @@ test("kit sources never spell a Tailwind theme variable", () => {
   }
 });
 
-test("the island compiles to scoped utilities and no :root", async (t) => {
-  let compile;
-  let Scanner;
-  try {
-    ({ compile } = await import("@tailwindcss/node"));
-    ({ Scanner } = await import("@tailwindcss/oxide"));
-  } catch {
-    t.skip("Tailwind's node packages are not installed");
-    return;
-  }
+test("the island compiles to scoped utilities and no :root", async () => {
+  const { compile, Scanner } = await loadTailwind();
 
   const compiler = await compile(read("console-island.css"), { base: kit, onDependency() {} });
   const scanner = new Scanner({
@@ -303,4 +398,109 @@ test("the island compiles to scoped utilities and no :root", async (t) => {
     "the literal #ffffff bridge is overridden inside the island",
   );
   assertScoped(topLevel(output), "compiled island");
+});
+
+// As @tailwindcss/vite builds a stylesheet for production: the CSS file's
+// folder as base, the Vite root for automatic sources, then optimized and
+// minified. `extraSources` adds scanner sources outside the CSS.
+async function buildWebsiteCss(tailwind, css, extraSources = []) {
+  const stylesDir = join(landing, "src/shared/styles");
+  const compiler = await tailwind.compile(css, { base: stylesDir, onDependency() {} });
+  const sources = [
+    ...(compiler.root === "none"
+      ? []
+      : compiler.root === null
+        ? [{ base: landing, negated: false, pattern: "**/*" }]
+        : [{ ...compiler.root, negated: false }]),
+    ...compiler.sources.map(({ base, negated, pattern }) => ({ base, negated, pattern })),
+    ...extraSources,
+  ];
+  const scanner = new tailwind.Scanner({ sources });
+  const built = compiler.build(scanner.scan());
+  return { css: tailwind.optimize(built, { minify: true }).code, files: scanner.files };
+}
+
+test("the website's app.css is the same as without the kit until a page imports it", async () => {
+  const appCss = readFileSync(join(landing, "src/shared/styles/app.css"), "utf8");
+  // The kit's exclusion: the directive right after the Tailwind import, with its comment.
+  const exclusion = /(?<=^@import "tailwindcss";\n)(?:\/\*[\s\S]*?\*\/\n)?@source not "\.\.\/\.\.\/product-kit";\n/m;
+  assert.match(appCss, exclusion);
+  const mainCss = appCss.replace(exclusion, "");
+
+  const tailwind = await loadTailwind();
+  const inKit = (file) => file.startsWith(`${kit}/`);
+
+  const committed = await buildWebsiteCss(tailwind, appCss);
+  assert.ok(committed.files.length > 0, "app.css scans the landing app");
+  assert.ok(!committed.files.some(inKit), "app.css scans no kit file");
+
+  // Main's stylesheet over the landing app without the kit folder (left out
+  // of the scan here, as if it did not exist) builds the same CSS, byte for byte.
+  const kitAbsent = { base: join(landing, "src"), negated: true, pattern: "product-kit" };
+  const main = await buildWebsiteCss(tailwind, mainCss, [kitAbsent]);
+  assert.ok(!main.files.some(inKit));
+  assert.equal(committed.css, main.css);
+
+  // And the exclusion matters: main's stylesheet scanning the kit grows.
+  const scanningKit = await buildWebsiteCss(tailwind, mainCss);
+  assert.ok(scanningKit.files.some(inKit));
+  assert.ok(scanningKit.css.length > committed.css.length, "the kit would add CSS to every page");
+});
+
+// --- KeyBoundary label sizes ---------------------------------------------------
+
+test("KeyBoundary labels render at 12px or more from a 354px island", async (t) => {
+  const layout = await loadTs(t, "components/key-boundary-layout.ts");
+  if (layout === null) return;
+  const { FIT, LABEL_SIZE, MIN_READABLE_ISLAND_PX, NARROW, WIDE, fitDiagram } = layout;
+
+  // The component's classes are the ones FIT describes.
+  const source = read("components/key-boundary.tsx");
+  const wideFrom = `@min-[${FIT.wideFromPx / 16}rem]`;
+  for (const className of ["p-4", "@xl:p-6", `${wideFrom}:block`, `${wideFrom}:hidden`, `max-w-[${FIT.narrowMaxPx}px]`, `max-w-[${FIT.wideMaxPx}px]`]) {
+    assert.ok(source.includes(className), `key-boundary.tsx uses ${className}`);
+  }
+  assert.equal(FIT.paddingWideFromPx, 36 * 16, "@xl is 36rem");
+  const diagram = source.slice(source.indexOf("function Diagram("), source.indexOf("export function KeyBoundaryView("));
+  assert.doesNotMatch(diagram, /text-\[\d/, "SVG labels take their size from LABEL_SIZE");
+
+  const sizes = Object.values(LABEL_SIZE);
+  for (let island = MIN_READABLE_ISLAND_PX; island <= 1600; island += 1) {
+    const { layout: used, scale } = fitDiagram(island);
+    const smallest = Math.min(...sizes) * scale;
+    const largest = Math.max(...sizes) * scale;
+    assert.ok(smallest >= 12, `${island}px island (${used}): ${smallest.toFixed(2)}px labels`);
+    assert.ok(largest <= 18, `${island}px island (${used}): ${largest.toFixed(2)}px labels`);
+  }
+  assert.ok(Math.min(...sizes) * fitDiagram(MIN_READABLE_ISLAND_PX - 1).scale < 12, "the minimum is tight");
+  assert.equal(fitDiagram(358).layout, "narrow", "a 390px phone with 16px gutters");
+  assert.equal(NARROW.width, 360);
+  assert.equal(WIDE.width, 780);
+});
+
+// --- No-JS fallback markup -----------------------------------------------------
+
+test("the static markup export carries the story's facts in every locale", async () => {
+  const { renderProductKitMarkup } = await import(
+    pathToFileURL(join(root, "scripts/export-product-kit-markup.mjs")).href
+  );
+  const { moments } = await renderProductKitMarkup();
+  const u = await import(pathToFileURL(join(kit, "data/example-universe.ts")).href);
+
+  for (const locale of ["en", "zh", "ja"]) {
+    const continuation = moments["session-continuation"][locale];
+    assert.match(continuation, /&quot;grand_total&quot;<\/span>[\s\S]*?230/);
+    assert.match(continuation, /&quot;grand_total&quot;<\/span>[\s\S]*?250/);
+    assert.equal(continuation.split(u.NONCE_SHA256).length - 1, 2, "the same hash in both outputs");
+    assert.ok(continuation.includes(u.EXAMPLE_IDS.thread));
+    assert.match(moments["turn-receipt"][locale], /grand_total is 230/);
+    assert.ok(moments["api-call"][locale].includes(u.EXAMPLE_IDS.inputFile));
+
+    for (const [id, byLocale] of Object.entries(moments)) {
+      const html = byLocale[locale];
+      assert.match(html, /^<div[^>]* data-surface="console"/, `${id} renders its island`);
+      assert.doesNotMatch(html, /\binvisible\b/, `${id} hides nothing in its final state`);
+      assert.doesNotMatch(html, /aria-label="(?:Replay|重放|リプレイ)/, `${id} has no Replay control`);
+    }
+  }
 });
