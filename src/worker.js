@@ -26,77 +26,95 @@ const API_CATALOG = {
   ],
 };
 const SUPPORTED_LOCALES = new Set(["en", "zh", "ja"]);
-const HOMEPAGE_MARKDOWN = `# Mosoo
+const HOMEPAGE_MARKDOWN = `# mosoo
 
-Mosoo is an open-source platform for building and running persistent cloud Agents in isolated sandboxes.
+mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox. mosoo is in Alpha.
 
-- What is Mosoo? An open-source Agent runtime and API for extending coding agents into products and automations.
-- Who is Mosoo for? Developers using OpenAI Codex, Claude Agent SDK, OpenCode, or similar coding agents who need hosted Threads, files, sandboxes, tool events, and API access.
-- How does a product call a Mosoo Agent? A trusted backend uses the Public Thread API to create or resume a Thread, send user events, read or stream results, and attach files. Do not expose Mosoo App-owner tokens to browsers.
-- Is Mosoo self-hostable? Yes. Mosoo is open source, self-hostable on Cloudflare, and BYOK for model/provider credentials.
+- Start a Session: POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads with an inline configuration and a Project API key (msp_). No Agent is required.
+- Continue it minutes or days later with POST /api/v2/threads/{threadId}/events.
+- Follow events over SSE. There are no Webhooks.
+- Bring your own model provider key. mosoo supplies no models.
 
-- Public Thread API base: https://cloud.mosoo.ai/api/v1
-- OpenAPI 3.1: https://cloud.mosoo.ai/api/v1/openapi.json
-- API documentation: https://mosoo.ai/docs/api-reference/
+- API quickstart: https://mosoo.ai/docs/quickstart/
+- OpenAPI 3.1 (v2): https://cloud.mosoo.ai/api/v2/openapi.json
 - Product and content index: https://mosoo.ai/llms.txt
 - Documentation index: https://mosoo.ai/docs/llms.txt
+- Source: https://github.com/langgenius/mosoo
 `;
-const LLMS_MARKDOWN = `# Mosoo
+const LLMS_MARKDOWN = `# mosoo
 
-> Mosoo is an open-source Agent runtime and API for developers extending coding agents into products and automations. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.
+> mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.
 
-Mosoo is currently in alpha. The Public Thread API is designed for trusted application backends: Mosoo App-owner credentials must not be exposed to browsers or end users.
+mosoo is in Alpha. Public APIs and product behavior may still change. It is licensed under Apache 2.0 and maintained by LangGenius, Inc.
 
 ## Direct answers
 
-- What is Mosoo? Mosoo is an open-source Agent runtime and API for extending coding agents into products and automations. It gives published Agents durable Threads, files, sandboxed execution, tool/event streams, and a callable HTTP API.
-- Which coding agent runtimes does Mosoo support? Mosoo runs OpenAI Codex, Claude Agent SDK, and OpenCode behind one normalized Agent API. The public pages describe current alpha support and roadmap items separately.
-- How do I call a Mosoo Agent from my product? Publish an Agent with API access, keep the Mosoo token on a trusted backend, create or resume a Thread with the Public Thread API, then send user events and read or stream Thread events.
-- What is the Public Thread API? It is the backend API for interacting with an already published Mosoo Agent. It creates and resumes Threads, transfers files, and exposes public events for Runs.
-- Is Mosoo self-hostable and BYOK? Yes. Mosoo is open source and self-hostable on Cloudflare; model/provider credentials are brought by the operator and resolved in the production plane.
-- How is Mosoo different from Dify, n8n, Claude Code, or building an in-house backend? Dify and n8n are strong deterministic workflow tools, while Claude Code, Codex, and OpenCode are agent runtimes. Mosoo sits above agent runtimes as a managed backend for published Agents: versioning, sandboxing, Thread state, files, events, API access, and usage accounting.
-- Where should credentials live? Mosoo App-owner API tokens belong only on trusted servers or automation runners. Browsers and mobile clients should call the integrating product backend, which passes authenticated user context to Mosoo.
+- What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha.
+- Do I need to create or publish an Agent first? No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers.
+- Which runtimes and models can I use? There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs.
+- Who pays for model usage? You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices.
+- What happens when I reply hours or days later? The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness's native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can't be restored, the follow-up fails with an error instead of starting empty.
+- Do my API keys enter the sandbox? No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo's proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections.
+- How do I follow progress and get results? Read the Thread's status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks.
+- How long can a turn run? Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error.
+- Can I retry a request without running the work twice? Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.
+- Is mosoo open source, and is it ready for production? mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can't stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.
+
+## Call mosoo from a backend (v2)
+
+- Authenticate with a Project API key: \`Authorization: Bearer msp_...\`. A key is a backend secret bound to one Project. It is shown once and stored only as a hash. Never put it in a browser or mobile app.
+- Start a Session: \`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\` with \`configuration\` \`{"type":"inline","harness":...,"provider":...,"model":...,"instructions":...}\` and optional \`input\` and \`resources\`. No Agent is created. Save the returned \`thread.id\`; it is the only handle you need.
+- Harness IDs: \`openai-runtime\` (OpenAI Codex), \`claude-agent-sdk\` (Claude Agent SDK), \`acp-fallback\` (OpenCode), \`pi\` (Pi).
+- Saved preset instead of inline: \`{"type":"agent","agent_id":"..."}\`. The two sources are never merged.
+- Continue: \`POST /api/v2/threads/{threadId}/events\` with \`{"events":[{"type":"user_message","text":"..."}]}\`.
+- Follow: \`GET /api/v2/threads/{threadId}/events\` for saved history, or \`GET /api/v2/threads/{threadId}/events/stream\` for SSE. There are no Webhooks.
+- Files: upload with \`POST /api/v2/projects/{projectId}/files\`; \`GET /api/v2/threads/{threadId}/files\` lists attachments and artifacts (files the Agent wrote under \`outputs/\`).
+- Usage: \`GET /api/v2/threads/{threadId}/usage\` returns one record per model call. Costs are estimates, not invoices.
+- Retries: send \`Idempotency-Key\` on creation and follow-ups; it is kept for 24 hours and scoped to the Project.
+- Before the first run, the Project needs a model provider key. mosoo supplies no models.
+
+## Set up with a coding agent
+
+- Install: \`curl -fsSL https://install.mosoo.ai/install.sh | bash\` installs the mosoo CLI and the @mosoo skill, then opens a browser sign-in.
+- The user must add the model provider key at https://cloud.mosoo.ai/providers. An agent cannot create it.
 
 ## Product
 
-- [Homepage](https://mosoo.ai/en): Product overview and current positioning.
-- [Pricing](https://mosoo.ai/en/pricing): Current cloud plans and included runtime resources.
-- [Runtime status](https://mosoo.ai/health): Observed production service and Run health.
-- [Use cases](https://mosoo.ai/en/use-cases): Real products using Mosoo as their Agent backend.
-- [Console](https://cloud.mosoo.ai/login): Build, test, publish, and operate Agents.
-- [Mosoo Computer](https://computer.mosoo.ai): A persistent cloud computer for agents, offered as a separate product.
+- [Homepage](https://mosoo.ai/en): What mosoo is and how a backend uses it.
+- [Console](https://cloud.mosoo.ai): Sign in with email or Google. The first sign-in creates a Default Project.
+- [Status](https://mosoo.ai/health): Built from production Worker outcomes and Run completions.
+- [Machine-readable status](https://mosoo.ai/status.json): The same data as JSON.
+- [Use cases](https://mosoo.ai/en/use-cases): Projects built on mosoo.
+- [Mosoo Computer](https://computer.mosoo.ai): A separate product, a persistent cloud computer for agents.
 
 ## Build and integrate
 
-- [Documentation](https://mosoo.ai/docs/): Build, run, publish, and integrate managed Agents.
-- [Documentation index for LLMs](https://mosoo.ai/docs/llms.txt): Concise index of all documentation pages.
-- [Full documentation for LLMs](https://mosoo.ai/docs/llms-full.txt): Complete documentation corpus.
-- [Product tour](https://mosoo.ai/docs/product-tour/): Apps, Agents, Threads, Runs, and delivery surfaces.
-- [Create your first Agent](https://mosoo.ai/docs/first-agent/): Configure, test, and publish an Agent.
-- [Skills and MCP servers](https://mosoo.ai/docs/skills-and-mcp/): Attach reusable instructions and authorized external tools.
-- [Publish and API access](https://mosoo.ai/docs/publish-and-api-access/): Publish an Agent and enable backend access.
-- [API quickstart](https://mosoo.ai/docs/quickstart/): Call a published Agent with curl.
-- [API reference](https://mosoo.ai/docs/api-reference/): Public Thread API request and response schemas.
-- [CLI](https://mosoo.ai/docs/cli/overview/): Install, authenticate, inspect, and operate Mosoo from a terminal or coding agent.
+- [API quickstart (v2)](https://mosoo.ai/docs/quickstart/): Start a Session with an inline configuration and continue it.
+- [Session continuity and API versions](https://mosoo.ai/docs/durable-sessions-v2/): How continuation works across turns and API versions.
+- [API reference v2](https://mosoo.ai/docs/api-reference-v2/): Request and response schemas.
+- [OpenAPI 3.1, v2](https://cloud.mosoo.ai/api/v2/openapi.json): Machine-readable contract for Project Sessions.
+- [OpenAPI 3.1, v1](https://cloud.mosoo.ai/api/v1/openapi.json): The published-Agent contract, kept wire-compatible.
+- [Pi runtime](https://mosoo.ai/docs/pi-runtime/): Run Pi with a compatible provider.
+- [CLI](https://mosoo.ai/docs/cli/overview/): Install, sign in, and operate mosoo from a terminal or coding agent.
+- [Documentation index for LLMs](https://mosoo.ai/docs/llms.txt)
+- [Full documentation for LLMs](https://mosoo.ai/docs/llms-full.txt)
 
 ## Examples
 
-- [Blueprint](https://mosoo.ai/en/use-cases/blueprint): A site builder backed by a published Agent.
-- [PitchPilot](https://mosoo.ai/en/use-cases/pitchpilot): Long-running presentation generation surfaced as a normal web product.
-- [Go Gym](https://mosoo.ai/en/use-cases/go-gym): Per-user Threads created by a trusted application backend.
-- [Codex Pet](https://mosoo.ai/en/use-cases/codex-pet): File-in, artifact-out generation through the Thread API.
-- [ghfind](https://mosoo.ai/en/use-cases/ghfind): Deep project evaluation produced by a published Agent.
+- [Codex Pet](https://mosoo.ai/en/use-cases/codex-pet): Built by the mosoo team. An uploaded avatar comes back as a validated ZIP with all 9 Codex pet animation states, through the Thread API.
+- [ghfind](https://mosoo.ai/en/use-cases/ghfind): Built by AsperforMias. A Go worker starts one Thread per public repository and renders 3 artifacts: analysis JSON, evidence JSON, and a Markdown report.
 
 ## Source and trust
 
 - [GitHub](https://github.com/langgenius/mosoo): Source code, issues, releases, and license.
+- [Product spec](https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md): What mosoo promises and what it does not do.
+- [Architecture](https://github.com/langgenius/mosoo/blob/main/docs/architecture.md): Engineering invariants.
+- [Releases](https://github.com/langgenius/mosoo/releases): Every release is marked Alpha.
+- [Incident postmortems](https://github.com/langgenius/mosoo/tree/main/docs/operations/incidents): Dated records; newer incidents are GitHub issues.
 - [Security](https://github.com/langgenius/mosoo/security): Security policy and private vulnerability reporting.
-- [Machine-readable status](https://mosoo.ai/status.json): Current production service and Run health.
-- [Authentication guide for agents](https://mosoo.ai/auth.md): Credential and identity boundaries.
-- [OpenAPI 3.1](https://cloud.mosoo.ai/api/v1/openapi.json): Machine-readable Public Thread API contract.
 - [API catalog](https://mosoo.ai/.well-known/api-catalog): Discovery links for the API, documentation, and status.
 - [Blog](https://mosoo.ai/blog): Product and engineering articles.
-- [Blog RSS](https://mosoo.ai/blog/rss.xml): Published article feed.
+- [Blog RSS](https://mosoo.ai/blog/rss.xml)
 
 ## Languages
 
