@@ -5,8 +5,9 @@
 // holds expiring grants and calls the Worker's LLM proxy and MCP proxy, which
 // read the credential on every request and add it upstream; Environment
 // variables are the exception, readable inside the sandbox
-// (docs/prd/environment.md). Two layouts, wide and narrow, switch on the
-// island's width so labels stay at least 12px.
+// (docs/prd/environment.md). It states a fact, so it carries no "Example
+// values" badge. Two layouts, wide and narrow, switch on the island's width so
+// labels render at 12px or more (key-boundary-layout.ts has the numbers).
 // Replay: a model call leaves the Driver, picks up its key at the LLM proxy
 // and reaches the provider; then an MCP call does the same with its
 // credential.
@@ -15,166 +16,16 @@ import { useId } from "react";
 import type { ReactElement } from "react";
 
 import type { KitLocale } from "../i18n";
-import { consoleText, kitText } from "../i18n";
+import { consoleText, kitText, momentLabel } from "../i18n";
 import { progress, useReplay } from "../lib/replay";
-import { ConsoleIsland, KitFooter, cx } from "./island";
+import { ConsoleIsland, ReplayControl, cx } from "./island";
+import type { MomentProps } from "./island";
+import { LABEL_SIZE, NARROW, WIDE } from "./key-boundary-layout";
+import type { Box, Layout, Point } from "./key-boundary-layout";
 
-export interface KeyBoundaryProps {
-  locale: KitLocale;
-  /** Send one model call and one MCP call through once when first half visible. */
-  animate?: boolean | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
-}
+export type KeyBoundaryProps = MomentProps;
 
 const REPLAY_MS = 4400;
-
-type Point = readonly [number, number];
-
-interface Box {
-  readonly h: number;
-  readonly w: number;
-  readonly x: number;
-  readonly y: number;
-}
-
-interface Layout {
-  readonly arrows: {
-    readonly llmIn: readonly Point[];
-    readonly llmOut: readonly Point[];
-    readonly mcpIn: readonly Point[];
-    readonly mcpOut: readonly Point[];
-    readonly vaultToLlm: readonly Point[];
-    readonly vaultToMcp: readonly Point[];
-  };
-  readonly boundary: { readonly from: Point; readonly label: Point; readonly to: Point };
-  readonly boxes: {
-    readonly driver: Box;
-    readonly env: Box;
-    readonly harness: Box;
-    readonly llm: Box;
-    readonly mcp: Box;
-    readonly mcpServer: Box;
-    readonly provider: Box;
-    readonly sandbox: Box;
-    readonly vault: Box;
-    readonly workdir: Box;
-    readonly worker: Box;
-  };
-  readonly grant: { readonly anchor: "end" | "start"; readonly point: Point };
-  readonly height: number;
-  readonly labelAnchor: "middle" | "start";
-  readonly sandboxLabel: Point;
-  readonly width: number;
-  readonly workerLabel: Point;
-}
-
-// Wide: sandbox, boundary, Worker, upstreams left to right.
-const WIDE: Layout = {
-  arrows: {
-    llmIn: [
-      [265, 72],
-      [356, 72],
-    ],
-    llmOut: [
-      [592, 72],
-      [620, 72],
-    ],
-    mcpIn: [
-      [265, 84],
-      [298, 84],
-      [298, 278],
-      [356, 278],
-    ],
-    mcpOut: [
-      [592, 278],
-      [620, 278],
-    ],
-    vaultToLlm: [
-      [474, 136],
-      [474, 98],
-    ],
-    vaultToMcp: [
-      [474, 216],
-      [474, 252],
-    ],
-  },
-  boundary: { from: [316, 24], label: [316, 352], to: [316, 334] },
-  boxes: {
-    driver: { h: 40, w: 120, x: 145, y: 52 },
-    env: { h: 60, w: 248, x: 17, y: 248 },
-    harness: { h: 40, w: 120, x: 17, y: 52 },
-    llm: { h: 52, w: 236, x: 356, y: 46 },
-    mcp: { h: 52, w: 236, x: 356, y: 252 },
-    mcpServer: { h: 52, w: 158, x: 620, y: 252 },
-    provider: { h: 52, w: 158, x: 620, y: 46 },
-    sandbox: { h: 296, w: 280, x: 1, y: 28 },
-    vault: { h: 80, w: 236, x: 356, y: 136 },
-    workdir: { h: 92, w: 248, x: 17, y: 140 },
-    worker: { h: 296, w: 268, x: 340, y: 28 },
-  },
-  grant: { anchor: "start", point: [17, 118] },
-  height: 364,
-  labelAnchor: "start",
-  sandboxLabel: [1, 16],
-  width: 780,
-  workerLabel: [340, 16],
-};
-
-// Narrow: the same parts stacked, the Driver at the sandbox's lower edge so
-// both calls go straight down through the boundary.
-const NARROW: Layout = {
-  arrows: {
-    llmIn: [
-      [60, 332],
-      [60, 424],
-    ],
-    llmOut: [
-      [16, 450],
-      [8, 450],
-      [8, 674],
-      [16, 674],
-    ],
-    mcpIn: [
-      [300, 332],
-      [300, 424],
-    ],
-    mcpOut: [
-      [344, 450],
-      [352, 450],
-      [352, 674],
-      [344, 674],
-    ],
-    vaultToLlm: [
-      [92, 508],
-      [92, 476],
-    ],
-    vaultToMcp: [
-      [268, 508],
-      [268, 476],
-    ],
-  },
-  boundary: { from: [1, 372], label: [180, 377], to: [359, 372] },
-  boxes: {
-    driver: { h: 40, w: 328, x: 16, y: 292 },
-    env: { h: 60, w: 328, x: 16, y: 216 },
-    harness: { h: 40, w: 328, x: 16, y: 52 },
-    llm: { h: 52, w: 152, x: 16, y: 424 },
-    mcp: { h: 52, w: 152, x: 192, y: 424 },
-    mcpServer: { h: 52, w: 152, x: 192, y: 648 },
-    provider: { h: 52, w: 152, x: 16, y: 648 },
-    sandbox: { h: 320, w: 358, x: 1, y: 28 },
-    vault: { h: 92, w: 328, x: 16, y: 508 },
-    workdir: { h: 92, w: 328, x: 16, y: 108 },
-    worker: { h: 208, w: 358, x: 1, y: 408 },
-  },
-  grant: { anchor: "end", point: [332, 316] },
-  height: 712,
-  labelAnchor: "middle",
-  sandboxLabel: [180, 16],
-  width: 360,
-  workerLabel: [180, 400],
-};
 
 function length(points: readonly Point[]): number {
   let total = 0;
@@ -226,16 +77,19 @@ function BoxRect({ box, className }: { box: Box; className: string }): ReactElem
 function Label({
   className,
   point,
+  size,
   text,
   anchor = "start",
 }: {
   anchor?: "end" | "middle" | "start";
   className: string;
   point: Point;
+  /** In SVG units; see LABEL_SIZE. */
+  size: number;
   text: string;
 }): ReactElement {
   return (
-    <text className={className} textAnchor={anchor} x={point[0]} y={point[1]}>
+    <text className={className} style={{ fontSize: size }} textAnchor={anchor} x={point[0]} y={point[1]}>
       {text}
     </text>
   );
@@ -331,7 +185,7 @@ function Diagram({
     <svg
       aria-describedby={descId}
       aria-labelledby={titleId}
-      className={cx("mx-auto h-auto w-full max-w-[880px]", className)}
+      className={cx("mx-auto h-auto w-full", className)}
       role="img"
       viewBox={`0 0 ${layout.width} ${layout.height}`}
       xmlns="http://www.w3.org/2000/svg"
@@ -343,14 +197,16 @@ function Diagram({
 
       <Label
         anchor={layout.labelAnchor}
-        className="fill-fg-1 text-[14px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={layout.sandboxLabel}
+        size={LABEL_SIZE.title}
         text={t("boundarySandbox")}
       />
       <Label
         anchor={layout.labelAnchor}
-        className="fill-fg-1 text-[14px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={layout.workerLabel}
+        size={LABEL_SIZE.title}
         text={t("boundaryWorker")}
       />
 
@@ -360,48 +216,55 @@ function Diagram({
       <BoxRect box={b.harness} className="fill-card stroke-border" />
       <Label
         anchor="middle"
-        className="fill-fg-1 font-mono text-[12.5px]"
+        className="fill-fg-1 font-mono"
         point={[center(b.harness), b.harness.y + 24]}
+        size={LABEL_SIZE.mono}
         text={t("boundaryHarness")}
       />
       <BoxRect box={b.driver} className="fill-card stroke-border" />
       <Label
         anchor={layout.grant.anchor === "end" ? "start" : "middle"}
-        className="fill-fg-1 text-[13.5px] font-medium"
+        className="fill-fg-1 font-medium"
         point={layout.grant.anchor === "end" ? [b.driver.x + 12, b.driver.y + 24] : [center(b.driver), b.driver.y + 24]}
+        size={LABEL_SIZE.label}
         text={t("boundaryDriver")}
       />
       <Label
         anchor={layout.grant.anchor}
-        className="fill-fg-3 text-[13px]"
+        className="fill-fg-3"
         point={layout.grant.point}
+        size={LABEL_SIZE.note}
         text={t("boundaryGrant")}
       />
 
       <BoxRect box={b.workdir} className="fill-card stroke-border" />
       <Label
-        className="fill-fg-2 text-[13px] font-medium"
+        className="fill-fg-2 font-medium"
         point={[b.workdir.x + 12, b.workdir.y + 22]}
+        size={LABEL_SIZE.note}
         text={t("boundaryWorkspace")}
       />
       {["input.csv", ".private/nonce", "outputs/"].map((name, index) => (
         <Label
           key={name}
-          className="fill-fg-1 font-mono text-[12.5px]"
+          className="fill-fg-1 font-mono"
           point={[b.workdir.x + 12, b.workdir.y + 44 + index * 17]}
+          size={LABEL_SIZE.mono}
           text={name}
         />
       ))}
 
       <BoxRect box={b.env} className="fill-soil-bg stroke-soil/40" />
       <Label
-        className="fill-soil-fg text-[13.5px] font-semibold"
+        className="fill-soil-fg font-semibold"
         point={[b.env.x + 12, b.env.y + 24]}
+        size={LABEL_SIZE.label}
         text={consoleText(locale, "environments.envVars")}
       />
       <Label
-        className="fill-soil-fg text-[13px]"
+        className="fill-soil-fg"
         point={[b.env.x + 12, b.env.y + 44]}
+        size={LABEL_SIZE.note}
         text={t("boundaryEnvNote")}
       />
 
@@ -414,8 +277,9 @@ function Diagram({
       />
       {/* A card-coloured halo lets the label sit on the dashed line. */}
       <text
-        className="fill-soil-fg stroke-card text-[13px] font-medium"
+        className="fill-soil-fg stroke-card font-medium"
         paintOrder="stroke"
+        style={{ fontSize: LABEL_SIZE.note }}
         strokeLinejoin="round"
         strokeWidth={10}
         textAnchor="middle"
@@ -427,39 +291,50 @@ function Diagram({
 
       <BoxRect box={b.llm} className="fill-card stroke-border" />
       <Label
-        className="fill-fg-1 text-[13.5px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={[b.llm.x + 12, b.llm.y + 22]}
+        size={LABEL_SIZE.label}
         text={t("boundaryLlmProxy")}
       />
-      <Label className="fill-fg-3 text-[13px]" point={[b.llm.x + 12, b.llm.y + 40]} text={t("boundaryAddsKey")} />
+      <Label
+        className="fill-fg-3"
+        point={[b.llm.x + 12, b.llm.y + 40]}
+        size={LABEL_SIZE.note}
+        text={t("boundaryAddsKey")}
+      />
 
       <BoxRect box={b.mcp} className="fill-card stroke-border" />
       <Label
-        className="fill-fg-1 text-[13.5px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={[b.mcp.x + 12, b.mcp.y + 22]}
+        size={LABEL_SIZE.label}
         text={t("boundaryMcpProxy")}
       />
       <Label
-        className="fill-fg-3 text-[13px]"
+        className="fill-fg-3"
         point={[b.mcp.x + 12, b.mcp.y + 40]}
+        size={LABEL_SIZE.note}
         text={t("boundaryAddsCredential")}
       />
 
       <BoxRect box={b.vault} className="fill-card stroke-border-strong" />
       <KeyGlyph at={[b.vault.x + 22, b.vault.y + 28]} className="text-fg-1" />
       <Label
-        className="fill-fg-1 text-[13.5px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={[b.vault.x + 38, b.vault.y + 25]}
+        size={LABEL_SIZE.label}
         text={t("boundaryProviderKeys")}
       />
       <Label
-        className="fill-fg-1 text-[13.5px] font-semibold"
+        className="fill-fg-1 font-semibold"
         point={[b.vault.x + 38, b.vault.y + 43]}
+        size={LABEL_SIZE.label}
         text={t("boundaryMcpCredentials")}
       />
       <Label
-        className="fill-fg-3 text-[13px]"
+        className="fill-fg-3"
         point={[b.vault.x + 12, b.vault.y + b.vault.h - 14]}
+        size={LABEL_SIZE.note}
         text={t("boundaryKeysNote")}
       />
       {[layout.arrows.vaultToLlm, layout.arrows.vaultToMcp].map((points, index) => (
@@ -476,15 +351,17 @@ function Diagram({
       <BoxRect box={b.provider} className="fill-card stroke-border" />
       <Label
         anchor="middle"
-        className="fill-fg-1 text-[13.5px] font-medium"
+        className="fill-fg-1 font-medium"
         point={[center(b.provider), b.provider.y + 31]}
+        size={LABEL_SIZE.label}
         text={t("boundaryProvider")}
       />
       <BoxRect box={b.mcpServer} className="fill-card stroke-border" />
       <Label
         anchor="middle"
-        className="fill-fg-1 text-[13.5px] font-medium"
+        className="fill-fg-1 font-medium"
         point={[center(b.mcpServer), b.mcpServer.y + 31]}
+        size={LABEL_SIZE.label}
         text={t("boundaryMcpServer")}
       />
 
@@ -516,25 +393,33 @@ export function KeyBoundaryView({
   elapsed: number | null;
   locale: KitLocale;
 }): ReactElement {
+  const envLabel = consoleText(locale, "environments.envVars");
+  const envSentence = kitText(locale, "boundaryEnvException");
+  // The deck's sentence starts with the console's label; set the label apart.
+  const envRest = envSentence.startsWith(envLabel) ? envSentence.slice(envLabel.length) : ` ${envSentence}`;
+
   return (
+    // Sizes are mirrored in key-boundary-layout.ts (FIT): p-4, @xl:p-6, the
+    // wide layout from a 47rem island, max-w-[380px] narrow, max-w-[880px] wide.
     <div className="border-border bg-card rounded-lg border p-4 @xl:p-6">
-      <Diagram className="hidden @2xl:block" elapsed={elapsed} layout={WIDE} locale={locale} />
-      <Diagram className="block @2xl:hidden" elapsed={elapsed} layout={NARROW} locale={locale} />
+      <Diagram className="hidden max-w-[880px] @min-[47rem]:block" elapsed={elapsed} layout={WIDE} locale={locale} />
+      <Diagram className="block max-w-[380px] @min-[47rem]:hidden" elapsed={elapsed} layout={NARROW} locale={locale} />
       <p className="text-fg-2 mt-4 text-[13px] leading-5">
-        <span className="text-soil-fg font-semibold">{consoleText(locale, "environments.envVars")}</span>{" "}
-        {kitText(locale, "boundaryEnvException")}
+        <span className="text-soil-fg font-semibold">{envLabel}</span>
+        {envRest}
       </p>
     </div>
   );
 }
 
-export function KeyBoundary({ animate = false, locale, replayAt }: KeyBoundaryProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: REPLAY_MS, replayAt });
+export function KeyBoundary({ animate = false, exclusive, locale, replayAt, scale }: KeyBoundaryProps): ReactElement {
+  const replay = useReplay({ animate, durationMs: REPLAY_MS, exclusive, replayAt });
+  const name = kitText(locale, "boundaryTitle");
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
+    <ConsoleIsland label={momentLabel(locale, name, false)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
       <KeyBoundaryView elapsed={replay.elapsed} locale={locale} />
-      <KitFooter canReplay={replay.canReplay} locale={locale} onReplay={replay.replay} />
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }

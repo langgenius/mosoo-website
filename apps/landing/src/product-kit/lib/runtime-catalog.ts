@@ -58,16 +58,22 @@ export interface CatalogPresetModel {
   readonly vendorId: string;
 }
 
-export const CATALOG_SOURCE = snapshot.source;
+// Module-level reads of the snapshot go through pure calls, so a page that
+// shows no catalog moment drops the catalog from its bundle.
+function pick<T>(read: () => T): T {
+  return read();
+}
 
-export const VENDORS: readonly CatalogVendor[] = snapshot.vendors;
+export const CATALOG_SOURCE = /* @__PURE__ */ pick(() => snapshot.source);
 
-export const RUNTIMES: readonly CatalogRuntime[] = snapshot.runtimes.map((runtime) => ({
+export const VENDORS: readonly CatalogVendor[] = /* @__PURE__ */ pick(() => snapshot.vendors);
+
+export const RUNTIMES: readonly CatalogRuntime[] = /* @__PURE__ */ snapshot.runtimes.map((runtime) => ({
   ...runtime,
   supportedModelProtocols: runtime.supportedModelProtocols.map(toProtocol),
 }));
 
-export const PRESET_MODELS: readonly CatalogPresetModel[] = snapshot.presetModels.map(
+export const PRESET_MODELS: readonly CatalogPresetModel[] = /* @__PURE__ */ snapshot.presetModels.map(
   (model) => ({ ...model, protocol: toProtocol(model.protocol) }),
 );
 
@@ -106,7 +112,10 @@ export interface ResolvedModelEntry {
   readonly vendorLabel: string;
 }
 
-const STATUS = snapshot.availability;
+const STATUS = /* @__PURE__ */ pick(() => snapshot.availability);
+
+/** The server's English label for a model whose provider has no key. */
+export const PROVIDER_KEY_REQUIRED_LABEL: string = /* @__PURE__ */ pick(() => STATUS.needsKey.statusLabel);
 
 function resolvePresetEntry(
   model: CatalogPresetModel,

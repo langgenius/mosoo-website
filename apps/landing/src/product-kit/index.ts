@@ -1,15 +1,17 @@
 // Product kit: console product moments for the website, telling the one CSV
 // example story. Every component renders inside its own
 // [data-surface="console"] island (console-island.css comes with it), takes
-// `locale` ("en" | "zh" | "ja") and `animate`, renders its final state first,
-// and replays its last step once, 3 to 5 s, when `animate` is on, the visitor
-// has not asked for reduced motion, and it is first half visible.
+// the MomentProps (`locale`, `animate`, `exclusive`, `replayAt`, `scale`),
+// renders its final state first, and replays its last step once, 3 to 5 s,
+// when `animate` is on, the visitor has not asked for reduced motion, it is
+// first half visible and no other moment is replaying.
 
 export { ApiCall } from "./components/api-call";
 export type { ApiCallProps } from "./components/api-call";
-export { CodingAgentSetup, buildSetupPrompt } from "./components/coding-agent-setup";
+export { CodingAgentSetup } from "./components/coding-agent-setup";
 export type { CodingAgentSetupProps } from "./components/coding-agent-setup";
-export { ConsoleIsland } from "./components/island";
+export { ConsoleIsland, ExampleValues } from "./components/island";
+export type { MomentProps } from "./components/island";
 export { KeyBoundary } from "./components/key-boundary";
 export type { KeyBoundaryProps } from "./components/key-boundary";
 export { PreviewReplay } from "./components/preview-replay";

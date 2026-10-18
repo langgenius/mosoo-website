@@ -1,46 +1,52 @@
-// PM-11, calling mosoo from a backend: the create call from the content-truth
-// brief (section 4; fields from apps/api/openapi/public-api-v2.generated.json)
-// and an excerpt of its 201 CreateThreadResponse with Example IDs. The panels
-// borrow the console CommandBlock's sunken mono surface and the install bar's
-// outline Copy button (routes/project-overview/project-overview-install.tsx).
+// PM-11, calling mosoo from a backend: the two calls that start the CSV story,
+// as scripts/public-api-session-workflow.ts makes them. Upload input.csv as a
+// Project file, then start the Session with that file attached, the turn 1
+// prompt and the script's inline configuration (fields from
+// apps/api/openapi/public-api-v2.generated.json; variables as in the docs
+// quickstart, copy deck D15). Each call shows an Example excerpt of its 201
+// response with the story's IDs, so the file ID and the thread ID are the
+// ones every other moment shows. The panels borrow the console CommandBlock's
+// sunken mono surface and the install bar's outline Copy button
+// (routes/project-overview/project-overview-install.tsx).
 // Code is set at --kit-code-size (default 1rem): match it to the page's body
-// size so code never reads smaller than prose. Lines stay within 80 columns;
-// on a narrow screen the block scrolls sideways instead of rewrapping the
-// command.
-// Replay: the request is sent, then the response arrives.
+// size so code never reads smaller than prose. Lines wrap only at spaces and
+// after the "/" of a URL, with a hanging indent two characters past the
+// line's own; strings of up to 24 characters never break, and a longer token
+// that cannot fit (an ID on a phone) scrolls inside the block instead of
+// breaking. Copy copies the exact text.
+// Replay: the upload is sent and answered, then the create call.
 
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 
-import { API_CALL } from "../data/example-universe";
+import { API_CALLS } from "../data/example-universe";
+import type { ExampleApiCall } from "../data/example-universe";
 import type { KitLocale } from "../i18n";
-import { consoleText, kitText } from "../i18n";
+import { kitText, momentLabel, withSubject } from "../i18n";
 import { copyText } from "../lib/clipboard";
 import { highlightLine, TOKEN_CLASS } from "../lib/highlight";
 import type { Token } from "../lib/highlight";
 import { reached, useReplay } from "../lib/replay";
 import { Loader2 } from "./icons";
-import { ConsoleIsland, KitFooter, cx } from "./island";
+import { ConsoleIsland, ExampleValues, ReplayControl, cx, useAnnounce } from "./island";
+import type { MomentProps } from "./island";
 import { Badge, Button, CopyCheckIcon } from "./primitives";
 
-export interface ApiCallProps {
-  locale: KitLocale;
-  /** Send the request once when first half visible (never with reduced motion). */
-  animate?: boolean | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
+export interface ApiCallProps extends MomentProps {
+  /** Show the input.csv upload before the create call (default true). */
+  upload?: boolean | undefined;
 }
 
-const REPLAY_MS = 3200;
-const AT = { response: 1500 } as const;
+const REPLAY_MS = 3600;
+// Milliseconds into the replay: the upload's answer, the create call going
+// out, and its answer. Without the upload, the create call starts at 0.
+const AT = { createResponse: 2500, createSent: 1300, uploadResponse: 900 } as const;
+const CREATE_ONLY_RESPONSE = 1500;
+const UNBROKEN_STRING_MAX = 24;
 
-// A wrap opportunity after each "/" so a URL breaks between path segments,
-// not mid-word; <wbr> adds no characters to the selection.
+// A wrap opportunity after each "/" of a URL, so it breaks between path
+// segments; <wbr> adds no characters to the selection.
 function withPathBreaks(text: string): ReactNode {
-  if (!text.includes("/")) {
-    return text;
-  }
-
   return text.split("/").map((part, index, parts) => (
     <Fragment key={index}>
       {part}
@@ -53,13 +59,23 @@ function withPathBreaks(text: string): ReactNode {
   ));
 }
 
+function TokenSpan({ token }: { token: Token }): ReactElement {
+  const isUrl = token.kind === "plain" && /^https?:\/\//.test(token.text);
+  const keepWhole =
+    (token.kind === "string" || token.kind === "key") && token.text.length <= UNBROKEN_STRING_MAX;
+
+  return (
+    <span className={cx(TOKEN_CLASS[token.kind], keepWhole ? "whitespace-nowrap" : null)}>
+      {isUrl ? withPathBreaks(token.text) : token.text}
+    </span>
+  );
+}
+
 function Tokens({ tokens }: { tokens: readonly Token[] }): ReactElement {
   return (
     <>
       {tokens.map((token, index) => (
-        <span key={index} className={TOKEN_CLASS[token.kind]}>
-          {withPathBreaks(token.text)}
-        </span>
+        <TokenSpan key={index} token={token} />
       ))}
     </>
   );
@@ -106,19 +122,12 @@ function hangingIndent(line: string): CSSProperties {
   return { paddingLeft: `${indent}ch`, textIndent: `-${indent}ch` };
 }
 
-function Code({ text }: { text: string }): ReactElement {
+function Code({ codeRef, text }: { codeRef?: (node: HTMLElement | null) => void; text: string }): ReactElement {
   return (
-    <pre className="text-fg-1 px-4 py-3 font-mono text-[length:var(--kit-code-size,1rem)] leading-[1.6]">
-      <code>
+    <pre className="text-fg-1 overflow-x-auto px-4 py-3 font-mono text-[length:var(--kit-code-size,1rem)] leading-[1.6]">
+      <code ref={codeRef}>
         {text.split("\n").map((line, index) => (
-          // Lines wrap where the column is narrow, with a hanging indent two
-          // characters past the line's own, so the command stays readable
-          // without sideways scrolling; Copy copies the exact text.
-          <span
-            key={index}
-            className="block min-h-[1.6em] whitespace-pre-wrap [overflow-wrap:anywhere]"
-            style={hangingIndent(line)}
-          >
+          <span key={index} className="block min-h-[1.6em] whitespace-pre-wrap" style={hangingIndent(line)}>
             <Line line={line} />
           </span>
         ))}
@@ -127,74 +136,132 @@ function Code({ text }: { text: string }): ReactElement {
   );
 }
 
-export function ApiCallView({
-  elapsed,
+function CallPanel({
+  arriving,
+  call,
+  label,
   locale,
+  responded,
 }: {
-  elapsed: number | null;
+  arriving: boolean;
+  call: ExampleApiCall;
+  label: string;
   locale: KitLocale;
+  responded: boolean;
 }): ReactElement {
   const [copied, setCopied] = useState(false);
-  const responded = reached(elapsed, AT.response);
+  const announce = useAnnounce();
+  const code = useRef<HTMLElement | null>(null);
 
   async function copy(): Promise<void> {
-    if (await copyText(API_CALL.curl)) {
+    if (await copyText(call.request)) {
       setCopied(true);
+      announce(kitText(locale, "requestCopied"));
       globalThis.setTimeout(() => {
         setCopied(false);
       }, 1500);
+      return;
+    }
+
+    // No clipboard: select the request so the visitor can copy it.
+    if (code.current !== null) {
+      globalThis.getSelection()?.selectAllChildren(code.current);
     }
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="border-border bg-sunken overflow-hidden rounded-lg border">
-        <div className="border-border-soft flex min-h-11 items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-4">
-          <span className="text-fg-2 text-[12.5px] font-medium">{kitText(locale, "request")}</span>
-          <Button
-            aria-label={copied ? consoleText(locale, "common.copied") : kitText(locale, "copyRequest")}
-            onClick={() => {
-              void copy();
-            }}
-            size="sm"
-            variant="outline"
-          >
-            <CopyCheckIcon copied={copied} />
-            {copied ? consoleText(locale, "common.copied") : consoleText(locale, "common.copy")}
-          </Button>
-        </div>
-        <Code text={API_CALL.curl} />
+    <div className="border-border bg-sunken overflow-hidden rounded-lg border">
+      <div className="border-border-soft flex min-h-11 items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-4">
+        <span className="text-fg-2 text-[12.5px] font-medium">{label}</span>
+        <Button
+          aria-label={withSubject(locale, kitText(locale, "copyRequest"), label)}
+          onClick={() => {
+            void copy();
+          }}
+          size="sm"
+          variant="outline"
+        >
+          <CopyCheckIcon copied={copied} />
+          {kitText(locale, "copyRequest")}
+        </Button>
       </div>
-
-      <div className="border-border bg-sunken overflow-hidden rounded-lg border">
-        <div className="border-border-soft flex min-h-11 items-center gap-2 border-b px-4 py-1.5">
-          <span className="text-fg-2 text-[12.5px] font-medium">{kitText(locale, "response")}</span>
-          {responded ? (
-            <Badge className={elapsed === null ? undefined : "environment-row-enter"} variant="success">
-              {API_CALL.status}
-            </Badge>
-          ) : (
-            <Loader2 aria-hidden className="text-brand-mark size-3.5 animate-spin" />
-          )}
-          <span className="text-fg-3 ml-auto text-[12px]">{kitText(locale, "example")}</span>
-        </div>
-        <div className={cx(responded ? null : "invisible", elapsed !== null && responded ? "environment-row-enter" : null)}>
-          <Code text={API_CALL.response} />
-        </div>
+      <Code
+        codeRef={(node) => {
+          code.current = node;
+        }}
+        text={call.request}
+      />
+      <div className="border-border-soft flex min-h-10 flex-wrap items-center gap-2 border-t px-4 py-1.5">
+        <span className="text-fg-2 text-[12.5px] font-medium">{kitText(locale, "response")}</span>
+        {responded ? (
+          <Badge className={arriving ? "environment-row-enter" : undefined} variant="success">
+            {call.status}
+          </Badge>
+        ) : (
+          <Loader2 aria-hidden className="text-brand-mark size-3.5 animate-spin" />
+        )}
+        <ExampleValues className="ml-auto" locale={locale} />
+      </div>
+      <div className={cx(responded ? null : "invisible", arriving ? "environment-row-enter" : null)}>
+        <Code text={call.response} />
       </div>
     </div>
   );
 }
 
-export function ApiCall({ animate = false, locale, replayAt }: ApiCallProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: REPLAY_MS, replayAt });
+export function ApiCallView({
+  elapsed,
+  locale,
+  upload,
+}: {
+  elapsed: number | null;
+  locale: KitLocale;
+  upload: boolean;
+}): ReactElement {
+  const createSent = upload ? AT.createSent : 0;
+  const createResponse = upload ? AT.createResponse : CREATE_ONLY_RESPONSE;
+  const arriving = (at: number): boolean => elapsed !== null && reached(elapsed, at);
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
-      <ApiCallView elapsed={replay.elapsed} locale={locale} />
-      {replay.canReplay ? (
-        <KitFooter canReplay locale={locale} note="" onReplay={replay.replay} />
+    <div className="flex flex-col gap-3">
+      {upload ? (
+        <CallPanel
+          arriving={arriving(AT.uploadResponse)}
+          call={API_CALLS.upload}
+          label={kitText(locale, "uploadInputCsv")}
+          locale={locale}
+          responded={reached(elapsed, AT.uploadResponse)}
+        />
       ) : null}
+      {/* The create call goes out once the upload is answered. */}
+      <div className={cx(reached(elapsed, createSent) ? null : "invisible", arriving(createSent) && createSent > 0 ? "environment-row-enter" : null)}>
+        <CallPanel
+          arriving={arriving(createResponse)}
+          call={API_CALLS.create}
+          label={kitText(locale, "startSession")}
+          locale={locale}
+          responded={reached(elapsed, createResponse)}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function ApiCall({
+  animate = false,
+  exclusive,
+  locale,
+  replayAt,
+  scale,
+  upload = true,
+}: ApiCallProps): ReactElement {
+  const replay = useReplay({ animate, durationMs: REPLAY_MS, exclusive, replayAt });
+  const name = kitText(locale, "startSession");
+
+  return (
+    <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
+      <ApiCallView elapsed={replay.elapsed} locale={locale} upload={upload} />
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }

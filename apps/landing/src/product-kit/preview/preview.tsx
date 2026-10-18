@@ -5,6 +5,7 @@
 //            coding-agent-setup
 //   locale   en | zh | ja          animate  1 to enable replays
 //   at       freeze replays at this many ms (replayAt)
+//   scale    CSS zoom on each island (the moments' `scale` prop)
 //   w        stage width in px     probes   1 to append the leak report
 // The page sits in the landing theme ([data-theme="landing"], warm paper) so
 // the island is checked against the website's own tokens.
@@ -35,6 +36,8 @@ const animate = params.get("animate") === "1";
 const atParam = params.get("at");
 const replayAt = atParam === null ? undefined : Number(atParam);
 const width = Number(params.get("w") ?? "760");
+const scaleParam = params.get("scale");
+const scale = scaleParam === null ? undefined : Number(scaleParam);
 const only = params.get("c") ?? "all";
 
 document.documentElement.lang = locale === "zh" ? "zh-CN" : locale;
@@ -42,44 +45,44 @@ document.documentElement.lang = locale === "zh" ? "zh-CN" : locale;
 const MOMENTS: { id: string; render: () => ReactNode; title: string }[] = [
   {
     id: "turn-receipt",
-    render: () => <TurnReceipt animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <TurnReceipt animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "TurnReceipt (PM-01)",
   },
   {
     id: "session-continuation",
     render: () => (
-      <SessionContinuation animate={animate} locale={locale} replayAt={replayAt} showCancelledTurn />
+      <SessionContinuation animate={animate} locale={locale} replayAt={replayAt} scale={scale} showCancelledTurn />
     ),
     title: "SessionContinuation (PM-02)",
   },
   {
     id: "preview-replay",
-    render: () => <PreviewReplay animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <PreviewReplay animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "PreviewReplay (PM-03)",
   },
   {
     id: "runtime-matrix",
-    render: () => <RuntimeMatrix animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <RuntimeMatrix animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "RuntimeMatrix (PM-04)",
   },
   {
     id: "runtime-availability",
-    render: () => <RuntimeAvailability animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <RuntimeAvailability animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "RuntimeAvailability (PM-05)",
   },
   {
     id: "key-boundary",
-    render: () => <KeyBoundary animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <KeyBoundary animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "KeyBoundary (PM-08)",
   },
   {
     id: "api-call",
-    render: () => <ApiCall animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <ApiCall animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "ApiCall (PM-11)",
   },
   {
     id: "coding-agent-setup",
-    render: () => <CodingAgentSetup animate={animate} locale={locale} replayAt={replayAt} />,
+    render: () => <CodingAgentSetup animate={animate} locale={locale} replayAt={replayAt} scale={scale} />,
     title: "CodingAgentSetup (PM-10)",
   },
 ];

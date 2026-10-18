@@ -2,9 +2,9 @@
 // - Console strings, quoted verbatim from the console catalogs
 //   (apps/web/src/shared/i18n/translations/{en,zh-CN,ja}.json) through
 //   data/console-strings.snapshot.json. Regenerate, never hand-edit.
-// - Kit copy: the few captions a product moment needs that the console does
-//   not have (the gap between turns, diagram labels, "Example"). These are
-//   website copy; align them with the copy deck when it lands.
+// - Kit copy: website copy a product moment needs that the console does not
+//   have. Most of it is quoted from the v1 copy deck (section noted per key);
+//   the rest is listed under "Copy deviations" in README.md with its reason.
 
 import snapshot from "./data/console-strings.snapshot.json";
 
@@ -35,36 +35,60 @@ export function consoleText(
 }
 
 const KIT_COPY = {
-  example: { en: "Example", zh: "示例", ja: "例" },
-  thread: { en: "Thread", zh: "Thread", ja: "Thread" },
-  exampleProjectKeys: {
-    en: "Example Project with Anthropic and OpenAI keys",
-    zh: "示例 Project，已配置 Anthropic 和 OpenAI 密钥",
-    ja: "Anthropic と OpenAI のキーを設定した例の Project",
-  },
-  gapReclaimed: {
-    en: "+7 days · sandbox reclaimed",
-    zh: "+7 天 · sandbox 已回收",
-    ja: "+7 日 · sandbox は回収済み",
+  // Copy deck §18 microcopy, verbatim.
+  exampleValues: { en: "Example values", zh: "示例数据", ja: "サンプル値" },
+  copyRequest: { en: "Copy request", zh: "复制请求", ja: "リクエストをコピー" },
+  requestCopied: { en: "Request copied", zh: "请求已复制", ja: "リクエストをコピーしました" },
+  commandCopied: { en: "Command copied", zh: "命令已复制", ja: "コマンドをコピーしました" },
+  startSession: { en: "Start a Session", zh: "启动 Session", ja: "Session を開始" },
+
+  // Copy deck §3 panel labels, verbatim.
+  sandboxReclaimed: {
+    en: "Sandbox reclaimed while idle",
+    zh: "sandbox 闲置后已回收",
+    ja: "アイドル中に sandbox を回収",
   },
   restoredFromCheckpoint: {
-    en: "Restored from checkpoint",
-    zh: "从检查点恢复",
-    ja: "チェックポイントから復元",
+    en: "Restored from the last checkpoint",
+    zh: "从最近一次检查点恢复",
+    ja: "最後のチェックポイントから復元",
+  },
+  sameThreadId: { en: "Same thread.id", zh: "同一个 thread.id", ja: "同じ thread.id" },
+
+  // Copy deck F5, the feature title, verbatim.
+  boundaryOutside: {
+    en: "Keys stay outside the sandbox",
+    zh: "密钥留在 sandbox 之外",
+    ja: "キーは sandbox の外に",
+  },
+  // Copy deck FAQ 6, the Environment variables sentences, verbatim. Each
+  // starts with the console's environments.envVars label.
+  boundaryEnvException: {
+    en: "Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections.",
+    zh: "环境变量则不同，sandbox 里的代码可以读取它们，所以模型密钥请放在模型供应商设置里，工具令牌请放在 MCP 连接里。",
+    ja: "環境変数は例外で、sandbox 内のコードから読み取れます。モデルのキーはプロバイダー設定に、ツールのトークンは MCP 接続に保存してください。",
+  },
+
+  // Kit copy (README "Copy deviations").
+  daysLater: { en: "7 days later", zh: "7 天后", ja: "7 日後" },
+  thread: { en: "Thread", zh: "Thread", ja: "Thread" },
+  response: { en: "Response", zh: "响应", ja: "レスポンス" },
+  uploadInputCsv: { en: "Upload input.csv", zh: "上传 input.csv", ja: "input.csv をアップロード" },
+  projectKeys: {
+    en: "Project with Anthropic and OpenAI keys",
+    zh: "项目已配置 Anthropic 和 OpenAI 密钥",
+    ja: "Anthropic と OpenAI のキーを設定したプロジェクト",
   },
   sameNonceHash: {
     en: "Same private_nonce_sha256",
     zh: "private_nonce_sha256 相同",
-    ja: "private_nonce_sha256 は同一",
+    ja: "同じ private_nonce_sha256",
   },
   priorCommitKept: {
     en: "Turn 2 stays the last committed checkpoint.",
     zh: "第 2 轮仍是最近一次提交的检查点。",
     ja: "最後にコミットされたチェックポイントは 2 ターンのままです。",
   },
-  request: { en: "Request", zh: "请求", ja: "リクエスト" },
-  response: { en: "Response", zh: "响应", ja: "レスポンス" },
-  copyRequest: { en: "Copy request", zh: "复制请求", ja: "リクエストをコピー" },
   boundaryTitle: {
     en: "Credential boundary",
     zh: "凭据边界",
@@ -76,8 +100,8 @@ const KIT_COPY = {
   boundaryWorkspace: { en: "working directory", zh: "工作目录", ja: "作業ディレクトリ" },
   boundaryGrant: {
     en: "expiring grants only",
-    zh: "只拿到短时效 grant",
-    ja: "期限付きの grant のみ",
+    zh: "只拿到会过期的授权",
+    ja: "期限付きの権限のみ",
   },
   boundaryWorker: { en: "mosoo Worker", zh: "mosoo Worker", ja: "mosoo Worker" },
   boundaryLlmProxy: { en: "LLM proxy", zh: "LLM 代理", ja: "LLM プロキシ" },
@@ -106,20 +130,25 @@ const KIT_COPY = {
     zh: "在 sandbox 内可读",
     ja: "sandbox 内で読み取れる",
   },
-  boundaryEnvException: {
-    en: "Readable inside the sandbox. Keep model keys in Providers and tool tokens in MCP connections.",
-    zh: "在 sandbox 内可读。模型密钥请放在 Providers，工具 token 放在 MCP 连接里。",
-    ja: "sandbox 内で読み取れます。モデルのキーは Providers に、ツールのトークンは MCP 接続に置いてください。",
-  },
-  boundaryOutside: {
-    en: "Keys never enter the sandbox",
-    zh: "密钥从不进入 sandbox",
-    ja: "キーは sandbox に入りません",
-  },
 } as const satisfies Record<string, Record<KitLocale, string>>;
 
 export type KitCopyKey = keyof typeof KIT_COPY;
 
 export function kitText(locale: KitLocale, key: KitCopyKey): string {
   return KIT_COPY[key][locale];
+}
+
+/** "{action}: {subject}" with the locale's colon, for unique control names. */
+export function withSubject(locale: KitLocale, action: string, subject: string): string {
+  return locale === "en" ? `${action}: ${subject}` : `${action}：${subject}`;
+}
+
+/** A moment's accessible name: what it shows, and that its data are examples. */
+export function momentLabel(locale: KitLocale, name: string, example = true): string {
+  if (!example) {
+    return name;
+  }
+
+  const values = kitText(locale, "exampleValues");
+  return locale === "en" ? `${name} (${values})` : `${name}（${values}）`;
 }

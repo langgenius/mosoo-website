@@ -328,20 +328,27 @@
   --sky: var(--info);
   --sky-fg: var(--info-fg);
   --sky-bg: var(--info-bg);
+}
 
-  /* Base text, as the console sets it on body. The website body is 15px/500. */
-  container-type: inline-size;
-  color: var(--fg-1);
-  font-family: var(--console-font-sans);
-  font-size: var(--fs-14);
-  font-weight: 400;
-  line-height: var(--lh-normal);
-  letter-spacing: 0;
-  text-align: start;
-  font-feature-settings: "ss01";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+/* Base text, as the console sets it on body (the website body is 15px/500).
+   In the base layer, so a website utility on the island root itself, such as
+   <ConsoleIsland className="text-[15px]">, still applies; the tokens above
+   stay unlayered. */
+@layer base {
+  [data-surface="console"] {
+    container-type: inline-size;
+    color: var(--fg-1);
+    font-family: var(--console-font-sans);
+    font-size: var(--fs-14);
+    font-weight: 400;
+    line-height: var(--lh-normal);
+    letter-spacing: 0;
+    text-align: start;
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 }
 
 /* Chinese locale: Geist keeps the Latin glyphs and the platform CJK sans takes

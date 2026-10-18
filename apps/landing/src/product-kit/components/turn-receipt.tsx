@@ -3,7 +3,9 @@
 // and the drawer's SessionTimelineBar and SessionEventLegend (drawer-core.tsx),
 // classes unchanged. Differences: the card is always expanded and has no
 // "Open event details" button (the timeline is shown inline instead), rows are
-// not buttons, and below 36rem the rows drop the domain and status columns.
+// not buttons, below 36rem the rows drop the domain and status columns, and
+// the timeline bar is a picture of the rows: hidden from assistive technology
+// and not focusable, its hover highlight kept for pointers.
 // Replay: the commit step. The turn reads Running, then the reply, the
 // outputs scan and Run completed arrive, the bar grows, and it flips to
 // Completed.
@@ -14,7 +16,7 @@ import type { ReactElement } from "react";
 import { TURN_1, TURN_2 } from "../data/example-universe";
 import type { ExampleTurn } from "../data/example-universe";
 import type { KitLocale } from "../i18n";
-import { consoleText } from "../i18n";
+import { consoleText, momentLabel } from "../i18n";
 import { progress, reached, useReplay } from "../lib/replay";
 import {
   SESSION_EVENT_DOMAIN_TONE,
@@ -34,17 +36,13 @@ import {
   summarizeSessionEvent,
 } from "../lib/session-events";
 import type { SessionProcessEvent } from "../lib/session-events";
-import { ConsoleIsland, KitFooter, cx } from "./island";
+import { ConsoleIsland, ExampleValues, ReplayControl, cx } from "./island";
+import type { MomentProps } from "./island";
 import { TurnHeader } from "./turn-parts";
 
-export interface TurnReceiptProps {
-  locale: KitLocale;
-  /** Replay the commit step once when first half visible (never with reduced motion). */
-  animate?: boolean | undefined;
+export interface TurnReceiptProps extends MomentProps {
   /** Which CSV turn to show; the receipt is designed around turn 1. */
   turn?: 1 | 2 | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
 }
 
 const REPLAY_MS = 3600;
@@ -126,7 +124,8 @@ function SessionEventRow({
       <span className="text-fg-1 hidden truncate text-[12px] font-semibold @xl:block">
         {getSessionEventDomainLabel(domain, locale)}
       </span>
-      <span className="text-fg-3 min-w-0 truncate text-[12px]">
+      {/* Event contents are the runtime's own text, in English in every locale. */}
+      <span className="text-fg-3 min-w-0 truncate text-[12px]" lang="en">
         {clipPreview(summarizeSessionEvent(event, locale))}
       </span>
       <span className="text-fg-3 justify-self-end font-mono text-[10.5px] tabular-nums">
@@ -144,51 +143,41 @@ function SessionEventRow({
   );
 }
 
+// A picture of the rows below: decorative for assistive technology and the
+// keyboard (the rows are the accessible list); a pointer over a segment
+// highlights its row, as in the console.
 function SessionTimelineBar({
   events,
   grow,
-  locale,
-  onSelect,
+  onHover,
   selectedId,
 }: {
   events: readonly SessionProcessEvent[];
   grow: (event: SessionProcessEvent) => number;
-  locale: KitLocale;
-  onSelect: (eventId: string | null) => void;
+  onHover: (eventId: string | null) => void;
   selectedId: string | null;
 }): ReactElement {
   return (
-    <div className="border-border-soft bg-sunken/10 flex h-7 w-full max-w-full min-w-0 items-center gap-0.5 overflow-hidden rounded-md border p-1">
+    <div
+      aria-hidden
+      className="border-border-soft bg-sunken/10 flex h-7 w-full max-w-full min-w-0 items-center gap-0.5 overflow-hidden rounded-md border p-1"
+      onMouseLeave={() => {
+        onHover(null);
+      }}
+    >
       {events.map((event) => {
         const tone = SESSION_EVENT_DOMAIN_TONE[getSessionEventDomain(event.type)];
         const attention = isSessionEventAttentionWorthy(event);
 
         return (
-          <button
+          <span
             key={event.id}
-            type="button"
-            aria-label={consoleText(locale, "sessionEvents.selectEvent", {
-              label: getSessionEventLabel(event.type, locale),
-            })}
-            aria-pressed={selectedId === event.id}
-            onBlur={() => {
-              onSelect(null);
-            }}
-            onClick={() => {
-              onSelect(selectedId === event.id ? null : event.id);
-            }}
-            onFocus={() => {
-              onSelect(event.id);
-            }}
             onMouseEnter={() => {
-              onSelect(event.id);
-            }}
-            onMouseLeave={() => {
-              onSelect(null);
+              onHover(event.id);
             }}
             style={{ flexGrow: Math.max(event.durationMs ?? 1, 1) * grow(event) }}
             className={cx(
-              "focus-visible:ring-ring h-full min-w-[2px] rounded-[1px] border text-[0] transition-colors outline-none focus-visible:ring-2",
+              "h-full min-w-[2px] rounded-[1px] border transition-colors",
               attention ? "border-danger/40 bg-danger/40" : cx("border-transparent", tone.bar),
               selectedId === event.id ? "ring-1 ring-ink-900/55 ring-inset" : null,
             )}
@@ -221,7 +210,13 @@ export function TurnReceiptView({
 
   return (
     <section className="border-border-soft bg-card overflow-hidden rounded-lg border">
-      <TurnHeader events={arrivedEvents} index={turn.index} locale={locale} status={status} />
+      <TurnHeader
+        events={arrivedEvents}
+        index={turn.index}
+        locale={locale}
+        status={status}
+        trailing={<ExampleValues className="mt-0.5" locale={locale} />}
+      />
       <div className="border-border-soft bg-paper-100 flex flex-col gap-1.5 border-t p-2.5">
         <div className="flex flex-col gap-2 px-1 pt-0.5 pb-1.5">
           <div className="text-fg-3 flex items-center justify-between text-[10.5px] tabular-nums">
@@ -231,8 +226,7 @@ export function TurnReceiptView({
           <SessionTimelineBar
             events={arrivedFeed}
             grow={(event) => progress(elapsed, arrivalOf(event), arrivalOf(event) + GROW_MS)}
-            locale={locale}
-            onSelect={setSelectedId}
+            onHover={setSelectedId}
             selectedId={selectedId}
           />
           <SessionEventLegend events={arrivedEvents} locale={locale} />
@@ -258,16 +252,20 @@ export function TurnReceiptView({
 
 export function TurnReceipt({
   animate = false,
+  exclusive,
   locale,
   replayAt,
+  scale,
   turn = 1,
 }: TurnReceiptProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: REPLAY_MS, replayAt });
+  const replay = useReplay({ animate, durationMs: REPLAY_MS, exclusive, replayAt });
+  const example = turn === 2 ? TURN_2 : TURN_1;
+  const name = consoleText(locale, "sessionEvents.turn", { number: String(example.index) });
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
-      <TurnReceiptView elapsed={replay.elapsed} locale={locale} turn={turn === 2 ? TURN_2 : TURN_1} />
-      <KitFooter canReplay={replay.canReplay} locale={locale} onReplay={replay.replay} />
+    <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
+      <TurnReceiptView elapsed={replay.elapsed} locale={locale} turn={example} />
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }

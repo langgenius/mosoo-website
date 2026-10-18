@@ -10,7 +10,12 @@ import type { ButtonHTMLAttributes, ComponentProps, ReactElement, ReactNode } fr
 import { Check, Copy } from "./icons";
 
 const BUTTON_BASE =
-  "inline-flex shrink-0 items-center justify-center gap-1.5 font-medium whitespace-nowrap outline-none select-none transition-[background-color,border-color,color,box-shadow] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:cursor-not-allowed aria-busy:cursor-progress [&_svg]:pointer-events-none [&_svg]:shrink-0";
+  "inline-flex shrink-0 items-center justify-center gap-1.5 font-medium whitespace-nowrap select-none [&_svg]:pointer-events-none [&_svg]:shrink-0";
+
+// What only a live control has: transitions, the focus ring, disabled and busy
+// cursors. A drawn control (a picture of a button) leaves all of it out.
+const BUTTON_INTERACTIVE =
+  "outline-none transition-[background-color,border-color,color,box-shadow] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:cursor-not-allowed aria-busy:cursor-progress";
 
 const BUTTON_SIZE = {
   default: "h-8 rounded-md px-3 text-[13px] has-[>svg]:px-2.5 [&_svg:not([class*='size-'])]:size-4",
@@ -27,15 +32,27 @@ const BUTTON_PILL_SIZE = {
   "icon-xs": "size-6 rounded-full [&_svg:not([class*='size-'])]:size-3",
 } as const;
 
+// `rest` is how the variant looks; `states` is its hover, pressed and disabled
+// looks, which only a live control gets.
 const BUTTON_VARIANT = {
-  default:
-    "border border-primary-border bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active disabled:border-transparent disabled:bg-paper-300 disabled:text-fg-3",
-  ghost:
-    "text-fg-2 hover:bg-hover hover:text-fg-1 active:bg-pressed disabled:bg-transparent disabled:text-fg-muted",
-  "ghost-quiet":
-    "text-fg-3 hover:bg-hover hover:text-fg-1 active:bg-pressed disabled:bg-transparent disabled:text-fg-muted",
-  outline:
-    "border border-border-strong bg-card text-fg-1 hover:bg-paper-100 active:bg-paper-200 disabled:border-border-soft disabled:bg-paper-100 disabled:text-fg-muted",
+  default: {
+    rest: "border border-primary-border bg-primary text-primary-foreground",
+    states:
+      "hover:bg-primary-hover active:bg-primary-active disabled:border-transparent disabled:bg-paper-300 disabled:text-fg-3",
+  },
+  ghost: {
+    rest: "text-fg-2",
+    states: "hover:bg-hover hover:text-fg-1 active:bg-pressed disabled:bg-transparent disabled:text-fg-muted",
+  },
+  "ghost-quiet": {
+    rest: "text-fg-3",
+    states: "hover:bg-hover hover:text-fg-1 active:bg-pressed disabled:bg-transparent disabled:text-fg-muted",
+  },
+  outline: {
+    rest: "border border-border-strong bg-card text-fg-1",
+    states:
+      "hover:bg-paper-100 active:bg-paper-200 disabled:border-border-soft disabled:bg-paper-100 disabled:text-fg-muted",
+  },
 } as const;
 
 export type ButtonVariant = keyof typeof BUTTON_VARIANT;
@@ -43,19 +60,30 @@ export type ButtonSize = keyof typeof BUTTON_SIZE;
 
 export function buttonClassName({
   className,
+  drawn = false,
   pill = false,
   size = "default",
   variant = "default",
 }: {
   className?: string | undefined;
+  /** A picture of the console's control: same look, no hover, pressed or focus states. */
+  drawn?: boolean;
   pill?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
 }): string {
   const sizeClass =
     pill && (size === "icon-sm" || size === "icon-xs") ? BUTTON_PILL_SIZE[size] : BUTTON_SIZE[size];
+  const look = BUTTON_VARIANT[variant];
 
-  return clsx(BUTTON_BASE, sizeClass, BUTTON_VARIANT[variant], className);
+  return clsx(
+    BUTTON_BASE,
+    drawn ? null : BUTTON_INTERACTIVE,
+    sizeClass,
+    look.rest,
+    drawn ? null : look.states,
+    className,
+  );
 }
 
 export function Button({

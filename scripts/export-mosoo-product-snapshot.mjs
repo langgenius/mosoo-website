@@ -9,7 +9,8 @@
 //   availability strings from apps/api/.../available-models.ts.
 // - apps/landing/src/product-kit/data/console-strings.snapshot.json
 //   the console i18n strings the kit quotes (en, zh-CN, ja), verbatim, plus
-//   the onboarding constants and the stream pacing constants.
+//   the install command, the docs URL, the coding-agent tiles and the stream
+//   pacing constants.
 //
 // With --ref (for example `--ref origin/main`) every file is read with
 // `git show <ref>:<path>`, so the checkout is never modified. Without it the
@@ -45,7 +46,10 @@ const FILES = {
   streamScheduler: "apps/web/src/domains/runtime/session-stream/session-stream-render-scheduler.ts",
 };
 
-// Console i18n keys the kit renders. Every key must exist in all three catalogs.
+// Console i18n keys the kit renders, and no others (tests/product-kit.test.mjs
+// checks each is used). Every key must exist in all three catalogs. The
+// console's projectOverview.setupPrompt is not among them: the website copies
+// the copy deck's adaptation (apps/landing/src/product-kit/data/setup-prompt.ts).
 const CONSOLE_KEYS = [
   "agent.addProviderKey",
   "agent.availableModels",
@@ -59,23 +63,15 @@ const CONSOLE_KEYS = [
   "agent.resetChat",
   "agent.runtime",
   "agent.testing",
-  "chat.attachFile",
   "chat.describeTask",
-  "chat.noOutput",
-  "chat.send",
-  "chat.stopGenerating",
   "chat.thinking",
   "chat.toolRunning",
-  "common.copied",
   "common.copy",
   "common.copyCommand",
   "common.done",
   "common.error",
   "environments.envVars",
   "files.artifact",
-  "files.attachment",
-  "nav.mcpServers",
-  "nav.providers",
   "onboarding.addProviderKey",
   "onboarding.createAgent",
   "onboarding.createApiToken",
@@ -93,7 +89,6 @@ const CONSOLE_KEYS = [
   "onboarding.subtitle",
   "onboarding.title",
   "projectOverview.copyPromptFailed",
-  "projectOverview.setupPrompt",
   "projectOverview.setupPromptLabel",
   "providers.customProviderRequired",
   "providers.modelProtocol",
@@ -120,28 +115,18 @@ const CONSOLE_KEYS = [
   "sessionEvents.eventToolUse",
   "sessionEvents.eventUsageUpdated",
   "sessionEvents.eventUserMessage",
-  "sessionEvents.selectEvent",
   "sessionEvents.statusError",
   "sessionEvents.statusOk",
   "sessionEvents.statusUnsupported",
   "sessionEvents.turn",
   "sessionEvents.turnStatusRunning",
-  "threads.activity",
-  "threads.agentReply",
   "threads.completed",
   "threads.directInvocation",
-  "threads.events",
-  "threads.failed",
-  "threads.followUp",
   "threads.previewFile",
   "threads.runCancelledMessage",
   "threads.runCancelledTitle",
-  "threads.showProcess",
   "threads.statusCancelled",
   "threads.statusDone",
-  "threads.userComment",
-  "threads.userRequest",
-  "threads.viewProcess",
 ];
 
 function fail(message) {

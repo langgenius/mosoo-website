@@ -8,13 +8,15 @@
 // - features/session-chat/assistant-ui/session-thread-composer.tsx (composer)
 // - shared/ui/markdown.tsx (artifact links, inline code)
 // The composer and header controls are drawn, not wired: they carry no
-// behaviour here. Artifact links open the real output inline instead of the
-// console's preview sheet.
+// behaviour and no hover, pressed or focus states here. Artifact links open
+// the real output inline instead of the console's preview sheet; their name
+// is the visible path ("Preview outputs/report.md"). The conversation is the
+// script's English in every locale and is marked lang="en".
 // Replay: Ready becomes Working, Thinking… shimmers, the exec_command card runs
 // and finishes, the reply streams at the console's pace (tau 250 ms drain,
 // 20 to 800 graphemes per second), the links land, and the pill is Ready again.
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { ReactElement } from "react";
 
 import {
@@ -26,30 +28,26 @@ import {
 } from "../data/example-universe";
 import type { ExampleFile, ExampleToolCall } from "../data/example-universe";
 import type { KitLocale } from "../i18n";
-import { consoleText } from "../i18n";
+import { consoleText, momentLabel } from "../i18n";
 import { countGraphemes, parseInline, sliceTokens } from "../lib/inline-markdown";
 import type { InlineToken } from "../lib/inline-markdown";
 import { reached, useReplay } from "../lib/replay";
 import { buildStreamSchedule, visibleGraphemes } from "../lib/stream-pacer";
 import { ArrowUp, ChevronRight, FileText, Loader2, Paperclip, RotateCcw } from "./icons";
-import { ConsoleIsland, KitFooter } from "./island";
+import { ConsoleIsland, ExampleValues, ReplayControl } from "./island";
+import type { MomentProps } from "./island";
 import { Badge, MonoText, buttonClassName } from "./primitives";
 
-export interface PreviewReplayProps {
-  locale: KitLocale;
-  /** Replay the turn once when first half visible (never with reduced motion). */
-  animate?: boolean | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
-}
+export type PreviewReplayProps = MomentProps;
 
 const REPLAY_MS = 4800;
 const AT = { ready: 4350, stream: 2450, toolDone: 2250, toolStart: 950 } as const;
 
-const REPLY_TOKENS = parseInline(ASSISTANT_REPLIES.turn1);
-const REPLY_GRAPHEMES = countGraphemes(REPLY_TOKENS);
+// Computed once; pure, so a page without this moment drops them.
+const REPLY_TOKENS = /* @__PURE__ */ parseInline(ASSISTANT_REPLIES.turn1);
+const REPLY_GRAPHEMES = /* @__PURE__ */ countGraphemes(REPLY_TOKENS);
 // The reply reaches the browser in five batches, one per Driver event batch.
-const STREAM = buildStreamSchedule(
+const STREAM = /* @__PURE__ */ buildStreamSchedule(
   [0, 1, 2, 3, 4].map((batch) => ({
     atMs: AT.stream + batch * 170,
     graphemes:
@@ -112,15 +110,17 @@ function ReplyText({
   locale,
   onOpen,
   openHref,
+  previewId,
   tokens,
 }: {
   locale: KitLocale;
   onOpen: (href: string) => void;
   openHref: string | null;
+  previewId: string;
   tokens: readonly InlineToken[];
 }): ReactElement {
   return (
-    <div className="min-w-0 max-w-full space-y-3 text-[14.5px] leading-[1.55] break-words text-inherit">
+    <div className="min-w-0 max-w-full space-y-3 text-[14.5px] leading-[1.55] break-words text-inherit" lang="en">
       <p className="leading-relaxed">
         {tokens.map((token, index) => {
           switch (token.kind) {
@@ -142,23 +142,22 @@ function ReplyText({
               );
             }
             case "link": {
-              const file = FILES_BY_HREF[token.href];
-
               return (
                 <button
                   key={index}
+                  aria-controls={previewId}
                   aria-expanded={openHref === token.href}
-                  aria-label={consoleText(locale, "threads.previewFile", {
-                    name: file?.name ?? token.text,
-                  })}
+                  // The visible path is the name's subject (label in name).
+                  aria-label={consoleText(locale, "threads.previewFile", { name: token.text })}
                   className="focus-visible:ring-ring inline-flex cursor-pointer items-baseline gap-1 rounded-xs underline decoration-current/40 underline-offset-3 transition-colors outline-none hover:text-current/80 focus-visible:ring-2"
+                  lang={locale === "zh" ? "zh-CN" : locale}
                   onClick={() => {
                     onOpen(token.href);
                   }}
                   type="button"
                 >
                   <FileText aria-hidden className="size-3.5 shrink-0 translate-y-[2px]" />
-                  <span>{token.text}</span>
+                  <span lang="en">{token.text}</span>
                 </button>
               );
             }
@@ -206,6 +205,7 @@ function AssistantMessage({
   locale: KitLocale;
 }): ReactElement {
   const [openHref, setOpenHref] = useState<string | null>(null);
+  const previewId = useId();
   const toolShown = reached(elapsed, AT.toolStart);
   const toolRunning = toolShown && !reached(elapsed, AT.toolDone);
   const visible = visibleGraphemes(STREAM, elapsed);
@@ -227,10 +227,13 @@ function AssistantMessage({
                 setOpenHref((current) => (current === href ? null : href));
               }}
               openHref={openHref}
+              previewId={previewId}
               tokens={tokens}
             />
           ) : null}
-          {openFile === undefined ? null : <ArtifactPreview file={openFile} locale={locale} />}
+          <div hidden={openFile === undefined} id={previewId}>
+            {openFile === undefined ? null : <ArtifactPreview file={openFile} locale={locale} />}
+          </div>
         </div>
       </div>
     </div>
@@ -255,10 +258,14 @@ export function PreviewReplayView({
         <Badge variant={working ? "brand" : "success"}>
           {consoleText(locale, working ? "agent.pillWorking" : "agent.pillReady")}
         </Badge>
+        <ExampleValues locale={locale} />
         <div className="flex-1" />
-        <span aria-hidden className={buttonClassName({ className: "gap-1.5", size: "xs", variant: "ghost" })}>
+        <span
+          aria-hidden
+          className={buttonClassName({ className: "gap-1.5", drawn: true, size: "xs", variant: "ghost" })}
+        >
           <RotateCcw className="size-3" />
-          {consoleText(locale, "agent.resetChat")}
+          <span className="hidden @md:inline">{consoleText(locale, "agent.resetChat")}</span>
         </span>
       </div>
 
@@ -272,7 +279,9 @@ export function PreviewReplayView({
         <div className="mx-auto flex w-full min-w-0 flex-col gap-2 @xl:w-2/3">
           <div className="flex min-w-0 justify-start">
             <div className="bg-paper-300 text-fg-heading max-w-[82%] min-w-0 rounded-lg rounded-tl-[4px] px-4 py-3 text-[14.5px] leading-[1.55]">
-              <div className="break-words whitespace-pre-wrap">{PROMPTS.turn1}</div>
+              <div className="break-words whitespace-pre-wrap" lang="en">
+                {PROMPTS.turn1}
+              </div>
             </div>
           </div>
           {elapsed === null ? (
@@ -291,14 +300,14 @@ export function PreviewReplayView({
 
       <div className="relative z-10 mx-auto w-full shrink-0 px-4 pb-4 @xl:w-2/3 @xl:px-0">
         <div aria-hidden className="border-border-strong bg-card rounded-lg border">
-          <div className="text-fg-muted px-3.5 pt-3 pb-1 text-[14.5px] leading-[1.5]">
+          <div className="text-fg-3 px-3.5 pt-3 pb-1 text-[14.5px] leading-[1.5]">
             {consoleText(locale, "chat.describeTask")}
           </div>
           <div className="flex items-center justify-between px-2 pb-2">
-            <span className={buttonClassName({ pill: true, size: "icon-sm", variant: "ghost-quiet" })}>
+            <span className={buttonClassName({ drawn: true, pill: true, size: "icon-sm", variant: "ghost-quiet" })}>
               <Paperclip className="size-4" />
             </span>
-            <span className={buttonClassName({ pill: true, size: "icon-sm" })}>
+            <span className={buttonClassName({ drawn: true, pill: true, size: "icon-sm" })}>
               {working ? (
                 <span className="size-2.5 rounded-[2px] bg-current" />
               ) : (
@@ -312,13 +321,14 @@ export function PreviewReplayView({
   );
 }
 
-export function PreviewReplay({ animate = false, locale, replayAt }: PreviewReplayProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: REPLAY_MS, replayAt });
+export function PreviewReplay({ animate = false, exclusive, locale, replayAt, scale }: PreviewReplayProps): ReactElement {
+  const replay = useReplay({ animate, durationMs: REPLAY_MS, exclusive, replayAt });
+  const name = consoleText(locale, "agent.testing", { name: PREVIEW_AGENT_NAME });
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
+    <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
       <PreviewReplayView elapsed={replay.elapsed} locale={locale} />
-      <KitFooter canReplay={replay.canReplay} locale={locale} onReplay={replay.replay} />
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }

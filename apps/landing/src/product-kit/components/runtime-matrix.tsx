@@ -6,9 +6,10 @@
 // available ones first (an Example Project with Anthropic and OpenAI keys),
 // then models whose provider has no key, in the product's own locked state
 // ("Provider key required", "Configure a Provider key for …"). Those labels
-// are the server's English strings, as in the console. The protocol row and
-// the visible lock list are kit additions; the lock list is the text the
-// console puts in the "Add provider key" link title.
+// are the server's English strings, as in the console, marked lang="en"; the
+// lock line uses the same English label, so one state reads one way. The
+// protocol row and the visible lock list are kit additions; the lock list is
+// the text the console puts in the "Add provider key" link title.
 // RuntimeAvailability is the Providers page card (routes/providers/
 // runtime-availability-section.tsx). Replay: Anthropic key, then OpenAI key.
 
@@ -16,9 +17,10 @@ import { useState } from "react";
 import type { ReactElement } from "react";
 
 import type { KitLocale } from "../i18n";
-import { consoleText, kitText } from "../i18n";
+import { consoleText, kitText, momentLabel } from "../i18n";
 import { reached, useReplay } from "../lib/replay";
 import {
+  PROVIDER_KEY_REQUIRED_LABEL,
   RUNTIMES,
   getRuntime,
   listLockedVendorLabels,
@@ -29,7 +31,8 @@ import {
 import type { ResolvedModelEntry } from "../lib/runtime-catalog";
 import { RuntimeMark, RuntimeTile } from "./brand-marks";
 import { ExternalLink } from "./icons";
-import { ConsoleIsland, KitFooter, cx } from "./island";
+import { ConsoleIsland, ExampleValues, ReplayControl, cx } from "./island";
+import type { MomentProps } from "./island";
 import { Badge, DataRow } from "./primitives";
 
 /** The Example Project's keys, in the order they were added. */
@@ -37,19 +40,15 @@ export const EXAMPLE_CONFIGURED_VENDORS: ReadonlySet<string> = new Set(["anthrop
 
 const PROVIDERS_URL = "https://cloud.mosoo.ai/providers";
 
-export interface RuntimeMatrixProps {
-  locale: KitLocale;
-  /** Cycle through the runtimes once when first half visible (never with reduced motion). */
-  animate?: boolean | undefined;
+export interface RuntimeMatrixProps extends MomentProps {
   /** The runtime selected in the final state. */
   defaultRuntimeId?: string | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
 }
 
 const MATRIX_REPLAY_MS = 4400;
-// The longest lock list among the runtimes, to hold the line's height.
-const RESERVED_LOCK_LIST = RUNTIMES.map((runtime) =>
+// The longest lock list among the runtimes, to hold the line's height. Pure,
+// so a page without this moment drops it.
+const RESERVED_LOCK_LIST = /* @__PURE__ */ RUNTIMES.map((runtime) =>
   listLockedVendorLabels(resolveAvailableModels(runtime.runtimeId, EXAMPLE_CONFIGURED_VENDORS)),
 ).reduce((longest, list) => (list.join(", ").length > longest.join(", ").length ? list : longest), []);
 const DEFAULT_RUNTIME_ID = "acp-fallback";
@@ -62,6 +61,16 @@ function replayRuntimeAt(elapsed: number, defaultRuntimeId: string): string {
   ];
   const beat = Math.min(order.length - 1, Math.floor(elapsed / (MATRIX_REPLAY_MS / order.length)));
   return order[beat] ?? defaultRuntimeId;
+}
+
+/** "Example values" and which keys the Example Project has. */
+function ExampleProject({ locale }: { locale: KitLocale }): ReactElement {
+  return (
+    <span className="text-fg-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] leading-4">
+      <ExampleValues locale={locale} />
+      <span>{kitText(locale, "projectKeys")}</span>
+    </span>
+  );
 }
 
 function ModelPickerItem({
@@ -89,13 +98,19 @@ function ModelPickerItem({
         >
           {entry.displayName}
         </span>
-        <Badge variant={entry.available ? "success" : "outline"}>{entry.statusLabel}</Badge>
+        <Badge lang="en" variant={entry.available ? "success" : "outline"}>
+          {entry.statusLabel}
+        </Badge>
       </div>
       <div className="text-fg-3 flex w-full items-center justify-between gap-2 text-[11px]">
         <span className="min-w-0 truncate">
           {entry.vendorLabel} · {entry.modelId}
         </span>
-        {entry.available ? null : <span className="text-fg-3 min-w-0 truncate">{entry.statusDetail}</span>}
+        {entry.available ? null : (
+          <span className="text-fg-3 min-w-0 truncate" lang="en">
+            {entry.statusDetail}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -123,8 +138,11 @@ export function RuntimeMatrixView({
   return (
     <div className="border-border bg-card rounded-lg border p-4 @xl:p-6">
       <div className="space-y-2">
-        <div className="text-fg-3 text-[12px] leading-none font-medium">
-          {consoleText(locale, "agent.runtime")}
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div className="text-fg-3 text-[12px] leading-none font-medium">
+            {consoleText(locale, "agent.runtime")}
+          </div>
+          <ExampleProject locale={locale} />
         </div>
         <div className="grid grid-cols-2 gap-2 @md:gap-3">
           {RUNTIMES.map((candidate) => {
@@ -143,7 +161,7 @@ export function RuntimeMatrixView({
                 }}
                 type="button"
               >
-                <RuntimeTile iconKey={candidate.iconKey} size={24} />
+                <RuntimeTile runtimeId={candidate.runtimeId} size={24} />
                 <div className="min-w-0">
                   <div className="text-foreground text-[13px] leading-5 font-medium">{candidate.label}</div>
                   <div className="text-fg-3 truncate text-[11px]">{candidate.providerLabel}</div>
@@ -177,7 +195,14 @@ export function RuntimeMatrixView({
             {consoleText(locale, "agent.availableModels")}
           </div>
           <div className="bg-border-soft -mx-1 my-1 h-px" />
-          <div key={runtimeId} className="environment-row-enter max-h-[280px] overflow-y-auto">
+          {/* A scroll container: focusable in every browser, with a short name. */}
+          <div
+            aria-label={consoleText(locale, "agent.availableModels")}
+            className="environment-row-enter focus-visible:ring-ring max-h-[280px] overflow-y-auto rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-inset"
+            key={runtimeId}
+            role="group"
+            tabIndex={0}
+          >
             {entries.length === 0 ? (
               <div className="text-fg-3 px-3 py-6 text-center text-[12px]">
                 {consoleText(locale, "providers.noMatchingModels")}
@@ -212,7 +237,9 @@ export function RuntimeMatrixView({
             lockedVendors.length === 0 ? "invisible" : null,
           )}
         >
-          <Badge variant="outline">{consoleText(locale, "agent.providerKeyRequired")}</Badge>
+          <Badge lang="en" variant="outline">
+            {PROVIDER_KEY_REQUIRED_LABEL}
+          </Badge>
           <span>{(lockedVendors.length === 0 ? RESERVED_LOCK_LIST : lockedVendors).join(", ")}</span>
         </p>
       </div>
@@ -223,21 +250,24 @@ export function RuntimeMatrixView({
 export function RuntimeMatrix({
   animate = false,
   defaultRuntimeId = DEFAULT_RUNTIME_ID,
+  exclusive,
   locale,
   replayAt,
+  scale,
 }: RuntimeMatrixProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: MATRIX_REPLAY_MS, replayAt });
+  const replay = useReplay({ animate, durationMs: MATRIX_REPLAY_MS, exclusive, replayAt });
   const [chosen, setChosen] = useState<string | null>(null);
   const runtimeId =
     chosen ?? (replay.elapsed === null ? defaultRuntimeId : replayRuntimeAt(replay.elapsed, defaultRuntimeId));
+  const name = `${consoleText(locale, "agent.runtime")}${locale === "en" ? ", " : "、"}${consoleText(locale, "agent.model")}`;
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
+    <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
       <RuntimeMatrixView locale={locale} onSelect={setChosen} runtimeId={runtimeId} />
-      <KitFooter
+      <ReplayControl
         canReplay={replay.canReplay}
         locale={locale}
-        note={kitText(locale, "exampleProjectKeys")}
+        moment={name}
         onReplay={() => {
           setChosen(null);
           replay.replay();
@@ -247,13 +277,7 @@ export function RuntimeMatrix({
   );
 }
 
-export interface RuntimeAvailabilityProps {
-  locale: KitLocale;
-  /** Add the Example keys one at a time once when first half visible. */
-  animate?: boolean | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
-}
+export type RuntimeAvailabilityProps = MomentProps;
 
 const AVAILABILITY_REPLAY_MS = 3200;
 const AVAILABILITY_STEPS = [
@@ -264,24 +288,30 @@ const AVAILABILITY_STEPS = [
 
 export function RuntimeAvailability({
   animate = false,
+  exclusive,
   locale,
   replayAt,
+  scale,
 }: RuntimeAvailabilityProps): ReactElement {
-  const replay = useReplay({ animate, durationMs: AVAILABILITY_REPLAY_MS, replayAt });
+  const replay = useReplay({ animate, durationMs: AVAILABILITY_REPLAY_MS, exclusive, replayAt });
   const vendors =
     replay.elapsed === null
       ? EXAMPLE_CONFIGURED_VENDORS
       : (AVAILABILITY_STEPS.findLast((step) => reached(replay.elapsed, step.at))?.vendors ?? new Set<string>());
   const rows = listRuntimeAvailabilityRows(vendors, locale);
+  const name = consoleText(locale, "providers.runtimeAvailability");
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
+    <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
       <section className="border-border bg-card rounded-lg border p-4 @xl:p-6">
         <div className="mb-3">
-          <p className="t-section-title">{consoleText(locale, "providers.runtimeAvailability")}</p>
+          <p className="t-section-title">{name}</p>
           <p className="text-fg-3 mt-1 text-[12px] leading-4">
             {consoleText(locale, "providers.runtimeAvailabilityDescription")}
           </p>
+          <div className="mt-2.5">
+            <ExampleProject locale={locale} />
+          </div>
         </div>
         <div className="space-y-2">
           {rows.map((row) => (
@@ -289,10 +319,9 @@ export function RuntimeAvailability({
               {/* The console lets the name shrink too; runtime names are short, so
                   here only the status truncates (its full text is the title). */}
               <div className="flex shrink-0 items-center gap-3">
-                <RuntimeMark
-                  className="border-border-soft bg-card size-6 shrink-0 rounded-sm border p-0.5"
-                  iconKey={getRuntime(row.runtimeId).iconKey}
-                />
+                <span className="border-border-soft bg-card flex size-6 shrink-0 items-center justify-center rounded-sm border p-0.5">
+                  <RuntimeMark className="size-full" runtimeId={row.runtimeId} />
+                </span>
                 <div className={cx("truncate font-medium", row.tone === "ready" ? "text-fg-1" : "text-fg-2")}>
                   {row.label}
                 </div>
@@ -310,12 +339,7 @@ export function RuntimeAvailability({
           ))}
         </div>
       </section>
-      <KitFooter
-        canReplay={replay.canReplay}
-        locale={locale}
-        note={kitText(locale, "exampleProjectKeys")}
-        onReplay={replay.replay}
-      />
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }

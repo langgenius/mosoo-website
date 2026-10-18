@@ -301,7 +301,7 @@ export const TURN_1: ExampleTurn = {
   assistantReply: ASSISTANT_REPLIES.turn1,
   completedAt: "2026-10-12T09:14:18.252Z",
   createdAt: "2026-10-12T09:14:02.910Z",
-  events: withDurations([
+  events: /* @__PURE__ */ withDurations([
     {
       content: PROMPTS.turn1,
       id: "01M4QP7XW4CFWTRGD2DZ3WASAG",
@@ -370,7 +370,7 @@ export const TURN_2: ExampleTurn = {
   assistantReply: ASSISTANT_REPLIES.turn2,
   completedAt: "2026-10-19T09:20:57.215Z",
   createdAt: "2026-10-19T09:20:41.305Z",
-  events: withDurations([
+  events: /* @__PURE__ */ withDurations([
     {
       content: PROMPTS.turn2,
       id: "01M59QD3TSS88V9PM9RZ1PVKBQ",
@@ -456,7 +456,7 @@ export const TURN_3: ExampleTurn = {
   assistantReply: null,
   completedAt: "2026-10-19T09:22:52.024Z",
   createdAt: "2026-10-19T09:22:30.118Z",
-  events: withDurations([
+  events: /* @__PURE__ */ withDurations([
     {
       content: PROMPTS.turn3,
       id: "01M59QGE361VSXVRREWJJK8FJM",
@@ -497,31 +497,60 @@ export const TURN_3: ExampleTurn = {
 
 export const TURNS: readonly ExampleTurn[] = [TURN_1, TURN_2, TURN_3];
 
-// The create call from the content-truth brief (section 4): fields from the
-// v2 OpenAPI example, the OpenAI default model, an inline configuration.
-export const API_CALL = {
-  curl: `curl https://cloud.mosoo.ai/api/v2/projects/$PROJECT_ID/threads \\
-  -H "Authorization: Bearer $MOSOO_API_KEY" \\
+// The two calls that start the story, as the script makes them: upload
+// input.csv as a Project file (POST /projects/{projectId}/files, multipart
+// `file`), then create the Session with that file attached
+// (POST /projects/{projectId}/threads with `resources`), the turn 1 prompt and
+// the script's inline configuration. Variables follow the docs quickstart and
+// the setup prompt (copy deck D15): $MOSOO_PROJECT_ID, $MOSOO_API_TOKEN. The
+// responses are Example excerpts of the 201 bodies (PublicFileResponse,
+// CreateThreadResponse) with the story's IDs: the uploaded file is
+// EXAMPLE_IDS.inputFile, the thread EXAMPLE_IDS.thread, the run turn 1's.
+// Lines stay within 80 columns except the two prose strings (the
+// instructions and the prompt), which the page wraps at spaces.
+export interface ExampleApiCall {
+  readonly request: string;
+  readonly response: string;
+  readonly status: string;
+}
+
+export const API_CALLS = {
+  create: {
+    request: `curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/threads \\
+  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\
   -H "Content-Type: application/json" \\
-  -H "Idempotency-Key: report-001" \\
+  -H "Idempotency-Key: csv-report-create" \\
   -d '{
     "configuration": {
-      "type": "inline",
-      "harness": "openai-runtime",
-      "provider": "openai",
-      "model": "gpt-5.5",
-      "instructions": "Analyze the supplied material and save the results."
+      "type": "${CONFIGURATION.type}",
+      "harness": "${CONFIGURATION.harness}",
+      "provider": "${CONFIGURATION.provider}",
+      "model": "${CONFIGURATION.model}",
+      "instructions": "${CONFIGURATION.instructions}"
     },
     "input": {
       "type": "user.message",
-      "content": [{ "type": "text", "text": "Create an analysis report." }]
-    }
+      "content": [{ "type": "text", "text": "${PROMPTS.turn1}" }]
+    },
+    "resources": [
+      { "type": "file", "file_id": "${EXAMPLE_IDS.inputFile}" }
+    ]
   }'`,
-  // Example excerpt of the 201 body (CreateThreadResponse): two fields each
-  // of `thread` and `run`; `links` and the other fields are left out.
-  response: `{
-  "thread": { "id": "01M59MGA6WS6HK4G8JDDMA8C6M", "agent_id": null },
-  "run": { "id": "01M59MGA7N3D92488YKHH5JNX2", "status": "queued" }
+    response: `{
+  "thread": { "id": "${EXAMPLE_IDS.thread}", "agent_id": null },
+  "run": { "id": "${RUN_IDS.turn1}", "status": "queued" }
 }`,
-  status: "201 Created",
-} as const;
+    status: "201 Created",
+  },
+  upload: {
+    request: `curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\
+  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\
+  -F "file=@input.csv"`,
+    response: `{ "file": { "id": "${EXAMPLE_IDS.inputFile}", "name": "input.csv" } }`,
+    status: "201 Created",
+  },
+} as const satisfies Record<string, ExampleApiCall>;
+
+// The upload happens a few seconds before the thread is created; the file ID's
+// time prefix encodes this.
+export const INPUT_FILE_UPLOADED_AT = "2026-10-12T09:13:58.214Z";

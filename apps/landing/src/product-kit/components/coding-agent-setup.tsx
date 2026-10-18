@@ -5,33 +5,32 @@
 // by side when there is room, so nothing hides behind a tab. Steps link to the
 // matching console pages on cloud.mosoo.ai. The five tiles are the coding
 // agents that can run the setup prompt, not mosoo runtimes.
-// The setup prompt is the console's own (projectOverview.setupPrompt) with
-// the console's values filled in; it still mentions publishing an Agent,
-// which the product plans to remove (issue #584).
+// The copied setup prompt is the website's (data/setup-prompt.ts, copy deck
+// section 13), not the console's, which still asks to publish an Agent.
+// Copy results are spoken through the island's live region; the buttons keep
+// their names. When the clipboard is unavailable, the prompt appears in a
+// text area that takes focus, as in the console.
 // Replay: the Example Project's checklist ticks off, step by step.
 
 import { useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 
+import { SETUP_PROMPT } from "../data/setup-prompt";
 import type { KitLocale } from "../i18n";
-import { CONSOLE_CONSTANTS, consoleText } from "../i18n";
+import { CONSOLE_CONSTANTS, consoleText, kitText, momentLabel } from "../i18n";
 import { copyText } from "../lib/clipboard";
 import { reached, useReplay } from "../lib/replay";
-import { RuntimeMark } from "./brand-marks";
+import { CodingAgentMark } from "./brand-marks";
 import { ArrowUpRight, Check, ChevronRight, MousePointerClick, SquareTerminal } from "./icons";
-import { ConsoleIsland, KitFooter, cx } from "./island";
+import { ConsoleIsland, ExampleValues, ReplayControl, cx, useAnnounce } from "./island";
+import type { MomentProps } from "./island";
 import { Badge, Button, CopyCheckIcon } from "./primitives";
 
-export interface CodingAgentSetupProps {
-  locale: KitLocale;
-  /** Tick the checklist once when first half visible (never with reduced motion). */
-  animate?: boolean | undefined;
+export interface CodingAgentSetupProps extends MomentProps {
   /** "done" shows the Example Project's finished checklist; "todo" shows numbered steps. */
   progress?: "done" | "todo" | undefined;
   /** Show the console's onboarding title and subtitle above the lanes. */
   heading?: boolean | undefined;
-  /** Render the replay frozen at this many milliseconds (stills, docs, tests). */
-  replayAt?: number | undefined;
 }
 
 const CONSOLE_ORIGIN = "https://cloud.mosoo.ai";
@@ -45,19 +44,27 @@ const STEPS = [
   { label: "onboarding.createAgent", optional: false, to: "/agent?create=1" },
 ] as const;
 
-export function buildSetupPrompt(locale: KitLocale): string {
-  return consoleText(locale, "projectOverview.setupPrompt", {
-    docsUrl: CONSOLE_CONSTANTS.docsBaseUrl,
-    installCommand: CONSOLE_CONSTANTS.installCommand,
-    origin: CONSOLE_ORIGIN,
-  });
+// Stable identity, so the text area takes focus once, when it appears.
+function focusOnMount(node: HTMLTextAreaElement | null): void {
+  node?.focus();
 }
 
-function LaneHeader({ children, icon }: { children: ReactNode; icon: ReactNode }): ReactElement {
+function LaneHeader({
+  children,
+  icon,
+  trailing,
+}: {
+  children: ReactNode;
+  icon: ReactNode;
+  trailing?: ReactNode;
+}): ReactElement {
   return (
-    <div className="text-fg-1 flex items-center gap-2 text-sm font-semibold">
-      <span className="text-fg-3">{icon}</span>
-      {children}
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="text-fg-1 flex items-center gap-2 text-sm font-semibold">
+        <span className="text-fg-3">{icon}</span>
+        {children}
+      </div>
+      {trailing}
     </div>
   );
 }
@@ -117,10 +124,13 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
   const [commandCopied, setCommandCopied] = useState(false);
   const [promptCopied, setPromptCopied] = useState(false);
   const [promptCopyFailed, setPromptCopyFailed] = useState(false);
+  const announce = useAnnounce();
+  const prompt = SETUP_PROMPT[locale];
 
   async function copyCommand(): Promise<void> {
     if (await copyText(CONSOLE_CONSTANTS.installCommand)) {
       setCommandCopied(true);
+      announce(kitText(locale, "commandCopied"));
       globalThis.setTimeout(() => {
         setCommandCopied(false);
       }, 1500);
@@ -130,12 +140,14 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
   async function copyPrompt(): Promise<void> {
     setPromptCopyFailed(false);
 
-    if (!(await copyText(buildSetupPrompt(locale)))) {
+    if (!(await copyText(prompt))) {
       setPromptCopyFailed(true);
+      announce(consoleText(locale, "projectOverview.copyPromptFailed"));
       return;
     }
 
     setPromptCopied(true);
+    announce(consoleText(locale, "onboarding.setupPromptCopied"));
     globalThis.setTimeout(() => {
       setPromptCopied(false);
     }, 1500);
@@ -153,7 +165,7 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
           {CONSOLE_CONSTANTS.installCommand}
         </code>
         <Button
-          aria-label={commandCopied ? consoleText(locale, "common.copied") : consoleText(locale, "common.copyCommand")}
+          aria-label={consoleText(locale, "common.copyCommand")}
           className="w-full @lg:w-auto"
           onClick={() => {
             void copyCommand();
@@ -161,7 +173,7 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
           variant="outline"
         >
           <CopyCheckIcon copied={commandCopied} />
-          {commandCopied ? consoleText(locale, "common.copied") : consoleText(locale, "common.copy")}
+          {consoleText(locale, "common.copy")}
         </Button>
       </div>
 
@@ -189,7 +201,7 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
               key={harness.runtimeId}
               title={harness.label}
             >
-              <RuntimeMark className="size-4.5" iconKey={harness.runtimeId} />
+              <CodingAgentMark agentId={harness.runtimeId} className="size-4.5" />
               <span className="sr-only">{harness.label}</span>
             </span>
           ))}
@@ -201,12 +213,13 @@ function CodingAgentLane({ locale }: { locale: KitLocale }): ReactElement {
         <div className="w-full text-left">
           <textarea
             aria-label={consoleText(locale, "projectOverview.setupPromptLabel")}
-            className="border-border bg-sunken text-fg-1 h-28 w-full rounded-md border px-3 py-2 font-mono text-xs"
+            className="border-border bg-sunken text-fg-1 focus-visible:ring-ring h-28 w-full rounded-md border px-3 py-2 font-mono text-xs outline-none focus-visible:ring-2"
             onFocus={(event) => {
               event.currentTarget.select();
             }}
             readOnly
-            value={buildSetupPrompt(locale)}
+            ref={focusOnMount}
+            value={prompt}
           />
           <p className="text-fg-3 mt-1 text-xs">{consoleText(locale, "projectOverview.copyPromptFailed")}</p>
         </div>
@@ -228,33 +241,37 @@ function ConsoleLane({
 }): ReactElement {
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <LaneHeader icon={<MousePointerClick className="size-4" />}>
+      <LaneHeader
+        icon={<MousePointerClick className="size-4" />}
+        trailing={progress === "done" ? <ExampleValues locale={locale} /> : null}
+      >
         {consoleText(locale, "onboarding.inConsole")}
       </LaneHeader>
-      <nav
+      <ol
         aria-label={consoleText(locale, "onboarding.steps")}
-        className="border-border bg-card divide-border w-full divide-y overflow-hidden rounded-lg border text-left"
+        className="border-border bg-card divide-border m-0 w-full list-none divide-y overflow-hidden rounded-lg border p-0 text-left"
       >
         {STEPS.map((step, index) => {
           const doneAt = STEP_DONE_AT[index] ?? 0;
           const done = progress === "done" && reached(elapsed, doneAt);
 
           return (
-            <a
-              className="group hover:bg-paper-100 focus-visible:ring-ring flex items-center gap-3 px-4 py-3.5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset"
-              href={`${CONSOLE_ORIGIN}${step.to}`}
-              key={step.to}
-            >
-              <StepMarker animateIn={elapsed !== null && done} done={done} locale={locale} number={index + 1} />
-              <span className="text-fg-1 min-w-0 flex-1 truncate text-left text-sm leading-6 font-medium">
-                {consoleText(locale, step.label)}
-              </span>
-              {step.optional ? <Badge variant="outline">{consoleText(locale, "onboarding.optional")}</Badge> : null}
-              <ChevronRight className="text-fg-3 size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
-            </a>
+            <li key={step.to}>
+              <a
+                className="group hover:bg-paper-100 focus-visible:ring-ring flex items-center gap-3 px-4 py-3.5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset"
+                href={`${CONSOLE_ORIGIN}${step.to}`}
+              >
+                <StepMarker animateIn={elapsed !== null && done} done={done} locale={locale} number={index + 1} />
+                <span className="text-fg-1 min-w-0 flex-1 truncate text-left text-sm leading-6 font-medium">
+                  {consoleText(locale, step.label)}
+                </span>
+                {step.optional ? <Badge variant="outline">{consoleText(locale, "onboarding.optional")}</Badge> : null}
+                <ChevronRight className="text-fg-3 size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+              </a>
+            </li>
           );
         })}
-      </nav>
+      </ol>
     </div>
   );
 }
@@ -288,19 +305,26 @@ export function CodingAgentSetupView({
 
 export function CodingAgentSetup({
   animate = false,
+  exclusive,
   heading = false,
   locale,
   progress = "done",
   replayAt,
+  scale,
 }: CodingAgentSetupProps): ReactElement {
-  const replay = useReplay({ animate: animate && progress === "done", durationMs: REPLAY_MS, replayAt });
+  const replay = useReplay({ animate: animate && progress === "done", durationMs: REPLAY_MS, exclusive, replayAt });
+  const name = consoleText(locale, "onboarding.title");
 
   return (
-    <ConsoleIsland locale={locale} rootRef={replay.ref}>
+    <ConsoleIsland
+      label={momentLabel(locale, name, progress === "done")}
+      locale={locale}
+      replaying={replay.elapsed !== null}
+      rootRef={replay.ref}
+      scale={scale}
+    >
       <CodingAgentSetupView elapsed={replay.elapsed} heading={heading} locale={locale} progress={progress} />
-      {progress === "done" ? (
-        <KitFooter canReplay={replay.canReplay} locale={locale} onReplay={replay.replay} />
-      ) : null}
+      <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );
 }
