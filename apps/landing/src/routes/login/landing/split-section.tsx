@@ -63,7 +63,7 @@ function DutyList({
 
 export function SplitSection(): ReactElement {
   return (
-    <section aria-labelledby="split-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="your-app-and-mosoo" aria-labelledby="split-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="split-title"
         title={t("Your app keeps its users. mosoo runs the Agent.")}

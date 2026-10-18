@@ -39,7 +39,7 @@ function limits(): readonly { notIncluded: string; instead: string }[] {
 
 export function LimitsSection(): ReactElement {
   return (
-    <section aria-labelledby="limits-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="limits" aria-labelledby="limits-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="limits-title"
         title={t("What mosoo doesn’t do")}

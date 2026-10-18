@@ -455,6 +455,42 @@ test("the static home page carries the whole page for readers without JavaScript
   }
 });
 
+// The static fallback and the React page are written separately, so these
+// checks keep them from drifting: the same anchors, the same FAQ strings (the
+// ones the FAQPage JSON-LD carries) and the same primary navigation.
+test("the React home page and the static fallback share anchors, FAQ text and navigation", () => {
+  const landing = "apps/landing/src/routes/login/landing";
+  const sections = [
+    "supply-wall.tsx",
+    "features-section.tsx",
+    "how-it-works.tsx",
+    "split-section.tsx",
+    "proof-section.tsx",
+    "limits-section.tsx",
+    "faq-section.tsx",
+    "final-cta.tsx",
+  ]
+    .map((file) => read(`${landing}/${file}`))
+    .join("\n");
+  for (const id of sectionIdsOf(home("en"))) {
+    assert.match(sections, new RegExp(`<section id="${id}" `), `the React page has #${id} too`);
+  }
+
+  const dictionary = read(`${landing}/i18n.ts`);
+  for (const locale of LOCALES) {
+    for (const { q, a } of homeFaq(locale)) {
+      assert.ok(dictionary.includes(JSON.stringify(q)), `the React FAQ asks (${locale}): ${q}`);
+      assert.ok(dictionary.includes(JSON.stringify(a)), `the React FAQ answers (${locale}): ${q}`);
+    }
+
+    const nav = /<nav aria-label="Primary site links">[\s\S]*?<\/nav>/.exec(home(locale))?.[0] ?? "";
+    assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai" translate="no">mosoo<\/a>/);
+    assert.match(nav, /<a href="https:\/\/computer\.mosoo\.ai" translate="no">Mosoo Computer<\/a>/);
+    assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai\/login">/);
+    assert.doesNotMatch(nav, /\/pricing/, "the home page does not link pricing (copy deck D12)");
+  }
+});
+
 test("pricing metadata lists every localized alternate", () => {
   const pricing = read("apps/landing/pricing.html");
 

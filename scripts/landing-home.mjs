@@ -236,6 +236,9 @@ const COPY = {
     health: "/health",
     nav: {
       home: "mosoo home",
+      products: "Products",
+      productMosoo: "Open-source Agent runtime for application backends.",
+      productComputer: "A persistent cloud computer for agents.",
       docs: "Docs",
       useCases: "Use cases",
       blog: "Blog",
@@ -459,6 +462,7 @@ const COPY = {
     },
     footer: {
       signoff: "Take root, and grow a bamboo sea.",
+      descriptor: "An open-source, API-first managed Agent runtime for application backends.",
       groups: [
         ["Product", ["mosoo console", "Mosoo Computer", "Use cases", "Status"]],
         [
@@ -499,6 +503,9 @@ const COPY = {
     health: "/zh/health",
     nav: {
       home: "mosoo 首页",
+      products: "产品",
+      productMosoo: "面向应用后端的开源 Agent runtime。",
+      productComputer: "为 Agent 准备的持久云端计算机。",
       docs: "文档",
       useCases: "用例",
       blog: "博客",
@@ -710,6 +717,7 @@ const COPY = {
     },
     footer: {
       signoff: "扎下根，长成一片竹海。",
+      descriptor: "开源、API 优先的托管 Agent runtime，面向应用后端。",
       groups: [
         ["产品", ["mosoo 控制台", "Mosoo Computer", "用例", "状态"]],
         ["开发者", ["文档", "快速开始", "API 参考 v2", "OpenAPI v2", "OpenAPI v1", "CLI", "更新日志", "llms.txt"]],
@@ -744,6 +752,9 @@ const COPY = {
     health: "/ja/health",
     nav: {
       home: "mosoo ホーム",
+      products: "プロダクト",
+      productMosoo: "アプリケーションのバックエンド向けのオープンソース Agent runtime。",
+      productComputer: "Agent のための永続的なクラウドコンピューター。",
       docs: "ドキュメント",
       useCases: "ユースケース",
       blog: "ブログ",
@@ -970,6 +981,7 @@ const COPY = {
     },
     footer: {
       signoff: "根を張り、竹の海を育てよう。",
+      descriptor: "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
       groups: [
         ["プロダクト", ["mosoo コンソール", "Mosoo Computer", "ユースケース", "稼働状況"]],
         [
@@ -1068,10 +1080,23 @@ function renderHeader(locale, copy) {
       )}</li>`,
   ).join("");
 
+  // The React topbar's Products menu (copy deck section 1) as a native
+  // disclosure, so it opens without JavaScript and crawlers read both entries.
+  const products = [
+    [LINKS.console, "mosoo", copy.nav.productMosoo],
+    [LINKS.computer, "Mosoo Computer", copy.nav.productComputer],
+  ]
+    .map(
+      ([href, name, description]) =>
+        `<li>${link(href, name, ' translate="no"')} <span class="mf-muted">${inline(description)}</span></li>`,
+    )
+    .join("");
+
   return `<header class="mf-bar">
 <a href="/${locale}" aria-label="${escapeAttribute(copy.nav.home)}"><img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" width="102" height="22" /></a>
 <nav aria-label="Primary site links">
 <ul class="mf-row">
+<li><details class="mf-menu"><summary>${inline(copy.nav.products)}</summary><ul>${products}</ul></details></li>
 <li>${link(copy.docs, copy.nav.docs)}</li>
 <li>${link(`/${locale}/use-cases`, copy.nav.useCases)}</li>
 <li>${link(copy.blog, copy.nav.blog)}</li>
@@ -1362,7 +1387,7 @@ function renderFooter(locale, copy) {
 
   return `<footer class="mf-foot">
 <p class="mf-signoff">${inline(copy.footer.signoff)}</p>
-<p class="mf-muted">${inline(copy.hero.title)}</p>
+<p class="mf-muted">${inline(copy.footer.descriptor)}</p>
 <nav class="mf-groups" aria-label="Footer">
 ${groups}
 </nav>
@@ -1479,6 +1504,9 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-bar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
 .mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none}
 .mosoo-fallback .mf-languages{font-size:14px}
+.mosoo-fallback .mf-menu summary{color:var(--mf-ink)}
+.mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
+.mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
 .mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
 .mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.02em}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}

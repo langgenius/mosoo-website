@@ -56,7 +56,7 @@ function RuntimeMark({ runtime }: { runtime: Runtime }): ReactElement | null {
 
 export function SupplyWall(): ReactElement {
   return (
-    <section aria-labelledby="supply-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="runtimes" aria-labelledby="supply-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="supply-title"
         title={t("Pick a runtime. Use your own model key.")}

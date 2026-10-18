@@ -18,7 +18,7 @@ export function FinalCta(): ReactElement {
   const setupPrompt = SETUP_PROMPT[locale];
 
   return (
-    <section aria-labelledby="start-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="start" aria-labelledby="start-title" className="px-4 py-20 md:px-6 md:py-24">
       <h2 id="start-title" className="text-ink-900 [text-wrap:balance]" style={sectionHeadingStyle}>
         {t("Start your first Session")}
       </h2>

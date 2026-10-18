@@ -156,7 +156,7 @@ function useCaseCards(): readonly UseCaseCard[] {
 
 export function ProofSection(): ReactElement {
   return (
-    <section aria-labelledby="proof-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="proof" aria-labelledby="proof-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="proof-title"
         title={t("What you can check for yourself")}

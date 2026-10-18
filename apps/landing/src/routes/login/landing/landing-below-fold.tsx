@@ -16,7 +16,10 @@ import { SupplyWall } from "./supply-wall";
 export function LandingBelowFold(): ReactElement {
   // These sections mount after the first paint, so a link to one of them
   // (for example /en#faq, the FAQPage @id) found no target on load. Scroll to
-  // it once it exists.
+  // it once it exists. The section ids (runtimes, features, how-it-works,
+  // your-app-and-mosoo, proof, limits, faq, start) are the same ones the
+  // static fallback in scripts/landing-home.mjs uses, so an anchor works with
+  // and without JavaScript.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
     if (id !== "") {

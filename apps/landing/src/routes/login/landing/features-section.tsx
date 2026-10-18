@@ -63,7 +63,7 @@ function features(): readonly { title: string; body: string; proof: string }[] {
 
 export function FeaturesSection(): ReactElement {
   return (
-    <section aria-labelledby="features-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="features" aria-labelledby="features-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="features-title"
         title={t("What mosoo runs for your backend")}

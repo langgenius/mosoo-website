@@ -121,7 +121,7 @@ function steps(): readonly { title: string; body: string; input: string; output:
 
 export function HowItWorks(): ReactElement {
   return (
-    <section aria-labelledby="how-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="how-it-works" aria-labelledby="how-title" className="px-4 py-20 md:px-6 md:py-24">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14">
         <div>
           <SectionHeading
