@@ -3,6 +3,10 @@ import { recordStatusTailEvents, statusJsonResponse } from "./status.js";
 export { StatusStore } from "./status.js";
 
 const CONSOLE_ORIGIN = "https://cloud.mosoo.ai";
+// v2 is the Project-key API that runs inline Sessions; v1 stays wire-compatible.
+const PUBLIC_API_V2_BASE = `${CONSOLE_ORIGIN}/api/v2`;
+const PUBLIC_API_V2_DESCRIPTION = `${PUBLIC_API_V2_BASE}/openapi.json`;
+const PUBLIC_API_V2_DOCUMENTATION = "https://mosoo.ai/docs/api-reference-v2/";
 const PUBLIC_API_BASE = `${CONSOLE_ORIGIN}/api/v1`;
 const PUBLIC_API_DESCRIPTION = `${PUBLIC_API_BASE}/openapi.json`;
 const PUBLIC_API_DOCUMENTATION = "https://mosoo.ai/docs/api-reference/";
@@ -14,16 +18,26 @@ const LLMS_LINK_HEADER =
   '</llms.txt>; rel="llms-txt", </docs/llms-full.txt>; rel="llms-full-txt"';
 const API_CATALOG_LINK =
   '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"';
-const DISCOVERY_LINK_HEADER = `${LLMS_LINK_HEADER}, ${API_CATALOG_LINK}, <${PUBLIC_API_DESCRIPTION}>; rel="service-desc"; type="application/json", <${PUBLIC_API_DOCUMENTATION}>; rel="service-doc"; type="text/html", </auth.md>; rel="describedby"; type="text/markdown"`;
+const SERVICE_LINKS = [
+  [PUBLIC_API_V2_DESCRIPTION, PUBLIC_API_V2_DOCUMENTATION],
+  [PUBLIC_API_DESCRIPTION, PUBLIC_API_DOCUMENTATION],
+]
+  .map(
+    ([description, documentation]) =>
+      `<${description}>; rel="service-desc"; type="application/json", <${documentation}>; rel="service-doc"; type="text/html"`,
+  )
+  .join(", ");
+const DISCOVERY_LINK_HEADER = `${LLMS_LINK_HEADER}, ${API_CATALOG_LINK}, ${SERVICE_LINKS}, </auth.md>; rel="describedby"; type="text/markdown"`;
 const API_CATALOG = {
   linkset: [
-    {
-      anchor: PUBLIC_API_BASE,
-      "service-desc": [{ href: PUBLIC_API_DESCRIPTION, type: "application/json" }],
-      "service-doc": [{ href: PUBLIC_API_DOCUMENTATION, type: "text/html" }],
-      status: [{ href: PUBLIC_API_STATUS, type: "application/json" }],
-    },
-  ],
+    [PUBLIC_API_V2_BASE, PUBLIC_API_V2_DESCRIPTION, PUBLIC_API_V2_DOCUMENTATION],
+    [PUBLIC_API_BASE, PUBLIC_API_DESCRIPTION, PUBLIC_API_DOCUMENTATION],
+  ].map(([anchor, description, documentation]) => ({
+    anchor,
+    "service-desc": [{ href: description, type: "application/json" }],
+    "service-doc": [{ href: documentation, type: "text/html" }],
+    status: [{ href: PUBLIC_API_STATUS, type: "application/json" }],
+  })),
 };
 const SUPPORTED_LOCALES = new Set(["en", "zh", "ja"]);
 const HOMEPAGE_MARKDOWN = `# mosoo
@@ -122,65 +136,76 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 - [简体中文](https://mosoo.ai/zh)
 - [日本語](https://mosoo.ai/ja)
 `;
-const AUTH_MARKDOWN = `# Mosoo auth.md — Agent Registration
+// Matches the agent-auth metadata at cloud.mosoo.ai/.well-known/oauth-authorization-server
+// (langgenius/mosoo apps/web/src/worker.ts) and SPEC section 2: Project API keys
+// (msp_) are the only credential the Public Thread API accepts.
+const AUTH_MARKDOWN = `# mosoo auth.md: agent registration
 
-Mosoo's Public Thread API is for backend agents and server-side integrations operated by a Mosoo App owner.
+mosoo's Public Thread API is for backend agents and server-side integrations. They call it with a Project API key.
 
-You are an agent integrating Mosoo from a trusted backend. Mosoo does not support autonomous agentic registration today. Credentials are issued by the Mosoo App owner out of band through a human-assisted Personal Access Token flow.
+You are an agent integrating mosoo from a trusted backend. mosoo does not support autonomous agentic registration. The account owner creates a Project API key in the console and gives it to you out of band.
 
 ## Identity boundary
 
-- A Mosoo Personal Access Token has no selectable scopes; it carries full account access and represents the Mosoo account and App owner that created it.
-- It cannot represent an App end user. The integrating product must authenticate and authorize its own users, then pass an opaque userId when it creates a Thread.
-- Keep the token on a trusted backend. Do not expose it to browsers, mobile clients, logs, or source control.
+- A Project API key starts with \`msp_\` and is bound to one Project. It configures Agent presets, runs Sessions and uses files in that Project, and nothing else. Requests for another Project are rejected.
+- Managing the account, Projects, keys, provider credentials, MCP servers, Skills or Environments needs an account login in the console or the CLI, not a Project API key.
+- A key cannot represent an end user of the integrating product. That product authenticates and authorizes its own users, and may label a Thread with an opaque userId. The label is not an access boundary.
+- Keep the key on a trusted backend. Do not expose it to browsers, mobile clients, logs, or source control.
 
-## Supported registration method: Personal Access Token, supplied out of band
+## Supported registration method: Project API key, supplied out of band
 
 - Account registration and sign-in page (human-operated): https://cloud.mosoo.ai/login
-- Credential provisioning endpoint (human-operated): https://cloud.mosoo.ai/settings/access-tokens
-- Supported credential type: Personal Access Token with the \`mst_\` prefix
+- Credential provisioning page (human-operated): https://cloud.mosoo.ai/project-settings/api-keys
+- Supported credential type: Project API key with the \`msp_\` prefix
 
 Human-assisted registration metadata:
 
-- \`register_uri\`: https://cloud.mosoo.ai/settings/access-tokens (open with GET; do not POST)
-- \`identity_types_supported\`: \`anonymous\` (the uncredentialed agent is claimed when the account owner provisions a token)
-- \`credential_types_supported\`: \`mosoo_personal_access_token\`
-- \`revocation_uri\`: https://cloud.mosoo.ai/settings/access-tokens
+- \`register_uri\`: https://cloud.mosoo.ai/project-settings/api-keys (open with GET; do not POST)
+- \`claim_uri\`: https://cloud.mosoo.ai/project-settings/api-keys
+- \`identity_types_supported\`: \`anonymous\` (the uncredentialed agent is claimed when the account owner creates a key)
+- \`credential_types_supported\`: \`mosoo_project_api_key\`
+- \`revocation_uri\`: https://cloud.mosoo.ai/project-settings/api-keys
 
-1. Sign in at https://cloud.mosoo.ai/settings/access-tokens.
-2. Create an Access Token and copy the mst_... value when it is shown.
+1. Sign in at https://cloud.mosoo.ai/project-settings/api-keys. The first sign-in creates a Default Project.
+2. Create a Project API key and copy the msp_... value. It is shown once and stored only as a hash.
 3. Store it as a backend secret, such as MOSOO_API_TOKEN.
 
-The account owner authorizes the integration by creating this token. Tokens have no selectable scopes and carry full account access.
+The account owner authorizes the integration by creating this key. The key reaches only its own Project.
 
 ## Credential exchange
 
-There is no OAuth authorization-code or token exchange. The authenticated settings page issues the mst_... token once after the owner creates it.
+There is no OAuth authorization-code or token exchange. The API keys page issues the msp_... key once after the owner creates it.
 
 ## Credential use
 
-Send the token as an HTTP Bearer credential:
+Send the key as an HTTP Bearer credential:
 
 ~~~http
-Authorization: Bearer mst_...
+Authorization: Bearer msp_...
 ~~~
+
+Legacy account tokens are rejected.
 
 ## Revocation
 
-The owner can revoke the token from https://cloud.mosoo.ai/settings/access-tokens. Requests using a revoked token are no longer authorized.
+The owner can revoke the key from https://cloud.mosoo.ai/project-settings/api-keys. Revoking it rejects later requests but does not cancel work it already admitted.
 
 Discovery metadata:
 
 - Protected resource: https://cloud.mosoo.ai/.well-known/oauth-protected-resource
 - Agent authentication: https://cloud.mosoo.ai/.well-known/oauth-authorization-server
 
-These documents describe the human-assisted PAT flow above; they do not provide an OAuth authorization-code or token exchange.
+These documents describe the human-assisted key flow above; they do not provide an OAuth authorization-code or token exchange.
 
-API base: https://cloud.mosoo.ai/api/v1
+API base (v2): https://cloud.mosoo.ai/api/v2
 
-OpenAPI: https://cloud.mosoo.ai/api/v1/openapi.json
+OpenAPI (v2): https://cloud.mosoo.ai/api/v2/openapi.json
 
-Human documentation: https://mosoo.ai/docs/api-reference/
+Human documentation (v2): https://mosoo.ai/docs/api-reference-v2/
+
+API base (v1, wire-compatible): https://cloud.mosoo.ai/api/v1
+
+OpenAPI (v1): https://cloud.mosoo.ai/api/v1/openapi.json
 `;
 
 function redirect(url, status = 307) {

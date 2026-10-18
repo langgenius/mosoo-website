@@ -207,6 +207,18 @@ test("worker advertises agent discovery resources from HTML assets", async () =>
   assert.match(link, /<\/\.well-known\/api-catalog>; rel="api-catalog"/);
   assert.match(link, /rel="service-desc"/);
   assert.match(link, /rel="service-doc"/);
+  assert.match(
+    link,
+    /<https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json>; rel="service-desc"; type="application\/json"/,
+  );
+  assert.match(
+    link,
+    /<https:\/\/mosoo\.ai\/docs\/api-reference-v2\/>; rel="service-doc"; type="text\/html"/,
+  );
+  assert.match(
+    link,
+    /<https:\/\/cloud\.mosoo\.ai\/api\/v1\/openapi\.json>; rel="service-desc"; type="application\/json"/,
+  );
   assert.match(link, /<\/auth\.md>; rel="describedby"/);
   assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
 });
@@ -338,35 +350,52 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
     envFor({}),
   );
   const catalog = await catalogResponse.json();
-  const [entry] = catalog.linkset;
+  const [v2, v1] = catalog.linkset;
 
   assert.match(catalogResponse.headers.get("content-type"), /^application\/linkset\+json/);
-  assert.equal(entry.anchor, "https://cloud.mosoo.ai/api/v1");
-  assert.equal(entry["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
-  assert.equal(entry["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
-  assert.equal(entry.status[0].href, "https://cloud.mosoo.ai/api/health");
+  assert.equal(catalog.linkset.length, 2);
+  assert.equal(v2.anchor, "https://cloud.mosoo.ai/api/v2");
+  assert.equal(v2["service-desc"][0].href, "https://cloud.mosoo.ai/api/v2/openapi.json");
+  assert.equal(v2["service-doc"][0].href, "https://mosoo.ai/docs/api-reference-v2/");
+  assert.equal(v2.status[0].href, "https://cloud.mosoo.ai/api/health");
+  assert.equal(v1.anchor, "https://cloud.mosoo.ai/api/v1");
+  assert.equal(v1["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
+  assert.equal(v1["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
+  assert.equal(v1.status[0].href, "https://cloud.mosoo.ai/api/health");
 
   const authResponse = await worker.fetch(new Request("https://mosoo.ai/auth.md"), envFor({}));
   const auth = await authResponse.text();
 
+  // The same values cloud.mosoo.ai/.well-known/oauth-authorization-server
+  // publishes for agent auth (langgenius/mosoo apps/web/src/worker.ts).
   assert.equal(authResponse.headers.get("content-type"), "text/markdown; charset=utf-8");
   assert.match(auth, /^# .*auth\.md/m);
   assert.match(auth, /You are an agent/);
   assert.match(auth, /agentic registration/);
-  assert.match(auth, /issued by the Mosoo App owner out of band/);
-  assert.match(auth, /Supported registration method: Personal Access Token/);
-  assert.match(auth, /Credential provisioning endpoint \(human-operated\)/);
-  assert.match(auth, /register_uri/);
-  assert.match(auth, /identity_types_supported\`: \`anonymous\`/);
-  assert.match(auth, /credential_types_supported\`: \`mosoo_personal_access_token\`/);
-  assert.match(auth, /revocation_uri/);
+  assert.match(auth, /creates a Project API key in the console and gives it to you out of band/);
+  assert.match(auth, /Supported registration method: Project API key/);
+  assert.match(auth, /Credential provisioning page \(human-operated\)/);
+  assert.match(auth, /starts with `msp_` and is bound to one Project/);
+  assert.match(
+    auth,
+    /`register_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys \(open with GET; do not POST\)/,
+  );
+  assert.match(auth, /`claim_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys/);
+  assert.match(auth, /identity_types_supported`: `anonymous`/);
+  assert.match(auth, /credential_types_supported`: `mosoo_project_api_key`/);
+  assert.match(auth, /`revocation_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
-  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
-  assert.match(auth, /Authorization: Bearer mst_\.\.\./);
+  assert.match(auth, /Authorization: Bearer msp_\.\.\./);
+  assert.match(auth, /Legacy account tokens are rejected\./);
   assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-protected-resource/);
   assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-authorization-server/);
   assert.doesNotMatch(auth, /does not currently publish/);
-  assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(auth, /API base \(v2\): https:\/\/cloud\.mosoo\.ai\/api\/v2/);
+  assert.match(auth, /API base \(v1, wire-compatible\): https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.doesNotMatch(auth, RETIRED_NARRATIVE);
+  assert.doesNotMatch(auth, /settings\/access-tokens/);
+  assert.doesNotMatch(auth, /\bMosoo\b(?! Computer)/);
+  assert.doesNotMatch(auth, /[—–]/);
 });
 
 test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {
