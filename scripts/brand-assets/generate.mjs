@@ -39,10 +39,14 @@ const write = (name, buffer) => {
   console.log(`${name.padEnd(34)} ${String(buffer.length).padStart(7)} B`);
 };
 
-/** Halftone a field (and an optional accent field on its own screen angle) to PNG. */
+/**
+ * Halftone a field (and an optional lime accent on its own screen angle) to PNG.
+ * The ink gets `steps` alpha levels; the accent one opaque step (crisp dots), so
+ * with two ink steps the palette fits in 2 bits.
+ */
 function halftonePng(field, { pitch, steps, color, accent }) {
   const layers = [{ coverage: halftone(field, { pitch, angle: 45 }), color, steps }];
-  if (accent) layers.push({ coverage: halftone(accent, { pitch, angle: 0, maxTone: 0.62 }), color: INK.lime, steps });
+  if (accent) layers.push({ coverage: halftone(accent, { pitch, angle: 0, maxTone: 0.62 }), color: INK.lime, steps: 1 });
   const { indices, palette } = quantiseInks(field.width, field.height, layers);
   return encodeIndexedPng(field.width, field.height, indices, palette);
 }
@@ -55,17 +59,24 @@ const jobs = {
       write(`bamboo-plate-paper-${w}.png`, halftonePng(field, { pitch, steps: 3, color: INK.sage }));
     }
   },
-  // (b) Footer landscape; the narrow render is a re-screened crop, not a squeeze.
+  // (b) Footer landscape. Narrow renders are re-screened, never squeezed: 1440 is
+  // the whole design space at half scale (1x desktops), 1200 a crop from x 1280
+  // (phones). Pitch follows the scale (8 k), so dots keep their size in CSS px.
+  // Two alpha steps where the dots are big enough not to need a third (measured:
+  // no visible difference at 1:1, 11 KB less on the 2880 file); the 1440 file's
+  // small dots keep three, or mid-tones turn into a pixel checkerboard at 1x.
   landscape: () => {
-    for (const [w, h, pitch, window] of [[2880, 800, 8, [0]], [1200, 600, 6, [1280]]]) {
+    for (const [w, h, pitch, steps, window] of [[2880, 800, 8, 2, [0]], [1440, 400, 4, 3, [0]], [1200, 600, 6, 2, [1280]]]) {
       const { ink, accent } = bambooLandscape({ width: w, height: h, window });
       for (let i = 0; i < ink.data.length; i++) ink.data[i] *= 1 - accent.data[i]; // knock out under the lime plate
-      write(`bamboo-landscape-${w}.png`, halftonePng(ink, { pitch, steps: 3, color: INK.sage, accent }));
+      write(`bamboo-landscape-${w}.png`, halftonePng(ink, { pitch, steps, color: INK.sage, accent }));
     }
   },
   // (d) Pixel / ordered-dither plate for the cool product-stage direction (v2c).
   // Tints sit exactly on the grey steps, so only gradients (ground mist, shading,
-  // the pale band under each node, soft far edges) dither.
+  // the pale band under each node, soft far edges) dither. The plate carries no
+  // lime: the stage it sits on already has the page's accent. The one lime node
+  // ring is a separate overlay on the same pixel grid, for a direction that wants it.
   "plate-pixel": () => {
     const levels = INK.greys.length;
     const tones = { mist: 0.3, far: 1 / levels, mid: 2 / levels, near: 1, leaf: 2 / levels };

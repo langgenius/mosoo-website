@@ -48,10 +48,13 @@ export const waistProfile = (() => {
  * Vertical layout of a culm from its base upward. Each node is gap + ring + gap
  * (the mark's gap on both sides, so stacked marks read as rings). Heights are
  * measured upward from the base: { kind: "gap" | "ring" | "internode", from, to }.
+ * `minGap` and `minBand` (px) open up thin culms optically, so their nodes
+ * survive the halftone screen; pass values proportional to the render scale to
+ * keep narrow renders true crops of wide ones.
  */
-export function culmSegments(width, internodes) {
-  const gap = Math.max(1, NODE.gap * width);
-  const band = Math.max(1, NODE.band * width);
+export function culmSegments(width, internodes, { minGap = 1, minBand = 1 } = {}) {
+  const gap = Math.max(minGap, NODE.gap * width);
+  const band = Math.max(minBand, NODE.band * width);
   const segs = [];
   let y = 0;
   for (const length of internodes) {
@@ -70,16 +73,19 @@ export function internodeRun(rand, width, count, { min = 2.6, max = 4.6 } = {}) 
 
 /**
  * Paint a culm. `c` = { x, base, top, width, lean, bow, tone, ringTone, shade,
- * internodes, offset, seed } in pixels. `lean` shifts x per px of height, `bow`
- * adds a quadratic curve, `offset` slides the node pattern, `seed` varies the
- * internode tints. Gaps stay unpainted, as in the mark. Returns ring positions
- * (image y, top y0 and bottom y1) and the centre-line function.
+ * internodes, offset, seed, fade, minGap, minBand } in pixels. `lean` shifts x
+ * per px of height, `bow` adds a quadratic curve, `offset` slides the node
+ * pattern, `seed` varies the internode tints, `fade` dissolves the top over that
+ * many px instead of cutting it flat, `minGap`/`minBand` see culmSegments. Gaps
+ * stay unpainted, as in the mark. Returns ring positions (image y, top y0 and
+ * bottom y1) and the centre-line function.
  */
 export function paintCulm(field, c) {
-  const segs = culmSegments(c.width, c.internodes);
+  const segs = culmSegments(c.width, c.internodes, { minGap: c.minGap, minBand: c.minBand });
   const half = c.width / 2;
   const span = c.base - c.top;
   const offset = c.offset ?? 0;
+  const fade = c.fade ?? 0;
   const centre = (py) => {
     const h = (c.base - py) / span;
     return c.x + c.lean * (c.base - py) + (c.bow ?? 0) * h * h * span;
@@ -119,7 +125,7 @@ export function paintCulm(field, c) {
       tone = c.ringTone ?? c.tone;
     }
     rowTone = tone;
-    rowAy = clamp01(Math.min(h - rowSeg.from, rowSeg.to - h) + 0.5);
+    rowAy = clamp01(Math.min(h - rowSeg.from, rowSeg.to - h) + 0.5) * (fade ? smoothstep(c.top, c.top + fade, py) : 1);
   };
   const shade = c.shade ?? 0;
   field.paint(
@@ -343,12 +349,139 @@ export function grovePlate({ width, height, seed = 7, tones = PAPER_TONES, calm 
 }
 
 /**
+ * Crest line of one footer ridge, in design units: a slow fbm swell topped by
+ * overlapping domes (bamboo crowns along the skyline). Sampled once per design
+ * unit over the whole design width, independent of the render window, so crops
+ * match the wide render and the grove band can stand on the same line.
+ */
+function ridgeCrest(seed, r, [baseline, swell, , , , crown]) {
+  const rn = noise2(seed + 100 + r);
+  const rand = rng(seed * 31 + r);
+  const domes = [];
+  for (let x = -120; x < 3000; ) {
+    const w = crown * rand.range(0.6, 1.4);
+    domes.push({ cx: x + w / 2, half: w / 2, h: w * rand.range(0.2, 0.38) });
+    x += w * rand.range(0.5, 0.8);
+  }
+  const x0 = -200;
+  const table = new Float32Array(3300);
+  let d0 = 0;
+  for (let i = 0; i < table.length; i++) {
+    const dx = x0 + i;
+    while (d0 < domes.length - 1 && domes[d0].cx + domes[d0].half < dx - crown * 2) d0++;
+    let bump = 0;
+    for (let d = d0; d < domes.length && domes[d].cx - domes[d].half <= dx; d++) {
+      const u = (dx - domes[d].cx) / domes[d].half;
+      if (u > -1 && u < 1) bump = Math.max(bump, domes[d].h * Math.sqrt(1 - u * u));
+    }
+    table[i] = baseline - swell * rn.fbm(dx / 1000 + r * 3.1, r * 1.7, 4) - bump;
+  }
+  return (dx) => {
+    const t = Math.min(table.length - 1.001, Math.max(0, dx - x0));
+    const i = Math.floor(t);
+    return table[i] + (table[i + 1] - table[i]) * (t - i);
+  };
+}
+
+/**
+ * Grove band on the nearest ridge: clumps of culms fanning out above its crest,
+ * leaf sprays from their upper nodes and a crown at each top, so the foreground
+ * reads as a bamboo grove rather than a hill. The same painters as the stage
+ * plate. Clumps are laid out over the whole design width and every culm has its
+ * own seeded generator; ring positions scale exactly with k, so any window and
+ * scale draws the same grove. Returns { culms, leaves } as separate layers.
+ */
+function paintGroveBand({ seed, k, P, width, height, crest, from, to }) {
+  const culms = new Field(width, height, { layer: true });
+  const leaves = new Field(width, height, { layer: true });
+  const layout = rng(seed * 53 + 7);
+  let index = 0;
+  for (let cx = from + layout.range(0, 60); cx < to; cx += layout.range(230, 390)) {
+    const count = 2 + Math.floor(layout() * 4);
+    const spread = layout.range(26, 72);
+    const stature = layout.range(0.6, 1);
+    const clump = [];
+    for (let i = 0; i < count; i++) {
+      const rand = rng(seed * 131 + index++);
+      clump.push({ rand, depth: rand.range(0.6, 1), dx: cx + rand.range(-spread, spread), id: index });
+    }
+    clump.sort((a, b) => a.depth - b.depth); // back to front
+    for (const { rand, depth, dx, id } of clump) {
+      const out = dx >= cx ? 1 : -1; // culms fan away from the clump's centre
+      const w = (12 + 16 * depth) * rand.range(0.9, 1.1);
+      const top = crest(dx) - rand.range(120, 260) * stature * (0.6 + 0.4 * depth);
+      const tone = 0.24 + 0.18 * depth;
+      const { rings, centre } = paintCulm(culms, {
+        x: P(dx),
+        base: height + 30 * k,
+        top: top * k,
+        width: w * k,
+        lean: out * rand.range(0, 0.035),
+        bow: out * rand.range(0, 0.03),
+        tone,
+        ringTone: tone * 1.1,
+        shade: 0.18,
+        internodes: internodeRun(rand, w * k, 30, { min: 3.2, max: 4.6 }),
+        offset: rand.range(0, 4) * w * k,
+        seed: seed * 131 + id,
+        fade: 30 * k,
+        minGap: 4 * k,
+        minBand: 2.5 * k,
+      });
+      const leaf = 0.4 + 0.12 * depth;
+      const size = rand.range(70, 100) * k * (0.75 + 0.25 * depth);
+      // A light tip, then sprays from two or three upper nodes, mostly outward:
+      // the leaves sit along the top third of the culm, not in one crown.
+      paintSpray(leaves, rand, {
+        x: centre(top * k + 8 * k),
+        y: top * k + 8 * k,
+        angle: -Math.PI / 2 + out * rand.range(0.3, 0.7),
+        length: rand.range(30, 50) * k,
+        size: size * 0.75,
+        tone: leaf,
+        groups: 1 + Math.floor(rand() * 2),
+      });
+      const upper = rings.filter((r) => r.y1 > top * k + 40 * k && r.y1 < (crest(dx) + 10) * k);
+      const picks = Math.min(upper.length, 2 + Math.floor(rand() * 2));
+      for (let j = 0; j < picks; j++) {
+        const ring = upper.splice(Math.floor(rand() * upper.length), 1)[0];
+        const toward = rand() < 0.7 ? out : -out;
+        paintSpray(leaves, rand, {
+          x: centre(ring.y1) + toward * w * k * 0.4,
+          y: ring.y1,
+          angle: toward > 0 ? rand.range(-0.15, 0.35) : Math.PI - rand.range(-0.15, 0.35),
+          length: rand.range(50, 90) * k,
+          size: size * rand.range(0.8, 1),
+          tone: leaf * 0.95,
+          groups: 2,
+        });
+      }
+    }
+  }
+  return { culms, leaves };
+}
+
+/**
+ * Paper keyline: a layer of bare paper covering a layer's shapes dilated by
+ * roughly `r` px. Composited under the shapes, it separates a leaf mass from
+ * the ridge texture behind it along the mass's outer edge only.
+ */
+function keyline(layer, r) {
+  const halo = new Field(layer.width, layer.height, { layer: true });
+  halo.alpha.set(layer.alpha);
+  halo.blur(r);
+  for (let i = 0; i < halo.alpha.length; i++) halo.alpha[i] = smoothstep(0.03, 0.2, halo.alpha[i]);
+  return halo;
+}
+
+/**
  * Footer landscape (design space 2880 x 800): ridges of bamboo sea receding in
  * mist (each ridge densest at its crest, dissolving downward, as in ink-wash
- * mountains), framed by culms at both edges, everything thinning into paper
- * toward the top. `window` = [x0 in design units] crops the design space, so a
- * narrow render is a true, re-screened crop of the same landscape. Returns
- * { ink, accent }; accent holds the one lime node ring.
+ * mountains), a grove band of culms and leaf sprays on the nearest ridge, framed
+ * by culms at both edges, everything thinning into paper toward the top.
+ * `window` = [x0 in design units] crops the design space, so a narrow render is
+ * a true, re-screened crop of the same landscape. Returns { ink, accent };
+ * accent holds the one lime node ring.
  */
 export function bambooLandscape({ width, height, seed = 23, window = [0] }) {
   const k = height / 800;
@@ -369,29 +502,10 @@ export function bambooLandscape({ width, height, seed = 23, window = [0] }) {
     [515, 105, 0.27, 115, 1, 52],
     [640, 85, 0.36, 150, 0, 62],
   ];
-  ridges.forEach(([baseline, swell, tone, mistDepth, blur, crown], r) => {
+  const crests = ridges.map((spec, r) => ridgeCrest(seed, r, spec));
+  ridges.forEach(([, , tone, mistDepth, blur, crown], r) => {
     const rn = noise2(seed + 100 + r);
-    // Bamboo crowns along the skyline: overlapping domes laid out over the whole
-    // design width (independent of the window, so crops match the wide render).
-    const rand = rng(seed * 31 + r);
-    const domes = [];
-    for (let x = -120; x < 3000; ) {
-      const w = crown * rand.range(0.6, 1.4);
-      domes.push({ cx: x + w / 2, half: w / 2, h: w * rand.range(0.2, 0.38) });
-      x += w * rand.range(0.5, 0.8);
-    }
-    const tops = new Float32Array(width + 1);
-    let d0 = 0;
-    for (let px = 0; px <= width; px++) {
-      const dx = X(px);
-      while (d0 < domes.length - 1 && domes[d0].cx + domes[d0].half < dx - crown * 2) d0++;
-      let bump = 0;
-      for (let d = d0; d < domes.length && domes[d].cx - domes[d].half <= dx; d++) {
-        const u = (dx - domes[d].cx) / domes[d].half;
-        if (u > -1 && u < 1) bump = Math.max(bump, domes[d].h * Math.sqrt(1 - u * u));
-      }
-      tops[px] = (baseline - swell * rn.fbm(dx / 1000 + r * 3.1, r * 1.7, 4) - bump) * k;
-    }
+    const tops = Float32Array.from({ length: width + 1 }, (_, px) => crests[r](X(px)) * k);
     const layer = new Field(width, height, { layer: true });
     layer.paint(
       [0, 0, width, height],
@@ -406,6 +520,18 @@ export function bambooLandscape({ width, height, seed = 23, window = [0] }) {
     layer.blur(blur * k);
     ink.composite(layer);
   });
+
+  // Grove band on the nearest ridge, between the framing culms. Below the crest
+  // the culms dissolve into the ridge's mist, as the ridge itself does.
+  const nearest = crests[crests.length - 1];
+  const crestPx = Float32Array.from({ length: width + 1 }, (_, px) => nearest(X(px)) * k);
+  const mist = (px, py) => {
+    const c = crestPx[Math.min(width, Math.floor(px))];
+    return 0.35 + 0.65 * smoothstep(c + 230 * k, c - 10 * k, py);
+  };
+  const { culms, leaves } = paintGroveBand({ seed, k, P, width, height, crest: nearest, from: 250, to: 2560 });
+  const halo = keyline(leaves, 3 * k);
+  for (const layer of [culms, halo, leaves]) ink.composite(layer.scale(mist));
 
   // Framing culms, as on the stage plate: a few wide culms cropped by the frame
   // edges, rising into the mist. Close and cropped, they frame the valley rather
