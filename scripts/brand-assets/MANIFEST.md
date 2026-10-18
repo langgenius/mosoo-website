@@ -16,7 +16,7 @@ node scripts/brand-assets/generate.mjs --out /tmp/check    # render elsewhere to
 ```
 
 - Toolchain: Node >= 22.12 (uses `zlib.deflateSync` and `zlib.crc32`). There are no
-  dependencies, no network calls and no browser. A full run took 4.2 s (Node 25.9,
+  dependencies, no network calls and no browser. A full run took 5.1 s (Node 25.9,
   Apple silicon).
 - Deterministic: a fresh render matches the committed files byte for byte (SHA-256
   compared, 2026-10-19). Every random choice comes from a seeded generator, and the narrow
@@ -24,6 +24,20 @@ node scripts/brand-assets/generate.mjs --out /tmp/check    # render elsewhere to
 - Fonts are not regenerated; they are downloaded files, recorded with source URLs
   and hashes below. `font-metrics.mjs` re-derives the fallback metrics in
   `literata.css`.
+
+## Checks
+
+`tests/brand-assets.test.mjs` runs with `npm run test:seo`, so `npm run validate` covers it:
+
+- The bamboo folder adds no Tailwind utilities. Tailwind's automatic source detection
+  scans `apps/landing/public`, so a word in a generated SVG that names a utility
+  becomes CSS on every page: the sprite's comment once said "ring" and emitted `.ring`.
+  The test compiles Tailwind with only this folder's candidates. With the folder, the
+  landing build's CSS is byte-identical to main's (SHA-1 `1b73c837…`, 2026-10-19).
+- The zh and ja Literata stacks leave U+00B7 and the quotes, dashes, ellipsis and
+  U+2027 to the CJK serif faces (see Fonts).
+- The stage plates carry no lime, and the pixel plate's accent overlay is lime only.
+- Every kit file has a row below with its current byte count.
 
 ## Files
 
@@ -34,22 +48,26 @@ node scripts/brand-assets/generate.mjs --out /tmp/check    # render elsewhere to
 | `apps/landing/public/fonts/Literata-Italic-Variable-latin.woff2` | 88,632 | variable | Google Fonts | OFL-1.1 | Literata italic, Latin |
 | `apps/landing/public/fonts/Literata-Italic-Variable-latin-ext.woff2` | 71,628 | variable | Google Fonts | OFL-1.1 | Literata italic, Latin-ext |
 | `apps/landing/public/fonts/Literata-LICENSE.txt` | 4,389 | text | google/fonts `ofl/literata/OFL.txt` | OFL-1.1 | Licence text shipped next to the fonts (repo convention, like `Inter-LICENSE.txt`) |
-| `apps/landing/src/shared/styles/literata.css` | 3,957 | text | hand-written; metric values from `font-metrics.mjs` | repository | `@font-face` rules, metric-matched Georgia fallback, `--font-literata*` stacks. Not imported anywhere yet |
+| `apps/landing/src/shared/styles/literata.css` | 7,255 | text | hand-written; metric values from `font-metrics.mjs` | repository | `@font-face` rules ("Literata", and "Literata Latin" for CJK pages), metric-matched Georgia fallbacks, `--font-literata*` stacks. Not imported anywhere yet |
 | `apps/landing/public/landing/bamboo/bamboo-plate-paper-2400.png` | 46,429 | 2400 x 1500 | `generate.mjs` job `plate-paper` | repository (original) | (a) v2a hero product-stage plate, desktop and 2x |
 | `apps/landing/public/landing/bamboo/bamboo-plate-paper-1200.png` | 14,380 | 1200 x 750 | `generate.mjs` job `plate-paper` | repository (original) | (a) same scene, re-screened for phones and 1x |
-| `apps/landing/public/landing/bamboo/bamboo-landscape-2880.png` | 37,470 | 2880 x 800 | `generate.mjs` job `landscape` | repository (original) | (b) footer landscape (#127), wide screens |
-| `apps/landing/public/landing/bamboo/bamboo-landscape-1200.png` | 11,918 | 1200 x 600 | `generate.mjs` job `landscape` | repository (original) | (b) footer landscape, narrow screens (crop of the same landscape, x >= 1280) |
-| `apps/landing/public/landing/bamboo/bamboo-culm.svg` | 2,070 | sprite | `generate.mjs` job `symbols` | repository (original) | (c) culm segment symbols for the Session-as-culm diagram |
-| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-2400.png` | 17,146 | 2400 x 1500 | `generate.mjs` job `plate-pixel` | repository (original) | (d) v2c product-stage plate, desktop and 2x |
-| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-1200.png` | 6,610 | 1200 x 750 | `generate.mjs` job `plate-pixel` | repository (original) | (d) same, phones and 1x |
+| `apps/landing/public/landing/bamboo/bamboo-landscape-2880.png` | 52,002 | 2880 x 800 | `generate.mjs` job `landscape` | repository (original) | (b) footer landscape (#127), 2x desktops and 1x screens wider than 1440 CSS px |
+| `apps/landing/public/landing/bamboo/bamboo-landscape-1440.png` | 21,412 | 1440 x 400 | `generate.mjs` job `landscape` | repository (original) | (b) the same landscape re-screened at half scale, 1x desktops up to 1440 CSS px |
+| `apps/landing/public/landing/bamboo/bamboo-landscape-1200.png` | 18,124 | 1200 x 600 | `generate.mjs` job `landscape` | repository (original) | (b) footer landscape, narrow screens (crop of the same landscape, x >= 1280) |
+| `apps/landing/public/landing/bamboo/bamboo-culm.svg` | 2,112 | sprite | `generate.mjs` job `symbols` | repository (original) | (c) culm segment symbols for the Session-as-culm diagram |
+| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-2400.png` | 12,587 | 2400 x 1500 | `generate.mjs` job `plate-pixel` | repository (original) | (d) v2c product-stage plate, desktop and 2x. No lime |
+| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-1200.png` | 5,430 | 1200 x 750 | `generate.mjs` job `plate-pixel` | repository (original) | (d) same, phones and 1x. No lime |
+| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-accent-2400.png` | 569 | 2400 x 1500 | `generate.mjs` job `plate-pixel` | repository (original) | (d) optional overlay: the one lime node ring, on the 2400 plate's pixel grid |
+| `apps/landing/public/landing/bamboo/bamboo-plate-pixel-accent-1200.png` | 237 | 1200 x 750 | `generate.mjs` job `plate-pixel` | repository (original) | (d) optional overlay for the 1200 plate |
 | `apps/landing/public/landing/bamboo/bamboo-contours.svg` | 8,810 | 1600 x 1000 viewBox | `generate.mjs` job `contours` | repository (original) | Optional contour overlay (#98) for the plate or a quiet section |
-| `scripts/brand-assets/generate.mjs` | 4,634 | | | repository | CLI: renders every generated asset |
-| `scripts/brand-assets/bamboo.mjs` | 19,056 | | | repository | Mark geometry, culm and leaf painters, the two scenes |
+| `scripts/brand-assets/generate.mjs` | 5,469 | | | repository | CLI: renders every generated asset |
+| `scripts/brand-assets/bamboo.mjs` | 24,707 | | | repository | Mark geometry, culm and leaf painters, the two scenes and the grove band |
 | `scripts/brand-assets/raster.mjs` | 13,547 | | | repository | Tone fields, halftone and Bayer screens, indexed PNG encoder |
-| `scripts/brand-assets/symbols.mjs` | 2,749 | | | repository | Culm sprite writer |
+| `scripts/brand-assets/symbols.mjs` | 3,186 | | | repository | Culm sprite writer |
 | `scripts/brand-assets/contours.mjs` | 5,338 | | | repository | Contour overlay (marching squares, RDP, Catmull-Rom) |
 | `scripts/brand-assets/font-metrics.mjs` | 6,655 | | | repository | Font inspector and fallback-metric calculator |
 | `scripts/brand-assets/MANIFEST.md` | | | | repository | This file |
+| `tests/brand-assets.test.mjs` | 5,434 | | | repository | The checks above |
 
 "Repository (original)" means the asset was drawn by the scripts above and contains no
 third-party material. The culm geometry is the mosoo mark's, so these files are brand
@@ -86,6 +104,15 @@ assets: use them for mosoo only. All decorative rasters take `alt=""` in every l
   Result for roman: `size-adjust 108.21%`, `ascent-override 108.77%`,
   `descent-override 28.46%`, `line-gap-override 0%`. Italic, against
   `Georgia Italic.ttf`: 99.7%, 118.05%, 30.89%, 0%.
+- Two families over the same four files. "Literata" uses Google's unicode-ranges,
+  which include U+0000-00FF and U+2000-206F. "Literata Latin" drops U+00B7 and
+  U+2000-206F (and U+2020 from Latin-ext), and its Georgia fallback is restricted the
+  same way. The zh and ja stacks start with "Literata Latin", so Latin words in a CJK
+  heading are Literata while “ ” ‘ ’ … · ‧ — come from Songti or Mincho at full width.
+  Measured in Chrome (`CSS.getPlatformFontsForNode`, macOS, 2026-10-19): with the old
+  stack, zh “ ” …… · —— ‘ ’ and ja “ ” …… · —— rendered in Literata; now they render in
+  Songti SC and Hiragino Mincho ProN, "mosoo" stays Literata, and en is unchanged. The
+  browser fetches each file once for both families.
 
 ## Generated assets: how they are made
 
@@ -100,9 +127,11 @@ culm width:
 - node ring 0.1005
 
 Culms stack gap, ring, gap between internodes, so every node reads as the mark's
-ring. Internodes are stretched to 3.4 to 5.2 widths, short near the base. The
+ring. Internodes are stretched to 3.2 to 5.2 widths, short near the base. The
 favicon `logo-mark.svg` uses a tighter gap (0.0705) and a heavier ring (0.1345); the
-kit follows the lockup.
+kit follows the lockup. The thin culms of the footer's grove band (21 to 30 design
+units wide) open their gaps to at least 4 and their rings to at least 2.5 design
+units, an optical correction like the favicon's, so the nodes survive the screen.
 
 **Screens.**
 - Halftone (a, b): amplitude-modulated round dots on a pixel-periodic 45 degree
@@ -111,10 +140,11 @@ kit follows the lockup.
   through dots as on a printed plate.
 - Below the smallest printable dot (radius 1.1 px), cells drop out stochastically
   instead of all at one threshold, so mists thin out like stipple.
-- Tone is quantised to 48 levels and dot edges to 3 alpha steps. The result is a
-  2-bit indexed PNG with a transparent background and the sage ink `#6d786a`.
-- The lime accent is a second plate: dots on a 0 degree screen, with the sage ink
-  knocked out underneath.
+- Tone is quantised to 48 levels and dot edges to 3 alpha steps (2 on the 2880 and
+  1200 landscapes, see Format). The result is an indexed PNG with a transparent
+  background and the sage ink `#6d786a`.
+- The lime accent is a second plate: dots on a 0 degree screen in one opaque step,
+  with the sage ink knocked out underneath.
 - Pixel (d): an 8x8 Bayer ordered dither on square pixels. Flat tints sit exactly on
   the grey steps, so only gradients dither.
 
@@ -123,13 +153,40 @@ kit follows the lockup.
 | Asset | Scene and parameters |
 |---|---|
 | plate-paper 2400 / 1200 | `grovePlate({ seed: 7, calm: 0.55 })`. Tones: mist 0.034, far 0.09, mid 0.17, near 0.27, leaves 0.25. Far culms blurred 2.5 px and mid culms 1 px (per 1600 design px); centre lightened for the shell. Halftone pitch 8 / 6 px (cell 11.3 / 8.5 px), 3 steps. No lime. |
-| landscape 2880 / 1200 | `bambooLandscape({ seed: 23 })`, design space 2880 x 800. Four ridges with crown-scalloped crests, each densest at its crest and fading into mist. Five framing culms. Everything thins into paper toward the top. The 1200 file is the window x >= 1280 at 0.75 scale. Pitch 8 / 6. Lime: one ring of the right-edge culm at 66% height (bbox 92 x 11 px in the 2880 file). |
-| plate-pixel 2400 / 1200 | Same grove (`seed: 7`, `calm: 0`) with tones on the grey steps: far 1/3, mid and leaves 2/3, near 1, mist up to 0.3. Pixel 8 / 6 px. Greys `#ebebeb #d6d6d6 #b8b8b8` (console ink-100/200/300). Lime: one ring of the right-edge culm (bbox 144 x 16 px in the 2400 file). |
+| landscape 2880 / 1440 / 1200 | `bambooLandscape({ seed: 23 })`, design space 2880 x 800. Four ridges with crown-scalloped crests, each densest at its crest and fading into mist. On the nearest ridge, a grove band between x 250 and 2560 (layout seed `23 * 53 + 7`, one generator per culm): 8 clumps, 33 culms (3 to 5 per clump, 21 to 30 units wide, tone 0.35 to 0.42) fanning out and rising 72 to 218 units above the crest, each with a light leaf tip and sprays from two or three upper nodes (leaf groups up to 100 units, tone 0.45 to 0.52), the leaf mass cut out of the ridge behind it by a paper keyline (its alpha blurred 3 units), all dissolving to 35% over the 230 units below the crest. Five framing culms. Everything thins into paper toward the top. Pitch follows scale (8 k): 2880 at pitch 8 with 2 steps; 1440 is the whole design space at k 0.5, pitch 4, 3 steps; 1200 is the window x >= 1280 at k 0.75, pitch 6, 2 steps. Lime: one ring of the right-edge culm at 66% height. |
+| plate-pixel 2400 / 1200 | Same grove (`seed: 7`, `calm: 0`) with tones on the grey steps: far 1/3, mid and leaves 2/3, near 1, mist up to 0.3. Pixel 8 / 6 px. Greys `#ebebeb #d6d6d6 #b8b8b8` (console ink-100/200/300). No lime. The accent overlays hold one ring of the right-edge culm about a third of the way down, dithered on the same pixel grid (`ordered: false`), as a 1-bit PNG. |
 | contours | `contourOverlay({ seed: 7, levels: 9 })`. Isolines of `fbm(x/620, y/420) * 0.55 + 1.1 * y/H` on a 10 px grid, simplified (RDP 0.25 cells), Catmull-Rom smoothed. Stroke `#6d786a`, 1 px non-scaling. |
 | culm sprite | Symbols `culm-segment` (viewBox 100 x 110.44: internode, gap, ring, trailing gap), `culm-segment-reclaimed` (dashed), `culm-internode` and `culm-internode-reclaimed` (100 x 100, `preserveAspectRatio="none"`), `culm-ring` (100 x 10.05). |
 
-**Lime audit** (counted from the decoded PNGs): plate-paper 0 px. Landscape 2880:
-one ring. Landscape 1200: one ring. Pixel 2400 and 1200: one ring each.
+**Lime audit** (counted from the decoded PNGs, 2026-10-19):
+
+| File | Lime px | Bounding box |
+|---|---:|---|
+| plate-paper 2400 / 1200 | 0 | |
+| plate-pixel 2400 / 1200 | 0 | |
+| plate-pixel-accent-2400 | 2,304 | 144 x 16 at (2224, 696) |
+| plate-pixel-accent-1200 | 792 | 66 x 12 at (1116, 348) |
+| landscape-2880 | 713 | 92 x 11 at (2788, 517), one ring |
+| landscape-1440 | 184 | 46 x 5 at (1394, 259), one ring |
+| landscape-1200 | 391 | 69 x 8 at (1131, 388), one ring |
+
+The pixel plate with its overlay stacked decodes to exactly the earlier plate that had
+the ring painted in (0 differing bytes at 2400 and 1200, compared on a canvas in Chrome).
+
+**Footer at each screen** (Chrome, the markup in Usage (b), 2026-10-19). The browser
+picks the 1440 file on 1x screens up to 1440 CSS px, so the screen is shown at 1:1
+there; before, 1x desktops got the 2880 file at 0.5 (1440 px) or 0.44 (1280 px),
+which clumped the dots into moiré bands.
+
+| Viewport | File | Device px per file px |
+|---|---|---:|
+| 1440 at 1x | 1440 | 1 |
+| 1280 at 1x | 1440 | 0.89 |
+| 1024 at 1x | 1440 | 0.71 |
+| 1920 at 1x | 2880 | 0.67 |
+| 1440 at 2x | 2880 | 1 |
+| 390 at 2x | 1200 | 0.67 |
+| 390 at 3x | 1200 | 1 |
 
 **Format decision, measured.**
 - The candidates were Chromium's canvas WebP encoder at quality 1.0 (which is
@@ -144,6 +201,11 @@ one ring. Landscape 1200: one ring. Pixel 2400 and 1200: one ring each.
   comparison was run.
 - Going from 4 alpha steps to 3, on the same final scene, halves the bit depth:
   61,370 B down to 46,466 B, with no visible difference at 1:1.
+- The grove band took the 2880 landscape from 37,470 B to 69,341 B at 3 steps. Two
+  steps bring it to 58,432 B with no visible difference at 1:1, and a one-step lime
+  plate (the palette then fits in 2 bits) to 52,002 B. The 1440 file keeps 3 steps:
+  with 2, its pitch-4 dots turn into a pixel checkerboard at 1x (17,470 B against
+  21,427 B). Tone levels barely matter (48 to 16 levels: 69,341 to 65,121 B).
 
 ## Usage
 
@@ -162,7 +224,7 @@ nine landing pages. Preload only where Literata renders above the fold.
 ```
 
 `font-optical-sizing: auto` is the browser default, so opsz follows font-size. CJK
-glyphs fall through to platform serif faces. In Vite, link the raw file as
+glyphs and CJK punctuation fall through to platform serif faces. In Vite, link the raw file as
 `/src/shared/styles/literata.css?direct` only when testing outside the app bundle.
 
 **(a) Hero plate.** The plate is transparent, so the stage's paper shows through.
@@ -192,7 +254,9 @@ below about 600 CSS px blurs the screen into grey.
 ```html
 <picture>
   <source media="(max-width: 640px)" srcset="/landing/bamboo/bamboo-landscape-1200.png" width="1200" height="600">
-  <img src="/landing/bamboo/bamboo-landscape-2880.png" width="2880" height="800" alt="" loading="lazy" decoding="async">
+  <img src="/landing/bamboo/bamboo-landscape-2880.png"
+       srcset="/landing/bamboo/bamboo-landscape-1440.png 1440w, /landing/bamboo/bamboo-landscape-2880.png 2880w"
+       sizes="100vw" width="2880" height="800" alt="" loading="lazy" decoding="async">
 </picture>
 ```
 
@@ -200,7 +264,10 @@ below about 600 CSS px blurs the screen into grey.
 footer picture img { display: block; width: 100%; height: clamp(200px, 26vw, 400px); object-fit: cover; object-position: 50% 100%; }
 ```
 
-The top 40% is empty paper, so a large wordmark may overlap it.
+`sizes="100vw"` holds because the image spans the viewport. Between the framing culms
+the top 27% of the file is bare paper; the far ridge's light stipple runs from there,
+and the grove band starts at 42% of the height. A large wordmark may overlap the upper
+third.
 
 **(c) Culm symbols.** External `<use>` needs the same origin (fine on mosoo.ai, not
 from `file://`); otherwise inline the sprite once per page.
@@ -224,7 +291,20 @@ from `file://`); otherwise inline the sprite once per page.
 
 **(d) Pixel plate (v2c).** Same markup as (a) with
 `bamboo-plate-pixel-{1200,2400}.png` on `#fafafa`. Leave `image-rendering` at its
-default; srcset keeps pixels at about 3 to 4 CSS px.
+default; srcset keeps pixels at about 3 to 4 CSS px. The plate has no lime, because
+the stage already carries the page's accent (the primary button and the product's
+own lime). Where a direction wants the node ring lit, for example at the moment a
+turn commits, stack the overlay as a second image with the same `srcset` descriptors,
+`sizes` and CSS, so both resolve to the same width and pixel grid:
+
+```html
+<img class="accent" src="/landing/bamboo/bamboo-plate-pixel-accent-2400.png"
+     srcset="/landing/bamboo/bamboo-plate-pixel-accent-1200.png 1200w, /landing/bamboo/bamboo-plate-pixel-accent-2400.png 2400w"
+     sizes="(max-width: 768px) calc(100vw - 32px), 56vw" width="2400" height="1500" alt="" decoding="async">
+```
+
+Keep it to one lime accent per viewport: show the overlay only where nothing else in
+view is lime.
 
 **Contour overlay (optional).** Use it either as an image or as a token-coloured
 mask:
@@ -239,10 +319,16 @@ mask:
 
 ## Known gaps
 
-- Footer landscape has no leaves. Sprays tested in front of the ridges lost their
-  outline, and over open sky the upward mist erased them. The bamboo reads through
-  the framing culms' nodes. A fuller grove would need its own composition pass.
 - No dark-mode variants. Every raster is sage ink meant for light paper.
+- The footer's 1x renders cover up to 1440 CSS px; wider 1x screens get the 2880 file
+  at 0.5 to 1 (0.67 at 1920, checked: no banding). Phones at 2x get the 1200 crop at
+  0.67, as before.
+- The accent overlay lines up with the plate only when both images resolve to the same
+  `srcset` candidate (they do with identical descriptors and `sizes`; Chrome, 1440 at
+  1x and 2x, 390 at 2x). The 1200 and 2400 renders use different pixel grids.
+- "Literata Latin" leaves only U+00B7 and U+2000-206F to the CJK faces. Other Latin-1
+  signs that CJK fonts set at full width (× ° ± §) still come from Literata in zh and
+  ja headings.
 - The Literata fallback overrides are computed for the default instance
   (opsz 12, wght 400); display sizes run slightly narrower. `local("Georgia")` is
   missing on Android and Linux, where the generic serif fallback has no overrides.
