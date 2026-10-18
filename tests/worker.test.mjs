@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { homeFaq } from "../scripts/landing-home.mjs";
 import worker from "../src/worker.js";
+
+// Narrative the main repo retired: App owners, publishing before calling,
+// self-hosting claims, Channels, legacy mst_ tokens, workflow comparisons.
+const RETIRED_NARRATIVE =
+  /App-owner|App owner|Publish an Agent|already published|self-host|Self-host|\bChannels\b|mst_|Personal Access Token|Dify|n8n|coding agents into products/;
 
 function envFor(paths) {
   return {
@@ -201,6 +207,18 @@ test("worker advertises agent discovery resources from HTML assets", async () =>
   assert.match(link, /<\/\.well-known\/api-catalog>; rel="api-catalog"/);
   assert.match(link, /rel="service-desc"/);
   assert.match(link, /rel="service-doc"/);
+  assert.match(
+    link,
+    /<https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json>; rel="service-desc"; type="application\/json"/,
+  );
+  assert.match(
+    link,
+    /<https:\/\/mosoo\.ai\/docs\/api-reference-v2\/>; rel="service-doc"; type="text\/html"/,
+  );
+  assert.match(
+    link,
+    /<https:\/\/cloud\.mosoo\.ai\/api\/v1\/openapi\.json>; rel="service-desc"; type="application\/json"/,
+  );
   assert.match(link, /<\/auth\.md>; rel="describedby"/);
   assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
 });
@@ -215,12 +233,27 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
   assert.match(response.headers.get("vary"), /Accept/);
   const markdown = await response.text();
-  assert.match(markdown, /^# Mosoo$/m);
-  assert.match(markdown, /What is Mosoo\? An open-source Agent runtime/);
-  assert.match(markdown, /trusted backend uses the Public Thread API/);
-  assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(markdown, /^# mosoo$/m);
+  assert.match(
+    markdown,
+    /mosoo is an open-source, API-first managed Agent runtime for application backends\./,
+  );
+  assert.match(markdown, /OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API/);
+  assert.match(markdown, /mosoo is in Alpha\./);
+  assert.match(
+    markdown,
+    /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads with an inline configuration and a Project API key \(msp_\)\. No Agent is required\./,
+  );
+  assert.match(markdown, /POST \/api\/v2\/threads\/\{threadId\}\/events/);
+  assert.match(markdown, /Follow events over SSE\. There are no Webhooks\./);
+  assert.match(markdown, /Bring your own model provider key\. mosoo supplies no models\./);
+  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/quickstart\//);
+  assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/llms\.txt/);
   assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo/);
+  assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
+  assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
   assert.doesNotMatch(markdown, /<html/i);
 
   const declined = await worker.fetch(
@@ -230,6 +263,45 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   assert.equal(declined.status, 307);
 });
 
+test("worker answers localized homepages with Markdown in their language", async () => {
+  const cases = [
+    { pathname: "/", language: "en", text: /^mosoo is an open-source, API-first managed Agent runtime/m },
+    { pathname: "/en", language: "en", text: /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects/ },
+    {
+      pathname: "/zh",
+      language: "zh-CN",
+      text: /^> mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。/m,
+      docs: "https://mosoo.ai/docs/zh-Hans/quickstart/",
+    },
+    {
+      pathname: "/ja",
+      language: "ja",
+      text: /^> mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。/m,
+      docs: "https://mosoo.ai/docs/ja/quickstart/",
+    },
+  ];
+
+  for (const entry of cases) {
+    const response = await worker.fetch(
+      new Request(`https://mosoo.ai${entry.pathname}`, { headers: { accept: "text/markdown" } }),
+      envFor({}),
+    );
+    const markdown = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+    assert.equal(response.headers.get("content-language"), entry.language);
+    assert.match(response.headers.get("vary"), /Accept/);
+    assert.match(markdown, /^# mosoo$/m);
+    assert.match(markdown, entry.text);
+    assert.match(markdown, /msp_/);
+    assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json/);
+    if (entry.docs) assert.ok(markdown.includes(entry.docs), `${entry.pathname} links ${entry.docs}`);
+    assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
+    assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+  }
+});
+
 test("worker serves a product-wide llms.txt index", async () => {
   const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
   const markdown = await response.text();
@@ -237,19 +309,48 @@ test("worker serves a product-wide llms.txt index", async () => {
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
   assert.equal(response.headers.get("content-signal"), "ai-train=no, search=yes, ai-input=yes");
-  assert.match(markdown, /^# Mosoo$/m);
-  assert.match(markdown, /^## Direct answers$/m);
-  assert.match(markdown, /^## Product$/m);
-  assert.match(markdown, /^## Build and integrate$/m);
-  assert.match(markdown, /^## Examples$/m);
-  assert.match(markdown, /^## Source and trust$/m);
-  assert.match(markdown, /What is the Public Thread API\?/);
-  assert.match(markdown, /How is Mosoo different from Dify, n8n, Claude Code/);
-  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/pricing/);
-  assert.match(markdown, /https:\/\/computer\.mosoo\.ai/);
-  assert.match(markdown, /https:\/\/mosoo\.ai\/en\/use-cases\/ghfind/);
-  assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo\/security/);
-  assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
+  assert.match(markdown, /^# mosoo$/m);
+  assert.match(
+    markdown,
+    /^> mosoo is an open-source, API-first managed Agent runtime for application backends\./m,
+  );
+  for (const heading of [
+    "Direct answers",
+    "Call mosoo from a backend (v2)",
+    "Set up with a coding agent",
+    "Product",
+    "Build and integrate",
+    "Examples",
+    "Source and trust",
+    "Languages",
+  ]) {
+    assert.ok(markdown.includes(`\n## ${heading}\n`), `llms.txt has the ${heading} section`);
+  }
+  assert.match(markdown, /mosoo is in Alpha\. Public APIs and product behavior may still change\./);
+  assert.match(markdown, /Authorization: Bearer msp_\.\.\./);
+  assert.match(markdown, /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads/);
+  assert.match(markdown, /No Agent is created\./);
+  for (const harness of ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"]) {
+    assert.ok(markdown.includes(`\`${harness}\``), `llms.txt names the ${harness} harness`);
+  }
+  assert.match(markdown, /GET \/api\/v2\/threads\/\{threadId\}\/events\/stream` for SSE\. There are no Webhooks\./);
+  assert.match(markdown, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
+  for (const url of [
+    "https://mosoo.ai/docs/quickstart/",
+    "https://mosoo.ai/docs/api-reference-v2/",
+    "https://cloud.mosoo.ai/api/v2/openapi.json",
+    "https://cloud.mosoo.ai/api/v1/openapi.json",
+    "https://github.com/langgenius/mosoo",
+    "https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md",
+    "https://github.com/langgenius/mosoo/security",
+    "https://computer.mosoo.ai",
+    "https://mosoo.ai/en/use-cases/ghfind",
+    "https://mosoo.ai/docs/llms.txt",
+  ]) {
+    assert.ok(markdown.includes(`(${url})`), `llms.txt links ${url}`);
+  }
+  assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
+  assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
   assert.doesNotMatch(markdown, /<html/i);
 
   const head = await worker.fetch(
@@ -258,6 +359,18 @@ test("worker serves a product-wide llms.txt index", async () => {
   );
   assert.equal(head.status, 200);
   assert.equal(await head.text(), "");
+});
+
+test("llms.txt direct answers repeat the FAQ on the English home page", async () => {
+  const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
+  const markdown = await response.text();
+  const section = markdown.split("\n## Direct answers\n\n")[1]?.split("\n\n## ")[0] ?? "";
+
+  // llms.txt keeps ASCII apostrophes for plain-text readers; the page uses curly ones.
+  assert.deepEqual(
+    section.split("\n"),
+    homeFaq("en").map(({ q, a }) => `- ${q} ${a}`.replaceAll("’", "'")),
+  );
 });
 
 test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {
@@ -276,35 +389,52 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
     envFor({}),
   );
   const catalog = await catalogResponse.json();
-  const [entry] = catalog.linkset;
+  const [v2, v1] = catalog.linkset;
 
   assert.match(catalogResponse.headers.get("content-type"), /^application\/linkset\+json/);
-  assert.equal(entry.anchor, "https://cloud.mosoo.ai/api/v1");
-  assert.equal(entry["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
-  assert.equal(entry["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
-  assert.equal(entry.status[0].href, "https://cloud.mosoo.ai/api/health");
+  assert.equal(catalog.linkset.length, 2);
+  assert.equal(v2.anchor, "https://cloud.mosoo.ai/api/v2");
+  assert.equal(v2["service-desc"][0].href, "https://cloud.mosoo.ai/api/v2/openapi.json");
+  assert.equal(v2["service-doc"][0].href, "https://mosoo.ai/docs/api-reference-v2/");
+  assert.equal(v2.status[0].href, "https://cloud.mosoo.ai/api/health");
+  assert.equal(v1.anchor, "https://cloud.mosoo.ai/api/v1");
+  assert.equal(v1["service-desc"][0].href, "https://cloud.mosoo.ai/api/v1/openapi.json");
+  assert.equal(v1["service-doc"][0].href, "https://mosoo.ai/docs/api-reference/");
+  assert.equal(v1.status[0].href, "https://cloud.mosoo.ai/api/health");
 
   const authResponse = await worker.fetch(new Request("https://mosoo.ai/auth.md"), envFor({}));
   const auth = await authResponse.text();
 
+  // The same values cloud.mosoo.ai/.well-known/oauth-authorization-server
+  // publishes for agent auth (langgenius/mosoo apps/web/src/worker.ts).
   assert.equal(authResponse.headers.get("content-type"), "text/markdown; charset=utf-8");
   assert.match(auth, /^# .*auth\.md/m);
   assert.match(auth, /You are an agent/);
   assert.match(auth, /agentic registration/);
-  assert.match(auth, /issued by the Mosoo App owner out of band/);
-  assert.match(auth, /Supported registration method: Personal Access Token/);
-  assert.match(auth, /Credential provisioning endpoint \(human-operated\)/);
-  assert.match(auth, /register_uri/);
-  assert.match(auth, /identity_types_supported\`: \`anonymous\`/);
-  assert.match(auth, /credential_types_supported\`: \`mosoo_personal_access_token\`/);
-  assert.match(auth, /revocation_uri/);
+  assert.match(auth, /creates a Project API key in the console and gives it to you out of band/);
+  assert.match(auth, /Supported registration method: Project API key/);
+  assert.match(auth, /Credential provisioning page \(human-operated\)/);
+  assert.match(auth, /starts with `msp_` and is bound to one Project/);
+  assert.match(
+    auth,
+    /`register_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys \(open with GET; do not POST\)/,
+  );
+  assert.match(auth, /`claim_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys/);
+  assert.match(auth, /identity_types_supported`: `anonymous`/);
+  assert.match(auth, /credential_types_supported`: `mosoo_project_api_key`/);
+  assert.match(auth, /`revocation_uri`: https:\/\/cloud\.mosoo\.ai\/project-settings\/api-keys/);
   assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/login/);
-  assert.match(auth, /https:\/\/cloud\.mosoo\.ai\/settings\/access-tokens/);
-  assert.match(auth, /Authorization: Bearer mst_\.\.\./);
+  assert.match(auth, /Authorization: Bearer msp_\.\.\./);
+  assert.match(auth, /Legacy account tokens are rejected\./);
   assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-protected-resource/);
   assert.match(auth, /cloud\.mosoo\.ai\/\.well-known\/oauth-authorization-server/);
   assert.doesNotMatch(auth, /does not currently publish/);
-  assert.match(auth, /API base: https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.match(auth, /API base \(v2\): https:\/\/cloud\.mosoo\.ai\/api\/v2/);
+  assert.match(auth, /API base \(v1, wire-compatible\): https:\/\/cloud\.mosoo\.ai\/api\/v1/);
+  assert.doesNotMatch(auth, RETIRED_NARRATIVE);
+  assert.doesNotMatch(auth, /settings\/access-tokens/);
+  assert.doesNotMatch(auth, /\bMosoo\b(?! Computer)/);
+  assert.doesNotMatch(auth, /[—–]/);
 });
 
 test("worker permanently redirects HTTP requests to HTTPS before assets", async () => {

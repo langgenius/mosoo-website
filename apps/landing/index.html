@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mosoo — Open-Source Agent Runtime for Coding Agents</title>
+    <title>Open-source Agent runtime for application backends | mosoo</title>
     <meta
       name="description"
-      content="Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Open source, self-hostable, and built for coding agents."
+      content="mosoo is an open-source Agent runtime for app backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, with a sandbox per Session."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#f5f0e8" />
+    <meta name="theme-color" content="#f7f6f1" />
     <link rel="canonical" href="https://mosoo.ai/en" />
     <link rel="alternate" hreflang="en" href="https://mosoo.ai/en" />
     <link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh" />
@@ -20,10 +20,13 @@
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="mosoo" />
-    <meta property="og:title" content="mosoo — Open-Source Agent Runtime for Coding Agents" />
+    <meta
+      property="og:title"
+      content="An open-source, API-first managed Agent runtime for application backends"
+    />
     <meta
       property="og:description"
-      content="Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes."
+      content="Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi."
     />
     <meta property="og:url" content="https://mosoo.ai/en" />
     <meta property="og:image" content="https://mosoo.ai/brand/social-card-geist-20260917.png" />
@@ -33,193 +36,21 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@mosooagent" />
-    <meta name="twitter:title" content="mosoo — Open-Source Agent Runtime for Coding Agents" />
+    <meta
+      name="twitter:title"
+      content="An open-source, API-first managed Agent runtime for application backends"
+    />
     <meta
       name="twitter:description"
-      content="Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes."
+      content="Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi."
     />
     <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-geist-20260917.png" />
     <meta name="twitter:image:alt" content="mosoo open-source agent runtime" />
 
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": "https://mosoo.ai/#organization",
-            "name": "LangGenius",
-            "url": "https://github.com/langgenius",
-            "sameAs": ["https://github.com/langgenius"]
-          },
-          {
-            "@type": "SoftwareApplication",
-            "@id": "https://mosoo.ai/#software",
-            "name": "mosoo",
-            "alternateName": "mosoo AI",
-            "url": "https://mosoo.ai/en",
-            "applicationCategory": "DeveloperApplication",
-            "applicationSubCategory": "AI agent runtime",
-            "operatingSystem": "Web, Cloudflare Workers",
-            "description": "Open-source agent runtime and API for running coding agents in isolated sandboxes.",
-            "codeRepository": "https://github.com/langgenius/mosoo",
-            "license": "https://github.com/langgenius/mosoo/blob/main/LICENSE",
-            "publisher": { "@id": "https://mosoo.ai/#organization" },
-            "sameAs": [
-              "https://github.com/langgenius/mosoo",
-              "https://x.com/mosooagent"
-            ]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://mosoo.ai/#website",
-            "name": "mosoo",
-            "alternateName": "mosoo AI",
-            "url": "https://mosoo.ai/en",
-            "inLanguage": "en",
-            "publisher": { "@id": "https://mosoo.ai/#organization" },
-            "about": { "@id": "https://mosoo.ai/#software" }
-          },
-          {
-            "@type": "FAQPage",
-            "@id": "https://mosoo.ai/en#faq",
-            "url": "https://mosoo.ai/en",
-            "inLanguage": "en",
-            "isPartOf": { "@id": "https://mosoo.ai/#website" },
-            "about": { "@id": "https://mosoo.ai/#software" },
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": "What is mosoo?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Who is mosoo for?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "How does a product call a Mosoo Agent?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Is mosoo self-hostable?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane."
-                }
-              },
-              {
-                "@type": "Question",
-                "name": "Where can I verify Mosoo's source and API contract?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": "Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery."
-                }
-              }
-            ]
-          }
-        ]
-      }
-    </script>
+    <!-- mosoo:home-head (JSON-LD and fallback styles per locale, filled by scripts/landing-locales.mjs) -->
   </head>
   <body>
-    <div id="root">
-      <main
-        style="
-          min-height: 100vh;
-          box-sizing: border-box;
-          padding: 48px 24px;
-          font-family: Geist, Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-            sans-serif;
-          color: #1c2024;
-          background: #fbfbfc;
-        "
-      >
-        <nav
-          aria-label="Primary site links"
-          style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px"
-        >
-          <a href="https://cloud.mosoo.ai">Mosoo</a>
-          <a href="https://computer.mosoo.ai">Mosoo Computer</a>
-          <a href="/en/pricing">Pricing</a>
-          <a href="/en/use-cases">Use cases</a>
-          <a href="/health">Status</a>
-          <a href="https://mosoo.ai/docs/">Docs</a>
-          <a href="https://mosoo.ai/docs/quickstart/">Quickstart</a>
-          <a href="https://mosoo.ai/blog">Blog</a>
-          <a href="https://github.com/langgenius/mosoo/">GitHub</a>
-          <a href="https://cloud.mosoo.ai/login">Log in</a>
-        </nav>
-        <h1 style="max-width: 760px; margin: 0; font-size: 48px; line-height: 1.05">
-          mosoo — Open-Source Agent Runtime for Coding Agents
-        </h1>
-        <p style="max-width: 680px; margin: 24px 0 0; font-size: 18px; line-height: 1.6">
-          Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated
-          sandboxes. Open source, self-hostable, and built for coding agents.
-        </p>
-        <section
-          aria-label="Direct answers"
-          style="max-width: 760px; margin-top: 40px; font-size: 16px; line-height: 1.6"
-        >
-          <h2 style="margin: 0 0 16px; font-size: 24px; line-height: 1.2">Direct answers</h2>
-          <dl style="display: grid; gap: 16px; margin: 0">
-            <div>
-              <dt style="font-weight: 700">What is mosoo?</dt>
-              <dd style="margin: 4px 0 0">
-                mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.
-              </dd>
-            </div>
-            <div>
-              <dt style="font-weight: 700">Who is mosoo for?</dt>
-              <dd style="margin: 4px 0 0">
-                mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.
-              </dd>
-            </div>
-            <div>
-              <dt style="font-weight: 700">How does a product call a Mosoo Agent?</dt>
-              <dd style="margin: 4px 0 0">
-                A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.
-              </dd>
-            </div>
-            <div>
-              <dt style="font-weight: 700">Is mosoo self-hostable?</dt>
-              <dd style="margin: 4px 0 0">
-                Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane.
-              </dd>
-            </div>
-            <div>
-              <dt style="font-weight: 700">
-                Where can I verify Mosoo's source and API contract?
-              </dt>
-              <dd style="margin: 4px 0 0">
-                Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery.
-              </dd>
-            </div>
-          </dl>
-          <h2 style="margin: 32px 0 12px; font-size: 24px; line-height: 1.2">
-            Sources and verification
-          </h2>
-          <ul style="display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 0; padding-left: 20px">
-            <li><a href="https://github.com/langgenius/mosoo">GitHub source</a></li>
-            <li><a href="https://mosoo.ai/docs/api-reference/">API docs</a></li>
-            <li><a href="https://cloud.mosoo.ai/api/v1/openapi.json">OpenAPI 3.1</a></li>
-            <li><a href="https://mosoo.ai/llms.txt">llms.txt</a></li>
-          </ul>
-        </section>
-      </main>
-    </div>
+    <div id="root"><!-- mosoo:home-fallback (the full home page as static HTML per locale, filled by scripts/landing-locales.mjs; React replaces it on mount) --></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
