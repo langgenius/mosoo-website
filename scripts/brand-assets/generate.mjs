@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Generate the bamboo kit assets: halftone stage plate, footer landscape, pixel
-// plate, optional contour overlay and culm symbols. Pure Node (zlib only): no
-// dependencies, no network, no browser; the output is byte-for-byte deterministic.
+// plate and its optional accent overlay, optional contour overlay and culm
+// symbols. Pure Node (zlib only): no dependencies, no network, no browser; the
+// output is byte-for-byte deterministic.
 //
 //   node scripts/brand-assets/generate.mjs [--out <dir>] [--only plate-paper,landscape,plate-pixel,contours,symbols]
 //
@@ -29,7 +30,7 @@ mkdirSync(outDir, { recursive: true });
 // Inks. Paper itself is never painted: every raster is transparent where no ink falls.
 const INK = {
   sage: "#6d786a", // warm sage between landing --ink-300 #97a095 and --ink-400 #667065
-  lime: "#6fd305", // the mark's green; at most once per asset
+  lime: "#6fd305", // the mark's green: one ring in the footer landscape, and the pixel plate's optional overlay
   greys: ["#ebebeb", "#d6d6d6", "#b8b8b8"], // console ink-100 / 200 / 300, for the cool plate
 };
 
@@ -70,11 +71,10 @@ const jobs = {
     const tones = { mist: 0.3, far: 1 / levels, mid: 2 / levels, near: 1, leaf: 2 / levels };
     for (const [w, h, pixel] of [[2400, 1500, 8], [1200, 750, 6]]) {
       const { field, accent } = grovePlate({ width: w, height: h, tones, calm: 0, accentRing: true });
-      const index = pixelDither(field, { pixel, levels });
-      const lime = pixelDither(accent, { pixel, levels: 1, ordered: false });
-      for (let i = 0; i < index.length; i++) if (lime[i]) index[i] = levels + 1;
-      const palette = [[0, 0, 0, 0], ...INK.greys.map((g) => [...hexToRgb(g), 255]), [...hexToRgb(INK.lime), 255]];
-      write(`bamboo-plate-pixel-${w}.png`, encodeIndexedPng(w, h, index, palette));
+      const greys = [[0, 0, 0, 0], ...INK.greys.map((g) => [...hexToRgb(g), 255])];
+      write(`bamboo-plate-pixel-${w}.png`, encodeIndexedPng(w, h, pixelDither(field, { pixel, levels }), greys));
+      const ring = pixelDither(accent, { pixel, levels: 1, ordered: false });
+      write(`bamboo-plate-pixel-accent-${w}.png`, encodeIndexedPng(w, h, ring, [[0, 0, 0, 0], [...hexToRgb(INK.lime), 255]]));
     }
   },
   // Optional contour overlay for the stage plate (owner issue #98).
