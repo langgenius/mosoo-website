@@ -5,7 +5,16 @@
 // the sunken surface (#f4f4f4): keys info-fg 5.5:1, strings soil-fg, $VARS
 // warning-fg 5.4:1, punctuation and flags fg-3 4.7:1.
 
-export type TokenKind = "command" | "flag" | "key" | "literal" | "plain" | "punct" | "string" | "variable";
+export type TokenKind =
+  | "command"
+  | "flag"
+  | "key"
+  | "literal"
+  | "plain"
+  | "punct"
+  | "string"
+  | "url"
+  | "variable";
 
 export interface Token {
   kind: TokenKind;
@@ -20,6 +29,7 @@ export const TOKEN_CLASS: Record<TokenKind, string> = {
   plain: "",
   punct: "text-fg-3",
   string: "text-soil-fg",
+  url: "",
   variable: "text-warning-fg",
 };
 
@@ -72,7 +82,7 @@ export function highlightLine(line: string): Token[] {
 
     const url = /^https?:\/\/[^\s"']+/.exec(rest);
     if (url !== null) {
-      tokens.push(...splitVariables(url[0], "plain"));
+      tokens.push(...splitVariables(url[0], "url"));
       index += url[0].length;
       continue;
     }

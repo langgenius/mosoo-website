@@ -11,9 +11,9 @@
 // Code is set at --kit-code-size (default 1rem): match it to the page's body
 // size so code never reads smaller than prose. Lines wrap only at spaces and
 // after the "/" of a URL, with a hanging indent two characters past the
-// line's own; strings of up to 24 characters never break, and a longer token
-// that cannot fit (an ID on a phone) scrolls inside the block instead of
-// breaking. Copy copies the exact text.
+// line's own; no word breaks (not "openai-runtime", not an ID), and a word
+// that cannot fit (the nested file ID on a narrow phone) scrolls inside the
+// block instead. Copy copies the exact text.
 // Replay: the upload is sent and answered, then the create call.
 
 import { Fragment, useRef, useState } from "react";
@@ -42,7 +42,6 @@ const REPLAY_MS = 3600;
 // out, and its answer. Without the upload, the create call starts at 0.
 const AT = { createResponse: 2500, createSent: 1300, uploadResponse: 900 } as const;
 const CREATE_ONLY_RESPONSE = 1500;
-const UNBROKEN_STRING_MAX = 24;
 
 // A wrap opportunity after each "/" of a URL, so it breaks between path
 // segments; <wbr> adds no characters to the selection.
@@ -59,14 +58,24 @@ function withPathBreaks(text: string): ReactNode {
   ));
 }
 
-function TokenSpan({ token }: { token: Token }): ReactElement {
-  const isUrl = token.kind === "plain" && /^https?:\/\//.test(token.text);
-  const keepWhole =
-    (token.kind === "string" || token.kind === "key") && token.text.length <= UNBROKEN_STRING_MAX;
+// Words never break (not at a hyphen, not inside an ID); lines wrap only at
+// the spaces between them.
+function unbrokenWords(text: string): ReactNode {
+  return text.split(/(\s+)/).map((part, index) =>
+    part === "" || /^\s+$/.test(part) ? (
+      part
+    ) : (
+      <span key={index} className="whitespace-nowrap">
+        {part}
+      </span>
+    ),
+  );
+}
 
+function TokenSpan({ token }: { token: Token }): ReactElement {
   return (
-    <span className={cx(TOKEN_CLASS[token.kind], keepWhole ? "whitespace-nowrap" : null)}>
-      {isUrl ? withPathBreaks(token.text) : token.text}
+    <span className={TOKEN_CLASS[token.kind] || undefined}>
+      {token.kind === "url" ? withPathBreaks(token.text) : unbrokenWords(token.text)}
     </span>
   );
 }
@@ -81,10 +90,11 @@ function Tokens({ tokens }: { tokens: readonly Token[] }): ReactElement {
   );
 }
 
-// A trailing shell continuation (a space and a backslash) stays with its last word.
+// A trailing shell continuation (a space and a backslash) stays with the
+// line's last word, or a URL's last path segment.
 function Line({ line }: { line: string }): ReactElement {
   const tokens = highlightLine(line);
-  const cut = line.search(/\S+ \\$/);
+  const cut = line.search(/[^\s/]+ \\$/);
 
   if (cut <= 0) {
     return <Tokens tokens={tokens} />;
@@ -124,7 +134,7 @@ function hangingIndent(line: string): CSSProperties {
 
 function Code({ codeRef, text }: { codeRef?: (node: HTMLElement | null) => void; text: string }): ReactElement {
   return (
-    <pre className="text-fg-1 overflow-x-auto px-4 py-3 font-mono text-[length:var(--kit-code-size,1rem)] leading-[1.6]">
+    <pre className="text-fg-1 overflow-x-auto px-3 py-3 font-mono text-[length:var(--kit-code-size,1rem)] leading-[1.6] @sm:px-4">
       <code ref={codeRef}>
         {text.split("\n").map((line, index) => (
           <span key={index} className="block min-h-[1.6em] whitespace-pre-wrap" style={hangingIndent(line)}>
@@ -171,7 +181,7 @@ function CallPanel({
 
   return (
     <div className="border-border bg-sunken overflow-hidden rounded-lg border">
-      <div className="border-border-soft flex min-h-11 items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-4">
+      <div className="border-border-soft flex min-h-11 items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-3 @sm:pl-4">
         <span className="text-fg-2 text-[12.5px] font-medium">{label}</span>
         <Button
           aria-label={withSubject(locale, kitText(locale, "copyRequest"), label)}
@@ -191,7 +201,7 @@ function CallPanel({
         }}
         text={call.request}
       />
-      <div className="border-border-soft flex min-h-10 flex-wrap items-center gap-2 border-t px-4 py-1.5">
+      <div className="border-border-soft flex min-h-10 flex-wrap items-center gap-2 border-t px-3 py-1.5 @sm:px-4">
         <span className="text-fg-2 text-[12.5px] font-medium">{kitText(locale, "response")}</span>
         {responded ? (
           <Badge className={arriving ? "environment-row-enter" : undefined} variant="success">
