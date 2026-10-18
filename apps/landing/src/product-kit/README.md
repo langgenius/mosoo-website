@@ -46,7 +46,7 @@ When you integrate, add one line to `apps/landing/src/shared/styles/app.css`:
 @source not "../../product-kit";
 ```
 
-The website's own Tailwind build scans the whole app, so today it also emits global copies of the kit's utilities (about 2 KB gzip on every page, additions only). The island compiles everything it needs itself, so excluding the folder from the website build changes nothing in the kit.
+The website's own Tailwind build scans the whole app, so today it also emits global copies of the kit's utilities: `app.css` grows from 68.0 to 80.6 kB (12.8 to 14.9 kB gzip) on every page, additions only. With the line, the website build is byte-identical to one without the kit, and the moments render the same, because the island compiles everything it needs itself.
 
 ## Data
 
