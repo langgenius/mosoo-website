@@ -18,6 +18,12 @@
     url("/fonts/CabinetGrotesk-Variable.woff2") format("woff2-variations"),
     url("/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
 }
+/* Inter is only a fallback behind Geist and has no CJK glyphs. Without a
+   unicode-range, Chinese and Japanese text made the browser download it (about
+   344 KB) just to find that out, then fall through to the system font anyway.
+   The range below leaves out U+3000 and up (CJK punctuation, kana, ideographs,
+   Hangul) and the full-width forms, so /zh and /ja skip the download. Latin text
+   renders exactly as before. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -26,6 +32,7 @@
   src:
     url("/fonts/InterVariable.woff2") format("woff2-variations"),
     url("/fonts/InterVariable.woff2") format("woff2");
+  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
 }
 @font-face {
   font-family: "Inter";
@@ -35,6 +42,7 @@
   src:
     url("/fonts/InterVariable-Italic.woff2") format("woff2-variations"),
     url("/fonts/InterVariable-Italic.woff2") format("woff2");
+  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
 }
 @font-face {
   font-family: "Geist Mono";
