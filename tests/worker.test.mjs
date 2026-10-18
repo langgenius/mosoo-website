@@ -263,6 +263,45 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   assert.equal(declined.status, 307);
 });
 
+test("worker answers localized homepages with Markdown in their language", async () => {
+  const cases = [
+    { pathname: "/", language: "en", text: /^mosoo is an open-source, API-first managed Agent runtime/m },
+    { pathname: "/en", language: "en", text: /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects/ },
+    {
+      pathname: "/zh",
+      language: "zh-CN",
+      text: /^> mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。/m,
+      docs: "https://mosoo.ai/docs/zh-Hans/quickstart/",
+    },
+    {
+      pathname: "/ja",
+      language: "ja",
+      text: /^> mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。/m,
+      docs: "https://mosoo.ai/docs/ja/quickstart/",
+    },
+  ];
+
+  for (const entry of cases) {
+    const response = await worker.fetch(
+      new Request(`https://mosoo.ai${entry.pathname}`, { headers: { accept: "text/markdown" } }),
+      envFor({}),
+    );
+    const markdown = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("content-type"), "text/markdown; charset=utf-8");
+    assert.equal(response.headers.get("content-language"), entry.language);
+    assert.match(response.headers.get("vary"), /Accept/);
+    assert.match(markdown, /^# mosoo$/m);
+    assert.match(markdown, entry.text);
+    assert.match(markdown, /msp_/);
+    assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json/);
+    if (entry.docs) assert.ok(markdown.includes(entry.docs), `${entry.pathname} links ${entry.docs}`);
+    assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
+    assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+  }
+});
+
 test("worker serves a product-wide llms.txt index", async () => {
   const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
   const markdown = await response.text();

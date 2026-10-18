@@ -55,6 +55,51 @@ mosoo is an open-source, API-first managed Agent runtime for application backend
 - Documentation index: https://mosoo.ai/docs/llms.txt
 - Source: https://github.com/langgenius/mosoo
 `;
+// /zh and /ja answer Accept: text/markdown in their own language (copy deck 17).
+const HOMEPAGE_MARKDOWN_ZH = `# mosoo
+
+> mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。它用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。
+
+mosoo 目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。它以 Apache 2.0 许可证开源，由 LangGenius, Inc. 维护。
+
+- 鉴权：使用 Project API 密钥，\`Authorization: Bearer msp_...\`。密钥是绑定单个项目的后端密钥，只显示一次，只保存哈希，不要放进浏览器或移动端。
+- 启动 Session：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\`，使用 inline 配置（harness、provider、model、instructions），不会创建 Agent。保存返回的 \`thread.id\`。
+- runtime：\`openai-runtime\`（OpenAI Codex）、\`claude-agent-sdk\`（Claude Agent SDK）、\`acp-fallback\`（OpenCode）、\`pi\`（Pi）。
+- 继续：\`POST /api/v2/threads/{threadId}/events\`，1 分钟后或 7 天后语义相同。
+- 跟踪：读取已保存的事件历史，或通过 SSE 接收事件。没有 Webhook。
+- 文件：Agent 写到 \`outputs/\` 下的文件会成为可下载的产出物。
+- 用量：\`GET /api/v2/threads/{threadId}/usage\`，每次模型调用一条记录，金额是估算，不是账单。
+- BYOK：首次运行前，项目里需要有模型供应商密钥。mosoo 不提供模型。
+
+- API 快速开始：https://mosoo.ai/docs/zh-Hans/quickstart/
+- API 参考 v2：https://mosoo.ai/docs/zh-Hans/api-reference-v2/
+- OpenAPI 3.1（v2）：https://cloud.mosoo.ai/api/v2/openapi.json
+- 源码：https://github.com/langgenius/mosoo
+`;
+const HOMEPAGE_MARKDOWN_JA = `# mosoo
+
+> mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。
+
+mosoo は現在 Alpha 版で、公開 API や製品の動作は変わる可能性があります。Apache 2.0 ライセンスのオープンソースで、LangGenius, Inc. が管理しています。
+
+- 認証：Project API キーを使います（\`Authorization: Bearer msp_...\`）。キーは 1 つのプロジェクトに紐づくバックエンド用のシークレットで、表示は一度だけ、保存されるのはハッシュのみです。ブラウザやモバイルアプリには置かないでください。
+- Session の開始：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\` に inline 設定（harness、provider、model、instructions）を送ります。Agent は作成されません。返ってきた \`thread.id\` を保存してください。
+- runtime：\`openai-runtime\`（OpenAI Codex）、\`claude-agent-sdk\`（Claude Agent SDK）、\`acp-fallback\`（OpenCode）、\`pi\`（Pi）。
+- 続行：\`POST /api/v2/threads/{threadId}/events\`。1 分後でも 7 日後でも意味は同じです。
+- 追跡：保存済みのイベント履歴を読むか、SSE で受け取ります。Webhook はありません。
+- ファイル：Agent が \`outputs/\` に書き込んだファイルは、ダウンロードできる成果物になります。
+- 使用量：\`GET /api/v2/threads/{threadId}/usage\`。モデル呼び出しごとに 1 件の記録で、金額は推定値であり請求書ではありません。
+- BYOK：最初の実行の前に、プロジェクトにプロバイダーキーが必要です。mosoo はモデルを提供しません。
+
+- API クイックスタート：https://mosoo.ai/docs/ja/quickstart/
+- API リファレンス v2：https://mosoo.ai/docs/ja/api-reference-v2/
+- OpenAPI 3.1（v2）：https://cloud.mosoo.ai/api/v2/openapi.json
+- ソースコード：https://github.com/langgenius/mosoo
+`;
+const HOMEPAGE_MARKDOWN_BY_PATH = {
+  "/zh": { markdown: HOMEPAGE_MARKDOWN_ZH, language: "zh-CN" },
+  "/ja": { markdown: HOMEPAGE_MARKDOWN_JA, language: "ja" },
+};
 const LLMS_MARKDOWN = `# mosoo
 
 > mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.
@@ -365,9 +410,14 @@ function methodNotAllowed() {
   });
 }
 
-function homepageMarkdown(request) {
-  return new Response(request.method === "HEAD" ? null : HOMEPAGE_MARKDOWN, {
+function homepageMarkdown(request, pathname) {
+  const { markdown, language } = HOMEPAGE_MARKDOWN_BY_PATH[pathname] ?? {
+    markdown: HOMEPAGE_MARKDOWN,
+    language: "en",
+  };
+  return new Response(request.method === "HEAD" ? null : markdown, {
     headers: {
+      "content-language": language,
       "content-signal": CONTENT_SIGNAL,
       "content-type": "text/markdown; charset=utf-8",
       link: DISCOVERY_LINK_HEADER,
@@ -489,7 +539,7 @@ export default {
       acceptsMarkdown(request) &&
       (request.method === "GET" || request.method === "HEAD")
     ) {
-      return homepageMarkdown(request);
+      return homepageMarkdown(request, pathname);
     }
 
     if (pathname === "/") {
