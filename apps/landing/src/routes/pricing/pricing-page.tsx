@@ -6,15 +6,19 @@ import type { CSSProperties, ReactElement } from "react";
 import { cn } from "@/shared/lib/class-names";
 
 import { GithubMark } from "../login/github-mark";
-import { MOSOO_DEPLOY_URL, MOSOO_GITHUB_URL } from "../login/links";
+import { MOSOO_GITHUB_URL } from "../login/links";
 import { Reveal } from "../login/landing/motion";
 import { DISPLAY_FONT, sectionHeadingStyle } from "../login/landing/typography";
 import { t } from "./i18n";
 import { METERED_ITEMS, TIERS } from "./pricing-data";
 import type { Tier } from "./pricing-data";
 
-// Same scene as the landing's closing band, so the site ends on the one
-// signature motion moment in both places.
+// Only this page links the Cloudflare deploy flow, so the URL lives here rather
+// than in the shared link module every page loads.
+const MOSOO_DEPLOY_URL = `https://deploy.workers.cloudflare.com/?url=${MOSOO_GITHUB_URL}`;
+
+// The page closes on the Unicorn Studio light-beam scene the home page used to
+// end on.
 const BAND_SCENE_ID = "dyB6OzmnClK6iCdmrv2H";
 
 const PAGE_HEADLINE_STYLE = {

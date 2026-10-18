@@ -617,6 +617,29 @@ html:has(.landing-shell[data-theme="landing"]) {
   }
 }
 
+/* Home page product visual: the event rows of the example Session arrive one
+   after another, once, on load. Opacity only (transforms on table rows are not
+   reliable everywhere). Reduced motion renders the finished record at once. */
+@keyframes product-visual-row-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.product-visual-row {
+  animation: product-visual-row-in 260ms var(--ease-out) both;
+  animation-delay: calc(var(--row-index, 0) * 60ms + 180ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-visual-row {
+    animation: none;
+  }
+}
+
 @keyframes environment-row-enter {
   from {
     opacity: 0;

@@ -1,424 +1,722 @@
 import { locale } from "@/shared/locale";
 
+// Strings for the home page below the first screen: the supply-side wall,
+// features, how it works, the app/mosoo split, proof, limits, FAQ and the
+// final call to action. Copy source: v1 copy deck §4 to §11 and §18. The FAQ
+// questions and answers are the same strings the FAQPage JSON-LD and llms.txt
+// use, so humans and crawlers read identical answers; change them together.
 const ZH_MESSAGES = {
-  Pricing: "定价",
-  Status: "状态",
-  "Use cases": "用例",
-  Blog: "博客",
-  "API docs": "API 文档",
-  Changelog: "更新日志",
-  "mosoo on X": "mosoo 的 X 主页",
-  "mosoo on GitHub": "mosoo 的 GitHub 主页",
-  "Log in": "登录",
-  "Star on GitHub": "在 GitHub 上加 Star",
-  "Star mosoo on GitHub": "在 GitHub 上为 mosoo 加 Star",
-  "# deploy an agent from the CLI": "# 从 CLI 部署一个 Agent",
-  "1,284 docs": "1,284 篇文档",
-  ok: "成功",
-  Agents: "Agents",
-  "Support copilot": "客服助手",
-  "Contract reviewer": "合同审核员",
-  "IT helpdesk": "IT 服务台",
-  Live: "已上线",
-  Draft: "草稿",
-  "Deploy to Cloudflare": "部署到 Cloudflare",
-  "provisions Workers · D1 · R2 · KV, no infra to wire up":
-    "自动配置 Workers · D1 · R2 · KV，无需手动连接基础设施",
-  CLI: "CLI",
-  "Run it from the terminal": "从终端运行",
-  "Script the whole lifecycle. mosoo agents deploy and it's live: version, publish, roll back from CI.":
-    "用脚本覆盖完整生命周期。执行 mosoo agents deploy 即可上线：可在 CI 中完成版本管理、发布与回滚。",
-  "Web UI": "Web UI",
-  "Or click through the console": "也可在控制台中操作",
-  "Manage agents, files, credentials, and cost from a console you can operate, no terminal required.":
-    "在控制台中管理 Agents、文件、凭据与成本，无需终端。",
-  "Self-host": "自托管",
-  "Ship to your own Cloudflare": "部署到你自己的 Cloudflare",
-  "Workers, D1, R2, and KV provision themselves on your account, so prompts and traffic never leave your edge and there is nothing to invoice or operate but your own.":
-    "Workers、D1、R2 与 KV 会在你的账户中自动配置，因此 prompt 与流量不会离开你的 edge；你只需承担并运维自己的基础设施。",
-  "Manage everything from the CLI or the console.": "通过 CLI 或控制台管理一切。",
-  "Spin up, deploy, and run agents from the terminal or the web UI, and self-host the whole platform on your own Cloudflare in a single click.":
-    "从终端或 Web UI 启动、部署并运行 Agents，还可一键将整个平台自行托管到你的 Cloudflare。",
-  "Streaming + tool calls": "流式输出 + tool calls",
-  "Native resume": "原生恢复",
-  "MCP tools & permissions": "MCP tools 与权限",
-  "Session replay": "session 重放",
-  Available: "可用",
-  "Resolves one Provider credential at launch": "启动时解析一组 Provider 凭据",
-  "Normalized interface": "统一接口",
-  "One Agent. Any runtime.": "一个 Agent，任意 runtime。",
-  "A mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK or any driver: the runtime is a swappable harness, not a rewrite. Same interface, same session model, every time.":
-    "mosoo Agent 与 harness 解耦。只需配置一次，即可在 Claude Agent SDK 或任意 driver 上运行：runtime 是可替换的 harness，无需重写。每次都使用同一接口、同一 session 模型。",
-  "Agent runtimes": "Agent runtimes",
-  "Preview {runtime}": "预览 {runtime}",
-  "Agent sandbox": "Agent sandbox",
-  "claude-agent-sdk · ephemeral": "claude-agent-sdk · 临时",
-  mounted: "已挂载",
-  "▸ mounting sandbox 27fe1193af5a …": "▸ 正在挂载 sandbox 27fe1193af5a …",
-  "✓ sandbox ready in 0.4s · /workspace mounted":
-    "✓ sandbox 已就绪，用时 0.4s · /workspace 已挂载",
-  "▸ pulling runtime · Claude Agent SDK": "▸ 正在拉取 runtime · Claude Agent SDK",
-  "✓ runtime online · claude-opus-4.8 · streaming + tools":
-    "✓ runtime 已上线 · claude-opus-4.8 · 流式输出 + tools",
-  "▸ mounting session files · support-kb, runbooks (ro)":
-    "▸ 正在挂载 session 文件 · support-kb、runbooks（只读）",
-  "✓ 12 MCP tools · BYOK credentials resolved": "✓ 12 个 MCP tools · BYOK 凭据已解析",
-  "▸ booting agent · memory + context restored":
-    "▸ 正在启动 Agent · memory + context 已恢复",
-  "✓ support-agent live · full cloud agent ready":
-    "✓ support-agent 已上线 · 完整云端 Agent 已就绪",
-  "agent · support-agent": "Agent · support-agent",
-  "ephemeral sandbox": "临时 sandbox",
-  "No always-on agent cloud.": "无需常驻的 Agent 云。",
-  "mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn ends. No standing fleet to pay for or babysit: compute appears on demand, scoped to the session, and disappears.":
-    "Agent 开始运行时，mosoo 会立即挂载一个全新的 sandbox，并在本轮结束后销毁。无需为常驻集群付费或值守：算力按需出现，仅作用于当前 session，用完即消失。",
-  "Runs on Claude Code": "运行于 Claude Code",
-  "Pixel-art bamboo reaching into a bright sky": "伸向明亮天空的像素风竹林",
-  "Run exported Skill.md": "运行导出的 Skill.md",
-  "Grounded support": "有依据的客服支持",
-  "Legal redlines": "法务修订",
-  "Internal IT": "内部 IT",
-  "Reset my 2FA": "重置我的 2FA",
-  Connected: "已连接",
-  "Reuse as Skill.md": "复用为 Skill.md",
-  "Export the App to one Skill.md, then reuse it as a /skill inside Claude Code or any compatible CLI: no context-switching, no glue code.":
-    "将 App 导出为一个 Skill.md，再在 Claude Code 或任意兼容 CLI 中作为 /skill 复用：无需切换上下文，也无需胶水代码。",
-  "Call it over the API": "通过 API 调用",
-  "Every App-local Agent gets a typed HTTP endpoint. Wire it into your backend, a cron job, or another agent.":
-    "每个 App 内 Agent 都会获得带类型的 HTTP endpoint。可接入你的 backend、cron job 或另一个 Agent。",
-  "Live in your channels": "接入你的聊天 Channels",
-  "Connect Slack, Lark, Discord, Telegram, or WeChat. Your users talk to the agent without leaving chat.":
-    "连接 Slack、Lark、Discord、Telegram 或 WeChat。用户无需离开聊天即可与 Agent 对话。",
-  "Build one App.": "构建一个 App。",
-  "Invoke its agents anywhere.": "随处调用其中的 Agents。",
-  "Export the App for Skill.md reuse, expose an App-local Agent through a typed API, or bind that Agent to the chat tools your users already live in: one App, every surface.":
-    "将 App 导出以复用 Skill.md，通过带类型的 API 暴露 App 内 Agent，或把该 Agent 绑定到用户常用的聊天工具：一个 App，覆盖所有触点。",
-  "Total spend": "总支出",
-  Requests: "请求数",
-  Tokens: "Tokens",
-  "94% cache hit": "cache 命中率 94%",
-  "Active apps": "活跃 App",
-  "of 9": "共 9 个",
-  Jan: "1月",
-  Feb: "2月",
-  Mar: "3月",
-  Apr: "4月",
-  May: "5月",
-  Jun: "6月",
-  Production: "生产",
-  Debug: "调试",
-  Preview: "预览",
-  "Spend over time": "支出趋势",
-  "Production vs debug · last 6 months": "生产 vs. 调试 · 近 6 个月",
-  "Spend by model": "按模型查看支出",
-  "Where the budget goes": "预算去向",
-  "30 days": "30 天",
-  "Know the unit cost of every run.": "掌握每次 Run 的单位成本。",
-  "See exactly where spend goes: by app, by agent, by model. Roll cost up to an app or a run, compare against last period, and know the unit economics of every agent you ship.":
-    "准确查看支出流向：按 App、Agent 或模型拆分。可汇总到 App 或 Run，与上期对比，掌握每个已发布 Agent 的单位经济性。",
-  Breakdown: "明细",
-  "Pivot the same spend by app, agent, or model": "按 App、Agent 或模型切换查看同一笔支出",
-  "Export CSV": "导出 CSV",
-  "By Agent": "按 Agent",
-  "By App": "按 App",
-  "By Model": "按模型",
-  Agent: "Agent",
-  Owner: "负责人",
-  "Run mix": "Run 构成",
-  "vs. prev": "较上期",
-  Cost: "成本",
-  App: "App",
-  "Top agent": "主要 Agent",
-  "External · API-triggered": "外部 · API 触发",
-  Model: "模型",
-  Vendor: "厂商",
-  "Cache hit": "cache 命中率",
-  "Sales researcher": "销售研究助手",
-  "Onboarding bot": "入门引导机器人",
-  "Support Console": "客服控制台",
-  "Customer Ops": "客户运营",
-  "Contract Desk": "合同工作台",
-  "Legal Ops": "法务运营",
-  "IT Intake": "IT 工单入口",
-  "Internal Tools": "内部工具",
-  "Sales Research": "销售研究",
-  Revenue: "营收",
-  "Onboarding Hub": "入门中心",
-  "Frequently asked questions": "常见问题",
-  "What developers ask before they build on mosoo.": "开发者在基于 mosoo 构建前常问的问题。",
-  "What is mosoo?": "mosoo 是什么？",
-  "mosoo is an open-source agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable in your own Cloudflare account. mosoo is currently alpha.":
-    "mosoo 是面向 Coding Agent 的开源 Agent runtime 与 API。它在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode，在 Runs 之间持久保存 Threads 与文件，并可自行托管到你的 Cloudflare 账户。mosoo 目前处于 alpha 阶段。",
-  "Who is mosoo built for?": "mosoo 为谁而构建？",
-  "Developers extending OpenAI Codex, Claude Agent SDK, or OpenCode into products and automations who don't want to operate a separate agent runtime, sandbox service, session store, file pipeline, and Agent API for every integration.":
-    "面向把 OpenAI Codex、Claude Agent SDK 或 OpenCode 扩展到产品和自动化中的开发者；他们不想为每个集成都单独运维 Agent runtime、sandbox 服务、session 存储、文件管线和 Agent API。",
-  "Why a backend instead of just running Claude Code or Codex locally?":
-    "为什么需要 backend，而不只是本地运行 Claude Code 或 Codex？",
-  "For a one-off problem, a local agent or a single Skill is the right, minimal tool — no need to abstract anything. The moment you have to build, evaluate, deploy, and run agents for other people, concurrently and for longer, the tooling fragments and you end up gluing point solutions across the whole lifecycle. mosoo is the backend that covers that lifecycle, so you build the product instead of the plumbing.":
-    "解决一次性问题时，本地 Agent 或单个 Skill 就是正确且最小的工具，无需抽象。可一旦要为其他人构建、评测、部署并长期并发运行 Agents，工具链就会碎片化，最后不得不在整个生命周期中拼接各种点状方案。mosoo 覆盖这套生命周期，让你专注产品，而不是管道。",
-  "Where does my data live, and does mosoo support BYOK?":
-    "我的数据存在哪里？mosoo 支持 BYOK 吗？",
-  "mosoo is open source and self-hostable, so data, knowledge, and run history live in infrastructure you control. There's no mosoo-operated data plane you're forced to route through. It's BYOK: you bring your own model and provider keys, held at the production plane rather than scattered across individual machines and accounts.":
-    "mosoo 开源且可自行托管，因此数据、Knowledge 和运行历史都保存在你控制的基础设施中。不会强制经过 mosoo 运营的数据平面。它支持 BYOK：模型与 Provider keys 由你提供，并集中保存在生产平面，而不是散落在每台机器和各个账户里。",
-  "What happens to an agent once it moves off my laptop?": "Agent 离开我的电脑后会怎样？",
-  "A local agent only reproduces if the same files, session history, context, MCP tools, and Skills are available again. mosoo makes the agent, its Skills, and its Knowledge first-class App resources instead of fragments on a personal machine, so a run reproduces from the API rather than a copy of your disk. mosoo is alpha, so expect rough edges and breaking changes.":
-    "本地 Agent 只有在同样的文件、session 历史、context、MCP tools 和 Skills 再次可用时才能复现。mosoo 把 Agent、Skills 和 Knowledge 变成一等 App 资源，而不是个人电脑上的零散片段，因此可通过 API 复现 Run，而不是复制整块磁盘。mosoo 仍处于 alpha 阶段，请预期会有不完善之处和 breaking changes。",
-  "Which runtimes does mosoo support, and am I locked to one vendor?":
-    "mosoo 支持哪些 runtime？会被锁定到某个厂商吗？",
-  "In the current alpha the Claude Agent SDK, OpenAI runtime, and OpenCode fallback runtime are live, and every harness is normalized to the same interface: streaming, tool calls, native resume, MCP permissions, and session replay. OpenClaw, Hermes, and Gemini are on the roadmap. Because the runtime is a swappable harness, an agent is configured once and resolves a single provider credential at launch, so you can move between vendors without touching the agent definition.":
-    "当前 alpha 中，Claude Agent SDK、OpenAI runtime 和 OpenCode fallback runtime 已可用；每种 harness 都统一为同一接口：流式输出、tool calls、原生恢复、MCP 权限与 session 重放。OpenClaw、Hermes 和 Gemini 已列入 roadmap。runtime 是可替换的 harness，因此 Agent 只需配置一次，启动时解析单个 Provider 凭据；切换厂商无需改动 Agent 定义。",
-  "When should I use a deterministic workflow versus a general agent?":
-    "何时该用确定性工作流，何时该用通用 Agent？",
-  "Use a deterministic workflow when the steps are known and you want repeatability; use a general agent when the path is open-ended and you want it to reason its way through. mosoo's job is to run both behind one production and lifecycle API, rather than forcing every scenario into a single engine.":
-    "步骤已知且重视可重复性时，使用确定性工作流；路径开放、希望由它自行推理时，使用通用 Agent。mosoo 的职责是让两者共用一套生产与生命周期 API，而不是强迫所有场景使用同一种引擎。",
-  "What does the dashboard show me?": "Dashboard 会显示什么？",
-  "An App overview with agent lifecycle status, recent threads, provider keys, runtime dependencies, and App usage broken down by agent and model with token and cache details. These are shipping views, not mockups; deeper per-run failure diagnostics are still being filled in during alpha.":
-    "App 概览、Agent 生命周期状态、最近 Threads、Provider keys、runtime 依赖，以及按 Agent 和模型拆分的 App 用量（含 token 与 cache 明细）。这些是已上线页面，不是 mockup；更深入的单 Run 失败诊断仍在 alpha 阶段补全。",
-  "How do my users reach an agent once it's published?": "Agent 发布后，用户如何使用它？",
-  "Through whichever surface you bind to it: a typed HTTP API, a /skill in Claude Code, Web Threads, Slack, Lark, GitHub, or your own app. An agent is a managed endpoint inside an App, so you call it where your product already lives.":
-    "可通过你绑定的任意触点：带类型的 HTTP API、Claude Code 中的 /skill、Web Threads、Slack、Lark、GitHub 或你自己的 App。Agent 是 App 内受管理的 endpoint，因此可在产品原本所在的位置调用。",
-  "What does a developer configure when building an agent, and how do changes go live?":
-    "构建 Agent 时需要配置什么？改动如何上线？",
-  "You set the agent's runtime, attach Skills, connect Knowledge, bind Channels, and wire in API integrations, and changes accumulate in a Draft that only takes effect when you publish, so callers always reach a published version rather than in-progress edits. In the current alpha the builder binds existing Skills, MCP servers, and environments; first-class creation of those assets from inside the builder is still being filled in.":
-    "你需要设置 Agent 的 runtime、挂载 Skills、连接 Knowledge、绑定 Channels，并接入 API integrations。改动先累积在 Draft 中，只有发布后才生效，因此调用方始终访问已发布版本，而不是尚未完成的编辑。当前 alpha 中，builder 可绑定已有的 Skills、MCP servers 与 environments；直接在 builder 中创建这些资源的一等能力仍在补全。",
-  "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?":
-    "mosoo 与 Dify、n8n、OpenClaw、Claude Code 或自建方案有何不同？",
-  "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.":
-    "Dify 和 n8n 擅长确定性工作流；OpenClaw、Claude Code 和 Hermes 擅长通用 Agent runtime。mosoo 不替代它们，而是作为上层 backend，把两类方案都作为可部署服务运行，并代为处理版本管理、sandbox 与 App 用量，避免你自行重建整个平台层。",
-  "What's the license and cost, and is it production-ready?":
-    "许可证和成本如何？可以用于生产了吗？",
-  "mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.":
-    "mosoo 开源、可自行托管并支持 BYOK，因此自行运行无需按席位付费。它仍处于 alpha：开放 runtime 与生命周期 API 已可用，但请预期会有不完善之处和 breaking changes。inventory、deploy 与 channel 界面已按从少量 Agents 扩展到数千个 Agents 的目标设计。",
-  "Get started": "开始使用",
-  "Take root in your stack.": "扎根你的技术栈。",
-  "Log in to build on your agents, or star the repo and self-host in minutes.":
-    "登录以构建你的 Agents，或为 repo 加 Star，几分钟内完成自托管。",
-  "Take root, and grow a bamboo sea.": "扎下根，长成一片竹海。",
-  "Open-source agent runtime and API for coding agents.":
-    "面向 Coding Agent 的开源 Agent runtime 与 API。",
-  Products: "产品",
-  Resources: "资源",
-  Docs: "文档",
-  Releases: "版本发布",
-  License: "许可证",
-  Security: "安全",
-  "Self-hostable · BYOK": "可自行托管 · BYOK",
+  "Pick a runtime. Use your own model key.":
+    "选一个 runtime，用你自己的模型密钥。",
+  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
+    "4 个 runtime、下列模型供应商，或任何兼容 OpenAI 的 HTTPS 端点。mosoo 会在执行前检查 runtime、模型和协议是否匹配。",
+  "Runtimes":
+    "Runtime",
+  "Model providers (your keys)":
+    "模型供应商（使用你的密钥）",
+  "Model protocols":
+    "模型协议",
+  "Name":
+    "名称",
+  "API id":
+    "API id",
+  "All 4":
+    "全部 4 种",
+  "All 4 (text input)":
+    "全部 4 种（仅文本输入）",
+  "Anthropic Messages (Anthropic models)":
+    "Anthropic Messages（Anthropic 模型）",
+  "Custom OpenAI-compatible endpoint":
+    "自定义 OpenAI 兼容端点",
+  "Provider keys belong to your Project, and the provider bills your account directly.":
+    "模型供应商密钥属于你的项目，费用由供应商直接向你的账户收取。",
+  "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
+    "名称和标志仅用于标明兼容的服务，不代表合作或背书。",
+  "What mosoo runs for your backend":
+    "mosoo 为你的后端承担的工作",
+  "Each of these is a promise in the product spec. The spec is linked below.":
+    "下面每一项都是产品规格里的承诺，规格链接在下方。",
+  "Read the product spec":
+    "阅读产品规格",
+  "Start a Session without creating an Agent":
+    "无需创建 Agent，直接启动 Session",
+  "Put the harness, provider, model, and instructions in one request. mosoo starts a durable Session and creates no Agent.":
+    "在一个请求里写明 harness、模型供应商、模型和指令，mosoo 就会启动持久 Session，不会创建 Agent。",
+  "`configuration.type: \"inline\"` on `POST /api/v2/projects/{projectId}/threads`. Saved presets are optional.":
+    "在 `POST /api/v2/projects/{projectId}/threads` 中使用 `configuration.type: \"inline\"`。保存的 Agent 预设是可选项。",
+  "Choose the runtime per Session":
+    "每个 Session 单独选择 runtime",
+  "Run OpenAI Codex, Claude Agent SDK, OpenCode, or Pi. Each Session freezes its runtime, model, and protocol, and nothing falls back silently.":
+    "可选 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi。每个 Session 会固定自己的 runtime、模型和协议，不会悄悄回退。",
+  "A runtime and model protocol that don’t match are rejected before anything runs.":
+    "runtime 与模型协议不匹配时，会在执行前被拒绝。",
+  "Reply 1 minute or 7 days later":
+    "1 分钟后或 7 天后回复，都能接着做",
+  "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
+    "后续消息会在同一个 Session 里继续，即使 sandbox 已被回收。工作目录、对话和文件都会从最近一次检查点恢复。",
+  "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
+    "检查点无法恢复时，后续消息会明确报错。API Session 不会因闲置而过期。",
+  "A turn succeeds only when its results are saved":
+    "结果保存好，turn 才算成功",
+  "Completion means the events, usage, and a checkpoint were committed together. A failed or cancelled turn never overwrites the last good state.":
+    "完成意味着事件、用量和检查点已经一起提交。失败或取消的 turn 不会覆盖上一次成功的状态。",
+  "From the product spec: “Model or tool execution ending is not success.”":
+    "产品规格原文：“Model or tool execution ending is not success.”（模型或工具执行结束，不等于成功。）",
+  "Keys stay outside the sandbox":
+    "密钥留在 sandbox 之外",
+  "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
+    "模型供应商密钥和 MCP 凭据不会进入 sandbox。runtime 通过 mosoo 的代理访问模型和工具，代理在每次请求时注入凭据。",
+  "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
+    "sandbox 只拿到会过期的授权。环境变量则不同，sandbox 里的代码可以读取它们。",
+  "Attach files, stream events, download results":
+    "附件进，结果出，事件实时可见",
+  "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
+    "附件以只读方式挂载。Agent 写到 `outputs/` 下的文件会成为可下载的产出物。进度可以通过 SSE 实时查看，也可以读取已保存的历史。",
+  "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
+    "事件先保存再推送，稳定的 ID 让客户端重连时不会收到重复事件。mosoo 不提供 Webhook。",
+  "From one request to a finished report":
+    "从一个请求到一份完成的报告",
+  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
+    "假设你的后端需要一份调研报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告最后以文件的形式返回。",
+  "Add your model key.":
+    "添加模型密钥。",
+  "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
+    "在项目里添加模型供应商密钥，再创建 Project API 密钥。它以 `msp_` 开头，只显示一次。",
+  "your provider key":
+    "你的模型供应商密钥",
+  "a Project API key":
+    "Project API 密钥",
+  "Start a Session.":
+    "启动 Session。",
+  "Send one request with the harness, provider, model, instructions, input, and any files. Save the `thread.id` you get back.":
+    "发送一个请求，带上 harness、模型供应商、模型、指令、输入和可选文件。保存返回的 `thread.id`。",
+  "one request":
+    "一个请求",
+  "a `thread.id`":
+    "`thread.id`",
+  "mosoo runs the turn.":
+    "mosoo 执行这个 turn。",
+  "The harness writes code and runs tools in the Session’s own sandbox. Your keys stay outside it.":
+    "harness 在该 Session 自己的 sandbox 里写代码、运行工具。你的密钥始终在 sandbox 之外。",
+  "the turn":
+    "这个 turn",
+  "events, artifacts, usage, and a checkpoint":
+    "事件、产出物、用量和检查点",
+  "Follow, download, continue.":
+    "跟进、下载、继续。",
+  "Stream events over SSE, download files from `outputs/`, and read the usage of every model call. Reply to the same Thread whenever you’re ready.":
+    "通过 SSE 接收事件，下载 `outputs/` 里的文件，查看每次模型调用的用量。准备好后，再向同一个 Thread 发送后续消息。",
+  "a follow-up, now or days later":
+    "后续消息，现在或几天后都可以",
+  "the next turn in the same Session":
+    "同一个 Session 里的下一个 turn",
+  "In":
+    "输入",
+  "Out":
+    "输出",
+  "Start a Session":
+    "启动 Session",
+  "Copy request":
+    "复制请求",
+  "Request copied":
+    "请求已复制",
+  "Open the v2 API reference":
+    "查看 v2 API 参考",
+  "Model IDs change often. Check the models available in your Project before you copy this.":
+    "模型 ID 经常变化，复制前请先确认你的项目里有哪些可用模型。",
+  "Copy failed.":
+    "复制失败。",
+  "Your app keeps its users. mosoo runs the Agent.":
+    "你的应用管用户，mosoo 运行 Agent。",
+  "This split comes straight from the product spec.":
+    "这个分工直接来自产品规格。",
+  "Your app keeps":
+    "你的应用负责",
+  "mosoo runs":
+    "mosoo 负责",
+  "Business logic":
+    "业务逻辑",
+  "What the task is for and what happens to the result":
+    "任务为什么做，结果怎么用",
+  "End-user authentication":
+    "终端用户认证",
+  "mosoo never signs your users in":
+    "mosoo 不替你的用户登录",
+  "Business queues":
+    "业务队列",
+  "When work starts and in what order":
+    "什么时候开始、按什么顺序",
+  "Result validation":
+    "结果校验",
+  "You decide whether the report is right":
+    "报告对不对，由你判断",
+  "Business storage":
+    "业务存储",
+  "Keep the `thread.id` and whatever you extract":
+    "保存 `thread.id` 和你提取的结果",
+  "UI":
+    "界面",
+  "Your product, your screens":
+    "你的产品，你的页面",
+  "Agent execution":
+    "Agent 执行",
+  "The harness runs each turn: model calls, code, tools":
+    "harness 运行每个 turn：模型调用、代码、工具",
+  "Sandboxing":
+    "sandbox 隔离",
+  "One sandbox per Session, never shared":
+    "每个 Session 一个 sandbox，从不共享",
+  "Durable continuation":
+    "持久续接",
+  "Follow-ups restore the last checkpoint":
+    "后续消息从最近一次检查点恢复",
+  "Input files and artifacts":
+    "输入文件与产出物",
+  "Attachments in, `outputs/` out":
+    "附件进，`outputs/` 出",
+  "Events":
+    "事件",
+  "Saved first, then streamed over SSE":
+    "先保存，再通过 SSE 推送",
+  "Usage measurement":
+    "用量计量",
+  "One record per model call":
+    "每次模型调用一条记录",
+  "Runtime cleanup":
+    "运行时清理",
+  "Idle sandboxes are reclaimed; the Session’s state stays":
+    "闲置的 sandbox 会被回收，Session 的状态保留",
+  "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
+    "mosoo 不认证你的终端用户。如果你的 MCP 服务器需要知道是谁发起的请求，可以给 Thread 标上你自己的 `userId`。",
+  "What you can check for yourself":
+    "你可以亲自核实的内容",
+  "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
+    "mosoo 目前处于 Alpha 阶段。今天能核实的，是代码、版本发布、生产状态，以及两个基于它构建的项目。",
+  "Source":
+    "源码",
+  "Releases":
+    "版本发布",
+  "Production status":
+    "生产状态",
+  "Postmortems":
+    "事故复盘",
+  "The runtime, console, and API are Apache 2.0 on GitHub. The stack: Cloudflare Workers, Durable Objects, D1, R2, and Containers.":
+    "runtime、控制台和 API 以 Apache 2.0 许可证开源在 GitHub 上。技术栈：Cloudflare Workers、Durable Objects、D1、R2 和 Containers。",
+  "Latest: v0.7.0 (Alpha), October 9, 2026. v0.5.0 added Pi as the fourth runtime. v0.4.0 made Sessions startable without an Agent.":
+    "最新版本：v0.7.0（Alpha），2026 年 10 月 9 日。v0.5.0 加入了第 4 个 runtime：Pi。从 v0.4.0 起，无需 Agent 即可启动 Session。",
+  "mosoo.ai/health is built from production Worker outcomes and real Run completions. A runtime without production samples shows Unknown.":
+    "mosoo.ai/health 根据生产环境 Worker 的调用结果和真实的 Run 完成情况生成。没有生产样本的 runtime 显示为“未知”。",
+  "6 incident postmortems from July to September 2026 are in the repo. Newer incidents are tracked as GitHub issues.":
+    "仓库里有 6 篇事故复盘，时间从 2026 年 7 月到 9 月。之后的事故改在 GitHub issue 中跟踪。",
+  "View source":
+    "查看源码",
+  "View all releases":
+    "查看全部版本",
+  "Open the status page":
+    "打开状态页",
+  "Read the postmortems":
+    "阅读事故复盘",
+  "Latest":
+    "最新版本",
+  "Smaller codebase. The public Thread API v1 and v2 did not change.":
+    "代码库瘦身，公开 Thread API v1 和 v2 没有变化。",
+  "Custom providers declare a model protocol, and mismatched runtime and model pairs are rejected before a run.":
+    "自定义模型供应商需声明模型协议，runtime 与模型不匹配的组合会在运行前被拒绝。",
+  "Pi joins as the fourth runtime.":
+    "Pi 成为第 4 个 runtime。",
+  "Sessions start straight from a Project, with no Agent required.":
+    "可直接从项目启动 Session，无需 Agent。",
+  "Built by the mosoo team.":
+    "由 mosoo 团队构建。",
+  "An uploaded avatar comes back as a validated ZIP with all 9 Codex pet animation states. The backend calls mosoo through the Thread API, and the token never reaches the browser.":
+    "上传一张头像，返回一个通过校验的 ZIP，包含 Codex 宠物全部 9 种动画状态。后端通过 Thread API 调用 mosoo，令牌从不进入浏览器。",
+  "Built by AsperforMias.":
+    "由 AsperforMias 构建。",
+  "For each public GitHub repository, ghfind’s Go worker starts a Thread and turns the 3 artifacts the Agent saves (analysis JSON, evidence JSON, and a Markdown report) into its own result page.":
+    "针对每个公开的 GitHub 仓库，ghfind 的 Go worker 会启动一个 Thread，并把 Agent 保存的 3 个产出物（分析 JSON、证据 JSON 和一份 Markdown 报告）渲染成自己的结果页。",
+  "Read the Codex Pet use case":
+    "查看 Codex Pet 用例",
+  "Read the ghfind use case":
+    "查看 ghfind 用例",
+  "Open ghfind":
+    "打开 ghfind",
+  "See all use cases":
+    "查看全部用例",
+  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
+    "Codex Pet 应用把一张上传的头像变成 9 种动画状态。",
+  "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
+    "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
+  "What mosoo doesn’t do":
+    "mosoo 不做的事",
+  "The product spec lists these on purpose. Plan around them before you build.":
+    "这些是产品规格里明确写下的取舍。开始构建前，先把它们考虑进去。",
+  "Not included":
+    "不包含",
+  "Do this instead":
+    "可以这样做",
+  "Webhooks":
+    "Webhook",
+  "Stream events over SSE, or read the saved history.":
+    "通过 SSE 接收事件，或读取已保存的历史。",
+  "Interactive tool approvals":
+    "交互式工具审批",
+  "Agents run with full access inside the Session’s own sandbox.":
+    "Agent 在该 Session 自己的 sandbox 内以完全权限运行。",
+  "Models, credits, billing, or a spending cap":
+    "模型、充值、计费或花费上限",
+  "Use your own provider key. The provider bills you, and the usage API lists every model call.":
+    "使用你自己的模型供应商密钥。费用由供应商直接收取，用量 API 会列出每次模型调用。",
+  "Git mounting, private repository access, or branch and PR workflows":
+    "Git 挂载、私有仓库授权，以及分支和 PR 工作流",
+  "Pass a public URL with an exact commit, or upload the files.":
+    "传入公开 URL 和确切的 commit，或直接上传文件。",
+  "Your own runtimes, a connector marketplace, or local MCP servers":
+    "自带 runtime、连接器市场或本地 MCP 服务器",
+  "Pick one of the 4 runtimes and connect remote HTTPS MCP servers.":
+    "从 4 个 runtime 中选一个，并接入远程 HTTPS MCP 服务器。",
+  "An online file editor or file manager":
+    "在线文件编辑器或文件管理器",
+  "Upload inputs and download artifacts through the API.":
+    "通过 API 上传输入文件、下载产出物。",
+  "Chat channels or a personal cloud computer":
+    "聊天渠道或个人云端计算机",
+  "That’s Mosoo Computer, a separate product.":
+    "这属于另一款产品 Mosoo Computer。",
+  "Questions to ask before you build on mosoo":
+    "开始构建前值得问的问题",
+  "Start your first Session":
+    "启动你的第一个 Session",
+  "In the console":
+    "在控制台中",
+  "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.":
+    "用邮箱或 Google 登录。首次登录会自动创建默认项目。添加模型供应商密钥后，就可以启动 Session。",
+  "Try mosoo":
+    "试用 mosoo",
+  "In your coding agent":
+    "在编码智能体中",
+  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.":
+    "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你提供模型供应商密钥，因为这是它唯一无法替你创建的值。",
+  "Copy setup prompt":
+    "复制设置提示",
+  "Setup prompt copied":
+    "设置提示已复制",
+  "Copy failed. Select and copy the prompt above.":
+    "复制失败。请手动选择并复制上方提示。",
+  "Copy command":
+    "复制命令",
+  "Command copied":
+    "命令已复制",
+  "Read the install script":
+    "查看安装脚本",
+  "mosoo is in Alpha. Public APIs may still change.":
+    "mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。",
+  "What is mosoo?":
+    "mosoo 是什么？",
+  "mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha.":
+    "mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。它用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。你的后端发起任务、读取结果，执行、文件、事件和用量由 mosoo 负责。mosoo 目前处于 Alpha 阶段。",
+  "Do I need to create or publish an Agent first?":
+    "需要先创建或发布 Agent 吗？",
+  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers.":
+    "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，只有挂载技能或 MCP 服务器时才需要。",
+  "Which runtimes and models can I use?":
+    "可以用哪些 runtime 和模型？",
+  "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs.":
+    "共有 4 个 runtime：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。模型使用你自己的密钥，可选 Anthropic、OpenAI、DeepSeek、Gemini、Qwen、Kimi、Zhipu、MiniMax 和 OpenCode Zen，也可以接入自定义的 OpenAI 兼容 HTTPS 端点。每个 runtime 只接受特定的模型协议，不匹配的组合会在执行前被拒绝。",
+  "Who pays for model usage?":
+    "模型费用由谁支付？",
+  "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices.":
+    "由你直接支付。模型密钥属于你的项目，由模型供应商向你的账户计费。mosoo 不提供模型，也不设花费上限。用量 API 和用量页面显示实测的 token 数和估算成本，它们不是账单。",
+  "What happens when I reply hours or days later?":
+    "隔几小时或几天再回复，会怎样？",
+  "The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness’s native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can’t be restored, the follow-up fails with an error instead of starting empty.":
+    "回复会在同一个 Session 里继续。在一个 turn 完成 1 分钟后还是 7 天后回复，语义完全相同，即使 sandbox 已被回收也是如此，只是冷启动可能更慢。mosoo 会从最近一次提交的检查点恢复工作目录、harness 的原生对话、冻结的配置和已记录的产出物。运行中的进程不会保留。检查点无法恢复时，后续消息会明确报错，不会从空白状态开始。",
+  "Do my API keys enter the sandbox?":
+    "我的 API 密钥会进入 sandbox 吗？",
+  "No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo’s proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections.":
+    "不会。模型供应商密钥和 MCP 凭据留在 sandbox 之外，runtime 通过 mosoo 的代理访问模型和 MCP 服务器，代理在每次请求时注入凭据。环境变量则不同，sandbox 里的代码可以读取它们，所以模型密钥请放在模型供应商设置里，工具令牌请放在 MCP 连接里。",
+  "How do I follow progress and get results?":
+    "怎样跟踪进度、拿到结果？",
+  "Read the Thread’s status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks.":
+    "读取 Thread 的状态和已保存的事件历史，或者打开 SSE 流，它会先发送最新的已保存事件。稳定的事件 ID 让重连的客户端可以跳过已经收到的事件。Agent 写到 outputs/ 下的文件会成为可下载的产出物。mosoo 不提供 Webhook。",
+  "How long can a turn run?":
+    "一个 turn 最长能运行多久？",
+  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error.":
+    "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果没有空闲的 sandbox 容量，请求会立即以可重试的 runtime.capacity_exhausted 错误失败。",
+  "Can I retry a request without running the work twice?":
+    "重试请求会不会让任务执行两次？",
+  "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.":
+    "创建请求和后续消息都不会，前提是带上 Idempotency-Key 请求头。24 小时内，相同的 key 和请求体会返回原来的结果，不会产生新的执行；请求体变了则会被拒绝。幂等不保证外部工具的副作用只发生一次。",
+  "Is mosoo open source, and is it ready for production?":
+    "mosoo 开源吗？可以用于生产环境吗？",
+  "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
+    "mosoo 以 Apache 2.0 许可证开源，源码在 GitHub 上。它目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。/api/v1 保持线上兼容，无法兼容的改动会作为新的 API 版本发布。最快的试用方式是托管控制台 cloud.mosoo.ai。README 也说明了如何在本地运行，方便开发。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
-  Pricing: "料金",
-  Status: "稼働状況",
-  "Use cases": "ユースケース",
-  Blog: "ブログ",
-  "API docs": "API ドキュメント",
-  Changelog: "更新履歴",
-  "mosoo on X": "mosoo の X",
-  "mosoo on GitHub": "mosoo の GitHub",
-  "Log in": "ログイン",
-  "Star on GitHub": "GitHub で Star",
-  "Star mosoo on GitHub": "GitHub で mosoo に Star",
-  "# deploy an agent from the CLI": "# CLI から Agent をデプロイ",
-  "1,284 docs": "1,284 ドキュメント",
-  ok: "完了",
-  Agents: "Agents",
-  "Support copilot": "サポートアシスタント",
-  "Contract reviewer": "契約レビュアー",
-  "IT helpdesk": "IT ヘルプデスク",
-  Live: "公開中",
-  Draft: "下書き",
-  "Deploy to Cloudflare": "Cloudflare にデプロイ",
-  "provisions Workers · D1 · R2 · KV, no infra to wire up":
-    "Workers・D1・R2・KV を自動構成。インフラの接続作業は不要",
-  CLI: "CLI",
-  "Run it from the terminal": "ターミナルから実行",
-  "Script the whole lifecycle. mosoo agents deploy and it's live: version, publish, roll back from CI.":
-    "ライフサイクル全体をスクリプト化。mosoo agents deploy で公開し、CI からバージョン管理・リリース・ロールバックできます。",
-  "Web UI": "Web UI",
-  "Or click through the console": "コンソールから操作",
-  "Manage agents, files, credentials, and cost from a console you can operate, no terminal required.":
-    "ターミナルなしで、コンソールから Agents、ファイル、認証情報、コストを管理できます。",
-  "Self-host": "セルフホスト",
-  "Ship to your own Cloudflare": "自分の Cloudflare にデプロイ",
-  "Workers, D1, R2, and KV provision themselves on your account, so prompts and traffic never leave your edge and there is nothing to invoice or operate but your own.":
-    "Workers、D1、R2、KV は自分のアカウントへ自動構成され、prompt とトラフィックは edge の外へ出ません。費用も運用も自分の環境だけです。",
-  "Manage everything from the CLI or the console.": "CLI またはコンソールですべてを管理。",
-  "Spin up, deploy, and run agents from the terminal or the web UI, and self-host the whole platform on your own Cloudflare in a single click.":
-    "ターミナルまたは Web UI から Agents を起動・デプロイ・実行し、ワンクリックでプラットフォーム全体を自分の Cloudflare にセルフホストできます。",
-  "Streaming + tool calls": "ストリーミング + tool calls",
-  "Native resume": "ネイティブ再開",
-  "MCP tools & permissions": "MCP tools と権限",
-  "Session replay": "session リプレイ",
-  Available: "利用可能",
-  "Resolves one Provider credential at launch": "起動時に 1 つの Provider 認証情報を解決",
-  "Normalized interface": "正規化されたインターフェース",
-  "One Agent. Any runtime.": "1 つの Agent、どの runtime でも。",
-  "A mosoo agent is harness-neutral. Configure it once, then run it on the Claude Agent SDK or any driver: the runtime is a swappable harness, not a rewrite. Same interface, same session model, every time.":
-    "mosoo Agent は harness に依存しません。一度設定すれば、Claude Agent SDK や任意の driver で実行できます。runtime は交換可能な harness であり、書き直しではありません。常に同じインターフェース、同じ session モデルです。",
-  "Agent runtimes": "Agent runtimes",
-  "Preview {runtime}": "{runtime} をプレビュー",
-  "Agent sandbox": "Agent sandbox",
-  "claude-agent-sdk · ephemeral": "claude-agent-sdk · 一時",
-  mounted: "マウント済み",
-  "▸ mounting sandbox 27fe1193af5a …": "▸ sandbox 27fe1193af5a をマウント中 …",
-  "✓ sandbox ready in 0.4s · /workspace mounted":
-    "✓ sandbox 準備完了、0.4s · /workspace マウント済み",
-  "▸ pulling runtime · Claude Agent SDK": "▸ runtime を取得中 · Claude Agent SDK",
-  "✓ runtime online · claude-opus-4.8 · streaming + tools":
-    "✓ runtime 稼働中 · claude-opus-4.8 · ストリーミング + tools",
-  "▸ mounting session files · support-kb, runbooks (ro)":
-    "▸ session ファイルをマウント中 · support-kb、runbooks（読み取り専用）",
-  "✓ 12 MCP tools · BYOK credentials resolved": "✓ 12 MCP tools · BYOK 認証情報を解決済み",
-  "▸ booting agent · memory + context restored": "▸ Agent を起動中 · memory + context 復元済み",
-  "✓ support-agent live · full cloud agent ready":
-    "✓ support-agent 稼働中 · フルクラウド Agent 準備完了",
-  "agent · support-agent": "Agent · support-agent",
-  "ephemeral sandbox": "一時 sandbox",
-  "No always-on agent cloud.": "常時稼働の Agent クラウドは不要。",
-  "mosoo mounts a fresh sandbox the instant an agent runs, then tears it down when the turn ends. No standing fleet to pay for or babysit: compute appears on demand, scoped to the session, and disappears.":
-    "Agent の実行時に mosoo が新しい sandbox を即座にマウントし、ターン終了時に破棄します。常設 fleet の費用も保守も不要です。compute は session 単位で必要なときだけ現れ、使い終わると消えます。",
-  "Runs on Claude Code": "Claude Code で動作",
-  "Pixel-art bamboo reaching into a bright sky": "明るい空へ伸びるピクセルアートの竹",
-  "Run exported Skill.md": "エクスポートした Skill.md を実行",
-  "Grounded support": "根拠に基づくサポート",
-  "Legal redlines": "法務レッドライン",
-  "Internal IT": "社内 IT",
-  "Reset my 2FA": "2FA をリセットして",
-  Connected: "接続済み",
-  "Reuse as Skill.md": "Skill.md として再利用",
-  "Export the App to one Skill.md, then reuse it as a /skill inside Claude Code or any compatible CLI: no context-switching, no glue code.":
-    "App を 1 つの Skill.md としてエクスポートし、Claude Code または互換 CLI 内で /skill として再利用。コンテキスト切り替えもつなぎ込みコードも不要です。",
-  "Call it over the API": "API 経由で呼び出す",
-  "Every App-local Agent gets a typed HTTP endpoint. Wire it into your backend, a cron job, or another agent.":
-    "App 内の各 Agent に型付き HTTP endpoint が用意されます。backend、cron job、別の Agent に接続できます。",
-  "Live in your channels": "いつもの Channels で使う",
-  "Connect Slack, Lark, Discord, Telegram, or WeChat. Your users talk to the agent without leaving chat.":
-    "Slack、Lark、Discord、Telegram、WeChat に接続。ユーザーはチャットを離れずに Agent と会話できます。",
-  "Build one App.": "1 つの App を構築。",
-  "Invoke its agents anywhere.": "その Agents をどこからでも呼び出す。",
-  "Export the App for Skill.md reuse, expose an App-local Agent through a typed API, or bind that Agent to the chat tools your users already live in: one App, every surface.":
-    "App を Skill.md として再利用し、App 内 Agent を型付き API で公開するか、ユーザーが普段使うチャットツールへ接続できます。1 つの App で、あらゆる接点へ。",
-  "Total spend": "総支出",
-  Requests: "リクエスト",
-  Tokens: "Tokens",
-  "94% cache hit": "cache ヒット率 94%",
-  "Active apps": "アクティブ App",
-  "of 9": "全 9 App 中",
-  Jan: "1月",
-  Feb: "2月",
-  Mar: "3月",
-  Apr: "4月",
-  May: "5月",
-  Jun: "6月",
-  Production: "本番",
-  Debug: "デバッグ",
-  Preview: "プレビュー",
-  "Spend over time": "支出推移",
-  "Production vs debug · last 6 months": "本番 vs. デバッグ · 直近 6 か月",
-  "Spend by model": "モデル別支出",
-  "Where the budget goes": "予算の配分先",
-  "30 days": "30 日",
-  "Know the unit cost of every run.": "すべての Run の単価を把握。",
-  "See exactly where spend goes: by app, by agent, by model. Roll cost up to an app or a run, compare against last period, and know the unit economics of every agent you ship.":
-    "支出先を App、Agent、モデル別に正確に確認。コストを App や Run 単位で集計し、前期と比較して、公開するすべての Agent のユニットエコノミクスを把握できます。",
-  Breakdown: "内訳",
-  "Pivot the same spend by app, agent, or model": "同じ支出を App、Agent、モデル別に切り替え",
-  "Export CSV": "CSV をエクスポート",
-  "By Agent": "Agent 別",
-  "By App": "App 別",
-  "By Model": "モデル別",
-  Agent: "Agent",
-  Owner: "担当者",
-  "Run mix": "Run 構成",
-  "vs. prev": "前期比",
-  Cost: "コスト",
-  App: "App",
-  "Top agent": "トップ Agent",
-  "External · API-triggered": "外部・API トリガー",
-  Model: "モデル",
-  Vendor: "ベンダー",
-  "Cache hit": "cache ヒット率",
-  "Sales researcher": "セールスリサーチャー",
-  "Onboarding bot": "オンボーディング Bot",
-  "Support Console": "サポートコンソール",
-  "Customer Ops": "カスタマーオペレーション",
-  "Contract Desk": "契約デスク",
-  "Legal Ops": "法務オペレーション",
-  "IT Intake": "IT 受付",
-  "Internal Tools": "社内ツール",
-  "Sales Research": "セールスリサーチ",
-  Revenue: "売上",
-  "Onboarding Hub": "オンボーディングハブ",
-  "Frequently asked questions": "よくある質問",
-  "What developers ask before they build on mosoo.":
-    "mosoo で構築を始める前によく寄せられる質問です。",
-  "What is mosoo?": "mosoo とは？",
-  "mosoo is an open-source agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable in your own Cloudflare account. mosoo is currently alpha.":
-    "mosoo は Coding Agent 向けのオープンソース Agent runtime と API です。隔離された sandbox で OpenAI Codex、Claude Agent SDK、OpenCode を実行し、Runs をまたいで Threads とファイルを保持できます。自分の Cloudflare アカウントにセルフホスト可能です。mosoo は現在 alpha です。",
-  "Who is mosoo built for?": "mosoo は誰のためのものですか？",
-  "Developers extending OpenAI Codex, Claude Agent SDK, or OpenCode into products and automations who don't want to operate a separate agent runtime, sandbox service, session store, file pipeline, and Agent API for every integration.":
-    "OpenAI Codex、Claude Agent SDK、OpenCode を製品や自動化へ組み込みたい開発者向けです。integration ごとに Agent runtime、sandbox サービス、session ストア、ファイルパイプライン、Agent API を個別運用したくない人のために作られています。",
-  "Why a backend instead of just running Claude Code or Codex locally?":
-    "Claude Code や Codex をローカル実行するだけでなく、なぜ backend が必要ですか？",
-  "For a one-off problem, a local agent or a single Skill is the right, minimal tool — no need to abstract anything. The moment you have to build, evaluate, deploy, and run agents for other people, concurrently and for longer, the tooling fragments and you end up gluing point solutions across the whole lifecycle. mosoo is the backend that covers that lifecycle, so you build the product instead of the plumbing.":
-    "単発の課題なら、ローカル Agent や 1 つの Skill が正しく最小の手段で、抽象化は不要です。しかし他の人向けに Agents を構築・評価・デプロイし、並行かつ長時間動かす段階になると、ツールは分断され、ライフサイクル全体で個別の仕組みをつなぐことになります。mosoo がそのライフサイクルを担うため、配管ではなく製品に集中できます。",
-  "Where does my data live, and does mosoo support BYOK?":
-    "データはどこに保存されますか？mosoo は BYOK に対応していますか？",
-  "mosoo is open source and self-hostable, so data, knowledge, and run history live in infrastructure you control. There's no mosoo-operated data plane you're forced to route through. It's BYOK: you bring your own model and provider keys, held at the production plane rather than scattered across individual machines and accounts.":
-    "mosoo はオープンソースでセルフホスト可能なため、データ、Knowledge、実行履歴は自分が管理するインフラに保存されます。mosoo 運営のデータプレーンを強制的に経由することはありません。BYOK に対応し、モデルと Provider keys は各マシンやアカウントへ分散させず、本番プレーンで管理できます。",
-  "What happens to an agent once it moves off my laptop?":
-    "Agent が自分の laptop を離れたらどうなりますか？",
-  "A local agent only reproduces if the same files, session history, context, MCP tools, and Skills are available again. mosoo makes the agent, its Skills, and its Knowledge first-class App resources instead of fragments on a personal machine, so a run reproduces from the API rather than a copy of your disk. mosoo is alpha, so expect rough edges and breaking changes.":
-    "ローカル Agent を再現するには、同じファイル、session 履歴、context、MCP tools、Skills が必要です。mosoo は Agent、Skills、Knowledge を個人マシン上の断片ではなく、第一級の App リソースとして扱います。そのため、ディスクのコピーではなく API から Run を再現できます。mosoo は alpha のため、粗い部分や breaking changes があります。",
-  "Which runtimes does mosoo support, and am I locked to one vendor?":
-    "mosoo はどの runtime に対応していますか？特定ベンダーにロックインされますか？",
-  "In the current alpha the Claude Agent SDK, OpenAI runtime, and OpenCode fallback runtime are live, and every harness is normalized to the same interface: streaming, tool calls, native resume, MCP permissions, and session replay. OpenClaw, Hermes, and Gemini are on the roadmap. Because the runtime is a swappable harness, an agent is configured once and resolves a single provider credential at launch, so you can move between vendors without touching the agent definition.":
-    "現在の alpha では Claude Agent SDK、OpenAI runtime、OpenCode fallback runtime が利用可能です。すべての harness は、ストリーミング、tool calls、ネイティブ再開、MCP 権限、session リプレイという同じインターフェースに正規化されています。OpenClaw、Hermes、Gemini は roadmap にあります。runtime は交換可能な harness なので、Agent は一度設定するだけで、起動時に 1 つの Provider 認証情報を解決します。Agent 定義を変えずにベンダーを移行できます。",
-  "When should I use a deterministic workflow versus a general agent?":
-    "決定論的 workflow と汎用 Agent はどう使い分けますか？",
-  "Use a deterministic workflow when the steps are known and you want repeatability; use a general agent when the path is open-ended and you want it to reason its way through. mosoo's job is to run both behind one production and lifecycle API, rather than forcing every scenario into a single engine.":
-    "手順が既知で再現性を重視するなら決定論的 workflow、経路がオープンで推論させたいなら汎用 Agent を使います。mosoo はすべてを 1 つの engine に押し込めず、両方を同じ本番・ライフサイクル API の背後で実行します。",
-  "What does the dashboard show me?": "Dashboard では何を確認できますか？",
-  "An App overview with agent lifecycle status, recent threads, provider keys, runtime dependencies, and App usage broken down by agent and model with token and cache details. These are shipping views, not mockups; deeper per-run failure diagnostics are still being filled in during alpha.":
-    "App の概要、Agent のライフサイクル状態、最近の Threads、Provider keys、runtime 依存関係、Agent・モデル別の App 使用量と token・cache の詳細を確認できます。これらは mockup ではなく提供中の画面です。Run ごとの詳細な失敗診断は alpha 期間中に拡充しています。",
-  "How do my users reach an agent once it's published?":
-    "公開後、ユーザーはどうやって Agent を利用しますか？",
-  "Through whichever surface you bind to it: a typed HTTP API, a /skill in Claude Code, Web Threads, Slack, Lark, GitHub, or your own app. An agent is a managed endpoint inside an App, so you call it where your product already lives.":
-    "型付き HTTP API、Claude Code 内の /skill、Web Threads、Slack、Lark、GitHub、自分の App など、接続した任意の接点から利用できます。Agent は App 内の管理された endpoint なので、製品が既に存在する場所から呼び出せます。",
-  "What does a developer configure when building an agent, and how do changes go live?":
-    "Agent の構築時に何を設定し、変更はどう公開されますか？",
-  "You set the agent's runtime, attach Skills, connect Knowledge, bind Channels, and wire in API integrations, and changes accumulate in a Draft that only takes effect when you publish, so callers always reach a published version rather than in-progress edits. In the current alpha the builder binds existing Skills, MCP servers, and environments; first-class creation of those assets from inside the builder is still being filled in.":
-    "Agent の runtime を設定し、Skills を追加し、Knowledge を接続し、Channels と API integrations を構成します。変更は Draft に蓄積され、公開時にのみ反映されるため、呼び出し側は編集中ではなく常に公開済みバージョンへ到達します。現在の alpha では既存の Skills、MCP servers、environments を builder から接続できますが、builder 内で直接作成する第一級機能は拡充中です。",
-  "How is mosoo different from Dify, n8n, OpenClaw, Claude Code, or building this in-house?":
-    "mosoo は Dify、n8n、OpenClaw、Claude Code、自社構築と何が違いますか？",
-  "Dify and n8n are strong at deterministic workflows; OpenClaw, Claude Code, and Hermes are strong as general agent runtimes. mosoo doesn't replace them. It sits above them as the backend that runs both kinds as deployable services with versioning, sandboxing, and App usage handled for you instead of you rebuilding that plane yourself.":
-    "Dify と n8n は決定論的 workflow、OpenClaw、Claude Code、Hermes は汎用 Agent runtime に強みがあります。mosoo はそれらを置き換えません。上位の backend として両方をデプロイ可能なサービスとして実行し、バージョン管理、sandbox、App 使用量を担うため、その基盤を自分で再構築する必要がありません。",
-  "What's the license and cost, and is it production-ready?":
-    "ライセンスとコストは？本番利用できますか？",
-  "mosoo is open source, self-hostable, and BYOK, so there's no per-seat fee for running it yourself. It's alpha: the open runtime and lifecycle API work today, but expect rough edges and breaking changes, with the inventory, deploy, and channel surfaces designed to scale from a handful of agents to thousands.":
-    "mosoo はオープンソースでセルフホスト可能、BYOK 対応のため、自分で実行する場合の席数課金はありません。現在は alpha です。オープンな runtime とライフサイクル API は利用できますが、粗い部分や breaking changes があります。inventory、deploy、channel の各画面は、少数から数千の Agents まで拡張できるよう設計されています。",
-  "Get started": "はじめる",
-  "Take root in your stack.": "あなたのスタックに根を張ろう。",
-  "Log in to build on your agents, or star the repo and self-host in minutes.":
-    "ログインして Agents を構築するか、repo に Star を付けて数分でセルフホストできます。",
-  "Take root, and grow a bamboo sea.": "根を張り、竹の海を育てよう。",
-  "Open-source agent runtime and API for coding agents.":
-    "Coding Agent 向けのオープンソース Agent runtime と API。",
-  Products: "プロダクト",
-  Resources: "リソース",
-  Docs: "ドキュメント",
-  Releases: "リリース",
-  License: "ライセンス",
-  Security: "セキュリティ",
-  "Self-hostable · BYOK": "セルフホスト可能 · BYOK",
+  "Pick a runtime. Use your own model key.":
+    "runtime を選び、自分のモデルキーを使う",
+  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
+    "4 つの runtime、以下のプロバイダー、そして OpenAI 互換の任意の HTTPS エンドポイントに対応します。mosoo は実行前に runtime、モデル、プロトコルの組み合わせを確認します。",
+  "Runtimes":
+    "runtime",
+  "Model providers (your keys)":
+    "モデルプロバイダー（ご自身のキー）",
+  "Model protocols":
+    "モデルプロトコル",
+  "Name":
+    "名前",
+  "API id":
+    "API id",
+  "All 4":
+    "4 種類すべて",
+  "All 4 (text input)":
+    "4 種類すべて（テキスト入力のみ）",
+  "Anthropic Messages (Anthropic models)":
+    "Anthropic Messages（Anthropic のモデル）",
+  "Custom OpenAI-compatible endpoint":
+    "OpenAI 互換のカスタムエンドポイント",
+  "Provider keys belong to your Project, and the provider bills your account directly.":
+    "プロバイダーキーはプロジェクトに属し、料金はプロバイダーからお客様のアカウントに直接請求されます。",
+  "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
+    "名称とロゴは互換性のあるサービスを示すもので、提携や推奨を意味するものではありません。",
+  "What mosoo runs for your backend":
+    "mosoo がバックエンドの代わりに担うこと",
+  "Each of these is a promise in the product spec. The spec is linked below.":
+    "どれも製品仕様に書かれた約束です。仕様へのリンクは下にあります。",
+  "Read the product spec":
+    "製品仕様を読む",
+  "Start a Session without creating an Agent":
+    "Agent を作らずに Session を開始",
+  "Put the harness, provider, model, and instructions in one request. mosoo starts a durable Session and creates no Agent.":
+    "1 つのリクエストに harness、プロバイダー、モデル、指示を書くだけで、mosoo は永続的な Session を開始します。Agent は作成されません。",
+  "`configuration.type: \"inline\"` on `POST /api/v2/projects/{projectId}/threads`. Saved presets are optional.":
+    "`POST /api/v2/projects/{projectId}/threads` で `configuration.type: \"inline\"` を指定します。保存済みプリセットは任意です。",
+  "Choose the runtime per Session":
+    "runtime は Session ごとに選べる",
+  "Run OpenAI Codex, Claude Agent SDK, OpenCode, or Pi. Each Session freezes its runtime, model, and protocol, and nothing falls back silently.":
+    "OpenAI Codex、Claude Agent SDK、OpenCode、Pi から選べます。各 Session は runtime、モデル、プロトコルを固定し、黙って別のものに切り替わることはありません。",
+  "A runtime and model protocol that don’t match are rejected before anything runs.":
+    "runtime とモデルプロトコルが合わない組み合わせは、実行前に拒否されます。",
+  "Reply 1 minute or 7 days later":
+    "1 分後でも 7 日後でも続きから",
+  "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
+    "フォローアップは、sandbox が回収された後でも同じ Session で続きます。作業ディレクトリ、会話、ファイルは最後のチェックポイントから戻ります。",
+  "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
+    "チェックポイントを復元できない場合はエラーになります。API の Session は放置しても期限切れになりません。",
+  "A turn succeeds only when its results are saved":
+    "結果が保存されて初めて turn は成功",
+  "Completion means the events, usage, and a checkpoint were committed together. A failed or cancelled turn never overwrites the last good state.":
+    "完了とは、イベント、使用量、チェックポイントがまとめてコミットされたことを意味します。失敗やキャンセルした turn が、直前の正常な状態を上書きすることはありません。",
+  "From the product spec: “Model or tool execution ending is not success.”":
+    "製品仕様の原文：“Model or tool execution ending is not success.”（モデルやツールの実行が終わっただけでは成功ではない）",
+  "Keys stay outside the sandbox":
+    "キーは sandbox の外に",
+  "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
+    "プロバイダーキーと MCP の認証情報は sandbox に入りません。runtime は mosoo のプロキシ経由でモデルやツールにアクセスし、認証情報はプロキシがリクエストごとに付与します。",
+  "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
+    "sandbox が受け取るのは期限付きの権限だけです。環境変数は例外で、sandbox 内のコードから読み取れます。",
+  "Attach files, stream events, download results":
+    "ファイルを渡し、イベントを追い、結果を受け取る",
+  "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
+    "添付ファイルは読み取り専用でマウントされます。Agent が `outputs/` に書き込んだものは、ダウンロードできる成果物になります。進捗は SSE でも保存済みの履歴でも確認できます。",
+  "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
+    "イベントは保存してから送信され、安定した ID によって再接続しても重複しません。Webhook はありません。",
+  "From one request to a finished report":
+    "1 つのリクエストから、完成したレポートまで",
+  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
+    "たとえば、バックエンドで調査レポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートはファイルとして返ってきます。",
+  "Add your model key.":
+    "モデルのキーを追加する。",
+  "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
+    "プロジェクトにプロバイダーキーを追加し、Project API キーを作成します。キーは `msp_` で始まり、表示されるのは一度だけです。",
+  "your provider key":
+    "プロバイダーキー",
+  "a Project API key":
+    "Project API キー",
+  "Start a Session.":
+    "Session を開始する。",
+  "Send one request with the harness, provider, model, instructions, input, and any files. Save the `thread.id` you get back.":
+    "harness、プロバイダー、モデル、指示、入力、必要なファイルを 1 つのリクエストで送ります。返ってきた `thread.id` を保存してください。",
+  "one request":
+    "1 つのリクエスト",
+  "a `thread.id`":
+    "`thread.id`",
+  "mosoo runs the turn.":
+    "mosoo が turn を実行する。",
+  "The harness writes code and runs tools in the Session’s own sandbox. Your keys stay outside it.":
+    "harness がその Session 専用の sandbox でコードを書き、ツールを実行します。キーは sandbox の外に置かれたままです。",
+  "the turn":
+    "turn",
+  "events, artifacts, usage, and a checkpoint":
+    "イベント、成果物、使用量、チェックポイント",
+  "Follow, download, continue.":
+    "追跡し、ダウンロードし、続ける。",
+  "Stream events over SSE, download files from `outputs/`, and read the usage of every model call. Reply to the same Thread whenever you’re ready.":
+    "SSE でイベントを受け取り、`outputs/` のファイルをダウンロードし、モデル呼び出しごとの使用量を確認します。準備ができたら、同じ Thread にフォローアップを送ります。",
+  "a follow-up, now or days later":
+    "今すぐ、または数日後のフォローアップ",
+  "the next turn in the same Session":
+    "同じ Session での次の turn",
+  "In":
+    "入力",
+  "Out":
+    "出力",
+  "Start a Session":
+    "Session を開始",
+  "Copy request":
+    "リクエストをコピー",
+  "Request copied":
+    "リクエストをコピーしました",
+  "Open the v2 API reference":
+    "v2 API リファレンスを開く",
+  "Model IDs change often. Check the models available in your Project before you copy this.":
+    "モデル ID はよく変わります。コピーする前に、プロジェクトで使えるモデルを確認してください。",
+  "Copy failed.":
+    "コピーに失敗しました。",
+  "Your app keeps its users. mosoo runs the Agent.":
+    "ユーザーはアプリが持ち、Agent は mosoo が動かす",
+  "This split comes straight from the product spec.":
+    "この役割分担は、製品仕様そのままです。",
+  "Your app keeps":
+    "アプリが担うこと",
+  "mosoo runs":
+    "mosoo が担うこと",
+  "Business logic":
+    "ビジネスロジック",
+  "What the task is for and what happens to the result":
+    "タスクの目的と、結果の使い道",
+  "End-user authentication":
+    "エンドユーザー認証",
+  "mosoo never signs your users in":
+    "mosoo がユーザーをログインさせることはありません",
+  "Business queues":
+    "業務キュー",
+  "When work starts and in what order":
+    "いつ、どの順で始めるか",
+  "Result validation":
+    "結果の検証",
+  "You decide whether the report is right":
+    "レポートが正しいかを判断する",
+  "Business storage":
+    "業務データの保存",
+  "Keep the `thread.id` and whatever you extract":
+    "`thread.id` と抽出した結果を保存する",
+  "UI":
+    "UI",
+  "Your product, your screens":
+    "あなたのプロダクトの画面",
+  "Agent execution":
+    "Agent の実行",
+  "The harness runs each turn: model calls, code, tools":
+    "harness が turn ごとにモデル呼び出し、コード、ツールを実行",
+  "Sandboxing":
+    "sandbox による分離",
+  "One sandbox per Session, never shared":
+    "Session ごとに 1 つ、共有しない",
+  "Durable continuation":
+    "永続的な継続",
+  "Follow-ups restore the last checkpoint":
+    "フォローアップは最後のチェックポイントから復元",
+  "Input files and artifacts":
+    "入力ファイルと成果物",
+  "Attachments in, `outputs/` out":
+    "添付ファイルを受け取り、`outputs/` を返す",
+  "Events":
+    "イベント",
+  "Saved first, then streamed over SSE":
+    "保存してから SSE で配信",
+  "Usage measurement":
+    "使用量の計測",
+  "One record per model call":
+    "モデル呼び出しごとに 1 件",
+  "Runtime cleanup":
+    "runtime の後片付け",
+  "Idle sandboxes are reclaimed; the Session’s state stays":
+    "アイドルの sandbox は回収し、Session の状態は残す",
+  "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
+    "mosoo はエンドユーザーを認証しません。MCP サーバーが依頼者を知る必要がある場合は、Thread に独自の `userId` を付けてください。",
+  "What you can check for yourself":
+    "自分で確かめられること",
+  "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
+    "mosoo は現在 Alpha 版です。今確かめられるのは、コード、リリース、本番環境のステータス、そして mosoo で作られた 2 つのプロジェクトです。",
+  "Source":
+    "ソースコード",
+  "Releases":
+    "リリース",
+  "Production status":
+    "本番環境のステータス",
+  "Postmortems":
+    "事後分析",
+  "The runtime, console, and API are Apache 2.0 on GitHub. The stack: Cloudflare Workers, Durable Objects, D1, R2, and Containers.":
+    "runtime、コンソール、API は Apache 2.0 ライセンスで GitHub に公開されています。技術スタックは Cloudflare Workers、Durable Objects、D1、R2、Containers です。",
+  "Latest: v0.7.0 (Alpha), October 9, 2026. v0.5.0 added Pi as the fourth runtime. v0.4.0 made Sessions startable without an Agent.":
+    "最新は v0.7.0（Alpha）、2026 年 10 月 9 日。v0.5.0 で 4 つ目の runtime として Pi が加わりました。v0.4.0 からは Agent なしで Session を開始できます。",
+  "mosoo.ai/health is built from production Worker outcomes and real Run completions. A runtime without production samples shows Unknown.":
+    "mosoo.ai/health は、本番環境の Worker の呼び出し結果と、実際の Run の完了状況から作られています。本番環境のサンプルがない runtime は「不明」と表示されます。",
+  "6 incident postmortems from July to September 2026 are in the repo. Newer incidents are tracked as GitHub issues.":
+    "2026 年 7 月から 9 月までの 6 件のインシデント事後分析がリポジトリにあります。それ以降のインシデントは GitHub issue で管理しています。",
+  "View source":
+    "ソースコードを見る",
+  "View all releases":
+    "すべてのリリースを見る",
+  "Open the status page":
+    "ステータスページを開く",
+  "Read the postmortems":
+    "事後分析を読む",
+  "Latest":
+    "最新",
+  "Smaller codebase. The public Thread API v1 and v2 did not change.":
+    "コードベースを整理。公開 Thread API の v1 と v2 は変わっていません。",
+  "Custom providers declare a model protocol, and mismatched runtime and model pairs are rejected before a run.":
+    "カスタムプロバイダーはモデルプロトコルを宣言し、合わない runtime とモデルの組み合わせは実行前に拒否されます。",
+  "Pi joins as the fourth runtime.":
+    "4 つ目の runtime として Pi が加わりました。",
+  "Sessions start straight from a Project, with no Agent required.":
+    "プロジェクトから直接 Session を開始でき、Agent は不要になりました。",
+  "Built by the mosoo team.":
+    "mosoo チームが作成。",
+  "An uploaded avatar comes back as a validated ZIP with all 9 Codex pet animation states. The backend calls mosoo through the Thread API, and the token never reaches the browser.":
+    "アップロードしたアバター 1 枚から、Codex ペットの 9 つのアニメーション状態をすべて含む検証済みの ZIP が返ってきます。バックエンドは Thread API で mosoo を呼び出し、トークンがブラウザに渡ることはありません。",
+  "Built by AsperforMias.":
+    "AsperforMias が作成。",
+  "For each public GitHub repository, ghfind’s Go worker starts a Thread and turns the 3 artifacts the Agent saves (analysis JSON, evidence JSON, and a Markdown report) into its own result page.":
+    "公開されている GitHub リポジトリごとに ghfind の Go ワーカーが Thread を開始し、Agent が保存した 3 つの成果物（分析 JSON、エビデンス JSON、Markdown レポート）を自前の結果ページに表示します。",
+  "Read the Codex Pet use case":
+    "Codex Pet のユースケースを読む",
+  "Read the ghfind use case":
+    "ghfind のユースケースを読む",
+  "Open ghfind":
+    "ghfind を開く",
+  "See all use cases":
+    "すべてのユースケースを見る",
+  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
+    "アップロードしたアバター 1 枚を 9 つのアニメーション状態に変える Codex Pet アプリ。",
+  "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
+    "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
+  "What mosoo doesn’t do":
+    "mosoo がやらないこと",
+  "The product spec lists these on purpose. Plan around them before you build.":
+    "以下は製品仕様に明記された判断です。作り始める前に、前提として織り込んでください。",
+  "Not included":
+    "含まれないもの",
+  "Do this instead":
+    "代わりの方法",
+  "Webhooks":
+    "Webhook",
+  "Stream events over SSE, or read the saved history.":
+    "SSE でイベントを受け取るか、保存済みの履歴を読み取ってください。",
+  "Interactive tool approvals":
+    "ツール実行の対話的な承認",
+  "Agents run with full access inside the Session’s own sandbox.":
+    "Agent は Session 専用の sandbox 内で、フルアクセス権限で動作します。",
+  "Models, credits, billing, or a spending cap":
+    "モデルの提供、チャージ、課金、支出上限",
+  "Use your own provider key. The provider bills you, and the usage API lists every model call.":
+    "ご自身のプロバイダーキーを使います。料金はプロバイダーから直接請求され、使用量 API でモデル呼び出しごとに確認できます。",
+  "Git mounting, private repository access, or branch and PR workflows":
+    "Git のマウント、プライベートリポジトリの認可、ブランチや PR のワークフロー",
+  "Pass a public URL with an exact commit, or upload the files.":
+    "公開 URL と正確なコミットを渡すか、ファイルをアップロードしてください。",
+  "Your own runtimes, a connector marketplace, or local MCP servers":
+    "独自 runtime の持ち込み、コネクタのマーケットプレイス、ローカル MCP サーバー",
+  "Pick one of the 4 runtimes and connect remote HTTPS MCP servers.":
+    "4 つの runtime から選び、リモートの HTTPS MCP サーバーを接続してください。",
+  "An online file editor or file manager":
+    "オンラインのファイルエディターやファイルマネージャー",
+  "Upload inputs and download artifacts through the API.":
+    "API で入力ファイルをアップロードし、成果物をダウンロードしてください。",
+  "Chat channels or a personal cloud computer":
+    "チャットチャネルや個人用のクラウドコンピューター",
+  "That’s Mosoo Computer, a separate product.":
+    "それは別のプロダクト、Mosoo Computer の領域です。",
+  "Questions to ask before you build on mosoo":
+    "使い始める前に確認したいこと",
+  "Start your first Session":
+    "最初の Session を始める",
+  "In the console":
+    "コンソールで",
+  "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.":
+    "メールアドレスまたは Google でログインします。初回ログイン時にデフォルトプロジェクトが作成されます。プロバイダーキーを追加したら、Session を開始できます。",
+  "Try mosoo":
+    "mosoo を試す",
+  "In your coding agent":
+    "コーディングエージェントで",
+  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.":
+    "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、プロバイダーキーの入力を求めます。エージェントが代わりに作れない唯一の値だからです。",
+  "Copy setup prompt":
+    "セットアッププロンプトをコピー",
+  "Setup prompt copied":
+    "セットアッププロンプトをコピーしました",
+  "Copy failed. Select and copy the prompt above.":
+    "コピーに失敗しました。上記のプロンプトを選択してコピーしてください。",
+  "Copy command":
+    "コマンドをコピー",
+  "Command copied":
+    "コマンドをコピーしました",
+  "Read the install script":
+    "インストールスクリプトを確認する",
+  "mosoo is in Alpha. Public APIs may still change.":
+    "mosoo は現在 Alpha 版です。公開 API は変更される可能性があります。",
+  "What is mosoo?":
+    "mosoo とは何ですか？",
+  "mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha.":
+    "mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。バックエンドはタスクを開始して結果を受け取り、実行、ファイル、イベント、使用量は mosoo が担います。mosoo は現在 Alpha 版です。",
+  "Do I need to create or publish an Agent first?":
+    "先に Agent を作成または公開する必要はありますか？",
+  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers.":
+    "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合にだけ必要です。",
+  "Which runtimes and models can I use?":
+    "どの runtime とモデルを使えますか？",
+  "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs.":
+    "runtime は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。モデルはご自身のキーで利用し、Anthropic、OpenAI、DeepSeek、Gemini、Qwen、Kimi、Zhipu、MiniMax、OpenCode Zen のほか、OpenAI 互換のカスタム HTTPS エンドポイントも使えます。runtime ごとに対応するモデルプロトコルが決まっており、合わない組み合わせは実行前に拒否されます。",
+  "Who pays for model usage?":
+    "モデルの利用料金は誰が支払いますか？",
+  "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices.":
+    "お客様が直接支払います。モデルのキーはプロジェクトに属し、プロバイダーがお客様のアカウントに請求します。mosoo はモデルを提供せず、支出上限も設けません。使用量 API と使用量ページには計測したトークン数と推定コストが表示されますが、請求書ではありません。",
+  "What happens when I reply hours or days later?":
+    "数時間後や数日後に返信するとどうなりますか？",
+  "The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness’s native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can’t be restored, the follow-up fails with an error instead of starting empty.":
+    "同じ Session で続きが実行されます。turn の完了から 1 分後でも 7 日後でも、sandbox が回収された後でも、返信の意味は変わりません。ただし、コールドスタートでは開始まで時間がかかることがあります。mosoo は最後にコミットされたチェックポイントから、作業ディレクトリ、harness のネイティブな会話、固定された設定、記録済みの成果物を復元します。実行中のプロセスは引き継がれません。チェックポイントを復元できない場合は、空の状態で始めずに明示的なエラーになります。",
+  "Do my API keys enter the sandbox?":
+    "API キーは sandbox に入りますか？",
+  "No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo’s proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections.":
+    "入りません。プロバイダーキーと MCP の認証情報は sandbox の外に置かれ、runtime は mosoo のプロキシ経由でモデルや MCP サーバーにアクセスします。認証情報はプロキシがリクエストごとに付与します。環境変数は例外で、sandbox 内のコードから読み取れます。モデルのキーはプロバイダー設定に、ツールのトークンは MCP 接続に保存してください。",
+  "How do I follow progress and get results?":
+    "進捗の確認と結果の取得はどうしますか？",
+  "Read the Thread’s status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks.":
+    "Thread のステータスと保存済みのイベント履歴を読み取るか、SSE ストリームを開きます。SSE は最新の保存済みイベントから送信され、安定したイベント ID によって、再接続したクライアントは受信済みのイベントをスキップできます。Agent が outputs/ に書き込んだファイルは、ダウンロードできる成果物になります。Webhook はありません。",
+  "How long can a turn run?":
+    "1 つの turn はどのくらい実行できますか？",
+  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error.":
+    "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。空いている sandbox の容量がない場合、リクエストは再試行可能な runtime.capacity_exhausted エラーですぐに失敗します。",
+  "Can I retry a request without running the work twice?":
+    "リクエストを再試行すると、処理が二重に実行されませんか？",
+  "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.":
+    "作成とフォローアップでは、Idempotency-Key ヘッダーを付ければ二重に実行されません。24 時間以内に同じキーと同じ本文を送ると、新しい処理を行わずに元の結果が返り、本文が異なる場合は拒否されます。ただし、外部ツールの副作用が 1 回だけになることまでは保証しません。",
+  "Is mosoo open source, and is it ready for production?":
+    "mosoo はオープンソースですか？本番環境で使えますか？",
+  "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
+    "mosoo は Apache 2.0 ライセンスのオープンソースで、ソースコードは GitHub にあります。現在は Alpha 版のため、公開 API や製品の動作は変わる可能性があります。/api/v1 は互換性を維持し、互換性を保てない変更は新しい API バージョンとして公開されます。すぐに試すなら、ホスト版のコンソール cloud.mosoo.ai が最も手軽です。開発用にローカルで動かす手順は README にあります。",
 } satisfies Record<Message, string>;
 
-const MESSAGES = {
-  zh: ZH_MESSAGES,
-  ja: JA_MESSAGES,
-};
+const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
 
 export function t(message: Message): string {
   return locale === "en" ? message : MESSAGES[locale][message];
 }
+
+/** FAQ entries in page order (copy deck §10). */
+export const FAQ_MESSAGES = [
+  { q: "What is mosoo?", a: "mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha." },
+  { q: "Do I need to create or publish an Agent first?", a: "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers." },
+  { q: "Which runtimes and models can I use?", a: "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs." },
+  { q: "Who pays for model usage?", a: "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices." },
+  { q: "What happens when I reply hours or days later?", a: "The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness’s native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can’t be restored, the follow-up fails with an error instead of starting empty." },
+  { q: "Do my API keys enter the sandbox?", a: "No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo’s proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections." },
+  { q: "How do I follow progress and get results?", a: "Read the Thread’s status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks." },
+  { q: "How long can a turn run?", a: "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error." },
+  { q: "Can I retry a request without running the work twice?", a: "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once." },
+  { q: "Is mosoo open source, and is it ready for production?", a: "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development." },
+] as const satisfies readonly { q: Message; a: Message }[];
