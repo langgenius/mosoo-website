@@ -1,106 +1,43 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const EN = {
-  lang: "en",
-  title: "mosoo — Open-Source Agent Runtime for Coding Agents",
-  description:
-    "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Open source, self-hostable, and built for coding agents.",
-  socialDescription:
-    "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes.",
-  imageAlt: "mosoo open-source agent runtime",
-  structuredDescription:
-    "Open-source agent runtime and API for running coding agents in isolated sandboxes.",
-  subcategory: "AI agent runtime",
-  directHeading: "Direct answers",
-  sourceHeading: "Sources and verification",
-  sourceGithub: "GitHub source",
-  sourceApiDocs: "API docs",
-  sourceOpenApi: "OpenAPI 3.1",
-  sourceLlmIndex: "llms.txt",
-  whatQuestion: "What is mosoo?",
-  whatAnswer:
-    "mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.",
-  whoQuestion: "Who is mosoo for?",
-  whoAnswer:
-    "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.",
-  callQuestion: "How does a product call a Mosoo Agent?",
-  callAnswer:
-    "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.",
-  selfHostQuestion: "Is mosoo self-hostable?",
-  selfHostAnswer:
-    "Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane.",
-  verifyQuestion: "Where can I verify Mosoo's source and API contract?",
-  verifyAnswer:
-    "Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery.",
-};
+import { HOME_FALLBACK_STYLE, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
-const SEO = {
-  en: EN,
+// Home page head copy (copy deck section 14). The body, the FAQ and the JSON-LD
+// come from landing-home.mjs and are written into the markers in index.html.
+// imageAlt describes the social card that ships today; change it together with
+// the og:image when the card is regenerated.
+const HOME_SEO = {
+  en: {
+    lang: "en",
+    title: "Open-source Agent runtime for application backends | mosoo",
+    description:
+      "mosoo is an open-source Agent runtime for app backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, with a sandbox per Session.",
+    socialTitle: "An open-source, API-first managed Agent runtime for application backends",
+    socialDescription:
+      "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
+    imageAlt: "mosoo open-source agent runtime",
+  },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — 面向 Coding Agent 的开源 Agent runtime",
+    title: "面向应用后端的开源 Agent runtime | mosoo",
     description:
-      "通过统一的 Agent API，在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode。开源、可自行托管，专为 Coding Agent 构建。",
+      "mosoo 是面向应用后端的开源 Agent runtime。用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在独立的 sandbox 中执行。",
+    socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
-      "通过统一的 Agent API，在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode。",
+      "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
     imageAlt: "mosoo 开源 Agent runtime",
-    structuredDescription: "用于在隔离 sandbox 中运行 Coding Agent 的开源 Agent runtime 与 API。",
-    subcategory: "AI Agent runtime",
-    directHeading: "直接答案",
-    sourceHeading: "来源与验证",
-    sourceGithub: "GitHub 源码",
-    sourceApiDocs: "API 文档",
-    sourceOpenApi: "OpenAPI 3.1",
-    sourceLlmIndex: "llms.txt",
-    whatQuestion: "mosoo 是什么？",
-    whatAnswer:
-      "mosoo 是面向 Coding Agent 的开源 Agent runtime 与 API。它在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode，跨 Run 保留 Thread 与文件，并可在 Cloudflare 上自行托管。",
-    whoQuestion: "mosoo 适合谁？",
-    whoAnswer:
-      "mosoo 面向把 Coding Agent 扩展到产品和自动化中的开发者；他们需要托管 Thread、文件、sandbox、工具事件和 API 访问，而不想为每个集成都重建一套 runtime。",
-    callQuestion: "产品如何调用 mosoo Agent？",
-    callAnswer:
-      "可信后端通过 Public Thread API 创建或恢复 Thread、发送用户事件、流式读取结果并挂载文件。mosoo App owner token 留在服务器上，不暴露给浏览器。",
-    selfHostQuestion: "mosoo 可以自行托管吗？",
-    selfHostAnswer:
-      "可以。mosoo 是开源的，并可在 Cloudflare 上自行托管。运营方在生产平面中带入自己的模型与服务商密钥。",
-    verifyQuestion: "在哪里验证 Mosoo 的源码和 API 合约？",
-    verifyAnswer:
-      "查看 GitHub 仓库、公开 API 文档和 OpenAPI 3.1 文档。产品也发布 llms.txt 与 auth.md，便于机器读取和发现。",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — Coding Agent 向けオープンソース Agent runtime",
+    title: "アプリのバックエンド向けオープンソース Agent runtime | mosoo",
     description:
-      "OpenAI Codex、Claude Agent SDK、OpenCode を、隔離された sandbox 上で 1 つの Agent API 経由で実行。オープンソースでセルフホスト可能、Coding Agent のために設計されています。",
+      "mosoo はアプリケーションのバックエンド向けのオープンソース Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
+    socialTitle:
+      "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:
-      "OpenAI Codex、Claude Agent SDK、OpenCode を、隔離された sandbox 上で 1 つの Agent API 経由で実行。",
+      "バックエンドから 1 つのリクエストで Agent のタスクを始め、数日後も同じ Session で続けられます。OpenAI Codex、Claude Agent SDK、OpenCode、Pi をご自身のモデルキーで実行します。",
     imageAlt: "mosoo オープンソース Agent runtime",
-    structuredDescription:
-      "隔離された sandbox で Coding Agent を実行するための、オープンソース Agent runtime と API。",
-    subcategory: "AI Agent runtime",
-    directHeading: "直接回答",
-    sourceHeading: "ソースと検証",
-    sourceGithub: "GitHub ソース",
-    sourceApiDocs: "API ドキュメント",
-    sourceOpenApi: "OpenAPI 3.1",
-    sourceLlmIndex: "llms.txt",
-    whatQuestion: "mosoo とは？",
-    whatAnswer:
-      "mosoo は Coding Agent 向けのオープンソース Agent runtime と API です。OpenAI Codex、Claude Agent SDK、OpenCode を隔離された sandbox で実行し、Run をまたいで Thread とファイルを保持し、Cloudflare 上でセルフホストできます。",
-    whoQuestion: "mosoo は誰向けですか？",
-    whoAnswer:
-      "mosoo は、Coding Agent をプロダクトや自動化に組み込みたい開発者向けです。integration ごとに runtime を作り直さず、ホストされた Thread、ファイル、sandbox、tool event、API access を使えます。",
-    callQuestion: "プロダクトから mosoo Agent を呼ぶには？",
-    callAnswer:
-      "信頼されたバックエンドが Public Thread API で Thread を作成または再開し、user event を送り、結果を stream し、ファイルを添付します。mosoo App owner token はサーバーに置き、ブラウザへ公開しません。",
-    selfHostQuestion: "mosoo はセルフホストできますか？",
-    selfHostAnswer:
-      "はい。mosoo はオープンソースで、Cloudflare 上にセルフホストできます。運用者は production plane で自分のモデルと provider key を持ち込みます。",
-    verifyQuestion: "Mosoo のソースと API contract はどこで確認できますか？",
-    verifyAnswer:
-      "GitHub repository、公開 API ドキュメント、OpenAPI 3.1 ドキュメントで確認できます。機械可読な discovery のために llms.txt と auth.md も公開しています。",
   },
 };
 
@@ -381,6 +318,7 @@ function applyReplacements(source, replacements) {
   );
 }
 
+// The static nav that the subpages (pricing, status, use cases) still carry.
 function navReplacements(locale) {
   const labels = FALLBACK_LABELS[locale];
   return [
@@ -394,38 +332,28 @@ function navReplacements(locale) {
   ];
 }
 
-function directAnswerReplacements(copy) {
-  return [
-    "directHeading",
-    "sourceHeading",
-    "sourceGithub",
-    "sourceApiDocs",
-    "sourceOpenApi",
-    "sourceLlmIndex",
-    "whatQuestion",
-    "whatAnswer",
-    "whoQuestion",
-    "whoAnswer",
-    "callQuestion",
-    "callAnswer",
-    "selfHostQuestion",
-    "selfHostAnswer",
-    "verifyQuestion",
-    "verifyAnswer",
-  ].map((key) => [EN[key], copy[key]]);
+// Replaces exactly one `<!-- mosoo:<name> ... -->` comment. A function
+// replacement keeps "$" in the inserted HTML (shell variables in code) literal.
+function fillMarker(html, name, content) {
+  const marker = new RegExp(`<!-- mosoo:${name}\\b[\\s\\S]*?-->`, "g");
+  const count = html.match(marker)?.length ?? 0;
+  if (count !== 1) {
+    throw new Error(`Landing locale build expected one mosoo:${name} marker, found ${count}`);
+  }
+  return html.replace(marker, () => content);
 }
 
-function localizeHtml(source, locale, copy) {
+function localizeHomeHead(source, locale) {
+  const en = HOME_SEO.en;
+  const copy = HOME_SEO[locale];
   const url = `https://mosoo.ai/${locale}`;
-  const replacements = [
-    [`<html lang="${EN.lang}">`, `<html lang="${copy.lang}">`],
-    [EN.title, copy.title],
-    [EN.description, copy.description],
-    [EN.socialDescription, copy.socialDescription],
-    [EN.imageAlt, copy.imageAlt],
-    [EN.structuredDescription, copy.structuredDescription],
-    [EN.subcategory, copy.subcategory],
-    ...directAnswerReplacements(copy),
+  return applyReplacements(source, [
+    [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
+    [en.title, copy.title],
+    [en.description, copy.description],
+    [en.socialTitle, copy.socialTitle],
+    [en.socialDescription, copy.socialDescription],
+    [en.imageAlt, copy.imageAlt],
     [
       '<link rel="canonical" href="https://mosoo.ai/en" />',
       `<link rel="canonical" href="${url}" />`,
@@ -434,13 +362,7 @@ function localizeHtml(source, locale, copy) {
       '<meta property="og:url" content="https://mosoo.ai/en" />',
       `<meta property="og:url" content="${url}" />`,
     ],
-    ['"@id": "https://mosoo.ai/en#faq"', `"@id": "${url}#faq"`],
-    ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
-    ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
-    ...navReplacements(locale),
-  ];
-
-  return applyReplacements(source, replacements);
+  ]);
 }
 
 // Localizes any landing subpage (pricing, status, use cases…): the EN copy in
@@ -471,10 +393,16 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
   return applyReplacements(source, replacements);
 }
 
+// Head copy is localized first, then the generated JSON-LD and static page go
+// into the markers, so the EN-to-locale replacements never touch them.
 export function renderLandingLocale(source, locale) {
-  const copy = SEO[locale];
-  if (!copy) throw new Error(`Unsupported landing locale: ${locale}`);
-  return localizeHtml(source, locale, copy);
+  if (!HOME_SEO[locale]) throw new Error(`Unsupported landing locale: ${locale}`);
+  const head = fillMarker(
+    localizeHomeHead(source, locale),
+    "home-head",
+    `${HOME_FALLBACK_STYLE}\n${renderHomeJsonLd(locale)}`,
+  );
+  return fillMarker(head, "home-fallback", renderHomeFallback(locale));
 }
 
 export function renderPricingLocale(source, locale) {
@@ -547,8 +475,11 @@ export async function buildLandingLocales(landingDist) {
     "utf8",
   );
 
+  // dist/index.html keeps no unfilled markers if a host ever serves it directly.
+  await writeFile(join(landingDist, "index.html"), renderLandingLocale(source, "en"));
+
   await Promise.all(
-    Object.keys(SEO).map(async (locale) => {
+    Object.keys(HOME_SEO).map(async (locale) => {
       await writeFile(join(landingDist, `${locale}.html`), renderLandingLocale(source, locale));
       await mkdir(join(landingDist, locale, "use-cases"), { recursive: true });
       await writeFile(
