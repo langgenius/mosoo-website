@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { CSSProperties, ReactElement } from "react";
 
 import { mountTranscriptStage } from "@/effects/transcript-stage";
 
@@ -7,6 +7,7 @@ import { Bracketed } from "./instrument-ui";
 import { TranscriptCard } from "./transcript-card";
 
 // Places of the five long ticks on the ruler (UI-FORMS U14: a log scale).
+// Phones keep three labels (+0, +1 hour, +7 days); the others are minor.
 const TICKS = [0, 0.22, 0.44, 0.7, 0.96] as const;
 
 /**
@@ -44,7 +45,8 @@ export function StageSection(): ReactElement {
                 <span
                   key={place}
                   className="i-ruler-tick"
-                  style={{ top: `${place * 100}%` }}
+                  data-minor={index === 1 || index === 3 ? "" : undefined}
+                  style={{ "--at": String(place) } as CSSProperties}
                 >
                   <span className="i-ruler-label">
                     {copy.stage.ruler[index]}
@@ -54,7 +56,7 @@ export function StageSection(): ReactElement {
               <span
                 className="i-ruler-dot"
                 data-ruler-dot=""
-                style={{ top: `${lastPlace * 100}%` }}
+                style={{ "--at": String(lastPlace) } as CSSProperties}
               />
             </div>
           </div>

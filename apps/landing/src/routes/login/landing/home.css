@@ -83,7 +83,7 @@
   display: flex;
   align-items: center;
   height: clamp(720px, calc(100svh - 64px), 900px);
-  padding: 0 var(--pad) 40px;
+  padding: 0 var(--pad) 96px;
 }
 
 .i-hero-copy {
@@ -104,7 +104,7 @@
 .i-hero-object {
   position: absolute;
   left: 720px;
-  top: calc(50% - 20px);
+  top: calc(50% - 48px);
   width: 640px;
   transform: translateY(-50%);
 }
@@ -214,6 +214,7 @@
 
 .i-ruler-tick {
   position: absolute;
+  top: calc(var(--at) * 100%);
   right: 0;
   width: 30px;
   height: 1px;
@@ -233,6 +234,7 @@
 
 .i-ruler-dot {
   position: absolute;
+  top: calc(var(--at) * 100%);
   left: 0;
   width: 9px;
   height: 9px;
@@ -782,8 +784,88 @@
     row-gap: 32px;
   }
 
+  /* U14 lies down on phones (ElevenLabs' original orientation), above the
+     card, with three labels; the dot rests at +7 days. */
   .i-ruler {
+    display: block;
+    padding: 34px 0 0;
+  }
+
+  .i-ruler-scale {
+    width: 100%;
+    height: 1px;
+  }
+
+  .i-ruler-scale::before {
+    top: -10px;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 10px;
+    background: repeating-linear-gradient(
+      to right,
+      rgb(239 241 238 / 0.22) 0 1px,
+      transparent 1px 8px
+    );
+  }
+
+  .i-ruler-spine {
+    top: 0;
+    height: 1px;
+  }
+
+  .i-ruler-spine-a {
+    left: 0;
+    width: 44%;
+  }
+
+  .i-ruler-spine-dash {
+    left: 44%;
+    width: 52%;
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      var(--ink-3) 0 3px,
+      transparent 3px 7px
+    );
+  }
+
+  .i-ruler-spine-b {
+    left: 96%;
+    right: 0;
+    width: auto;
+  }
+
+  .i-ruler-tick {
+    top: auto;
+    bottom: 0;
+    left: calc(var(--at) * 100%);
+    right: auto;
+    width: 1px;
+    height: 22px;
+  }
+
+  .i-ruler-label {
+    top: -20px;
+    right: auto;
+    left: 0;
+  }
+
+  .i-ruler-tick:last-child .i-ruler-label,
+  .i-ruler-tick:nth-last-child(2) .i-ruler-label {
+    left: auto;
+    right: 0;
+  }
+
+  .i-ruler-tick[data-minor] .i-ruler-label {
     display: none;
+  }
+
+  .i-ruler-dot {
+    top: 0;
+    left: calc(var(--at) * 100%);
+    margin: -4px 0 0 -4.5px;
   }
 
   .i-term {
