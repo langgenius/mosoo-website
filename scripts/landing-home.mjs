@@ -758,6 +758,8 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback h1,.mosoo-fallback h2{margin:0;color:var(--mf-ink);font-family:"Display Fallback",ui-serif,Georgia,serif;font-weight:400;text-wrap:balance}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:"Display Fallback","Songti SC","Noto Serif CJK SC",serif;word-break:keep-all}
 .mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:"Display Fallback","Hiragino Mincho ProN","Noto Serif CJK JP",serif;word-break:auto-phrase}
+.mosoo-fallback:lang(ja) p,.mosoo-fallback:lang(ja) summary{word-break:auto-phrase}
+.mosoo-fallback:lang(zh) .mf-lead,.mosoo-fallback:lang(zh) .mf-intro{word-break:keep-all}
 .mosoo-fallback h1{max-width:600px;font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.03em}
 .mosoo-fallback h2{max-width:600px;font-size:clamp(30px,4vw,44px);line-height:1.06;letter-spacing:-.02em}
 .mosoo-fallback .mf-soft{color:var(--mf-soft)}
