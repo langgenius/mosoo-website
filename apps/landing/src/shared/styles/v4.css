@@ -1,0 +1,304 @@
+/*
+ * v4c "Stage" tokens and the site-wide chrome (nav, buttons, footer). Every landing page imports this
+ * file; the home adds src/home/home.css.
+ *
+ * Tokens: proposals/c-stage/PROPOSAL.md §2.1 (light zinc, hue 135, chroma <= .006; the third act turns
+ * to night) and UI-FORMS c.0 (ink steps, radii, shadows, easing). Green (#6fd305) only as a <= 8 px live
+ * dot or a 1-2 px live line (ATLAS §2.3).
+ */
+@import "./fonts-v4.css";
+
+:root {
+  --paper: #f9faf9;
+  --paper-2: #f3f4f2;
+  --raised: #ffffff;
+  --ink: #161815;
+  --ink-2: #515350;
+  --ink-3: #7f817e;
+  --line: rgb(22 24 21 / 0.08);
+  --line-2: rgb(22 24 21 / 0.16);
+  --night: #0e0f0d;
+  --night-ink: #f2f4f2;
+  --night-dim: #858784;
+  --accent: #6fd305;
+  --outline-ink: #1a1a1c;
+
+  --r-card: 6px;
+  --r-plate: 20px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-feed: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --gutter: clamp(16px, 4.4vw, 64px);
+  --w: min(1120px, calc(100vw - 2 * var(--gutter)));
+  --nav-h: 64px;
+}
+
+.v4,
+.v4-chrome {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.v4 *,
+.v4-chrome * {
+  box-sizing: border-box;
+}
+
+.v4 :focus-visible,
+.v4-chrome :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.v4 .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Skip link */
+.v4-skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 80;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 14px/1 var(--font-sans);
+  text-decoration: none;
+}
+.v4-skip:focus {
+  top: 12px;
+}
+
+/* Buttons: ink pill (Converge Work / Mintlify / Harvey keep the main CTA in ink). */
+.v4-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  font: 500 14px/1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s ease-out;
+}
+.v4-btn-ink {
+  background: var(--ink);
+  color: #f4f4f2;
+}
+.v4-btn:hover {
+  opacity: 0.86;
+}
+.v4-btn-sm {
+  height: 36px;
+  padding: 0 16px;
+}
+.v4-btn-lg {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 15px;
+}
+
+/* Nav: a13n-style (wordmark left; Docs, GitHub, one ink button right). The mark is the solid
+   monochrome logo at 20 px, static, no hover motion (brand/outline README §5.3). */
+.v4-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--nav-h);
+  background: rgb(249 250 249 / 0.88);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  color: var(--ink);
+  transition:
+    background-color 0.4s var(--ease),
+    color 0.4s var(--ease);
+}
+.v4-nav-in {
+  width: min(1240px, calc(100vw - 2 * var(--gutter)));
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.v4-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: inherit;
+  text-decoration: none;
+}
+.v4-brand .brand-mark {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.v4-brand-word {
+  font: 600 17px/1 var(--font-sans);
+  letter-spacing: -0.02em;
+}
+.v4-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.v4-nav-link {
+  font: 500 14px/1 var(--font-sans);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.v4-nav-link:hover {
+  color: var(--ink);
+}
+.v4-nav[data-tone="night"] {
+  background: rgb(14 15 13 / 0.82);
+  color: var(--night-ink);
+}
+.v4-nav[data-tone="night"] .v4-nav-link {
+  color: rgb(242 244 242 / 0.7);
+}
+.v4-nav[data-tone="night"] .v4-btn-ink {
+  background: var(--night-ink);
+  color: var(--night);
+}
+
+/* Footer: U07 Ask-AI plate (Ploy notes §10, crops/ploy-footer-ask-ai-live.jpg), then one quiet link
+   row and the bottom row with the language switcher and the credit. */
+.v4-foot {
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0 0 40px;
+}
+.v4-foot-in {
+  width: var(--w);
+  margin: 0 auto;
+}
+.v4-foot .ask {
+  position: relative;
+  background: #161815;
+  color: #f2f4f2;
+  border-radius: var(--r-plate);
+  padding: 32px 32px 30px;
+}
+.v4-foot .ask::before {
+  content: "";
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 0;
+  height: 1px;
+  background: rgb(255 255 255 / 0.08);
+}
+.v4-foot .ask-title {
+  margin: 0;
+  font: 400 32px/1.08 var(--font-display);
+  letter-spacing: -0.015em;
+}
+.v4-foot .ask-note {
+  margin: 10px 0 0;
+  max-width: 420px;
+  font: 400 13.5px/1.55 var(--font-sans);
+  color: rgb(242 244 242 / 0.58);
+}
+.v4-foot .ask-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+.v4-foot .ask-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.13);
+  font: 500 13px/38px var(--font-sans);
+  color: #f2f4f2;
+  text-decoration: none;
+}
+.v4-foot .ask-pill:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+.v4-foot .ask-pill em {
+  font-style: normal;
+  color: rgb(242 244 242 / 0.45);
+}
+.v4-foot .foot-links ul,
+.v4-foot .foot-langs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.v4-foot .foot-links {
+  margin-top: 40px;
+}
+.v4-foot a {
+  color: var(--ink-2);
+  text-decoration: none;
+  font: 400 14px/1.4 var(--font-sans);
+}
+.v4-foot a:hover {
+  color: var(--ink);
+}
+.v4-foot .ask a {
+  color: #f2f4f2;
+}
+.v4-foot .foot-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.v4-foot .foot-langs a {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.v4-foot .foot-langs a[aria-current="true"] {
+  color: var(--ink);
+}
+.v4-foot .foot-credit {
+  margin: 0;
+  font: 400 13px/1.4 var(--font-sans);
+  color: var(--ink-3);
+}
+
+@media (max-width: 900px) {
+  .v4-nav-links {
+    gap: 18px;
+  }
+  .v4-nav-link {
+    display: none;
+  }
+  .v4-foot .ask {
+    padding: 26px 22px 24px;
+  }
+  .v4-foot .ask::before {
+    left: 22px;
+    right: 22px;
+  }
+  .v4-foot .ask-title {
+    font-size: 28px;
+  }
+}

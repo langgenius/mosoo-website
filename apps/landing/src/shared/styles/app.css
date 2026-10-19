@@ -612,79 +612,13 @@ html {
 }
 
 html:has(.landing-shell[data-theme="landing"]) {
-  background-color: #f7f6f1;
+  background-color: #f9faf9;
 }
 
 .landing-shell {
   overflow-x: clip;
 }
 
-.landing-footer {
-  position: relative;
-  z-index: 0;
-}
-
-/* Pinned under the content layer only where the whole footer (links, the
-   wordmark and the bamboo landscape) fits the screen; a taller footer would
-   keep its top hidden behind the page. */
-@media (min-width: 1024px) and (min-height: 1180px) {
-  .landing-footer {
-    position: sticky;
-    bottom: 0;
-  }
-
-  .landing-content-layer {
-    box-shadow: 0 24px 48px -16px rgba(11, 26, 20, 0.45);
-  }
-}
-
-.landing-footer-signoff {
-  font-family: "Cabinet Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-}
-
-/* Where a page loads Literata (the home page), the sign-off is set in it. */
-html:has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata);
-  font-weight: 400;
-  letter-spacing: -0.015em;
-}
-
-html:lang(zh):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-zh);
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-html:lang(ja):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-ja);
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-/* The large lowercase wordmark, one ink colour, resting on the landscape's
-   bare upper third (scripts/brand-assets/MANIFEST.md, use (b)). */
-.landing-footer-wordmark {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: min(980px, calc(100% - 32px));
-  margin: 0 auto -4.5vw;
-  aspect-ratio: 162 / 35;
-  /* The landscape's own sage ink, so the wordmark reads as part of the print. */
-  background-color: #6d786a;
-  -webkit-mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
-  mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
-}
-
-.landing-footer-landscape {
-  display: block;
-  width: 100%;
-  height: clamp(200px, 28vw, 420px);
-  object-fit: cover;
-  object-position: 50% 100%;
-}
 
 @media (prefers-reduced-transparency: reduce) {
   .site-header {

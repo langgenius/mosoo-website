@@ -1,0 +1,925 @@
+/*
+ * v4c home sections. Locked specs: mosoo-website-redesign-staging/refs/UI-FORMS.md §c (U04, U06, U10,
+ * U14, U15, U16) and the board's ② column (refs/devices/board.html), on the c-stage canvas.
+ * Default = the no-JS / reduced-motion / phone end state: the three acts stacked, every object static.
+ * src/effects/stage.ts switches the stage to [data-mode="pinned"] on wide screens with motion allowed.
+ */
+
+body:has(.v4) {
+  margin: 0;
+  background: var(--paper);
+}
+
+.v4 main {
+  outline: none;
+}
+
+/* Zero-specificity reset, so every component's own margins win. */
+:where(.v4) :where(h1, h2, p) {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- hero
+   Enter Pro hero door (crops/enter-pro-hero-portal-context.jpg): a 1 px window above a centred headline
+   and one pill button. Cardinal (#126, crops/issue-126-tilted-tiles-wordmark.jpg): four tilted tiles
+   around the mark; here 64 px runtime tiles on flat low-chroma plates (oklch C <= .03), ink glyphs. */
+.hero {
+  position: relative;
+  min-height: calc(100svh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.hero-in {
+  position: relative;
+  width: var(--w);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 0 72px;
+}
+.hero-window {
+  position: relative;
+  width: 117.2px;
+  height: 102.2px;
+  margin-bottom: 34px;
+}
+.hero-ripple {
+  position: absolute;
+  left: 2.61px;
+  top: 2.61px;
+  width: 112px;
+  height: 89.05px;
+  overflow: hidden;
+  background: #f3f1ec;
+  -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+}
+/* S2 ripple (brand/outline/studies/s2-rings-ripple.png), rebuilt with transform/opacity only: four
+   warm-grey bands rise from the line's midpoint, 7.2 s a cycle, staggered 1.8 s. Two cycles, then the
+   rings stop at mid phase (iteration count 2.5, fill forwards). */
+.hero-ripple i {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 240px;
+  height: 240px;
+  margin-left: -120px;
+  margin-bottom: -120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 0 52%, #e4e1da 53% 66%, transparent 67%);
+  transform: scale(0.5);
+  opacity: 0.9;
+  animation: v4-ripple 7.2s linear 2.5 forwards;
+}
+.hero-ripple i:nth-child(1) {
+  transform: scale(0.15);
+  animation-delay: -5.4s;
+}
+.hero-ripple i:nth-child(2) {
+  transform: scale(0.4);
+  animation-delay: -3.6s;
+}
+.hero-ripple i:nth-child(3) {
+  transform: scale(0.65);
+  animation-delay: -1.8s;
+}
+.hero-ripple i:nth-child(4) {
+  transform: scale(0.9);
+  animation-delay: 0s;
+}
+@keyframes v4-ripple {
+  from {
+    transform: scale(0.05);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  to {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+.hero-window[data-paused] .hero-ripple i {
+  animation-play-state: paused;
+}
+.hero-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  stroke: var(--outline-ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  animation: v4-draw 0.9s cubic-bezier(0.16, 1, 0.35, 1) 0.1s both;
+}
+.hero-outline path {
+  vector-effect: non-scaling-stroke;
+}
+@keyframes v4-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.hero-title {
+  font: 400 78px/0.96 var(--font-display);
+  letter-spacing: -0.035em;
+  word-spacing: 0.08em;
+  text-wrap: balance;
+}
+.hero-title > span {
+  display: block;
+}
+.hero-b {
+  color: var(--ink-3);
+}
+.hero-lead {
+  max-width: 540px;
+  margin-top: 26px;
+  font: 400 19px/1.5 var(--font-sans);
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+.hero-cta {
+  margin-top: 34px;
+}
+.hero-tiles {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.tile {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.tile-glyph {
+  width: 28px;
+  height: 28px;
+}
+.tile-1 {
+  left: calc(50% - 472px);
+  top: 15%;
+  background: #e9e6df; /* stone */
+  transform: rotate(-4deg);
+}
+.tile-2 {
+  left: calc(50% + 396px);
+  top: 9%;
+  background: #e2e7ec; /* mist, h 250 */
+  transform: rotate(3deg);
+}
+.tile-3 {
+  left: calc(50% - 548px);
+  top: 61%;
+  background: #e8e3ec; /* lilac, h 300 */
+  transform: rotate(4deg);
+}
+.tile-4 {
+  left: calc(50% + 468px);
+  top: 55%;
+  background: #eee3dc; /* clay, h 40 */
+  transform: rotate(-3deg);
+}
+
+/* ---------------------------------------------------------------- stage (stacked default) */
+.stage {
+  position: relative;
+}
+.stage-pin {
+  position: relative;
+}
+.portal-frame {
+  display: none;
+}
+.act {
+  position: relative;
+  padding: 140px 0;
+}
+.act-in {
+  width: var(--w);
+  margin: 0 auto;
+}
+.act-title {
+  max-width: 900px;
+  font: 400 40px/1.08 var(--font-display);
+  letter-spacing: -0.022em;
+  word-spacing: 0.05em;
+  text-wrap: pretty;
+}
+.act-title .soft {
+  color: var(--ink-3);
+}
+
+/* U10 typed spec table (a13n, crops/a13n-spec-table.jpg). */
+.spec {
+  margin: 48px 0 0;
+  border-top: 1px solid var(--ink);
+}
+.spec-row {
+  display: grid;
+  grid-template-columns: 3fr 9fr;
+  align-items: center;
+  min-height: 62px;
+  border-bottom: 1px solid var(--line);
+}
+.spec-first {
+  min-height: 86px;
+}
+.spec dt {
+  font: 400 13px/1.3 var(--font-sans);
+  color: var(--ink-3);
+}
+.spec dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  font: 400 16px/1.4 var(--font-sans);
+}
+.spec-ico {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--ink);
+}
+.spec-tok {
+  font: 400 13px/1 var(--font-mono);
+  padding: 6px 9px;
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+}
+.spec-flip {
+  display: inline-grid;
+  perspective: 400px;
+}
+.spec-face {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font: 400 38px/1 var(--font-display);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  transform-origin: 50% 50% -18px;
+  backface-visibility: hidden;
+}
+.spec-face:not(.is-on) {
+  visibility: hidden;
+}
+.spec-glyph {
+  width: 28px;
+  height: 28px;
+  flex: none;
+}
+.spec-others {
+  font: 400 13px/1.3 var(--font-sans);
+  color: var(--ink-3);
+}
+.stage[data-flip] .spec-face {
+  visibility: visible;
+  opacity: 0;
+  transform: rotateX(-90deg);
+  transition:
+    transform 0.42s var(--ease),
+    opacity 0.42s var(--ease);
+}
+.stage[data-flip] .spec-face.is-on {
+  opacity: 1;
+  transform: rotateX(0deg);
+}
+.stage[data-flip] .spec-face.is-off {
+  opacity: 0;
+  transform: rotateX(90deg);
+}
+.stage[data-flip] .spec-others {
+  display: none;
+}
+
+/* U04 split headline around a timestamped feed (Ploy notes §5, crops/ploy-split-headline-feed.jpg). */
+.field {
+  position: relative;
+  height: 680px;
+  border-radius: var(--r-plate);
+  background: #eeefec;
+  overflow: hidden;
+}
+.field-title > span {
+  position: absolute;
+  z-index: 3;
+  font: 400 64px/0.95 var(--font-display);
+  letter-spacing: -0.03em;
+  word-spacing: 0.06em;
+}
+.field-a {
+  left: 40px;
+  top: 40px;
+}
+.field-b {
+  right: 40px;
+  bottom: 40px;
+  text-align: right;
+}
+.feed {
+  position: absolute;
+  left: 50%;
+  top: 118px;
+  bottom: 118px;
+  width: 520px;
+  margin-left: -260px;
+  z-index: 2;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent 0, #000 24%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(transparent 0, #000 24%, #000 76%, transparent 100%);
+}
+.feed-list {
+  margin: 0;
+  padding: 110px 0 0; /* end state: the newest card (the only live dot) sits in the clear band */
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.stage[data-mode="pinned"] .feed-list {
+  will-change: transform;
+}
+.fc {
+  flex: none;
+  height: 104px;
+  padding: 13px 16px 14px;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+}
+.fc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fc-time {
+  font: 400 12px/1 var(--font-mono);
+  color: var(--ink-3);
+}
+.fc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  padding: 0 9px 0 7px;
+  border-radius: 999px;
+  background: #f2f3f1;
+  font: 400 11px/20px var(--font-mono);
+  color: var(--ink-2);
+}
+.dot {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+.dot.live {
+  background: var(--accent);
+}
+.fc-title {
+  margin-top: 9px;
+  font: 600 15px/1.3 var(--font-sans);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fc-result {
+  margin-top: 3px;
+  font: 400 13px/1.4 var(--font-sans);
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* U14 tick ruler, night skin (ElevenLabs, crops/elevenlabs-tick-ruler-timeline.jpg; Zaro mobbin
+   4e38789e). a13n turns its second act to night; colour = running only. */
+.act-3 {
+  background: var(--night);
+  color: var(--night-ink);
+}
+.act-3 .act-title .soft {
+  color: var(--night-dim);
+}
+.ruler-card {
+  margin-top: 48px;
+  padding: 22px 48px 14px;
+  border-radius: var(--r-plate);
+  background: #151614;
+  border: 1px solid rgb(242 244 242 / 0.06);
+}
+.ruler {
+  position: relative;
+  height: 128px;
+}
+.ruler > i {
+  position: absolute;
+  display: block;
+}
+.ruler .ticks {
+  left: 0;
+  right: 0;
+  top: 82px;
+  height: 10px;
+  background: repeating-linear-gradient(90deg, rgb(242 244 242 / 0.22) 0 1px, transparent 1px 8px);
+}
+.ruler .base {
+  top: 92px;
+  height: 1px;
+  background: var(--night-ink);
+}
+.ruler .base-a {
+  left: 0;
+  right: 56%;
+}
+.ruler .base-b {
+  left: 96%;
+  right: 0;
+}
+.ruler .gap {
+  top: 92px;
+  left: 44%;
+  right: 4%;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--night-ink) 0 3px, transparent 3px 7px);
+}
+.ruler .mj {
+  top: 62px;
+  width: 1px;
+  height: 30px;
+  background: var(--night-ink);
+}
+.ruler .lb {
+  position: absolute;
+  top: 38px;
+  transform: translateX(-50%);
+  font: 400 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(242 244 242 / 0.72);
+  white-space: nowrap;
+}
+.ruler .lb.first {
+  transform: none;
+}
+.ruler .lb.last {
+  transform: translateX(-100%);
+}
+.ruler .now {
+  top: 84px;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgb(111 211 5 / 0.16);
+  transform: translateX(var(--now-x, 0px));
+}
+.ruler-note {
+  margin-top: 4px;
+  font: 400 16px/1.4 var(--font-sans);
+  color: var(--night-dim);
+}
+.ruler-note b {
+  font-weight: 500;
+  color: var(--night-ink);
+}
+
+/* ---------------------------------------------------------------- stage (pinned) */
+.stage[data-mode="pinned"] {
+  height: 380svh;
+}
+.stage[data-mode="pinned"] .stage-pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.stage[data-mode="pinned"] .stage-acts {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}
+.stage[data-mode="pinned"] .act {
+  position: absolute;
+  inset: 0;
+  padding: var(--nav-h) 0 0;
+  display: flex;
+  align-items: center;
+  will-change: opacity, transform;
+}
+.stage[data-mode="pinned"] .act-2,
+.stage[data-mode="pinned"] .act-3 {
+  opacity: 0;
+}
+.stage[data-mode="pinned"] .act-3 {
+  opacity: 1;
+  clip-path: circle(0% at 50% 50%);
+  will-change: clip-path;
+}
+.stage[data-mode="pinned"] .field {
+  height: min(680px, calc(100svh - var(--nav-h) - 56px));
+}
+.stage[data-mode="pinned"] .portal-frame {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 117.2px;
+  height: 102.2px;
+  margin: -51.1px 0 0 -58.6px;
+  overflow: visible;
+  stroke: var(--outline-ink);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.stage[data-mode="pinned"] .portal-frame path {
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---------------------------------------------------------------- U15 statement with glyph circles
+   #121 America.gov (crops/issue-121-inline-glyph-sentence.jpg); Frame keycap sentence. */
+.statement {
+  padding: 168px 0 152px;
+}
+.statement-text {
+  width: min(760px, var(--w));
+  margin: 0 auto;
+  text-align: center;
+  font: 400 44px/1.14 var(--font-display);
+  letter-spacing: -0.022em;
+  word-spacing: 0.04em;
+  text-wrap: balance;
+}
+.statement .g {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.86em;
+  height: 0.86em;
+  margin: 0 0.04em;
+  vertical-align: -0.1em;
+  border-radius: 50%;
+  background: var(--raised);
+  border: 1px solid rgb(22 24 21 / 0.24);
+  box-shadow: 0 1px 2px rgb(22 24 21 / 0.06);
+  color: var(--ink);
+}
+.statement .g-glyph {
+  width: 0.46em;
+  height: 0.46em;
+}
+
+/* ---------------------------------------------------------------- U16 FAQ, narrow-column skin
+   #134 SpaceXAI (crops/issue-134-faq-split-spacexai.jpg): only "FAQs" on the left, a narrow right
+   column of hairline rows; Retool row metrics; the +/- becomes the outline indicator (Enter Pro
+   .faq-item__dot: hollow, fills and moves 10 px left when open). */
+.faq {
+  width: var(--w);
+  margin: 0 auto;
+  padding: 40px 0 168px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 580px;
+  gap: 80px;
+  align-items: start;
+}
+.faq-title {
+  font: 400 44px/1.04 var(--font-display);
+  letter-spacing: -0.022em;
+}
+.faq-rows {
+  border-bottom: 1px solid #dbd9d5;
+}
+.faq-row {
+  position: relative;
+  border-top: 1px solid #dbd9d5;
+}
+.faq-row summary {
+  position: relative;
+  display: block;
+  padding: 22px 0 22px 30px;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-row summary::-webkit-details-marker {
+  display: none;
+}
+.faq-ind {
+  position: absolute;
+  left: 0;
+  top: 29px;
+  width: 11px;
+  height: 9px;
+  overflow: visible;
+  color: var(--outline-ink);
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 1;
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.35, 1),
+    fill 0.2s ease-out;
+}
+.faq-row[open] .faq-ind {
+  fill: currentColor;
+  transform: translateX(-10px);
+}
+.faq-q {
+  display: block;
+  font: 500 18px/1.35 var(--font-sans);
+  letter-spacing: -0.01em;
+}
+.faq-a {
+  max-width: 560px;
+  padding: 0 0 24px 30px;
+  font: 400 15.5px/1.65 var(--font-sans);
+  color: var(--ink-2);
+}
+
+/* ---------------------------------------------------------------- U06 closing card, legend variant
+   Enter CLI (crops/enter-cli-legend-prompt-card.jpg): the label sits on the top border; Ploy final CTA
+   card (crops/ploy-final-cta-card-live.jpg): a pill field and an ink button inside a quiet card. */
+.closing {
+  padding: 24px 0 0;
+  text-align: center;
+}
+.closing-title {
+  font: 400 48px/1.02 var(--font-display);
+  letter-spacing: -0.025em;
+  word-spacing: 0.05em;
+  margin-bottom: 40px;
+}
+.closing-title > span {
+  display: block;
+}
+.closing-card {
+  position: relative;
+  width: min(560px, var(--w));
+  margin: 0 auto;
+  padding: 34px 24px 18px;
+  background: var(--paper);
+  border: 1px solid rgb(22 24 21 / 0.1);
+  border-radius: 4px;
+  text-align: left;
+}
+.legend {
+  position: absolute;
+  top: -8px;
+  left: 22px;
+  padding: 0 8px;
+  background: var(--paper);
+  font: 400 11px/16px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.prompt-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 6px 0 22px;
+  background: var(--raised);
+  border: 1px solid rgb(22 24 21 / 0.13);
+  border-radius: 999px;
+}
+.prompt-text {
+  flex: 1;
+  min-width: 0;
+  font: 400 15px/1 var(--font-sans);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.prompt-copy {
+  height: 44px;
+  padding: 0 18px 0 16px;
+  flex: none;
+}
+.copy-ico {
+  width: 16px;
+  height: 16px;
+}
+.closing-fine {
+  margin-top: 14px;
+  text-align: center;
+  font: 400 12px/1.4 var(--font-sans);
+  color: var(--ink-3);
+}
+/* Session line (brand/outline README §5.1, UI-FORMS §d): a full-width 1 px line, 16 % ink, with one
+   28 px window standing on it. It replaces the footer's nested outline in this variant. */
+.session-line {
+  position: relative;
+  height: 26px;
+  margin-top: 120px;
+  margin-bottom: 96px;
+}
+.sl-rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.5px;
+  height: 1px;
+  background: var(--line-2);
+}
+.sl-window {
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  width: 29px;
+  height: 25.738px;
+  margin-left: -14.5px;
+  stroke: rgb(22 24 21 / 0.42);
+  stroke-width: 1;
+  overflow: visible;
+}
+
+/* ---------------------------------------------------------------- phones */
+@media (max-width: 900px) {
+  .hero {
+    min-height: auto;
+  }
+  .hero-in {
+    padding: 56px 0 72px;
+  }
+  .hero-window {
+    width: 100.5px;
+    height: 87.6px;
+    margin-bottom: 28px;
+  }
+  .hero-ripple {
+    left: 2.24px;
+    top: 2.24px;
+    width: 96px;
+    height: 76.3px;
+  }
+  .hero-title {
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .hero-lead {
+    font-size: 17px;
+    margin-top: 20px;
+  }
+  .tile {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+  }
+  .tile-glyph {
+    width: 20px;
+    height: 20px;
+  }
+  .tile-1 {
+    left: 2%;
+    top: 34px;
+  }
+  .tile-2 {
+    left: auto;
+    right: 4%;
+    top: 46px;
+  }
+  .tile-3 {
+    left: 14%;
+    top: 118px;
+  }
+  .tile-4 {
+    left: auto;
+    right: 15%;
+    top: 128px;
+  }
+  .act {
+    padding: 88px 0;
+  }
+  .act-title {
+    font-size: 30px;
+    line-height: 1.1;
+  }
+  .spec {
+    margin-top: 32px;
+  }
+  .spec-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 14px 0;
+    min-height: 0;
+  }
+  .spec-face {
+    font-size: 28px;
+  }
+  .field {
+    height: auto;
+    padding: 28px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .field-title {
+    display: contents;
+  }
+  .field-title > span {
+    position: static;
+    font-size: 40px;
+  }
+  .field-b {
+    order: 3;
+  }
+  .feed {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    height: 360px;
+    margin: 0;
+    order: 2;
+  }
+  .feed-list {
+    padding-top: 72px;
+  }
+  .ruler-card {
+    padding: 18px 20px 12px;
+  }
+  .ruler .mob-hide {
+    display: none;
+  }
+  .statement {
+    padding: 96px 0;
+  }
+  .statement-text {
+    font-size: 30px;
+  }
+  .faq {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 0 96px;
+  }
+  .faq-title {
+    font-size: 36px;
+  }
+  .faq-q {
+    font-size: 17px;
+  }
+  .closing-title {
+    font-size: 32px;
+  }
+  .prompt-copy span {
+    display: none;
+  }
+  .prompt-copy {
+    width: 44px;
+    padding: 0;
+  }
+  .session-line {
+    margin-top: 72px;
+    margin-bottom: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-ripple i,
+  .hero-outline {
+    animation: none;
+  }
+  .faq-ind {
+    transition: fill 0.2s ease-out;
+  }
+  .faq-row[open] .faq-ind {
+    transform: none;
+  }
+}
+
+/* CJK: no negative tracking, keep phrases whole (decision 8). */
+.v4:lang(zh) :is(.hero-title, .act-title, .field-title > span, .statement-text, .faq-title, .closing-title),
+.v4:lang(ja) :is(.hero-title, .act-title, .field-title > span, .statement-text, .faq-title, .closing-title) {
+  letter-spacing: 0;
+  word-spacing: 0;
+  word-break: keep-all;
+}
+.v4:lang(ja) :is(.hero-title, .act-title, .statement-text, .closing-title) {
+  word-break: auto-phrase;
+}

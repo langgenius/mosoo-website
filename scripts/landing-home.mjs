@@ -8,6 +8,9 @@
 // exact strings the FAQPage JSON-LD carries, and the React FAQ must show the
 // same text. Do not add facts here that the main repo does not state.
 
+import { HOME_COPY } from "../apps/landing/src/home/copy.ts";
+import { renderHome } from "../apps/landing/src/home/markup.ts";
+
 const SITE = "https://mosoo.ai";
 const CONSOLE = "https://cloud.mosoo.ai";
 const GITHUB = "https://github.com/langgenius/mosoo";
@@ -462,7 +465,6 @@ const COPY = {
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.",
     },
     footer: {
-      signoff: "Take root, and grow a bamboo sea.",
       descriptor: "An open-source, API-first managed Agent runtime for application backends.",
       groups: [
         ["Product", ["mosoo console", "Mosoo Computer", "Use cases", "Status"]],
@@ -709,7 +711,6 @@ const COPY = {
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你在控制台添加模型供应商密钥，这是它唯一无法替你完成的一步。",
     },
     footer: {
-      signoff: "扎下根，长成一片竹海。",
       descriptor: "开源、API 优先的托管 Agent runtime，面向应用后端。",
       groups: [
         ["产品", ["mosoo 控制台", "Mosoo Computer", "用例", "状态"]],
@@ -963,7 +964,6 @@ const COPY = {
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、コンソールでプロバイダーキーを追加するよう求めます。エージェントが代わりにできない唯一の手順です。",
     },
     footer: {
-      signoff: "根を張り、竹の海を育てよう。",
       descriptor: "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
       groups: [
         ["プロダクト", ["mosoo コンソール", "Mosoo Computer", "ユースケース", "稼働状況"]],
@@ -1014,9 +1014,10 @@ function copyFor(locale) {
   return copy;
 }
 
+// v4c: the FAQ the page shows (apps/landing/src/home/copy.ts) is the one the FAQPage JSON-LD carries.
 export function homeFaq(locale) {
   copyFor(locale);
-  return FAQ[locale];
+  return HOME_COPY[locale].faq.items;
 }
 
 export function homeHeadline(locale) {
@@ -1039,356 +1040,29 @@ function inline(value) {
 
 // FAQ answers stay plain text so the visible answer and the FAQPage JSON-LD
 // carry identical text content; code styling and one link are markup only.
-const FAQ_CODE = /\/api\/v[12]\b|outputs\/|Idempotency-Key|runtime\.capacity_exhausted/g;
-function faqAnswer(value) {
-  return escapeText(value)
-    .replace(FAQ_CODE, (token) => `<code translate="no">${token}</code>`)
-    .replace("cloud.mosoo.ai", `<a href="${LINKS.console}">cloud.mosoo.ai</a>`);
-}
 
 function link(href, label, attributes = "") {
   return `<a href="${escapeAttribute(href)}"${attributes}>${inline(label)}</a>`;
 }
 
-const codeBlock = (code, className = "") =>
-  `<pre${className ? ` class="${className}"` : ""} translate="no"><code>${escapeText(code)}</code></pre>`;
 
-function renderHeader(locale, copy) {
-  const languages = LANGUAGES.map(
-    (language) =>
-      `<li>${link(
-        `/${language.locale}`,
-        language.label,
-        ` hreflang="${language.lang}" lang="${language.lang}"${language.locale === locale ? ' aria-current="page"' : ""}`,
-      )}</li>`,
-  ).join("");
 
-  // The React topbar's Products menu (copy deck section 1) as a native
-  // disclosure, so it opens without JavaScript and crawlers read both entries.
-  const products = [
-    [LINKS.console, "mosoo", copy.nav.productMosoo],
-    [LINKS.computer, "Mosoo Computer", copy.nav.productComputer],
-  ]
-    .map(
-      ([href, name, description]) =>
-        `<li>${link(href, name, ' translate="no"')} <span class="mf-muted">${inline(description)}</span></li>`,
-    )
-    .join("");
-
-  return `<header class="mf-bar">
-<a href="/${locale}" aria-label="${escapeAttribute(copy.nav.home)}"><img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" width="102" height="22" /></a>
-<nav aria-label="Primary site links">
-<ul class="mf-row">
-<li><details class="mf-menu"><summary>${inline(copy.nav.products)}</summary><ul>${products}</ul></details></li>
-<li>${link(copy.docs, copy.nav.docs)}</li>
-<li>${link(`/${locale}/use-cases`, copy.nav.useCases)}</li>
-<li>${link(copy.blog, copy.nav.blog)}</li>
-<li>${link(LINKS.github, "GitHub", ` aria-label="${escapeAttribute(copy.nav.github)}"`)}</li>
-<li>${link(LINKS.signIn, copy.nav.signIn)}</li>
-<li>${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')}</li>
-</ul>
-<ul class="mf-row mf-languages" aria-label="${escapeAttribute(copy.nav.language)}">${languages}</ul>
-</nav>
-</header>`;
-}
-
-function renderHero(copy) {
-  // Keep the category noun on one line in every locale; the text is unchanged.
-  const title = inline(copy.hero.title).replace(
-    "Agent runtime",
-    '<span class="mf-nowrap">Agent runtime</span>',
-  );
-  return `<section class="mf-hero" aria-labelledby="mf-title">
-<h1 id="mf-title">${title}</h1>
-<p class="mf-lead">${inline(copy.hero.subhead)}</p>
-<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
-<p>${inline(copy.hero.hosted)}</p>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-</section>`;
-}
 
 // The two outputs of the CSV story with the short private_nonce_sha256 they
 // share (the hero stage's evidence rows; values from the kit's example).
-function renderWall(copy) {
-  const wall = copy.wall;
-  const rows = RUNTIMES.map(
-    (runtime) =>
-      `<tr><td>${inline(runtime.name)}</td><td><code translate="no">${runtime.id}</code></td><td>${inline(wall.protocolsByRuntime[runtime.id])}</td></tr>`,
-  ).join("\n");
-  const providers = [...PROVIDERS, wall.customProvider].map((name) => `<li>${inline(name)}</li>`).join("");
-  const protocols = PROTOCOLS.map((name) => `<li>${inline(name)}</li>`).join("");
 
-  return `<section id="runtimes" aria-labelledby="mf-runtimes">
-<h2 id="mf-runtimes">${inline(wall.title)}</h2>
-<p class="mf-intro">${inline(wall.intro)}</p>
-<h3>${inline(wall.runtimes)}</h3>
-<div class="mf-table"><table>
-<thead><tr>${wall.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-<h3>${inline(wall.providers)}</h3>
-<ul class="mf-row mf-chips">${providers}</ul>
-<h3>${inline(wall.protocols)}</h3>
-<ul class="mf-row mf-chips">${protocols}</ul>
-${wall.notes.map((note) => `<p class="mf-muted">${inline(note)}</p>`).join("\n")}
-</section>`;
-}
 
-function renderFeatures(copy) {
-  const features = copy.features;
-  const items = features.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.proof)}</p>
-</li>`,
-    )
-    .join("\n");
 
-  return `<section id="features" aria-labelledby="mf-features">
-<h2 id="mf-features">${inline(features.title)}</h2>
-<ul class="mf-grid">
-${items}
-</ul>
-<p>${link(LINKS.spec, features.spec)}</p>
-</section>`;
-}
 
-function renderSteps(copy) {
-  const steps = copy.steps;
-  const items = steps.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.io)}</p>
-</li>`,
-    )
-    .join("\n");
 
-  return `<section id="how-it-works" aria-labelledby="mf-steps">
-<h2 id="mf-steps">${inline(steps.title)}</h2>
-<p class="mf-intro">${inline(steps.intro)}</p>
-<ol class="mf-steps">
-${items}
-</ol>
-<figure class="mf-code">
-<figcaption>${inline(steps.uploadLabel)}</figcaption>
-${codeBlock(UPLOAD_REQUEST)}
-</figure>
-<figure class="mf-code">
-<figcaption>${inline(steps.codeLabel)}</figcaption>
-${codeBlock(START_SESSION_REQUEST)}
-</figure>
-<p class="mf-muted">${inline(steps.note)}</p>
-<p>${link(copy.apiReferenceV2, steps.apiReference)}</p>
-</section>`;
-}
 
-function renderSplit(copy) {
-  const split = copy.split;
-  const list = (rows) =>
-    rows.map(([term, detail]) => `<dt>${inline(term)}</dt><dd>${inline(detail)}</dd>`).join("\n");
 
-  return `<section id="your-app-and-mosoo" aria-labelledby="mf-split">
-<h2 id="mf-split">${inline(split.title)}</h2>
-<div class="mf-cols">
-<div>
-<h3>${inline(split.app)}</h3>
-<dl>
-${list(split.appRows)}
-</dl>
-</div>
-<div>
-<h3>${inline(split.mosoo)}</h3>
-<dl>
-${list(split.mosooRows)}
-</dl>
-</div>
-</div>
-<p>${inline(split.path)}</p>
-<p class="mf-muted">${inline(split.footnote)}</p>
-</section>`;
-}
 
-function renderProof(locale, copy) {
-  const proof = copy.proof;
-  const releases = proof.releases.list
-    .map(
-      ([version, text]) =>
-        `<dt><span translate="no">${version}</span> <time datetime="${RELEASE_DATES[version]}">${RELEASE_DATES[version]}</time></dt><dd>${inline(text)}</dd>`,
-    )
-    .join("\n");
 
-  return `<section id="proof" aria-labelledby="mf-proof">
-<h2 id="mf-proof">${inline(proof.title)}</h2>
-<p class="mf-intro">${inline(proof.intro)}</p>
-<div class="mf-cols">
-<div>
-<h3>${inline(proof.source.title)}</h3>
-<p>${inline(proof.source.body)}</p>
-<p class="mf-row">${link(LINKS.github, copy.cta.source)} ${link(LINKS.spec, copy.features.spec)}</p>
-</div>
-<div>
-<h3>${inline(proof.releases.title)}</h3>
-<p>${inline(proof.releases.body)}</p>
-<dl class="mf-releases">
-${releases}
-</dl>
-<p>${link(LINKS.releases, proof.releases.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.status.title)}</h3>
-<p>${inline(proof.status.body)}</p>
-<p>${link(copy.health, proof.status.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.postmortems.title)}</h3>
-<p>${inline(proof.postmortems.body)}</p>
-<p>${link(LINKS.incidents, proof.postmortems.link)}</p>
-</div>
-<div>
-<h3>Codex Pet</h3>
-<p>${inline(proof.codexPet.body)}</p>
-<p>${link(`/${locale}/use-cases/codex-pet`, proof.codexPet.link)}</p>
-</div>
-<div>
-<h3>ghfind</h3>
-<p>${inline(proof.ghfind.body)}</p>
-<p class="mf-row">${link(`/${locale}/use-cases/ghfind`, proof.ghfind.link)} ${link(LINKS.ghfind, proof.ghfind.app)}</p>
-</div>
-</div>
-<p>${link(`/${locale}/use-cases`, proof.allUseCases)}</p>
-</section>`;
-}
-
-function renderLimits(copy) {
-  const limits = copy.limits;
-  const rows = limits.rows
-    .map(([gap, instead]) => `<tr><th scope="row">${inline(gap)}</th><td>${inline(instead)}</td></tr>`)
-    .join("\n");
-
-  return `<section id="limits" aria-labelledby="mf-limits">
-<h2 id="mf-limits">${inline(limits.title)}</h2>
-<p class="mf-intro">${inline(limits.intro)}</p>
-<div class="mf-table"><table>
-<thead><tr>${limits.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-</section>`;
-}
-
-function renderFaq(locale, copy) {
-  const items = FAQ[locale]
-    .map(({ q, a }) => `<div class="mf-qa">
-<h3>${escapeText(q)}</h3>
-<p>${faqAnswer(a)}</p>
-</div>`)
-    .join("\n");
-
-  return `<section id="faq" aria-labelledby="mf-faq">
-<h2 id="mf-faq">${inline(copy.faqTitle)}</h2>
-${items}
-</section>`;
-}
-
-function renderFinal(locale, copy) {
-  const final = copy.final;
-  return `<section id="start" aria-labelledby="mf-start">
-<h2 id="mf-start">${inline(final.title)}</h2>
-<div class="mf-cols">
-<div>
-<h3>${inline(final.consoleTitle)}</h3>
-<p>${inline(final.consoleBody)}</p>
-<p>${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')}</p>
-</div>
-<div>
-<h3>${inline(final.agentTitle)}</h3>
-<p>${inline(final.agentBody)}</p>
-${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
-<details>
-<summary>${inline(copy.hero.agentLabel)}</summary>
-${codeBlock(SETUP_PROMPT[locale], "mf-prompt")}
-</details>
-</div>
-</div>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-</section>`;
-}
-
-function footerHref(locale, copy, index) {
-  // Same order as copy.footer.groups.
-  return [
-    [LINKS.console, LINKS.computer, `/${locale}/use-cases`, copy.health],
-    [
-      copy.docs,
-      copy.quickstart,
-      copy.apiReferenceV2,
-      LINKS.openApiV2,
-      LINKS.openApiV1,
-      copy.cli,
-      LINKS.changelog,
-      LINKS.llms,
-    ],
-    [LINKS.github, LINKS.releases, LINKS.spec, LINKS.driver, LINKS.license, LINKS.security, LINKS.incidents],
-    [copy.blog, LINKS.x, LINKS.issues],
-  ][index];
-}
-
-function renderFooter(locale, copy) {
-  const groups = copy.footer.groups
-    .map(([label, labels], index) => {
-      const hrefs = footerHref(locale, copy, index);
-      if (hrefs.length !== labels.length) {
-        throw new Error(`Footer group ${label} has ${labels.length} labels for ${hrefs.length} links`);
-      }
-      const id = `mf-footer-${index}`;
-      const items = labels
-        .map((text, position) => {
-          const href = hrefs[position];
-          const english = locale !== "en" && href === LINKS.changelog ? ' hreflang="en"' : "";
-          return `<li>${link(href, text, english)}</li>`;
-        })
-        .join("");
-      return `<div><p id="${id}" class="mf-label">${inline(label)}</p><ul aria-labelledby="${id}">${items}</ul></div>`;
-    })
-    .join("\n");
-
-  return `<footer class="mf-foot">
-<p class="mf-signoff">${inline(copy.footer.signoff)}</p>
-<p class="mf-muted">${inline(copy.footer.descriptor)}</p>
-<nav class="mf-groups" aria-label="Footer">
-${groups}
-</nav>
-<p class="mf-muted">${inline(copy.footer.copyright)}</p>
-</footer>`;
-}
 
 export function renderHomeFallback(locale) {
-  const copy = copyFor(locale);
-  return `<div class="mosoo-fallback">
-<a class="mf-skip" href="#main">${inline(copy.nav.skip)}</a>
-${renderHeader(locale, copy)}
-<main id="main">
-${renderHero(copy)}
-
-${renderWall(copy)}
-${renderFeatures(copy)}
-${renderSteps(copy)}
-${renderSplit(copy)}
-${renderProof(locale, copy)}
-${renderLimits(copy)}
-${renderFaq(locale, copy)}
-${renderFinal(locale, copy)}
-</main>
-${renderFooter(locale, copy)}
-</div>`;
+  copyFor(locale);
+  return renderHome(locale);
 }
 
 // ---------------------------------------------------------------------------
@@ -1444,7 +1118,7 @@ export function homeStructuredData(locale) {
         inLanguage: copy.lang,
         isPartOf: { "@id": `${SITE}/#website` },
         about: { "@id": `${SITE}/#software` },
-        mainEntity: FAQ[locale].map(({ q, a }) => ({
+        mainEntity: homeFaq(locale).map(({ q, a }) => ({
           "@type": "Question",
           name: q,
           acceptedAnswer: { "@type": "Answer", text: a },
@@ -1463,73 +1137,6 @@ export function renderHomeJsonLd(locale) {
 // Scoped to .mosoo-fallback, which only exists until React mounts. Warm paper
 // and forest ink match the landing palette; no web font beyond Geist, and CJK
 // text uses the platform fonts.
-export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
-.mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
-.mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
-.mosoo-fallback *{box-sizing:border-box}
-.mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
-.mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(15,26,2,.16)}
-.mosoo-fallback .mf-skip{position:absolute;left:-9999px}
-.mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
-.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
-.mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-top:16px;padding-bottom:16px;border-bottom:1px solid var(--mf-line)}
-.mosoo-fallback .mf-bar img{display:block;height:22px;width:auto}
-.mosoo-fallback .mf-bar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
-.mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none}
-.mosoo-fallback .mf-languages{font-size:14px}
-.mosoo-fallback .mf-menu summary{color:var(--mf-ink)}
-.mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
-.mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
-.mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
-.mosoo-fallback h1,.mosoo-fallback h2{font-family:var(--font-literata,Georgia,serif);font-weight:400}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:var(--font-literata-zh,"Songti SC",serif);font-weight:600}
-.mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:var(--font-literata-ja,"Hiragino Mincho ProN",serif);font-weight:600}
-.mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;letter-spacing:-.02em}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
-.mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;letter-spacing:-.01em}
-.mosoo-fallback h3{margin-top:28px;font-size:18px;line-height:1.35;font-weight:650}
-.mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:70ch}
-.mosoo-fallback p{margin:10px 0 0}
-.mosoo-fallback main>.mf-hero{padding:56px 0 48px;border-top:0}
-.mosoo-fallback .mf-nowrap{white-space:nowrap}
-.mosoo-fallback .mf-hero h1{margin-top:0}
-.mosoo-fallback .mf-lead{margin-top:20px;font-size:19px;color:var(--mf-muted)}
-.mosoo-fallback .mf-actions{margin-top:28px}
-.mosoo-fallback .mf-muted,.mosoo-fallback .mf-intro,.mosoo-fallback dd{color:var(--mf-muted)}
-.mosoo-fallback .mf-agent{margin-top:32px;padding-top:20px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback main>section,.mosoo-fallback .mf-figure{margin:0;padding:56px 0;border-top:1px solid var(--mf-line)}
-.mosoo-fallback figcaption{font-weight:600}
-.mosoo-fallback .mf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 40px;margin:0;padding:0;list-style:none}
-.mosoo-fallback .mf-steps{margin:8px 0 0;padding-left:1.4em;list-style:decimal}
-.mosoo-fallback .mf-steps>li::marker{font-weight:650}
-.mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
-.mosoo-fallback .mf-chips{gap:6px 18px;margin-top:10px}
-.mosoo-fallback code,.mosoo-fallback pre{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.mosoo-fallback code{font-size:.92em}
-.mosoo-fallback :not(pre)>code{overflow-wrap:anywhere}
-.mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:8px;background:var(--mf-panel);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
-.mosoo-fallback pre code{font-size:inherit}
-.mosoo-fallback .mf-prompt{max-height:420px}
-.mosoo-fallback .mf-code{margin:28px 0 0}
-.mosoo-fallback details{margin-top:16px}
-.mosoo-fallback summary{cursor:pointer;color:var(--mf-link);font-weight:600}
-.mosoo-fallback .mf-table{margin-top:16px;overflow-x:auto}
-.mosoo-fallback table{width:100%;border-collapse:collapse;font-size:15px}
-.mosoo-fallback th,.mosoo-fallback td{padding:10px 16px 10px 0;border-bottom:1px solid var(--mf-line);text-align:left;vertical-align:top}
-.mosoo-fallback th{font-weight:600}
-.mosoo-fallback dl{margin:8px 0 0}
-.mosoo-fallback dt{margin-top:12px;font-weight:600}
-.mosoo-fallback dd{margin:2px 0 0}
-.mosoo-fallback .mf-releases dt{font-weight:500}
-.mosoo-fallback .mf-qa h3{margin-top:32px}
-.mosoo-fallback .mf-foot{padding-top:48px;padding-bottom:48px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback .mf-signoff{margin:0;font-size:clamp(22px,3vw,28px);font-weight:650;line-height:1.25}
-.mosoo-fallback .mf-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:32px}
-.mosoo-fallback .mf-groups ul{margin:8px 0 0;padding:0;list-style:none}
-.mosoo-fallback .mf-groups li{margin-top:4px}
-.mosoo-fallback .mf-label{margin:0;font-weight:600}
-@media (min-width:768px){.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{padding-left:32px;padding-right:32px}.mosoo-fallback .mf-grid,.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
-</style>`;
+// The v4c home links its real stylesheet (src/shared/styles/v4.css, src/home/home.css) from the page
+// head, so the no-JS page needs no inline fallback styles.
+export const HOME_FALLBACK_STYLE = "";
