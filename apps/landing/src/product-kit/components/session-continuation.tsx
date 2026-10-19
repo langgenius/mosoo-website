@@ -239,16 +239,25 @@ function Gap({
         className="border-border-strong absolute top-0 bottom-0 left-6 origin-top border-l border-dashed"
         style={{ transform: `scaleY(${drawn})` }}
       />
-      <span
-        className={cx(
-          "inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5",
-          large ? "text-fg-1 font-medium" : "text-fg-3",
-          visible ? null : "invisible",
-        )}
-      >
-        {icon}
-        {children}
-      </span>
+      {large ? (
+        // The icon keeps its own column, so a long label wraps beside it
+        // instead of dropping below a lone icon on a phone.
+        <span className={cx("text-fg-1 flex min-w-0 items-start gap-1.5 font-medium", visible ? null : "invisible")}>
+          <span className="flex h-6 shrink-0 items-center">{icon}</span>
+          <span className="flex min-w-0 flex-wrap items-center gap-x-1.5">{children}</span>
+        </span>
+      ) : (
+        <span
+          className={cx(
+            "inline-flex flex-wrap items-center gap-x-1.5 gap-y-0.5",
+            "text-fg-3",
+            visible ? null : "invisible",
+          )}
+        >
+          {icon}
+          {children}
+        </span>
+      )}
     </div>
   );
 }
