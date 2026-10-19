@@ -302,12 +302,29 @@
   border-radius: 50%;
   background: #fff;
 }
-.pp-chip-ic img {
+/* Runtime glyphs are masks painted in ink, so all four share one weight and one tone (UI review P2-2). */
+.pp-gm {
+  display: block;
   width: 13px;
   height: 13px;
+  background: var(--pp-ink);
+  -webkit-mask: var(--pp-gm) center / contain no-repeat;
+  mask: var(--pp-gm) center / contain no-repeat;
 }
-.pp-glyph {
-  filter: grayscale(1) brightness(0.35) contrast(1.4);
+.pp-gm-openai-runtime {
+  --pp-gm: url("/brand/runtime/openai-runtime.svg");
+}
+.pp-gm-claude-agent-sdk {
+  --pp-gm: url("/brand/runtime/claude-agent-sdk.svg");
+}
+.pp-gm-acp-fallback {
+  --pp-gm: url("/brand/runtime/acp-fallback.svg");
+}
+.pp-gm-pi {
+  --pp-gm: url("/brand/runtime/pi.svg");
+}
+.pp-gm-key {
+  --pp-gm: url("/brand/runtime/key.svg");
 }
 .pp-live {
   width: 6px;
@@ -339,12 +356,85 @@
   font: 300 20px/1 var(--font-sans);
 }
 .pp-pill {
+  display: inline-flex;
+  align-items: center;
   height: 32px;
   padding: 0 13px;
   border-radius: 999px;
   background: var(--pp-chip);
   color: var(--pp-ink-2);
   font: 500 14px/32px var(--font-sans);
+}
+/* An optional count gets its own white disc (Enter Pro "Skills 3"); an optional caret is drawn, not a glyph. */
+.pp-pill b {
+  min-width: 20px;
+  height: 20px;
+  margin-left: 7px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #fff;
+  font: 500 13px/20px var(--font-sans);
+  text-align: center;
+}
+.pp-pill svg {
+  width: 10px;
+  height: 6px;
+  margin-left: 6px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+/* U08 at full width (UI review P0-1): the fragment scales about 1.5x so it holds the plate instead of sitting in its
+   corner; the plate keeps 448 so the caption stays below the first screen. */
+@media (min-width: 1024px) {
+  .pp-frag {
+    top: 72px;
+    left: calc(100% - 760px); /* 200px of the 960px fragment run past the plate's right edge */
+    width: 960px;
+    padding: 26px 32px;
+    border-radius: 28px;
+  }
+  .pp-chip {
+    gap: 12px;
+    height: 48px;
+    padding: 0 20px 0 9px;
+    font-size: 20px;
+  }
+  .pp-chip-ic {
+    width: 30px;
+    height: 30px;
+  }
+  .pp-chip-ic .pp-gm {
+    width: 17px;
+    height: 17px;
+  }
+  .pp-live {
+    width: 8px;
+    height: 8px;
+  }
+  .pp-ghost {
+    margin: 26px 0 36px;
+    font-size: 26px;
+  }
+  .pp-ctl {
+    gap: 10px;
+  }
+  .pp-plus {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
+  .pp-pill {
+    height: 40px;
+    padding: 0 17px;
+    font: 500 17px/40px var(--font-sans);
+  }
+  .pp-pill b {
+    min-width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 24px;
+  }
 }
 .pp-cap {
   max-width: 470px;
@@ -395,14 +485,21 @@
 
 /* ---------------------------------------------------------------- 03 U11: two said cards */
 
+/* Same 1120 column as U13 below, so both share the 160 / 1280 edges (UI review P1-1). */
 .pp-said {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 536px));
-  justify-content: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  width: min(1120px, 100% - 2 * var(--pp-gutter));
+}
+/* The cards are the sentence's evidence, so they sit under it, not a full section away (UI review P1-2). */
+.pp-voice + .pp-said {
+  margin-top: 16px;
 }
 .pp-said-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 28px 30px 30px;
   border: 1px solid rgb(27 25 22 / 0.08);
@@ -421,6 +518,7 @@
 .pp-said-card blockquote {
   position: relative;
   z-index: 1;
+  min-height: calc(2 * 1.3em + 33px); /* two quote lines, so a one-line quote keeps the result row level */
   margin: 16px 0 18px;
   padding: 16px 18px 17px;
   border-left: 2px solid var(--pp-ink);
@@ -430,6 +528,7 @@
   letter-spacing: -0.01em;
 }
 .pp-said-res {
+  margin-top: auto;
   color: var(--pp-ink-2);
   font: 400 14.5px/1.62 var(--font-sans);
 }
@@ -490,9 +589,9 @@
   border: 1px solid var(--pp-hair);
   background: var(--pp-paper-2);
 }
-.pp-ib img {
-  width: 18px;
-  height: 18px;
+.pp-ib .pp-gm {
+  width: 16px;
+  height: 16px;
 }
 .pp-mx-name {
   font: 500 14px/1.3 var(--font-sans);
@@ -555,12 +654,13 @@
 .pp-q summary::-webkit-details-marker {
   display: none;
 }
+/* The window stands on its floor line (UI-FORMS §d), so the small mark never reads as a checkbox (UI review P2-3). */
 .pp-ind {
   position: absolute;
   left: 0;
-  top: 29px;
-  width: 11px;
-  height: 9px;
+  top: 28px;
+  width: 13px;
+  height: 11px;
   color: var(--pp-ink);
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.35, 1);
 }
@@ -571,7 +671,7 @@
 .pp-q[open] .pp-ind {
   transform: translateX(-10px);
 }
-.pp-q[open] .pp-ind path {
+.pp-q[open] .pp-ind .pp-ind-win {
   fill: currentColor;
 }
 .pp-a {
@@ -776,7 +876,7 @@
     height: 380px; /* U08 says 300; 380 keeps the caption below a 390x844 first screen (≤25 words) */
   }
   .pp-frag {
-    top: 56px;
+    top: 114px; /* centred on the 380 plate; not a transform, which the tab engine animates */
     left: 20px;
     width: 520px;
     padding: 14px 18px;
@@ -801,6 +901,9 @@
   }
   .pp-said {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .pp-voice + .pp-said {
+    margin-top: 28px;
   }
   .pp-said-card {
     padding: 22px 20px 24px;

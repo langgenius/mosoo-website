@@ -6,7 +6,7 @@
 // Port of mosoo-website-redesign-staging/brand/outline/src/gen.mjs, cut to the three pieces this variant uses:
 //   public/brand/outline/nested-3.svg          footer: three nested windows on one floor line (22% / 40% / 100%)
 //   public/brand/outline/portal-mask.svg       the block, filled; masks the footer's dot field to the inner window
-//   public/brand/outline/faq-indicator-*.svg   FAQ row indicator, 10 px block, 1 px; open = filled
+//   public/brand/outline/faq-indicator-*.svg   FAQ row indicator, 10 px block on a floor line, 1 px; open = filled
 //   src/shared/chrome/outline-geometry.mjs     the same paths for inline SVG (currentColor) in the page chrome
 // Deterministic: every number below comes from the mark, nothing is sampled.
 //
@@ -82,16 +82,19 @@ writeFileSync(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${M.w} ${M.h}" width="${r(M.w * 4)}" height="${r(M.h * 4)}" preserveAspectRatio="none">\n  <path d="${maskD}" fill="#000"/>\n</svg>\n`,
 );
 
-// FAQ indicator: 10 px block, 1 px stroke.
+// FAQ indicator: 10 px block, 1 px stroke, standing on a floor line 2 px wider, 1 px under it (UI-FORMS §d: the
+// window stands on its line). Without the line, the block alone reads as a checkbox at this size.
 const fw = 10;
 const fk = fw / M.w;
 const fh = M.h * fk;
-const faqD = block(0.5, 0.5, fw, fh, M.sag * fk);
-const faqViewBox = `0 0 11 ${r(fh + 1)}`;
+const faqD = block(1.5, 0.5, fw, fh, M.sag * fk);
+const faqBase = `M0.5 ${r(fh + 2)}H12.5`;
+const faqH = r(fh + 3);
+const faqViewBox = `0 0 13 ${faqH}`;
 for (const open of [false, true]) {
   writeFileSync(
     join(svgDir, `faq-indicator-${open ? "open" : "closed"}.svg`),
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${faqViewBox}" width="11" height="${r(fh + 1)}" fill="none" color="#1b1916">\n  <path d="${faqD}" stroke="currentColor" stroke-width="1"${open ? ' fill="currentColor"' : ""}/>\n</svg>\n`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${faqViewBox}" width="13" height="${faqH}" fill="none" color="#1b1916">\n  <path d="${faqD}" stroke="currentColor" stroke-width="1"${open ? ' fill="currentColor"' : ""}/>\n  <path d="${faqBase}" stroke="currentColor" stroke-width="1"/>\n</svg>\n`,
   );
 }
 
@@ -105,7 +108,7 @@ const geometry = {
     // The inner window's box in viewBox units, for the dot field that fills it.
     inner: { x: inner.x, y: inner.y, w: inner.w, h: inner.h },
   },
-  faq: { viewBox: faqViewBox, d: faqD },
+  faq: { viewBox: faqViewBox, d: faqD, base: faqBase },
 };
 writeFileSync(
   moduleFile,
