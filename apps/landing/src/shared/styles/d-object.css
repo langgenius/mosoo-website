@@ -147,7 +147,7 @@ html:has(.d-shell) {
   border-radius: inherit;
   background: var(--d-grain) 0 0 / 256px 256px;
   mix-blend-mode: multiply;
-  opacity: 0.16;
+  opacity: 0.14;
   pointer-events: none;
 }
 
@@ -366,10 +366,10 @@ html:has(.d-shell) {
   will-change: transform;
 }
 
-.d-sat.s1 { left: 236px; top: 64px; --dock-x: -146px; --dock-y: -40px; }
-.d-sat.s2 { left: 700px; top: 104px; --dock-x: 156px; --dock-y: -58px; }
-.d-sat.s3 { left: 246px; top: 214px; --dock-x: -132px; --dock-y: 66px; }
-.d-sat.s4 { left: 690px; top: 250px; --dock-x: 142px; --dock-y: 54px; }
+.d-sat.s1 { left: 236px; top: 64px; --dock-x: -92px; --dock-y: -26px; }
+.d-sat.s2 { left: 700px; top: 104px; --dock-x: 100px; --dock-y: -38px; }
+.d-sat.s3 { left: 238px; top: 220px; --dock-x: -86px; --dock-y: 42px; }
+.d-sat.s4 { left: 698px; top: 252px; --dock-x: 92px; --dock-y: 34px; }
 
 .d-stage[data-dock="out"] .d-sat {
   transform: translate(var(--dock-x), var(--dock-y));
@@ -439,7 +439,9 @@ html:has(.d-shell) {
   background: var(--d-ink);
   color: #ecebe6;
   font: 400 14px/36px var(--font-mono);
+  letter-spacing: -0.08em;
   text-align: center;
+  white-space: nowrap;
 }
 
 .d-tile.live {
@@ -483,22 +485,25 @@ html:has(.d-shell) {
 }
 
 .d-plate-mist {
-  height: 520px;
-  background: linear-gradient(165deg, var(--d-mist-a) 0%, var(--d-mist-b) 100%);
+  height: 540px;
+  background:
+    radial-gradient(70% 55% at 50% 0%, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(60% 50% at 85% 100%, oklch(0.84 0.024 240 / 0.7) 0%, transparent 70%),
+    linear-gradient(170deg, var(--d-mist-a) 0%, var(--d-mist-b) 100%);
 }
 
 .d-stack {
   position: absolute;
   left: 50%;
-  top: 92px;
-  width: 520px;
-  margin-left: -260px;
+  top: 96px;
+  width: 680px;
+  margin-left: -340px;
 }
 
 .d-stack-card {
   position: relative;
   z-index: 2;
-  padding: 24px 28px 26px;
+  padding: 28px 32px 28px;
   border-radius: 18px;
   background: rgb(255 255 255 / 0.94);
   box-shadow: var(--d-shadow-paper);
@@ -511,8 +516,8 @@ html:has(.d-shell) {
   bottom: -12px;
   height: 60px;
   border-radius: 18px;
-  background: rgb(255 255 255 / 0.72);
-  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.04);
+  background: rgb(255 255 255 / 0.78);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.05), 0 10px 24px -14px rgb(21 23 20 / 0.3);
   z-index: 1;
 }
 
@@ -520,7 +525,7 @@ html:has(.d-shell) {
   left: 34px;
   right: 34px;
   bottom: -24px;
-  background: rgb(255 255 255 / 0.5);
+  background: rgb(255 255 255 / 0.56);
   z-index: 0;
 }
 
@@ -531,7 +536,7 @@ html:has(.d-shell) {
 }
 
 .d-stack-label {
-  font: 500 18px/1.2 var(--font-sans);
+  font: 500 20px/1.2 var(--font-sans);
   letter-spacing: -0.012em;
 }
 
@@ -541,7 +546,7 @@ html:has(.d-shell) {
 }
 
 .d-stack-track {
-  margin: 22px 0 20px;
+  margin: 26px 0 22px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -552,8 +557,8 @@ html:has(.d-shell) {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: #f1f0ed;
 }
@@ -567,7 +572,7 @@ html:has(.d-shell) {
 .d-stack-rail {
   position: relative;
   flex: 1;
-  height: 40px;
+  height: 44px;
   border-radius: 999px;
   background: #ecebe8;
 }
@@ -743,7 +748,9 @@ html:has(.d-shell) {
 .d-pc summary {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 16px;
+  min-height: 96px;
   padding: 26px 34px 26px 30px;
   cursor: pointer;
   list-style: none;
@@ -921,7 +928,7 @@ html:has(.d-shell) {
   mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
   background-color: #fff;
   background-image:
-    linear-gradient(#fff 8%, rgb(255 255 255 / 0) 88%),
+    radial-gradient(78% 100% at 50% 100%, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0) 30%, #fff 96%),
     radial-gradient(rgb(22 24 21 / 0.55) 1px, transparent 1.3px);
   background-size:
     100% 100%,

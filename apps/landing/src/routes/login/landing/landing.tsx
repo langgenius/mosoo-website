@@ -83,11 +83,17 @@ function Hero(): ReactElement {
   );
 }
 
-const GLYPH_FRAMES = [
+// Ploy's braille tiles: eight frames per tile, each frame a row of three
+// cells read off the same cycle at offsets 0 / 3 / 6. Tile states follow the
+// console's pending / running / completed (thread-state-icon.tsx).
+const GLYPH_CYCLES = [
   ["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"],
   ["⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"],
   ["⠀", "⠄", "⠤", "⠦", "⠶", "⠷", "⠿", "⠷"],
 ];
+const GLYPH_FRAMES = GLYPH_CYCLES.map((cycle) =>
+  cycle.map((_, k) => `${cycle[k]}${cycle[(k + 3) % 8]}${cycle[(k + 6) % 8]}`),
+);
 
 function Verbs(): ReactElement {
   return (
@@ -207,7 +213,7 @@ function FaqSection(): ReactElement {
             <summary>
               <Corners className="d-pc-c" />
               <span className="d-pc-q">{item.q}</span>
-              <span className="d-pc-n">
+              <span aria-hidden="true" className="d-pc-n">
                 <FaqIndicator />
                 {String(index + 1).padStart(2, "0")}
               </span>

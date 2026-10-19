@@ -1433,12 +1433,12 @@ export function renderHomeJsonLd(locale) {
 }
 
 // Scoped to .mosoo-fallback, which only exists until React mounts. Warm paper
-// and forest ink match the landing palette; no web font beyond Geist, and CJK
+// and ink match the landing palette; no web font beyond Inter, and CJK
 // text uses the platform fonts.
 export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
-.mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
-.mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
+.mosoo-fallback{--mf-paper:#ffffff;--mf-ink:#161815;--mf-muted:#515350;--mf-line:rgba(22,24,21,.12);--mf-link:#161815;--mf-panel:#fafaf8;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
+.mosoo-fallback:lang(zh){font-family:Inter,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+.mosoo-fallback:lang(ja){font-family:Inter,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
 .mosoo-fallback *{box-sizing:border-box}
 .mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
 .mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
@@ -1479,7 +1479,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-steps>li::marker{font-weight:650}
 .mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
 .mosoo-fallback .mf-chips{gap:6px 18px;margin-top:10px}
-.mosoo-fallback code,.mosoo-fallback pre{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mosoo-fallback code,.mosoo-fallback pre{font-family:"Fragment Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .mosoo-fallback code{font-size:.92em}
 .mosoo-fallback :not(pre)>code{overflow-wrap:anywhere}
 .mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:8px;background:var(--mf-panel);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}

@@ -30,7 +30,7 @@ for (let y = 0; y < SIZE; y++) {
       16;
     // Stretch the contrast back after the blur; white = no darkening under multiply.
     const n = Math.max(0, Math.min(1, (v - 0.5) * 3.2 + 0.5));
-    out[y * SIZE + x] = Math.round(255 - n * 150);
+    out[y * SIZE + x] = Math.round(255 - n * 96);
   }
 }
 
