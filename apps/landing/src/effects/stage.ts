@@ -1,12 +1,14 @@
 // The v4c signature effect: the hero window opens into a pinned three-act stage. The hero is layer 0 of
 // the pinned stage, so the hero window and the portal mask are one window (brand/outline README L131):
 //
-//   hero    0.00-0.07  the hero's words and tiles leave; the hero window glides to the stage centre
-//   portal  0.07-0.19  the acts show through the logo block (clip-path: path()), which grows from the hero
-//                      window's 112 px to past the viewport (progress squared, brand/outline README §3)
-//   act 1   0.19-0.43  U10 spec table; the Harness slot flips every 2.4 s (rotateX, a13n first act)
-//   act 2   0.43-0.66  U04 feed; scrolling walks the feed from the first event to the newest
-//   act 3   0.66-1.00  iris to night (clip-path: circle()), then the ruler's live dot travels to +7 days
+//   hero    0.00-0.07  a short hold, then the hero's words and tiles leave; the window glides to the centre
+//   portal  0.07-0.17  the acts show through the logo block (clip-path: path()), which grows from the hero
+//                      window's 112 px to past the viewport (ease-out). Until the block is about as wide as
+//                      the act, the window holds only the S2 bands (the veil), never a crop of a sentence
+//   act 1   0.10-0.37  U10 spec table, static
+//   act 2   0.37-0.65  U04 feed: act 1 leaves first, then act 2 enters (never two titles at once);
+//                      scrolling walks the feed from the first event to the newest
+//   act 3   0.65-1.00  iris to night (clip-path: circle()), then the ruler's live dot travels to +7 days
 //
 // Sources: a13n pinned acts and night act (refs/a13n/cdp/d1440-y01554 / y02589 / y03165.jpg); Enter Pro
 // portal mask (refs/enter-pro notes §2, crops/enter-pro-hero-portal.jpg); Ploy feed push
@@ -19,17 +21,19 @@
 import { OUTLINE } from "../home/outline-geometry.ts";
 
 const SMOOTHING = 9;
-const FLIP_MS = 2400;
 const WINDOW_W = 112;
 /** The hero window's line sits this far below the block centre, in units of the block width. */
 const LINE_DROP = (45.79 - 21.68) / OUTLINE.w;
 
 const T = {
-  heroOut: [0, 0.07],
-  portal: [0.07, 0.19],
-  x12: [0.4, 0.47],
-  feed: [0.46, 0.64],
-  iris: [0.66, 0.75],
+  // The words are gone before the gliding window reaches the H1, so the window never crosses a sentence.
+  heroText: [0.015, 0.045],
+  glide: [0.03, 0.07],
+  portal: [0.07, 0.17],
+  act1Out: [0.34, 0.37],
+  act2In: [0.37, 0.41],
+  feed: [0.4, 0.62],
+  iris: [0.65, 0.75],
   travel: [0.77, 0.95],
 } as const;
 
@@ -90,7 +94,6 @@ export function initStage(): void {
   const heroParts = [...hero.querySelectorAll<HTMLElement>("[data-hero-part]")];
   const nav = document.querySelector<HTMLElement>("[data-nav]");
   const navItems = nav ? [...nav.querySelectorAll<HTMLElement>(".v4-brand, .v4-nav-link, .v4-btn")] : [];
-  const faces = [...stage.querySelectorAll<HTMLElement>("[data-face]")];
   const cards = [...feed.querySelectorAll<HTMLElement>("[data-card]")];
 
   const wide = matchMedia("(min-width: 901px)");
@@ -102,8 +105,6 @@ export function initStage(): void {
   let sp = 0;
   let top = 0;
   let run = 1;
-  let face = 0;
-  let flipTimer = 0;
   // Offset from the hero window's resting centre to the stage centre, where the portal opens.
   let glideX = 0;
   let glideY = 0;
@@ -130,44 +131,25 @@ export function initStage(): void {
     });
   }
 
-  function flip(on: boolean): void {
-    if (on && !flipTimer && faces.length > 1) {
-      stage!.dataset["flip"] = "";
-      flipTimer = window.setInterval(() => {
-        const prev = faces[face];
-        face = (face + 1) % faces.length;
-        const next = faces[face];
-        faces.forEach((f) => f.classList.remove("is-off"));
-        prev?.classList.replace("is-on", "is-off");
-        prev?.setAttribute("aria-hidden", "true");
-        next?.classList.add("is-on");
-        next?.removeAttribute("aria-hidden");
-      }, FLIP_MS);
-    } else if (!on && flipTimer) {
-      window.clearInterval(flipTimer);
-      flipTimer = 0;
-    }
-  }
-
   function render(p: number): void {
     const w = pin!.clientWidth;
     const h = pin!.clientHeight;
 
     // Hero: words and tiles leave; the window glides to the centre and hands over to the portal there.
-    const out = span(p, T.heroOut[0], T.heroOut[1] * 0.65);
+    const out = span(p, T.heroText[0], T.heroText[1]);
     for (const part of heroParts) {
       setStyle(part, "opacity", (1 - out).toFixed(3));
       setStyle(part, "transform", `translateY(${(-24 * out).toFixed(1)}px)`);
     }
-    const glide = easeInOut(span(p, T.heroOut[0] + 0.01, T.heroOut[1]));
+    const glide = easeInOut(span(p, T.glide[0], T.glide[1]));
     setStyle(heroWindow!, "transform", `translate(${(glideX * glide).toFixed(1)}px, ${(glideY * glide).toFixed(1)}px)`);
-    const handed = p >= T.heroOut[1];
+    const handed = p >= T.glide[1];
     setStyle(hero!, "visibility", handed ? "hidden" : "visible");
 
-    // Portal: the logo block grows from the hero window's width to well past the viewport. The 1 px frame
-    // is redrawn at each size (not scaled), so its stroke stays one pixel.
+    // Portal: the logo block grows from the hero window's width to well past the viewport, fast first and
+    // settling (ease-out). The 1 px frame is redrawn at each size (not scaled), so its stroke stays one pixel.
     const grow = span(p, T.portal[0], T.portal[1]);
-    const open = grow ** 2;
+    const open = easeOut(grow);
     const reach = Math.max(w, (h / (OUTLINE.h / OUTLINE.w)) * 1.02) * 1.35;
     const blockW = WINDOW_W + (reach - WINDOW_W) * open;
     const cx = w / 2;
@@ -176,16 +158,18 @@ export function initStage(): void {
     setAttr(frameBlock!, "d", blockPath(cx, cy, blockW));
     const lineY = (cy + LINE_DROP * blockW).toFixed(1);
     setAttr(frameLine!, "d", `M${(cx - blockW / 2).toFixed(1)} ${lineY}H${(cx + blockW / 2).toFixed(1)}`);
-    setStyle(frame!, "opacity", handed ? (1 - span(open, 0, 0.35)).toFixed(3) : "0");
-    setStyle(veil!, "opacity", (1 - span(grow, 0.05, 0.55)).toFixed(3));
+    // The veil (the window's S2 bands) and the frame follow the block's size: while the block is narrower
+    // than the act, the window shows bands only; they clear once the act fits inside.
+    setStyle(frame!, "opacity", handed ? (1 - span(open, 0.45, 0.85)).toFixed(3) : "0");
+    setStyle(veil!, "opacity", (1 - span(open, 0.55, 0.9)).toFixed(3));
 
-    // Act 1 -> act 2: crossfade with a short lift.
-    const x12 = easeOut(span(p, T.x12[0], T.x12[1]));
-    setStyle(act1!, "opacity", (1 - x12).toFixed(3));
-    setStyle(act1!, "transform", `translateY(${(-28 * x12).toFixed(1)}px)`);
-    setStyle(act2!, "opacity", x12.toFixed(3));
-    setStyle(act2!, "transform", `translateY(${(28 * (1 - x12)).toFixed(1)}px)`);
-    flip(p > T.portal[0] && p < T.x12[1] - 0.03);
+    // Act 1 -> act 2: act 1 leaves first, then act 2 enters, so at most one title is readable at a time.
+    const out1 = easeOut(span(p, T.act1Out[0], T.act1Out[1]));
+    const in2 = easeOut(span(p, T.act2In[0], T.act2In[1]));
+    setStyle(act1!, "opacity", (1 - out1).toFixed(3));
+    setStyle(act1!, "transform", `translateY(${(-28 * out1).toFixed(1)}px)`);
+    setStyle(act2!, "opacity", in2.toFixed(3));
+    setStyle(act2!, "transform", `translateY(${(28 * (1 - in2)).toFixed(1)}px)`);
 
     // Act 2: walk the feed from the oldest event (last card) to the newest (first card). Each card in turn
     // sits at the list's resting top, so the walk ends exactly on the static end state.
@@ -244,13 +228,6 @@ export function initStage(): void {
       el.style.removeProperty("transform");
       el.style.removeProperty("visibility");
     }
-    flip(false);
-    delete stage!.dataset["flip"];
-    faces.forEach((f, i) => {
-      f.classList.toggle("is-on", i === 0);
-      f.classList.remove("is-off");
-    });
-    face = 0;
     if (nav) delete nav.dataset["tone"];
     navItems.forEach((item) => delete item.dataset["night"]);
   }

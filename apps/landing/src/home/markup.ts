@@ -5,10 +5,10 @@
 // Forms (mosoo-website-redesign-staging/refs/UI-FORMS.md §c, assignment §f "c-stage"):
 //   hero   logo-outline window (S2 ripple) + centred two-value H1 + one button + four runtime tiles (F28)
 //   stage  portal transition into a pinned three-act stage: U10 spec table -> U04 split feed -> U14 ruler (night)
-//   U15    statement with inline glyph circles
 //   U16    FAQ, narrow-column skin (F42), outline indicator
-//   U06    closing card, legend variant, on the session line
-//   U07    footer Ask-AI plate
+//   U06    closing card on the session line
+//   U07    footer Ask-AI row
+// (The U15 statement was cut in the review round: the hero lead now names the four harnesses.)
 // Every product object carries data-product-ui (its words count in the object budget, UI-FORMS §g).
 
 import { HOME_COPY, LINKS } from "./copy.ts";
@@ -40,6 +40,14 @@ function uiGlyph(id: string, cls: string): string {
 function navMark(): string {
   return `<svg class="brand-mark" viewBox="${NAV_MARK.vb}" aria-hidden="true" focusable="false"><path d="${NAV_MARK.block}" fill="currentColor"/><rect x="0" y="${NAV_MARK.bar.y}" width="51.51" height="${NAV_MARK.bar.h}" fill="currentColor"/></svg>`;
 }
+
+/** zh and ja carry their own spacing; Latin halves are joined with a space. */
+function pairGap(...parts: string[]): string {
+  return /[\u3040-\u30ff\u3400-\u9fff]/.test(parts.join("")) ? "" : " ";
+}
+
+/** A check mark on the copy glyph's 24 px grid and 1.5 px stroke (drawn here, no source asset). */
+const CHECK_GLYPH = `<svg class="check-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
 
 function homeHref(locale: HomeLocale): string {
   return `/${locale}`;
@@ -79,16 +87,14 @@ function renderHero(copy: HomeCopy): string {
 
 function renderAct1(copy: HomeCopy): string {
   const a = copy.act1;
-  const rest = a.harnesses.slice(1);
-  const harnessIds = ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"];
-  const faces = a.harnesses
-    .map((name, i) => `<span class="spec-face${i === 0 ? " is-on" : ""}" data-face="${i}"${i === 0 ? "" : ' aria-hidden="true"'}>${runtimeGlyph(harnessIds[i] ?? "pi", "spec-glyph")}<span>${esc(name)}</span></span>`)
-    .join("");
+  const [first, ...rest] = a.harnesses;
+  // The first harness is the one large value; the other three follow in small type (no rotation).
+  const face = `<span class="spec-face">${runtimeGlyph("openai-runtime", "spec-glyph")}<span>${esc(first)}</span></span>`;
   return `<article class="act act-1" data-act="1" aria-labelledby="act1-title">
   <div class="act-in">
-    <h2 id="act1-title" class="act-title">${esc(a.titleA)} <span class="soft">${esc(a.titleB)}</span></h2>
+    <h2 id="act1-title" class="act-title">${esc(a.titleA)}${pairGap(a.titleA, a.titleB)}<span class="soft">${esc(a.titleB)}</span></h2>
     <dl class="spec" data-product-ui>
-      <div class="spec-row spec-first"><dt>${esc(a.rows[0])}</dt><dd><span class="spec-flip" data-flip>${faces}</span><span class="spec-others">${esc(rest.join(" · "))}</span></dd></div>
+      <div class="spec-row spec-first"><dt>${esc(a.rows[0])}</dt><dd>${face}<span class="spec-others">${esc(rest.join(" · "))}</span></dd></div>
       <div class="spec-row"><dt>${esc(a.rows[1])}</dt><dd>${uiGlyph("key", "spec-ico")}<span>${esc(a.model)}</span></dd></div>
       <div class="spec-row"><dt>${esc(a.rows[2])}</dt><dd>${uiGlyph("environments", "spec-ico")}<span>${esc(a.sandbox)}</span></dd></div>
       <div class="spec-row"><dt>${esc(a.rows[3])}</dt><dd><code class="spec-tok">${esc(a.files)}</code></dd></div>
@@ -108,7 +114,7 @@ function renderAct2(copy: HomeCopy): string {
   return `<article class="act act-2" data-act="2" aria-labelledby="act2-title">
   <div class="act-in">
     <div class="field">
-      <h2 id="act2-title" class="field-title"><span class="field-a">${esc(a.halfA)}</span> <span class="field-b">${esc(a.halfB)}</span></h2>
+      <h2 id="act2-title" class="field-title"><span class="field-a">${esc(a.halfA)}</span>${pairGap(a.halfA, a.halfB)}<span class="field-b">${esc(a.halfB)}</span></h2>
       <div class="feed" data-product-ui><ol class="feed-list" data-feed>${cards}</ol></div>
     </div>
   </div>
@@ -119,18 +125,20 @@ function renderAct3(copy: HomeCopy): string {
   const a = copy.act3;
   const xs = [0, 22, 44, 70, 96];
   const majors = xs
-    .map((x, i) => `<i class="mj" style="left:${x}%"></i><span class="lb${i === 0 ? " first" : ""}${i === 4 ? " last" : ""}${i === 1 || i === 3 ? " mob-hide" : ""}" style="left:${x}%">${esc(a.ticks[i] ?? "")}</span>`)
+    .map((x, i) => {
+      const hide = i === 1 || i === 3 ? " mob-hide" : "";
+      return `<i class="mj${hide}" style="left:${x}%"></i><span class="lb${i === 0 ? " first" : ""}${i === 4 ? " last" : ""}${hide}" style="left:${x}%">${esc(a.ticks[i] ?? "")}</span>`;
+    })
     .join("");
   return `<article class="act act-3" data-act="3" aria-labelledby="act3-title">
   <div class="act-in">
-    <h2 id="act3-title" class="act-title">${esc(a.titleA)} <span class="soft">${esc(a.titleB)}</span></h2>
+    <h2 id="act3-title" class="act-title">${esc(a.titleA)}${pairGap(a.titleA, a.titleB)}<span class="soft">${esc(a.titleB)}</span></h2>
     <div class="ruler-card" data-product-ui>
       <div class="ruler" data-ruler>
         <i class="ticks"></i><i class="base base-a"></i><i class="gap"></i><i class="base base-b"></i>
         ${majors}
         <i class="now" data-now></i>
       </div>
-      <p class="ruler-note"><b>${esc(a.noteStrong)}</b> ${esc(a.note)}</p>
     </div>
   </div>
 </article>`;
@@ -152,22 +160,6 @@ ${renderAct3(copy)}
 </div>`;
 }
 
-function renderStatement(copy: HomeCopy): string {
-  const [p0, p1, p2, p3, tail] = copy.statement.parts;
-  const ids = ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"];
-  // CJK copy carries its own spacing; Latin copy is joined with spaces.
-  const join = /[\u3040-\u30ff\u3400-\u9fff]/.test(copy.statement.parts.join("")) ? "" : " ";
-  // Each name is bound to its circle (nowrap); a trailing comma moves after the circle.
-  const bound = [p0, p1, p2, p3].map((part, i) => {
-    const comma = /[,、，]$/.exec(part)?.[0] ?? "";
-    const name = comma ? part.slice(0, -1) : part;
-    return `<span class="nw">${esc(name)} <span class="g">${runtimeGlyph(ids[i] ?? "pi", "g-glyph")}</span>${comma}</span>`;
-  });
-  return `<section class="statement">
-  <p class="statement-text">${bound.join(join)}${join}${esc(tail)}</p>
-</section>`;
-}
-
 function renderFaq(copy: HomeCopy): string {
   const indicator = `<svg class="faq-ind" viewBox="0 0 ${FAQ_INDICATOR.w} ${FAQ_INDICATOR.h}" aria-hidden="true" focusable="false"><path d="${FAQ_INDICATOR.d}"/></svg>`;
   const items = copy.faq.items
@@ -187,8 +179,7 @@ function renderClosing(copy: HomeCopy): string {
   return `<section class="closing" aria-labelledby="closing-title">
   <h2 id="closing-title" class="closing-title"><span>${esc(c.lineA)}</span> <span>${esc(c.lineB)}</span></h2>
   <div class="closing-card" data-product-ui>
-    <span class="legend">${esc(c.legend)}</span>
-    <div class="prompt-field"><span class="prompt-text" data-prompt>${esc(c.prompt)}</span><button class="v4-btn v4-btn-ink prompt-copy" type="button" data-copy data-copied-label="${esc(c.copied)}" aria-label="${esc(`${c.copy}: ${c.prompt}`)}">${uiGlyph("copy", "copy-ico")}<span data-copy-label>${esc(c.copy)}</span></button></div>
+    <div class="prompt-field"><span class="prompt-text" data-prompt>${esc(c.prompt)}</span><button class="v4-btn v4-btn-ink prompt-copy" type="button" data-copy data-copied-label="${esc(c.copied)}" aria-label="${esc(`${c.copy}: ${c.prompt}`)}">${uiGlyph("copy", "copy-ico")}${CHECK_GLYPH}<span data-copy-label>${esc(c.copy)}</span></button><span class="sr-only" data-copy-status aria-live="polite"></span></div>
     <p class="closing-fine">${esc(c.fine)}</p>
   </div>
   <div class="session-line" aria-hidden="true"><i class="sl-rule"></i><svg class="sl-window" viewBox="${line.x0 - 0.5} 0 ${line.bw + 1} ${line.h}" fill="none"><path d="${line.window}"/></svg></div>
@@ -205,7 +196,7 @@ export function renderFooter(locale: HomeLocale, copy: HomeCopy = HOME_COPY[loca
     { name: "Gemini", href: `https://gemini.google.com/app?q=${q}` },
   ];
   const pills = assistants
-    .map((a) => `<a class="ask-pill" href="${a.href}" rel="noopener" target="_blank">${esc(a.name)}<em aria-hidden="true">↗</em></a>`)
+    .map((a) => `<li><a class="ask-link" href="${a.href}" rel="noopener" target="_blank">${esc(a.name)}<em aria-hidden="true">↗</em></a></li>`)
     .join("");
   const links = f.links
     .map((l) => `<li><a href="${l.href.startsWith("/") ? `/${locale}${l.href}` : l.href}">${esc(l.label)}</a></li>`)
@@ -217,8 +208,7 @@ export function renderFooter(locale: HomeLocale, copy: HomeCopy = HOME_COPY[loca
   <div class="v4-foot-in">
     <div class="ask">
       <h2 class="ask-title">${esc(f.askTitle)}</h2>
-      <p class="ask-note">${esc(f.askNote)}</p>
-      <div class="ask-pills">${pills}</div>
+      <ul class="ask-links">${pills}</ul>
     </div>
     <nav class="foot-links" aria-label="Footer"><ul>${links}</ul></nav>
     <div class="foot-bottom">
@@ -229,14 +219,13 @@ export function renderFooter(locale: HomeLocale, copy: HomeCopy = HOME_COPY[loca
 </footer>`;
 }
 
-/** The whole home body (inside #root): nav, the five sections, footer. */
+/** The whole home body (inside #root): nav, the stage, FAQ, closing, footer. */
 export function renderHome(locale: HomeLocale): string {
   const copy = HOME_COPY[locale];
   return `<div class="v4" data-v4-home>
 ${renderNav(locale, copy)}
 <main id="main" tabindex="-1">
 ${renderStage(copy)}
-${renderStatement(copy)}
 ${renderFaq(copy)}
 ${renderClosing(copy)}
 </main>

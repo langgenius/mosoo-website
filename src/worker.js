@@ -111,7 +111,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 - Is it hosted, or do I run it myself? The quickest way is the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache-2.0, and the README explains how to run it locally for development.
 - Do I need to create an Agent first? No. On /api/v2 one request carries the harness, provider, model, instructions and input. A saved Agent preset is optional; you need one to attach Skills, MCP servers or a non-default Environment.
 - Why not call a model API directly? A model call returns tokens. A Session runs a whole Agent turn: the harness, its tools and files in a sandbox, saved events, and a checkpoint you can continue from.
-- What is Pi? One of the four runtimes, next to OpenAI Codex, Claude Agent SDK and OpenCode. Its API id is pi and it takes text input only. You pick the runtime per Session.
+- Is it stable yet? Not yet. mosoo is in Alpha; public APIs and product behavior may still change.
 - Who pays for model usage? You do, directly. Model keys belong to your Project and the provider bills your account. mosoo supplies no models and sets no spending cap.
 - Do my keys enter the sandbox? No. Provider keys and MCP credentials never enter it; the sandbox gets only expiring grants for them. Environment variables are different: code in the sandbox can read them.
 - What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha.

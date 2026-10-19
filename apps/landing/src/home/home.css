@@ -1,6 +1,6 @@
 /*
  * v4c home sections. Locked specs: mosoo-website-redesign-staging/refs/UI-FORMS.md §c (U04, U06, U10,
- * U14, U15, U16) and the board's ② column (refs/devices/board.html), on the c-stage canvas.
+ * U14, U16; U15 was cut in the review round, v4c/UI-LOCK.md §10) and the board's ② column (refs/devices/board.html), on the c-stage canvas.
  * Default = the no-JS / reduced-motion / phone end state: the three acts stacked, every object static.
  * src/effects/stage.ts switches the stage to [data-mode="pinned"] on wide screens with motion allowed.
  */
@@ -273,7 +273,7 @@ body:has(.v4) {
 }
 .spec dt {
   font: 400 13px/1.3 var(--font-sans);
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 .spec dd {
   margin: 0;
@@ -295,23 +295,13 @@ body:has(.v4) {
   border: 1px solid var(--line-2);
   border-radius: 4px;
 }
-.spec-flip {
-  display: inline-grid;
-  perspective: 400px;
-}
 .spec-face {
-  grid-area: 1 / 1;
   display: inline-flex;
   align-items: center;
   gap: 14px;
   font: 400 38px/1 var(--font-display);
   letter-spacing: -0.02em;
   white-space: nowrap;
-  transform-origin: 50% 50% -18px;
-  backface-visibility: hidden;
-}
-.spec-face:not(.is-on) {
-  visibility: hidden;
 }
 .spec-glyph {
   width: 28px;
@@ -320,26 +310,7 @@ body:has(.v4) {
 }
 .spec-others {
   font: 400 13px/1.3 var(--font-sans);
-  color: var(--ink-3);
-}
-.stage[data-flip] .spec-face {
-  visibility: visible;
-  opacity: 0;
-  transform: rotateX(-90deg);
-  transition:
-    transform 0.42s var(--ease),
-    opacity 0.42s var(--ease);
-}
-.stage[data-flip] .spec-face.is-on {
-  opacity: 1;
-  transform: rotateX(0deg);
-}
-.stage[data-flip] .spec-face.is-off {
-  opacity: 0;
-  transform: rotateX(90deg);
-}
-.stage[data-flip] .spec-others {
-  display: none;
+  color: var(--ink-3-text);
 }
 
 /* U04 split headline around a timestamped feed (Ploy notes §5, crops/ploy-split-headline-feed.jpg). */
@@ -405,7 +376,7 @@ body:has(.v4) {
 .fc-time {
   font: 400 12px/1 var(--font-sans);
   font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
+  color: var(--ink-3-text);
 }
 .fc-pill {
   display: inline-flex;
@@ -473,8 +444,10 @@ body:has(.v4) {
   top: 82px;
   height: 10px;
   background: repeating-linear-gradient(90deg, rgb(242 244 242 / 0.22) 0 1px, transparent 1px 8px);
-  -webkit-mask-image: linear-gradient(90deg, #000 44%, transparent 44% 96%, #000 96%);
-  mask-image: linear-gradient(90deg, #000 44%, transparent 44% 96%, #000 96%);
+  /* The dashed (parked) stretch starts near +5 min on this log-like scale: MAIN releases an idle
+     sandbox after 5 minutes (apps/api/.../session-runtime-policy.ts L2). The number is not printed. */
+  -webkit-mask-image: linear-gradient(90deg, #000 31%, transparent 31% 96%, #000 96%);
+  mask-image: linear-gradient(90deg, #000 31%, transparent 31% 96%, #000 96%);
 }
 .ruler .base {
   top: 92px;
@@ -483,7 +456,7 @@ body:has(.v4) {
 }
 .ruler .base-a {
   left: 0;
-  right: 56%;
+  right: 69%;
 }
 .ruler .base-b {
   left: 96%;
@@ -491,7 +464,7 @@ body:has(.v4) {
 }
 .ruler .gap {
   top: 92px;
-  left: 44%;
+  left: 31%;
   right: 4%;
   height: 1px;
   background: repeating-linear-gradient(90deg, var(--night-ink) 0 3px, transparent 3px 7px);
@@ -506,9 +479,8 @@ body:has(.v4) {
   position: absolute;
   top: 38px;
   transform: translateX(-50%);
-  font: 400 11px/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font: 400 11px/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
   color: rgb(242 244 242 / 0.72);
   white-space: nowrap;
 }
@@ -521,8 +493,8 @@ body:has(.v4) {
 .ruler .now {
   top: 84px;
   left: 96%; /* end state: +7 days; the pinned stage starts it at +0 and moves it with transform */
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   margin-left: -4px;
   border-radius: 50%;
   background: var(--accent);
@@ -531,19 +503,10 @@ body:has(.v4) {
 .stage[data-mode="pinned"] .ruler .now {
   left: 0;
 }
-.ruler-note {
-  margin-top: 4px;
-  font: 400 16px/1.4 var(--font-sans);
-  color: var(--night-dim);
-}
-.ruler-note b {
-  font-weight: 500;
-  color: var(--night-ink);
-}
 
 /* ---------------------------------------------------------------- stage (pinned) */
 .stage[data-mode="pinned"] {
-  height: 440svh;
+  height: 380svh;
   margin-top: calc(-1 * var(--nav-h));
 }
 .stage[data-mode="pinned"] .hero {
@@ -601,46 +564,11 @@ body:has(.v4) {
   will-change: opacity;
 }
 
-/* ---------------------------------------------------------------- U15 statement with glyph circles
-   #121 America.gov (crops/issue-121-inline-glyph-sentence.jpg); Frame keycap sentence. */
-.statement {
-  padding: 152px 0 140px;
-}
-.statement-text {
-  width: min(820px, var(--w));
-  margin: 0 auto;
-  text-align: center;
-  font: 400 52px/1.12 var(--font-display);
-  letter-spacing: -0.022em;
-  word-spacing: 0.04em;
-  text-wrap: balance;
-}
-.statement .nw {
-  white-space: nowrap;
-}
-.statement .g {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 0.86em;
-  height: 0.86em;
-  margin: 0 0.04em;
-  vertical-align: -0.1em;
-  border-radius: 50%;
-  background: var(--raised);
-  border: 1px solid rgb(22 24 21 / 0.24);
-  box-shadow: 0 1px 2px rgb(22 24 21 / 0.06);
-  color: var(--ink);
-}
-.statement .g-glyph {
-  width: 0.46em;
-  height: 0.46em;
-}
-
 /* ---------------------------------------------------------------- U16 FAQ, narrow-column skin
    #134 SpaceXAI (crops/issue-134-faq-split-spacexai.jpg): only "FAQs" on the left, a narrow right
    column of hairline rows; Retool row metrics; the +/- becomes the outline indicator (Enter Pro
-   .faq-item__dot: hollow, fills and moves 10 px left when open). */
+   .faq-item__dot: moves 10 px left when open). Outline only, never filled: 45 % ink closed, full ink
+   open, so it does not read as a checkbox. */
 .faq {
   width: var(--w);
   margin: 0 auto;
@@ -678,17 +606,22 @@ body:has(.v4) {
   width: 11px;
   height: 9px;
   overflow: visible;
-  color: var(--outline-ink);
-  fill: transparent;
+  color: rgb(26 26 28 / 0.45);
+  fill: none;
   stroke: currentColor;
   stroke-width: 1;
   transition:
     transform 0.65s cubic-bezier(0.16, 1, 0.35, 1),
-    fill 0.2s ease-out;
+    color 0.2s ease-out;
 }
 .faq-row[open] .faq-ind {
-  fill: currentColor;
+  color: var(--outline-ink);
   transform: translateX(-10px);
+}
+@media (hover: hover) {
+  .faq-row summary:hover .faq-ind {
+    color: var(--outline-ink);
+  }
 }
 .faq-q {
   display: block;
@@ -702,9 +635,10 @@ body:has(.v4) {
   color: var(--ink-2);
 }
 
-/* ---------------------------------------------------------------- U06 closing card, legend variant
-   Enter CLI (crops/enter-cli-legend-prompt-card.jpg): the label sits on the top border; Ploy final CTA
-   card (crops/ploy-final-cta-card-live.jpg): a pill field and an ink button inside a quiet card. */
+/* ---------------------------------------------------------------- U06 closing card
+   Ploy final CTA card (crops/ploy-final-cta-card-live.jpg): a pill field and an ink button inside a
+   quiet card; Enter CLI (crops/enter-cli-legend-prompt-card.jpg) card proportions. The legend label was
+   cut in the review round (the title already says who the sentence is for). */
 .closing {
   padding: 24px 0 0;
   text-align: center;
@@ -722,22 +656,11 @@ body:has(.v4) {
   position: relative;
   width: min(560px, var(--w));
   margin: 0 auto;
-  padding: 34px 24px 18px;
+  padding: 24px 24px 18px;
   background: var(--paper);
   border: 1px solid rgb(22 24 21 / 0.1);
   border-radius: 4px;
   text-align: left;
-}
-.legend {
-  position: absolute;
-  top: -8px;
-  left: 22px;
-  padding: 0 8px;
-  background: var(--paper);
-  font: 400 11px/16px var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-3);
 }
 .prompt-field {
   display: flex;
@@ -759,18 +682,25 @@ body:has(.v4) {
 }
 .prompt-copy {
   height: 44px;
+  min-width: 112px; /* "Copy" and "Copied" take the same box: the field never shifts */
   padding: 0 18px 0 16px;
   flex: none;
 }
-.copy-ico {
+.copy-ico,
+.check-ico {
   width: 16px;
   height: 16px;
+  flex: none;
+}
+.prompt-copy:not([data-done]) .check-ico,
+.prompt-copy[data-done] .copy-ico {
+  display: none;
 }
 .closing-fine {
   margin-top: 14px;
   text-align: center;
   font: 400 12px/1.4 var(--font-sans);
-  color: var(--ink-3);
+  color: var(--ink-3-text);
 }
 /* Session line (brand/outline README §5.1, UI-FORMS §d): a full-width 1 px line, 16 % ink, with one
    28 px window standing on it. It replaces the footer's nested outline in this variant. */
@@ -910,13 +840,6 @@ body:has(.v4) {
   .ruler .mob-hide {
     display: none;
   }
-  .statement {
-    padding: 96px 0;
-  }
-  .statement-text {
-    font-size: 30px;
-    line-height: 1.14;
-  }
   .faq {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -936,10 +859,21 @@ body:has(.v4) {
   }
   .prompt-copy {
     width: 44px;
+    min-width: 0;
     padding: 0;
   }
   .session-line {
     margin-top: 72px;
+  }
+}
+/* 390: the whole instruction shows (S5-C <= 220 px visible at 390 with these insets). */
+@media (max-width: 600px) {
+  .closing-card {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .prompt-field {
+    padding-left: 16px;
   }
 }
 
@@ -950,7 +884,7 @@ body:has(.v4) {
     animation: none;
   }
   .faq-ind {
-    transition: fill 0.2s ease-out;
+    transition: color 0.2s ease-out;
   }
   .faq-row[open] .faq-ind {
     transform: none;
@@ -958,21 +892,28 @@ body:has(.v4) {
 }
 
 /* CJK: no negative tracking, keep phrases whole (decision 8). */
-.v4:lang(zh) :is(.hero-title, .act-title, .field-title > span, .statement-text, .faq-title, .closing-title),
-.v4:lang(ja) :is(.hero-title, .act-title, .field-title > span, .statement-text, .faq-title, .closing-title) {
+.v4:lang(zh) :is(.hero-title, .act-title, .field-title > span, .faq-title, .closing-title),
+.v4:lang(ja) :is(.hero-title, .act-title, .field-title > span, .faq-title, .closing-title) {
   letter-spacing: 0;
   word-spacing: 0;
   word-break: keep-all;
 }
-.v4:lang(ja) :is(.hero-title, .act-title, .statement-text, .closing-title) {
+.v4:lang(ja) :is(.hero-title, .act-title, .closing-title) {
   word-break: auto-phrase;
 }
+/* Proportional kana and half-width CJK punctuation in display sizes (no loose gaps around 、。). */
+.v4:lang(ja) :is(.hero-title, .act-title, .field-title > span, .faq-title, .closing-title) {
+  font-feature-settings: "palt";
+}
+.v4:lang(zh) :is(.hero-title, .act-title, .field-title > span, .faq-title, .closing-title) {
+  font-feature-settings: "halt";
+}
 /* Short running lines keep words whole too (zh: break at spaces and punctuation; ja: at phrases). */
-.v4:lang(zh) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note),
-.v4:lang(ja) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note) {
+.v4:lang(zh) :is(.hero-lead, .faq-q, .closing-fine),
+.v4:lang(ja) :is(.hero-lead, .faq-q, .closing-fine) {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
-.v4:lang(ja) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note) {
+.v4:lang(ja) :is(.hero-lead, .faq-q, .closing-fine) {
   word-break: auto-phrase;
 }

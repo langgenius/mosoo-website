@@ -14,7 +14,8 @@
   --raised: #ffffff;
   --ink: #161815;
   --ink-2: #515350;
-  --ink-3: #7f817e;
+  --ink-3: #7f817e; /* display sizes only (>= 40 px grey halves) */
+  --ink-3-text: #6b6d6a; /* small grey text: 4.99:1 on paper, 5.22:1 on white (WCAG AA) */
   --line: rgb(22 24 21 / 0.08);
   --line-2: rgb(22 24 21 / 0.16);
   --night: #0e0f0d;
@@ -31,6 +32,11 @@
   --gutter: clamp(16px, 4.4vw, 64px);
   --w: min(1120px, calc(100vw - 2 * var(--gutter)));
   --nav-h: 64px;
+}
+
+/* Anchors (#faq is the FAQPage @id) land below the sticky nav. */
+html {
+  scroll-padding-top: calc(var(--nav-h) + 16px);
 }
 
 .v4,
@@ -51,8 +57,23 @@
 
 .v4 :focus-visible,
 .v4-chrome :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
+}
+/* On night (the third act, the night nav) the ring is night ink. */
+.v4 .act-3 :focus-visible,
+.v4-nav[data-tone="night"] :focus-visible,
+.v4-nav [data-night]:focus-visible {
+  outline-color: var(--night-ink);
+}
+
+.v4 ::selection,
+.v4-chrome ::selection {
+  background: rgb(22 24 21 / 0.12);
+  color: inherit;
+}
+.v4 .act-3 ::selection {
+  background: rgb(242 244 242 / 0.2);
 }
 
 .v4 .sr-only {
@@ -93,14 +114,21 @@
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: opacity 0.15s ease-out;
+  transition: background-color 0.15s ease-out;
 }
 .v4-btn-ink {
   background: var(--ink);
   color: #f4f4f2;
 }
-.v4-btn:hover {
-  opacity: 0.86;
+/* Hover changes the plate, not opacity (the stage writes inline opacity on the hero button). */
+@media (hover: hover) {
+  .v4-btn-ink:hover {
+    background: #2b2d2a;
+  }
+  .v4-nav[data-tone="night"] .v4-btn-ink:hover,
+  .v4-nav[data-tone="clear"] .v4-btn-ink[data-night]:hover {
+    background: #d9dcd9;
+  }
 }
 .v4-btn-sm {
   height: 36px;
@@ -188,8 +216,9 @@
   color: var(--night);
 }
 
-/* Footer: U07 Ask-AI plate (Ploy notes §10, crops/ploy-footer-ask-ai-live.jpg), then one quiet link
-   row and the bottom row with the language switcher and the credit. */
+/* Footer: U07 Ask-AI as one quiet row (Ploy notes §10, crops/ploy-footer-ask-ai-live.jpg: in Ploy it is
+   one line of the footer, not a plate), then the link row and the bottom row with the language switcher
+   and the credit. */
 .v4-foot {
   background: var(--paper);
   color: var(--ink);
@@ -200,64 +229,30 @@
   margin: 0 auto;
 }
 .v4-foot .ask {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 48px;
-  align-items: end;
-  background: #161815;
-  color: #f2f4f2;
-  border-radius: var(--r-plate);
-  padding: 32px 32px 30px;
-}
-.v4-foot .ask::before {
-  content: "";
-  position: absolute;
-  left: 32px;
-  right: 32px;
-  top: 0;
-  height: 1px;
-  background: rgb(255 255 255 / 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 24px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
 }
 .v4-foot .ask-title {
   margin: 0;
-  font: 400 32px/1.08 var(--font-display);
-  letter-spacing: -0.015em;
+  font: 500 14px/1.4 var(--font-sans);
+  color: var(--ink);
 }
-.v4-foot .ask-note {
-  margin: 10px 0 0;
-  max-width: 420px;
-  font: 400 13.5px/1.55 var(--font-sans);
-  color: rgb(242 244 242 / 0.58);
-}
-.v4-foot .ask-pills {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+.v4-foot .ask-links {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-  max-width: 460px;
+  gap: 10px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.v4-foot .ask-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 40px;
-  padding: 0 15px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.06);
-  border: 1px solid rgb(255 255 255 / 0.13);
-  font: 500 13px/38px var(--font-sans);
-  color: #f2f4f2;
-  text-decoration: none;
-}
-.v4-foot .ask-pill:hover {
-  background: rgb(255 255 255 / 0.1);
-}
-.v4-foot .ask-pill em {
+.v4-foot .ask-link em {
+  margin-left: 3px;
   font-style: normal;
-  color: rgb(242 244 242 / 0.45);
+  color: var(--ink-3-text);
 }
 .v4-foot .foot-links ul,
 .v4-foot .foot-langs ul {
@@ -269,7 +264,7 @@
   list-style: none;
 }
 .v4-foot .foot-links {
-  margin-top: 40px;
+  margin-top: 28px;
 }
 .v4-foot a {
   color: var(--ink-2);
@@ -278,9 +273,6 @@
 }
 .v4-foot a:hover {
   color: var(--ink);
-}
-.v4-foot .ask a {
-  color: #f2f4f2;
 }
 .v4-foot .foot-bottom {
   display: flex;
@@ -294,15 +286,16 @@
 }
 .v4-foot .foot-langs a {
   font-size: 13px;
-  color: var(--ink-3);
+  color: var(--ink-3-text);
 }
-.v4-foot .foot-langs a[aria-current="true"] {
+.v4-foot .foot-langs a[aria-current="true"],
+.v4-foot .foot-langs a:hover {
   color: var(--ink);
 }
 .v4-foot .foot-credit {
   margin: 0;
   font: 400 13px/1.4 var(--font-sans);
-  color: var(--ink-3);
+  color: var(--ink-3-text);
 }
 
 @media (max-width: 900px) {
@@ -315,19 +308,7 @@
   .v4-nav-link {
     display: none;
   }
-  .v4-foot .ask {
-    display: block;
-    padding: 26px 22px 24px;
-  }
-  .v4-foot .ask-pills {
-    justify-content: flex-start;
-    margin-top: 24px;
-  }
-  .v4-foot .ask::before {
-    left: 22px;
-    right: 22px;
-  }
-  .v4-foot .ask-title {
-    font-size: 28px;
+  .v4-btn-sm {
+    height: 44px; /* touch target */
   }
 }

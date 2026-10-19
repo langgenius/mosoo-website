@@ -3,8 +3,10 @@
 //
 // Written last, to the slot sizes of the locked UI: a string that does not fit is rewritten, never given a
 // new slot. Product statements are checked against langgenius/mosoo (file:line in the v4c CHANGELOG);
-// the feed is the SPEC's own acceptance story (docs/SPEC.md L82, CSV analysis, multi-turn) and its event
-// names are the contract's (pkgs/contracts/src/session/session.contract.ts L138-L152). zh and ja use the
+// the feed is the acceptance workflow's own story (scripts/public-api-session-workflow.ts L24, L33: analyze
+// input.csv, then a follow-up turn that appends south,20) and its event names are the contract's
+// (pkgs/contracts/src/session/session.contract.ts L138-L152). No durations are invented: a card says only
+// which day it is (decision 9). zh and ja use the
 // same slots, as short as they allow; names (runtimes, events, files, assistants) are not translated.
 // In ja, a numeral and its counter are joined by a no-break space (1\u00a0つ), so a line never splits them.
 
@@ -13,7 +15,7 @@ export type HomeLocale = "en" | "zh" | "ja";
 export type FaqItem = { q: string; a: string };
 
 export type FeedCard = {
-  /** C: relative time, 1x8, Fragment Mono 12. */
+  /** C: relative day, 1x8, Inter 12 tabular figures. */
   time: string;
   /** D: event name from MAIN pkgs/contracts/src/session/session.contract.ts, 1x22. */
   event: string;
@@ -44,7 +46,7 @@ export type HomeCopy = {
     titleB: string;
     /** S2.1-B: row labels x5, 1x12. */
     rows: readonly [string, string, string, string, string];
-    /** S2.1-C: harness names, 1x18 each, rotated in this order. */
+    /** S2.1-C: harness names, 1x18 each; the first is the large value, the rest follow in small type. */
     harnesses: readonly [string, string, string, string];
     /** S2.1-D: the other four values, 1x40 each (Files is one mono token). */
     model: string;
@@ -60,19 +62,11 @@ export type HomeCopy = {
     cards: readonly FeedCard[];
   };
   act3: {
-    /** S2.3-A: 2x36 two-value title, display 40 on night. */
+    /** S2.3-A: 2x36 two-value title, display 40 on night: the act's one new fact (the note slot is gone). */
     titleA: string;
     titleB: string;
-    /** S2.3-L: tick labels x5, 1x10, Fragment Mono 11 uppercase. */
+    /** S2.3-L: tick labels x5, 1x10, Inter 11 tabular figures. */
     ticks: readonly [string, string, string, string, string];
-    /** S2.3-B: 1x60; the first sentence is set in 500. */
-    noteStrong: string;
-    note: string;
-  };
-  statement: {
-    /** S3-A: 3x26 (<=84 chars, <=16 words) around four glyph circles (G). Each of the first four parts is
-     *  followed by its glyph; a trailing comma (, 、) moves after the glyph. */
-    parts: readonly [string, string, string, string, string];
   };
   faq: {
     /** S4-A: 1x10, display 44. */
@@ -84,17 +78,15 @@ export type HomeCopy = {
     /** S5-A: 2x18, display 48. */
     lineA: string;
     lineB: string;
-    /** S5-B legend 1x18; S5-C instruction 1x48 (what the field shows at 1440); S5-D button 1x8; S5-E fine print 1x40. */
-    legend: string;
+    /** S5-C instruction 1x48 at 1440, <= 220 px at 390; S5-D button 1x8; S5-E fine print 1x40. */
     prompt: string;
     copy: string;
     copied: string;
     fine: string;
   };
   footer: {
-    /** S6-A: 1x24, display 32. S6-B: 2x55. S6-C: assistant pills, 1x14 each. */
+    /** S6-A: 1x24, Inter 14/500, the label of one quiet row. S6-C: assistant links, 1x14 each. */
     askTitle: string;
-    askNote: string;
     askPrompt: string;
     links: readonly { label: string; href: string }[];
     languageLabel: string;
@@ -113,8 +105,7 @@ const footerLinks = (docs: string, blog: string, labels: readonly string[]) =>
     { label: labels[2] ?? "", href: GITHUB },
     { label: labels[3] ?? "", href: blog },
     { label: labels[4] ?? "", href: "/use-cases" },
-    { label: labels[5] ?? "", href: "/pricing" },
-    { label: labels[6] ?? "", href: "/status" },
+    { label: labels[5] ?? "", href: "/status" },
   ] as const;
 
 const EN: HomeCopy = {
@@ -128,7 +119,7 @@ const EN: HomeCopy = {
   hero: {
     lineA: "Agent Sessions",
     lineB: "for your backend.",
-    lead: "One request starts a Session in its own sandbox. Events and files come back.",
+    lead: "One request starts Codex, Claude Agent SDK, OpenCode or Pi in its own sandbox.",
     cta: "Try mosoo",
   },
   act1: {
@@ -136,8 +127,8 @@ const EN: HomeCopy = {
     titleB: "Pick one of four harnesses.",
     rows: ["Harness", "Model", "Sandbox", "Files", "Resume"],
     harnesses: ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
-    model: "Your pick, on your own provider key",
-    sandbox: "Its own. Provider keys stay outside.",
+    model: "Your pick, your own provider key",
+    sandbox: "Isolated. Provider keys stay outside.",
     files: "outputs/report.md",
     resume: "A minute or seven days later",
   },
@@ -145,22 +136,17 @@ const EN: HomeCopy = {
     halfA: "Same Session,",
     halfB: "a week later.",
     cards: [
-      { time: "+7 days", event: "run.started", title: "Follow-up: add Q3", result: "Files and conversation restored.", live: true },
-      { time: "+3 min", event: "run.completed", title: "Turn 1 done", result: "Checkpoint saved; the sandbox may go." },
-      { time: "+2 min", event: "session_files.updated", title: "outputs/report.md written", result: "Ready to download as an artifact." },
-      { time: "+1 min", event: "tool.use.completed", title: "python analyze.py", result: "Exit code 0." },
-      { time: "+0", event: "run.started", title: "Analyze input.csv", result: "OpenAI Codex starts in a fresh sandbox." },
+      { time: "Day 7", event: "run.started", title: "Files and conversation restored", result: "Follow-up: append south,20 to input.csv.", live: true },
+      { time: "Day 0", event: "run.completed", title: "Turn 1 done", result: "Checkpoint saved; sandbox can stop." },
+      { time: "Day 0", event: "session_files.updated", title: "outputs/report.md written", result: "Ready to download as an artifact." },
+      { time: "Day 0", event: "tool.use.completed", title: "input.csv copied in for analysis", result: "A Python tool call finished." },
+      { time: "Day 0", event: "run.started", title: "Analyze input.csv", result: "OpenAI Codex starts in a fresh sandbox." },
     ],
   },
   act3: {
-    titleA: "Reply a minute or seven days later.",
-    titleB: "Same Session.",
+    titleA: "Sandbox gone.",
+    titleB: "Session kept.",
     ticks: ["+0", "+1 min", "+1 hour", "+1 day", "+7 days"],
-    noteStrong: "Sandbox gone, Session kept.",
-    note: "Files and conversation return.",
-  },
-  statement: {
-    parts: ["Run Codex,", "Claude Agent SDK,", "OpenCode", "or Pi", "behind one API, one sandbox each."],
   },
   faq: {
     title: "FAQs",
@@ -178,8 +164,8 @@ const EN: HomeCopy = {
         a: "A model call returns tokens. A Session runs a whole Agent turn: the harness, its tools and files in a sandbox, saved events, and a checkpoint you can continue from.",
       },
       {
-        q: "What is Pi?",
-        a: "One of the four runtimes, next to OpenAI Codex, Claude Agent SDK and OpenCode. Its API id is pi and it takes text input only. You pick the runtime per Session.",
+        q: "Is it stable yet?",
+        a: "Not yet. mosoo is in Alpha; public APIs and product behavior may still change.",
       },
       {
         q: "Who pays for model usage?",
@@ -192,17 +178,15 @@ const EN: HomeCopy = {
     ],
   },
   closing: {
-    lineA: "Start a Session",
-    lineB: "from your agent.",
-    legend: "Paste to any agent",
-    prompt: "Set up mosoo from https://mosoo.ai/llms.txt",
+    lineA: "Your coding agent",
+    lineB: "sets it up.",
+    prompt: "Set up mosoo: mosoo.ai/llms.txt",
     copy: "Copy",
     copied: "Copied",
     fine: "Works in Claude Code, Codex and Cursor.",
   },
   footer: {
-    askTitle: "Want the short version?",
-    askNote: "Ask an assistant to summarize mosoo, with links back to the docs and the repo.",
+    askTitle: "Ask an AI about mosoo",
     askPrompt:
       "Summarize mosoo (https://mosoo.ai) for a backend developer: what it runs, how a Session works, and where the docs are.",
     links: footerLinks(DOCS, "https://mosoo.ai/blog", [
@@ -211,7 +195,6 @@ const EN: HomeCopy = {
       "GitHub",
       "Blog",
       "Use cases",
-      "Pricing",
       "Status",
     ]),
     languageLabel: "Language",
@@ -229,9 +212,9 @@ const ZH: HomeCopy = {
   },
   nav: { docs: "文档", docsHref: ZH_DOCS, github: "GitHub", cta: "试用 mosoo", skip: "跳到正文" },
   hero: {
-    lineA: "Agent Session，",
+    lineA: "Agent Session",
     lineB: "给你的后端。",
-    lead: "一个请求启动一个 Session，运行在它自己的 sandbox 里。事件和文件随后返回。",
+    lead: "一个请求，在独立的 sandbox 里启动 Codex、Claude Agent SDK、OpenCode 或 Pi。",
     cta: "试用 mosoo",
   },
   act1: {
@@ -240,30 +223,25 @@ const ZH: HomeCopy = {
     rows: ["Harness", "模型", "Sandbox", "文件", "续跑"],
     harnesses: ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     model: "自选模型，用你自己的服务商密钥",
-    sandbox: "独享一个，服务商密钥留在外面",
+    sandbox: "隔离运行，服务商密钥留在外面",
     files: "outputs/report.md",
     resume: "一分钟后或七天后都可以",
   },
   act2: {
-    halfA: "同一个 Session，",
+    halfA: "同一个 Session",
     halfB: "一周之后。",
     cards: [
-      { time: "+7 天", event: "run.started", title: "追问：补上 Q3", result: "文件和对话都已恢复。", live: true },
-      { time: "+3 分钟", event: "run.completed", title: "第 1 轮完成", result: "检查点已保存，sandbox 可以回收。" },
-      { time: "+2 分钟", event: "session_files.updated", title: "已写入 outputs/report.md", result: "可作为产物下载。" },
-      { time: "+1 分钟", event: "tool.use.completed", title: "python analyze.py", result: "退出码 0。" },
-      { time: "+0", event: "run.started", title: "分析 input.csv", result: "OpenAI Codex 在新的 sandbox 里启动。" },
+      { time: "7 天后", event: "run.started", title: "文件和对话都已恢复", result: "追问：给 input.csv 加一行 south,20。", live: true },
+      { time: "当天", event: "run.completed", title: "第 1 轮完成", result: "检查点已保存，sandbox 可以停了。" },
+      { time: "当天", event: "session_files.updated", title: "已写入 outputs/report.md", result: "可作为产物下载。" },
+      { time: "当天", event: "tool.use.completed", title: "input.csv 已复制进来分析", result: "一次 Python 工具调用完成。" },
+      { time: "当天", event: "run.started", title: "分析 input.csv", result: "OpenAI Codex 在新的 sandbox 里启动。" },
     ],
   },
   act3: {
-    titleA: "一分钟后或七天后回复，",
-    titleB: "还是同一个 Session。",
+    titleA: "sandbox 已回收，",
+    titleB: "Session 还在。",
     ticks: ["+0", "+1 分钟", "+1 小时", "+1 天", "+7 天"],
-    noteStrong: "sandbox 已回收，Session 还在。",
-    note: "文件和对话都会回来。",
-  },
-  statement: {
-    parts: ["用一个 API 运行 Codex、", "Claude Agent SDK、", "OpenCode", " 或 Pi", "，各有自己的 sandbox。"],
   },
   faq: {
     title: "常见问题",
@@ -281,8 +259,8 @@ const ZH: HomeCopy = {
         a: "模型调用只返回 token。Session 运行完整的一轮 Agent：harness、它在 sandbox 里的工具和文件、保存下来的事件，以及可以接着跑的检查点。",
       },
       {
-        q: "Pi 是什么？",
-        a: "四个 runtime 之一，另外三个是 OpenAI Codex、Claude Agent SDK 和 OpenCode。它的 API id 是 pi，只接受文本输入。runtime 按 Session 选择。",
+        q: "现在稳定了吗？",
+        a: "还没有。mosoo 处于 Alpha 阶段，公开 API 和产品行为仍可能变化。",
       },
       {
         q: "模型用量由谁付费？",
@@ -295,17 +273,15 @@ const ZH: HomeCopy = {
     ],
   },
   closing: {
-    lineA: "在你的编码助手里",
-    lineB: "开始一个 Session。",
-    legend: "粘贴给编码助手",
-    prompt: "按 https://mosoo.ai/llms.txt 配置 mosoo",
+    lineA: "你的编码助手",
+    lineB: "替你完成配置。",
+    prompt: "配置 mosoo：mosoo.ai/llms.txt",
     copy: "复制",
     copied: "已复制",
     fine: "适用于 Claude Code、Codex 和 Cursor。",
   },
   footer: {
-    askTitle: "想看简短版本？",
-    askNote: "让 AI 助手概括 mosoo，并附上文档和代码仓库的链接。",
+    askTitle: "问问 AI：mosoo 是什么",
     askPrompt: "请为后端开发者概括 mosoo（https://mosoo.ai）：它运行什么、Session 如何工作、文档在哪里。",
     links: footerLinks(ZH_DOCS, "https://mosoo.ai/blog/zh", [
       "文档",
@@ -313,7 +289,6 @@ const ZH: HomeCopy = {
       "GitHub",
       "博客",
       "使用案例",
-      "定价",
       "状态",
     ]),
     languageLabel: "语言",
@@ -329,11 +304,11 @@ const JA: HomeCopy = {
     description:
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
   },
-  nav: { docs: "ドキュメント", docsHref: JA_DOCS, github: "GitHub", cta: "mosoo を試す", skip: "本文へスキップ" },
+  nav: { docs: "Docs", docsHref: JA_DOCS, github: "GitHub", cta: "mosoo を試す", skip: "本文へスキップ" },
   hero: {
     lineA: "Agent Session を",
     lineB: "バックエンドへ。",
-    lead: "1 リクエストで、専用 sandbox の Session が始動。イベントとファイルが返る。",
+    lead: "1\u00a0リクエストで、Codex、Claude Agent SDK、OpenCode か Pi を専用 sandbox で起動。",
     cta: "mosoo を試す",
   },
   act1: {
@@ -342,30 +317,25 @@ const JA: HomeCopy = {
     rows: ["Harness", "モデル", "Sandbox", "ファイル", "再開"],
     harnesses: ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     model: "選んだモデルを自分のプロバイダーキーで",
-    sandbox: "専用。プロバイダーキーは外に置く",
+    sandbox: "隔離環境。プロバイダーキーは外に置く",
     files: "outputs/report.md",
     resume: "1\u00a0分後でも 7\u00a0日後でも",
   },
   act2: {
-    halfA: "同じ Session、",
+    halfA: "同じ Session",
     halfB: "1\u00a0週間後に。",
     cards: [
-      { time: "+7 日", event: "run.started", title: "追加の依頼：Q3 を足して", result: "ファイルと会話を復元。", live: true },
-      { time: "+3 分", event: "run.completed", title: "ターン 1 完了", result: "チェックポイントを保存。sandbox は回収可。" },
-      { time: "+2 分", event: "session_files.updated", title: "outputs/report.md を書き出し", result: "成果物としてダウンロードできます。" },
-      { time: "+1 分", event: "tool.use.completed", title: "python analyze.py", result: "終了コード 0。" },
-      { time: "+0", event: "run.started", title: "input.csv を分析", result: "OpenAI Codex が新しい sandbox で起動。" },
+      { time: "7\u00a0日後", event: "run.started", title: "ファイルと会話を復元", result: "追加の依頼：input.csv に south,20 を追記。", live: true },
+      { time: "当日", event: "run.completed", title: "ターン 1 完了", result: "チェックポイントを保存。sandbox は停止可。" },
+      { time: "当日", event: "session_files.updated", title: "outputs/report.md を書き出し", result: "成果物としてダウンロードできます。" },
+      { time: "当日", event: "tool.use.completed", title: "input.csv を分析用にコピー", result: "Python のツール呼び出しが完了。" },
+      { time: "当日", event: "run.started", title: "input.csv を分析", result: "OpenAI Codex が新しい sandbox で起動。" },
     ],
   },
   act3: {
-    titleA: "1\u00a0分後でも 7\u00a0日後でも返信できます。",
-    titleB: "同じ Session のまま。",
+    titleA: "sandbox は回収、",
+    titleB: "Session は継続。",
     ticks: ["+0", "+1 分", "+1 時間", "+1 日", "+7 日"],
-    noteStrong: "sandbox は回収、Session は継続。",
-    note: "ファイルも会話も戻ります。",
-  },
-  statement: {
-    parts: ["1\u00a0つの API で Codex、", "Claude Agent SDK、", "OpenCode、", "Pi", "を、それぞれ専用の sandbox で。"],
   },
   faq: {
     title: "よくある質問",
@@ -376,15 +346,15 @@ const JA: HomeCopy = {
       },
       {
         q: "先に Agent を作成する必要はありますか？",
-        a: "いいえ。/api/v2 では 1 回のリクエストで harness、プロバイダー、モデル、指示、入力を渡せます。保存した Agent プリセットは任意で、Skills や MCP サーバーを付けるときに使います。",
+        a: "いいえ。/api/v2 では 1 回のリクエストで harness、プロバイダー、モデル、指示、入力を渡せます。Agent プリセットは任意で、Skills や MCP を付けるときに使います。",
       },
       {
         q: "モデル API を直接呼ぶのと何が違いますか？",
-        a: "モデル呼び出しが返すのはトークンです。Session は Agent の 1 ターンを丸ごと実行します。sandbox 内の harness、ツール、ファイル、保存されたイベント、再開できるチェックポイントまで。",
+        a: "モデル呼び出しはトークンを返すだけ。Session は Agent の 1 ターンを丸ごと実行し、sandbox 内のツールとファイル、イベント、再開用のチェックポイントまで残します。",
       },
       {
-        q: "Pi とは何ですか？",
-        a: "4 つの runtime のひとつで、ほかは OpenAI Codex、Claude Agent SDK、OpenCode です。API id は pi で、入力はテキストのみ。runtime は Session ごとに選びます。",
+        q: "もう安定していますか？",
+        a: "まだです。mosoo は Alpha 段階で、公開 API と製品の挙動は今後も変わる可能性があります。",
       },
       {
         q: "モデルの利用料は誰が払いますか？",
@@ -397,26 +367,23 @@ const JA: HomeCopy = {
     ],
   },
   closing: {
-    lineA: "エージェントから",
-    lineB: "Session を始める。",
-    legend: "エージェントに貼る",
-    prompt: "https://mosoo.ai/llms.txt に沿って mosoo を設定",
+    lineA: "手元のエージェントが",
+    lineB: "セットアップ。",
+    prompt: "mosoo を設定：mosoo.ai/llms.txt",
     copy: "コピー",
-    copied: "コピー済み",
+    copied: "コピー済",
     fine: "Claude Code、Codex、Cursor で使えます。",
   },
   footer: {
-    askTitle: "要点だけ知りたい？",
-    askNote: "AI アシスタントに mosoo を要約してもらえます。ドキュメントとリポジトリへのリンク付き。",
+    askTitle: "AI に mosoo を聞く",
     askPrompt:
       "バックエンド開発者向けに mosoo（https://mosoo.ai）を要約してください：何を動かすのか、Session の仕組み、ドキュメントの場所。",
     links: footerLinks(JA_DOCS, "https://mosoo.ai/blog/ja", [
       "ドキュメント",
-      "API リファレンス",
+      "API 参照",
       "GitHub",
       "ブログ",
       "ユースケース",
-      "料金",
       "ステータス",
     ]),
     languageLabel: "言語",

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
@@ -80,8 +81,9 @@ const HOME_LINKS = {
 };
 
 // Crawlable links in the static home page: the primary nav (localized docs, the source, the console),
-// the footer's link row (localized docs and blog, the use-case gallery, pricing, status) and every
-// language. The v4c UI has these slots and no others (UI-LOCK §4: N1-N3, S6-L x7, S6-G).
+// the footer's link row (localized docs and blog, the use-case gallery, status) and every language.
+// The v4c UI has these slots and no others (UI-LOCK §4: N1-N3, S6-L x6, S6-G). Pricing stays out of the
+// footer until the pricing page is rebuilt for v4 (review round, YC P1-6).
 const assertHomeSiteLinks = (html, locale) => {
   const links = HOME_LINKS[locale];
   const hrefs = hrefsOf(html);
@@ -92,7 +94,6 @@ const assertHomeSiteLinks = (html, locale) => {
     "/zh",
     "/ja",
     `/${locale}/use-cases`,
-    `/${locale}/pricing`,
     `/${locale}/status`,
     links.docs,
     links.apiReference,
@@ -102,6 +103,7 @@ const assertHomeSiteLinks = (html, locale) => {
   ]) {
     assert.ok(hrefs.includes(href), `${locale} home page links ${href}`);
   }
+  assert.ok(!hrefs.includes(`/${locale}/pricing`), `${locale} home page does not link the v3 pricing page`);
 };
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 const alternates = (xml) =>
@@ -261,6 +263,14 @@ test("landing and blog metadata never point at a missing default image", () => {
     existsSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url)),
     true,
   );
+  // The card is the v4 one (apps/landing/scripts/assets/social-card.mjs), not the v3 card with the
+  // bamboo photo and the enlarged green mark (decisions 4 and 10).
+  const card = readFileSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url));
+  assert.notEqual(
+    createHash("sha256").update(card).digest("hex"),
+    "fd744e4902b145737ab28320b566b49ffa03da441557ffbb7235afe5b5c7e8bd",
+    "the v3 bamboo social card is gone",
+  );
   // The card states the README positioning and all four runtimes; its alt
   // text says the same.
   assert.match(landing, /<meta property="og:image:alt" content="mosoo: an open-source, API-first managed Agent runtime for application backends\. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi\." \/>/);
@@ -317,7 +327,7 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, />API 参考<\/a>/);
   assertHomeSiteLinks(ja, "ja");
   assert.match(ja, />ドキュメント<\/a>/);
-  assert.match(ja, />API リファレンス<\/a>/);
+  assert.match(ja, />API 参照<\/a>/);
 });
 
 test("the home JSON-LD graph is valid and states only what the main repo states", () => {
@@ -423,14 +433,14 @@ test("the static home page carries the whole page for readers without JavaScript
   assert.deepEqual(headingsOf(en, 2), [
     "One Session, five parts. Pick one of four harnesses.",
     "Same Session, a week later.",
-    "Reply a minute or seven days later. Same Session.",
+    "Sandbox gone. Session kept.",
     "FAQs",
-    "Start a Session from your agent.",
-    "Want the short version?",
+    "Your coding agent sets it up.",
+    "Ask an AI about mosoo",
   ]);
-  // The statement's glyph circles sit between each name and its comma.
-  assert.match(textOf(en), /Run Codex ?, Claude Agent SDK ?, OpenCode or Pi behind one API, one sandbox each\./);
-  assert.match(en, /<span class="prompt-text" data-prompt>Set up mosoo from https:\/\/mosoo\.ai\/llms\.txt<\/span>/);
+  // The first screen names the four harnesses (the hero lead; the statement section was cut).
+  assert.match(textOf(en), /One request starts Codex, Claude Agent SDK, OpenCode or Pi in its own sandbox\./);
+  assert.match(en, /<span class="prompt-text" data-prompt>Set up mosoo: mosoo\.ai\/llms\.txt<\/span>/);
   assert.match(en, /<a class="v4-btn v4-btn-ink v4-btn-lg hero-cta" data-hero-part href="https:\/\/cloud\.mosoo\.ai">Try mosoo<\/a>/);
   // The pinned stage's end state is the static page: every act is in the HTML.
   for (const act of ["1", "2", "3"]) assert.match(en, new RegExp(`data-act="${act}"`));
@@ -442,7 +452,7 @@ test("the static home page carries the whole page for readers without JavaScript
     const headlines = headingsOf(html, 1);
 
     assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1`);
-    assert.deepEqual(sectionClassesOf(html), ["hero", "statement", "faq", "closing"]);
+    assert.deepEqual(sectionClassesOf(html), ["hero", "faq", "closing"]);
     assert.equal(headingsOf(html, 2).length, 6);
     assert.match(html, /<main id="main" tabindex="-1">/);
     assert.match(html, /<footer class="v4-foot">/);
