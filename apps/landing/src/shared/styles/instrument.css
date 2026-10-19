@@ -1,0 +1,516 @@
+/* ----------------------------------------------------------------------------
+   v4a Instrument: the site canvas (tokens, fonts, rails, header, footer).
+   Locked in v4a/UI-LOCK.md. Every component reads the semantic tokens below,
+   never a raw colour, so a light canvas is a token swap (not built).
+   Sources: proposals/a-instrument/PROPOSAL.md §2 (tokens, type, rails),
+   refs/UI-FORMS.md c.0, U07, U10, U12, U14, U16, U06 and §d.
+   --------------------------------------------------------------------------- */
+
+/* Display: Hedvig Letters Serif 400 (OFL), the stand-in for ABC Arizona Mix.
+   Metric overrides from refs/fonts/notes.md L191-L205. A licensed Arizona Mix
+   is one more @font-face and the first entry of --font-display. */
+@font-face {
+  font-family: "Display Fallback";
+  src: url("/fonts/HedvigLettersSerif-400-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter Text";
+  src: url("/fonts/Inter-Variable-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("/fonts/FragmentMono-400-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.i-page {
+  /* Canvas (hue 135, chroma <= 0.006; Supabase's tinted neutrals). */
+  --bg-0: #0e0f0d;
+  --bg-1: #141513;
+  --bg-well: #080807;
+  --rail: #242623;
+  --line-2: #343633;
+  --ink-1: #eff1ee;
+  --ink-2: #a9aca8;
+  --ink-soft: #8c8f8b;
+  --ink-3: #737572;
+  --ink-4: #4c4e4b;
+  --mark: #151614;
+  /* Signal only: <= 8px dots, 1-2px lines (ATLAS §2.3). */
+  --signal: #6fd305;
+  --signal-halo: rgb(111 211 5 / 0.16);
+  /* Lines and fills on the canvas, as ink alphas. */
+  --hair: rgb(255 255 255 / 0.08);
+  --edge: rgb(255 255 255 / 0.1);
+  --edge-2: rgb(255 255 255 / 0.13);
+  --fill-1: rgb(255 255 255 / 0.06);
+
+  --font-display:
+    "ABC Arizona Mix", "Display Fallback", "Songti SC", "Noto Serif CJK SC",
+    "Source Han Serif SC", "Hiragino Mincho ProN", ui-serif, Georgia, serif;
+  --font-text:
+    "Inter Text", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans",
+    "Microsoft YaHei UI", "Noto Sans CJK SC", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-code:
+    "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Motion: one curve for objects, one for feeds (UI-FORMS c.0). */
+  --ease-object: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-feed: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-door: cubic-bezier(0.16, 1, 0.35, 1);
+
+  --r-1: 4px;
+  --r-2: 8px;
+  --r-3: 12px;
+  --r-plate: 20px;
+
+  --shell: 1120px;
+  --pad: 48px;
+
+  background: var(--bg-0);
+  color: var(--ink-1);
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+html:has(.i-page) {
+  background: #0e0f0d;
+  color-scheme: dark;
+}
+
+.i-page ::selection {
+  background: rgb(239 241 238 / 0.22);
+}
+
+.i-page :focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* The rails: one 1120px column with a 1px line on each side, from the header
+   to the footer (Mintlify 1088 + rails; Dub's grid-section). */
+.i-shell {
+  position: relative;
+  width: min(100% - 32px, var(--shell) + 2px);
+  margin-inline: auto;
+  border-inline: 1px solid var(--rail);
+}
+
+.i-skip {
+  position: absolute;
+  left: 16px;
+  top: -64px;
+  z-index: 70;
+  padding: 8px 14px;
+  border-radius: var(--r-1);
+  background: var(--ink-1);
+  color: var(--bg-0);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.i-skip:focus {
+  top: 12px;
+}
+
+.i-main {
+  outline: none;
+}
+
+/* Display voice and the two-value tone. */
+.i-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-feature-settings: "kern";
+  text-wrap: balance;
+}
+
+.i-soft {
+  color: var(--ink-soft);
+}
+
+/* Buttons: ink on the dark canvas, 4px corners (Mintlify's CTA). */
+.i-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--r-1);
+  background: var(--ink-1);
+  color: var(--bg-0);
+  font: 500 15px/1 var(--font-text);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.16s var(--ease-object);
+}
+
+.i-btn:hover {
+  background: #ffffff;
+}
+
+.i-btn-sm {
+  height: 32px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+/* Header ------------------------------------------------------------------ */
+.i-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 64px;
+  border-bottom: 1px solid var(--rail);
+  background: rgb(14 15 13 / 0.86);
+  backdrop-filter: blur(12px);
+}
+
+.i-nav-shell {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 24px;
+}
+
+/* A 5px square where each rail crosses the header line (#99 Lumen). */
+.i-nav-shell::before,
+.i-nav-shell::after,
+.i-cross-top::before,
+.i-cross-top::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  width: 5px;
+  height: 5px;
+  border: 1px solid var(--ink-4);
+  background: var(--bg-0);
+}
+
+.i-nav-shell::before,
+.i-cross-top::before {
+  left: -3px;
+}
+
+.i-nav-shell::after,
+.i-cross-top::after {
+  right: -3px;
+}
+
+.i-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border-radius: 2px;
+}
+
+/* The wordmark in one ink, 17px tall (<= 24px; the mark's green is dropped). */
+.i-wordmark {
+  display: block;
+  width: 78px;
+  height: 17px;
+  background: var(--ink-1);
+  -webkit-mask: url("/brand/logo-wordmark-ondark.svg") left center / contain
+    no-repeat;
+  mask: url("/brand/logo-wordmark-ondark.svg") left center / contain no-repeat;
+}
+
+.i-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.i-nav-link {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--r-1);
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.16s var(--ease-object);
+}
+
+.i-nav-link:hover,
+.i-nav-link[aria-current="page"] {
+  color: var(--ink-1);
+}
+
+.i-nav-icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-2);
+  border-radius: var(--r-1);
+}
+
+.i-nav-icon:hover {
+  color: var(--ink-1);
+}
+
+.i-nav-links .i-btn-sm {
+  margin-left: 8px;
+}
+
+@media (max-width: 720px) {
+  .i-nav-shell {
+    padding-inline: 12px;
+  }
+
+  .i-nav-link:not(.i-nav-signin) {
+    display: none;
+  }
+
+  .i-nav-signin {
+    padding: 0 8px;
+  }
+}
+
+/* Footer ------------------------------------------------------------------ */
+.i-footer {
+  position: relative;
+  border-top: 1px solid var(--rail);
+}
+
+.i-footer-shell {
+  padding: 120px 48px 0;
+}
+
+/* Page end: the nested outline with the lit inner window (S6) on its line. */
+.i-end {
+  position: relative;
+  width: min(560px, 100%);
+  margin: 0 auto;
+  color: var(--ink-1);
+}
+
+.i-end-figure {
+  position: relative;
+}
+
+.i-end-outline {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.i-end-outline path {
+  stroke-width: 1px;
+}
+
+.i-end-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 4px var(--signal-halo);
+}
+
+.i-end-status {
+  margin-top: 18px;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.i-end-status code {
+  margin-right: 6px;
+  color: var(--ink-2);
+  font: 12px/1 var(--font-code);
+}
+
+/* Ask-AI board (U07; Ploy's footer). */
+.i-ask {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px 48px;
+  align-items: end;
+  margin-top: 120px;
+  padding: 64px 32px 32px;
+  border-radius: var(--r-plate);
+  background: var(--bg-1);
+}
+
+.i-ask::before {
+  content: "";
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  right: 32px;
+  height: 1px;
+  background: var(--hair);
+}
+
+.i-ask-title {
+  font-size: 32px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.i-ask-lead {
+  max-width: 420px;
+  margin-top: 12px;
+  color: rgb(239 241 238 / 0.58);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.i-ask-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.i-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 15px;
+  border: 1px solid var(--edge-2);
+  border-radius: 999px;
+  background: var(--fill-1);
+  color: var(--ink-1);
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color 0.16s var(--ease-object);
+}
+
+.i-pill:hover {
+  border-color: rgb(255 255 255 / 0.28);
+}
+
+.i-pill-arrow {
+  color: rgb(239 241 238 / 0.45);
+}
+
+.i-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 64px;
+  padding-inline: 32px;
+}
+
+.i-footer-head {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.i-footer-cols ul {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.i-footer-cols a {
+  color: var(--ink-2);
+  font-size: 14px;
+  transition: color 0.16s var(--ease-object);
+}
+
+.i-footer-cols a:hover {
+  color: var(--ink-1);
+}
+
+.i-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 72px;
+  padding: 22px 32px 28px;
+  border-top: 1px solid var(--rail);
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.i-lang {
+  display: flex;
+  gap: 4px;
+}
+
+.i-lang a {
+  display: inline-flex;
+  height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--ink-3);
+}
+
+.i-lang a:hover {
+  color: var(--ink-1);
+}
+
+.i-lang a[aria-current="true"] {
+  color: var(--ink-1);
+  box-shadow: inset 0 0 0 1px var(--edge-2);
+}
+
+@media (max-width: 720px) {
+  .i-footer-shell {
+    padding: 72px 12px 0;
+  }
+
+  .i-end {
+    width: min(360px, 100%);
+  }
+
+  .i-ask {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 72px;
+    padding: 56px 20px 24px;
+  }
+
+  .i-ask::before {
+    top: 24px;
+    left: 20px;
+    right: 20px;
+  }
+
+  .i-ask-pills {
+    justify-content: flex-start;
+  }
+
+  .i-footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 8px;
+  }
+
+  .i-footer-bottom {
+    padding-inline: 8px;
+  }
+}

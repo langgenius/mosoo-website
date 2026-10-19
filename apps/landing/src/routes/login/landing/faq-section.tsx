@@ -1,42 +1,45 @@
 import type { ReactElement } from "react";
 
-import { FAQ_MESSAGES, t } from "./i18n";
-import { WithCodeTokens, Phrases, SpecCite } from "./ui";
+import { FAQ_INDICATOR } from "@/shared/brand/outline-paths";
 
-// API names styled as code inside the answers. Only presentation changes: the
-// text stays identical to the FAQPage JSON-LD and llms.txt answers.
-const FAQ_CODE_TOKENS = [
-  "/api/v2",
-  "/api/v1",
-  "outputs/",
-  "runtime.capacity_exhausted",
-  "Idempotency-Key",
-] as const;
+import { copy } from "./home-copy";
+import { Bracketed } from "./instrument-ui";
 
 /**
- * Copy deck §10: ten questions, every answer visible without a click, so the
- * visible FAQ, the FAQPage structured data and the crawlable fallback match.
- * id="faq" is the fragment the FAQPage @id points at (https://mosoo.ai/en#faq).
+ * 04 FAQ (UI-FORMS U16, dark skin): Retool's two-column FAQ (issue #134,
+ * refs/devices/crops/issue-134-faq-split-retool.jpg) between the page rails.
+ * The +/− is the logo outline's smallest place: a 10x8 window that fills and
+ * steps 10px left when its row opens (Enter Pro's .faq-item__dot). Native
+ * <details name="faq">, first one open; answers stay in the DOM.
  */
 export function FaqSection(): ReactElement {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="v2a-section">
-      <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
-      <h2 id="faq-title" className="v2a-display v2a-h2">
-        <Phrases text={t("Questions to ask before you build on mosoo")} />
+    <section id="faq" aria-labelledby="faq-title" className="i-section i-faq">
+      <h2 id="faq-title" className="i-display i-h2 i-faq-title">
+        <Bracketed lines={copy.faq.title} />
       </h2>
-      <SpecCite section="all" />
-
-      {/* Two columns from 1024px (v2b's appendix layout): all ten answers stay
-          open, in reading order down the first column, then the second. */}
-      <div className="v2a-faq mt-10">
-        {FAQ_MESSAGES.map((faq) => (
-          <div key={faq.q} className="v2a-qa">
-            <h3 className="text-ink-900 text-[18px] leading-[1.4] font-semibold">{t(faq.q)}</h3>
-            <p className="text-ink-700 mt-2.5 max-w-[720px] text-[16px] leading-[1.65]">
-              <WithCodeTokens text={t(faq.a)} tokens={FAQ_CODE_TOKENS} />
-            </p>
-          </div>
+      <div className="i-faq-list">
+        {copy.faq.items.map((item, index) => (
+          <details
+            key={item.question}
+            name="faq"
+            className="i-faq-row"
+            open={index === 0}
+          >
+            <summary>
+              <svg
+                className="i-faq-mark"
+                viewBox={`0 0 ${FAQ_INDICATOR.w} ${FAQ_INDICATOR.h}`}
+                width={FAQ_INDICATOR.w}
+                height={FAQ_INDICATOR.h}
+                aria-hidden="true"
+              >
+                <path d={FAQ_INDICATOR.d} />
+              </svg>
+              <span className="i-faq-q">{item.question}</span>
+            </summary>
+            <p className="i-faq-a">{item.answer}</p>
+          </details>
         ))}
       </div>
     </section>

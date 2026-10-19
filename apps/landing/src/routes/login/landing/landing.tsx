@@ -1,36 +1,35 @@
-import { lazy, Suspense } from "react";
+import { useEffect } from "react";
 import type { ReactElement } from "react";
 
-import { useIdleReady } from "@/shared/lib/use-idle-ready";
-
+import { FaqSection } from "./faq-section";
+import { FinalCta } from "./final-cta";
 import { Hero } from "./hero";
+import { SpecSection } from "./spec-section";
+import { StageSection } from "./stage-section";
 
-const LandingBelowFold = lazy(async () => {
-  const mod = await import("./landing-below-fold");
-  return { default: mod.LandingBelowFold };
-});
-
-// Holds the space of the sections below the hero until their chunk arrives,
-// so the footer never shows in the first screen and then jumps away.
-const BELOW_FOLD_PLACEHOLDER = <div aria-hidden="true" className="min-h-screen" />;
-
+/**
+ * The instrument home (v4a): 01 hero, 02 the pinned transcript stage, 03 the
+ * spec table, 04 FAQ, 05 closing card; the footer comes from the shell.
+ * Section ids match the static fallback in scripts/landing-home.mjs where
+ * they still exist (faq, start).
+ */
 export function LoginLanding(): ReactElement {
-  const loadBelowFold = useIdleReady();
+  // A link to a section (for example /en#faq, the FAQPage @id) scrolls to it
+  // once React has replaced the static first paint.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id !== "") {
+      document.getElementById(id)?.scrollIntoView();
+    }
+  }, []);
 
   return (
-    <div className="v2a px-4 md:px-6">
-      {/* One column. Below the hero, the sections hang off a single 1px
-          culm line with a node at each heading (bamboo-node.css). */}
-      <div className="mx-auto w-full max-w-[1280px]">
-        <Hero />
-        {loadBelowFold ? (
-          <Suspense fallback={BELOW_FOLD_PLACEHOLDER}>
-            <LandingBelowFold />
-          </Suspense>
-        ) : (
-          BELOW_FOLD_PLACEHOLDER
-        )}
-      </div>
+    <div className="i-home i-shell">
+      <Hero />
+      <StageSection />
+      <SpecSection />
+      <FaqSection />
+      <FinalCta />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./instrument.css";
 
 @font-face {
   font-family: "Geist";
@@ -55,7 +56,7 @@
 }
 
 :root {
-  /* Brand green — the bright Moso-bamboo shoot (#6FD305). A disciplined accent
+  /* Brand green (#6FD305). A disciplined accent
      only: primary actions stay BLACK; green marks growth/action/life. */
   --green-50: #f4fce4;
   --green-100: #e7f8c4;
@@ -70,7 +71,7 @@
   --green-950: #1a310b;
 
   /* Signal lime — reserved for the single hero announcement chip. Deliberately
-     outside the bamboo-green ramp and theme-invariant: it must read as "new"
+     outside the brand-green ramp and theme-invariant: it must read as "new"
      on the cool-gray root palette and on the warm landing palette alike, with
      near-black ink on top (#050a08 on #c8ff00 ≈ 17:1). */
   --lime: #c8ff00;
@@ -625,7 +626,7 @@ html:has(.landing-shell[data-theme="landing"]) {
 }
 
 /* Pinned under the content layer only where the whole footer (links, the
-   wordmark and the bamboo landscape) fits the screen; a taller footer would
+   wordmark and the landscape) fits the screen; a taller footer would
    keep its top hidden behind the page. */
 @media (min-width: 1024px) and (min-height: 1180px) {
   .landing-footer {
@@ -644,24 +645,6 @@ html:has(.landing-shell[data-theme="landing"]) {
   letter-spacing: -0.025em;
 }
 
-/* Where a page loads Literata (the home page), the sign-off is set in it. */
-html:has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata);
-  font-weight: 400;
-  letter-spacing: -0.015em;
-}
-
-html:lang(zh):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-zh);
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-html:lang(ja):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-ja);
-  font-weight: 600;
-  letter-spacing: 0;
-}
 
 /* The large lowercase wordmark, one ink colour, resting on the landscape's
    bare upper third (scripts/brand-assets/MANIFEST.md, use (b)). */

@@ -56,7 +56,9 @@ function loadUnicornSdk(): Promise<UnicornStudioSdk> {
       if (window.UnicornStudio) {
         resolve(window.UnicornStudio);
       } else {
-        reject(new Error("Unicorn Studio SDK loaded without exposing a runtime"));
+        reject(
+          new Error("Unicorn Studio SDK loaded without exposing a runtime"),
+        );
       }
     });
     script.addEventListener("error", () => {
@@ -76,7 +78,11 @@ function loadUnicornSdk(): Promise<UnicornStudioSdk> {
  * itself so the section's own background shows through — the copy on top stays
  * readable instead of sitting on a black canvas.
  */
-export function UnicornBackground({ sceneId }: { sceneId: string }): ReactElement | null {
+export function UnicornBackground({
+  sceneId,
+}: {
+  sceneId: string;
+}): ReactElement | null {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
 

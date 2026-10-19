@@ -2,7 +2,10 @@ import { ArrowRight } from "lucide-react";
 import { Fragment } from "react";
 import type { ReactElement, ReactNode } from "react";
 
-import { MOSOO_GITHUB_URL, MOSOO_SPEC_URL } from "@/shared/config/external-links";
+import {
+  MOSOO_GITHUB_URL,
+  MOSOO_SPEC_URL,
+} from "@/shared/config/external-links";
 import { cn } from "@/shared/lib/class-names";
 
 import { sectionHeadingStyle } from "./typography";
@@ -59,7 +62,11 @@ export function Phrases({ text }: { text: string }): ReactElement {
           {index > 0 ? <wbr /> : null}
           {part.split(KEEP_TERMS).map((piece, pieceIndex) =>
             pieceIndex % 2 === 1 ? (
-              <span key={pieceIndex} translate="no" className="whitespace-nowrap">
+              <span
+                key={pieceIndex}
+                translate="no"
+                className="whitespace-nowrap"
+              >
                 {piece}
               </span>
             ) : (
@@ -125,7 +132,9 @@ export function WithCodeTokens({
   text: string;
   tokens: readonly string[];
 }): ReactElement {
-  const escaped = tokens.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const escaped = tokens.map((token) =>
+    token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+  );
   const pattern = new RegExp(`(${escaped.join("|")})`);
   const parts = text.split(pattern);
   return (
@@ -156,7 +165,11 @@ export function SectionHeading({
 }): ReactElement {
   return (
     <div className={className}>
-      <h2 id={id} className="text-ink-900 max-w-[860px] [text-wrap:balance]" style={sectionHeadingStyle}>
+      <h2
+        id={id}
+        className="text-ink-900 max-w-[860px] [text-wrap:balance]"
+        style={sectionHeadingStyle}
+      >
         {title}
       </h2>
       {intro === undefined ? null : (
@@ -203,16 +216,44 @@ export function ArrowLink({
  */
 export const SPEC_SECTIONS = {
   all: { label: "SPEC", title: "The product contract", href: MOSOO_SPEC_URL },
-  s1: { label: "SPEC §1", title: "Product", href: `${MOSOO_SPEC_URL}#1-product` },
-  s2: { label: "SPEC §2", title: "Projects, keys and credentials", href: `${MOSOO_SPEC_URL}#2-projects-keys-and-credentials` },
-  s3: { label: "SPEC §3", title: "Configuration and presets", href: `${MOSOO_SPEC_URL}#3-configuration-and-presets` },
-  s4: { label: "SPEC §4", title: "Sessions and durability", href: `${MOSOO_SPEC_URL}#4-sessions-and-durability` },
-  s5: { label: "SPEC §5", title: "Execution and usage", href: `${MOSOO_SPEC_URL}#5-execution-and-usage` },
+  s1: {
+    label: "SPEC §1",
+    title: "Product",
+    href: `${MOSOO_SPEC_URL}#1-product`,
+  },
+  s2: {
+    label: "SPEC §2",
+    title: "Projects, keys and credentials",
+    href: `${MOSOO_SPEC_URL}#2-projects-keys-and-credentials`,
+  },
+  s3: {
+    label: "SPEC §3",
+    title: "Configuration and presets",
+    href: `${MOSOO_SPEC_URL}#3-configuration-and-presets`,
+  },
+  s4: {
+    label: "SPEC §4",
+    title: "Sessions and durability",
+    href: `${MOSOO_SPEC_URL}#4-sessions-and-durability`,
+  },
+  s5: {
+    label: "SPEC §5",
+    title: "Execution and usage",
+    href: `${MOSOO_SPEC_URL}#5-execution-and-usage`,
+  },
   s8: { label: "SPEC §8", title: "Scope", href: `${MOSOO_SPEC_URL}#8-scope` },
-  license: { label: "README", title: "License", href: `${MOSOO_GITHUB_URL}blob/main/README.md#license` },
+  license: {
+    label: "README",
+    title: "License",
+    href: `${MOSOO_GITHUB_URL}blob/main/README.md#license`,
+  },
 } as const;
 
-export function SpecCite({ section }: { section: keyof typeof SPEC_SECTIONS }): ReactElement {
+export function SpecCite({
+  section,
+}: {
+  section: keyof typeof SPEC_SECTIONS;
+}): ReactElement {
   const { label, title, href } = SPEC_SECTIONS[section];
   return (
     <p className="v2a-cite">

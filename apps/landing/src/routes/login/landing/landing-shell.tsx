@@ -1,51 +1,40 @@
 import type { ReactElement, ReactNode } from "react";
 
-import { t } from "@/shared/i18n";
-
 import { LoginLandingTopbar } from "../topbar";
 import type { TopbarNav } from "../topbar";
 import { LandingFooter } from "./footer";
+import { copy } from "./home-copy";
 
 /**
- * The chrome every landing page shares: skip link, sticky header, the page in
- * <main id="main">, and the footer.
- *
- * The document scrolls (there is no fixed inner scroll container). The footer
- * renders with the page, in normal flow, so it never shifts the layout when it
- * arrives; on large viewports app.css pins it under the content layer, which
- * peels up to reveal it at the end of the page.
+ * The chrome every landing page shares: skip link, the header, the page in
+ * <main id="main">, and the footer, all on the instrument canvas
+ * (instrument.css). The two 1px rails run from the header to the footer.
  */
 export function LandingShell({
   activeNav,
-  navVariant = "bar",
   theme = "landing",
   children,
 }: {
   activeNav?: TopbarNav;
-  /** The header's shape: the full-width bar, or the home page's floating capsule. */
+  /** Kept for the page entries; the header shape is the same everywhere. */
   navVariant?: "bar" | "capsule";
-  // "landing" keeps the warm forest palette; "brand" drops it to inherit the
-  // cool/bright :root palette the blog uses, so a page can match the blog.
+  // "landing" keeps the landing palette for the page body; "brand" drops it
+  // to inherit the :root palette the blog uses.
   theme?: "landing" | "brand";
   children: ReactNode;
 }): ReactElement {
   return (
     <div
       data-theme={theme === "landing" ? "landing" : undefined}
-      className="landing-shell bg-paper-100 text-fg-1"
+      className="landing-shell i-page"
     >
-      <a
-        href="#main"
-        className="bg-ink-900 text-paper-100 focus-visible:ring-ring sr-only rounded-md px-4 py-2.5 text-[15px] font-semibold outline-none focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[60] focus-visible:ring-2 focus-visible:ring-offset-2"
-      >
-        {t("Skip to content")}
+      <a href="#main" className="i-skip">
+        {copy.nav.skip}
       </a>
-      <div className="landing-content-layer bg-paper-100 relative z-10">
-        <LoginLandingTopbar activeNav={activeNav} variant={navVariant} />
-        <main id="main" tabIndex={-1} className="outline-none">
-          {children}
-        </main>
-      </div>
+      <LoginLandingTopbar activeNav={activeNav} />
+      <main id="main" tabIndex={-1} className="i-main">
+        {children}
+      </main>
       <LandingFooter />
     </div>
   );

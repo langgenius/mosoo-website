@@ -1,0 +1,831 @@
+/* ----------------------------------------------------------------------------
+   v4a Instrument home sections. Tokens come from instrument.css; sizes are
+   the locked specs in refs/UI-FORMS.md (U12, U14, U10, U16, U06) and v4a/
+   UI-LOCK.md. Sections hang between the two rails; each opens with a 1px
+   line across the page and a square on each rail.
+   --------------------------------------------------------------------------- */
+
+.i-home {
+  border-bottom: 0;
+}
+
+.i-section,
+.i-stage {
+  position: relative;
+}
+
+/* One line across the page with a 5px square on each rail (#99 Lumen). The
+   rails sit at the page centre +- half the shell. */
+.i-section::before,
+.i-stage::before {
+  --half: min(50vw - 16px, 561px);
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 100vw;
+  height: 5px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(var(--ink-4), var(--ink-4)) calc(50vw - var(--half) - 2.5px)
+      0 / 5px 5px no-repeat,
+    linear-gradient(var(--ink-4), var(--ink-4)) calc(50vw + var(--half) - 2.5px)
+      0 / 5px 5px no-repeat,
+    linear-gradient(var(--rail), var(--rail)) 0 2px / 100% 1px no-repeat;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.i-h1 {
+  font-size: 68px;
+  line-height: 1;
+  letter-spacing: -0.032em;
+}
+
+.i-h1 > span {
+  display: block;
+}
+
+.i-h2 {
+  font-size: 44px;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+}
+
+.i-phrase {
+  display: block;
+}
+
+/* ACE's bracket after each phrase: a 10px, 1px right angle (issue #96). */
+.i-bracket {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 0.16em;
+  border-top: 1px solid var(--ink-3);
+  border-right: 1px solid var(--ink-3);
+  vertical-align: 0.58em;
+}
+
+.i-lead {
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+/* 01 Hero --------------------------------------------------------------------
+   Left: the two-value H1, the lead and one button. Right: the transcript
+   card, past the right rail and cut by the viewport's right edge (Mintlify's
+   product frame bleeds off the page; Enter Pro's card is cut by its plate). */
+.i-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: clamp(720px, calc(100svh - 64px), 900px);
+  padding: 0 var(--pad) 40px;
+}
+
+.i-hero-copy {
+  width: 600px;
+}
+
+.i-hero-copy .i-lead {
+  max-width: 420px;
+  margin-top: 28px;
+}
+
+.i-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.i-hero-object {
+  position: absolute;
+  left: 720px;
+  top: calc(50% - 20px);
+  width: 640px;
+  transform: translateY(-50%);
+}
+
+/* 02 Stage -------------------------------------------------------------------
+   Static by default (the end state). With [data-live] (wide screens, motion
+   allowed) the section becomes a 240vh runway and the frame pins. */
+.i-stage {
+  padding: 0 var(--pad);
+}
+
+.i-stage-frame {
+  display: flex;
+  align-items: center;
+  min-height: 680px;
+  padding: 120px 0;
+}
+
+.i-stage[data-live] {
+  height: 240vh;
+}
+
+.i-stage[data-live] .i-stage-frame {
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  min-height: 0;
+  padding: 0;
+}
+
+.i-stage-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 376px 112px 536px;
+  column-gap: 0;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.i-stage-copy {
+  align-self: start;
+  padding-top: 8px;
+}
+
+.i-stage-lead {
+  max-width: 320px;
+  margin-top: 20px;
+  font-size: 16.5px;
+}
+
+/* U14, upright: 1px ticks every 8px, five long ticks with labels, the spine
+   solid to +1 hour, dashed to +7 days (sandbox reclaimed), solid after. */
+.i-ruler {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 24px;
+}
+
+.i-ruler-scale {
+  position: relative;
+  width: 1px;
+  height: 352px;
+}
+
+.i-ruler-scale::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 1px;
+  width: 10px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(239 241 238 / 0.22) 0 1px,
+    transparent 1px 8px
+  );
+}
+
+.i-ruler-spine {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  background: var(--ink-3);
+}
+
+.i-ruler-spine-a {
+  top: 0;
+  height: 44%;
+}
+
+.i-ruler-spine-dash {
+  top: 44%;
+  height: 52%;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--ink-3) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.i-ruler-spine-b {
+  top: 96%;
+  bottom: 0;
+}
+
+.i-ruler-tick {
+  position: absolute;
+  right: 0;
+  width: 30px;
+  height: 1px;
+  background: var(--ink-1);
+}
+
+.i-ruler-label {
+  position: absolute;
+  right: 38px;
+  top: -7px;
+  color: var(--ink-2);
+  font: 11px/14px var(--font-code);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.i-ruler-dot {
+  position: absolute;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 4px var(--signal-halo);
+}
+
+.i-stage[data-live] .i-ruler-dot {
+  top: 0 !important;
+  will-change: transform;
+}
+
+/* U12 transcript card -------------------------------------------------------- */
+.i-term {
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-2);
+  background: linear-gradient(#111211, #0a0b0a);
+  box-shadow: 0 36px 120px rgb(0 0 0 / 0.5);
+  font: 13px/1.65 var(--font-code);
+}
+
+.i-term-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--hair);
+}
+
+.i-term-dots {
+  display: flex;
+  gap: 7px;
+}
+
+.i-term-dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.28);
+}
+
+.i-term-name {
+  color: rgb(255 255 255 / 0.42);
+  font-size: 12px;
+}
+
+.i-term-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 312px;
+  overflow: hidden;
+  padding: 0 28px 22px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16%);
+}
+
+.i-term-track {
+  display: grid;
+  gap: 12px;
+  transition: transform 0.6s var(--ease-feed);
+}
+
+.i-term-track > li {
+  position: relative;
+  transition:
+    opacity 0.6s var(--ease-feed),
+    transform 0.6s var(--ease-feed);
+}
+
+.i-term-track > li[data-hidden] {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+}
+
+.i-term-prompt {
+  color: rgb(255 255 255 / 0.96);
+  max-width: 40ch;
+}
+
+.i-term-step {
+  display: grid;
+}
+
+.i-term-verb {
+  color: rgb(255 255 255 / 0.96);
+}
+
+.i-term-arg {
+  color: rgb(255 255 255 / 0.62);
+}
+
+.i-term-result {
+  padding-left: 14px;
+  color: rgb(255 255 255 / 0.4);
+}
+
+.i-term-result::before {
+  content: "└ ";
+}
+
+.i-term-gap {
+  height: 1px;
+  margin: 6px 0;
+  background: repeating-linear-gradient(
+    to right,
+    rgb(255 255 255 / 0.22) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+/* The running line: a 2px lime bar and braille frames, the card's one colour. */
+.i-term-glyph {
+  display: none;
+  margin-left: 10px;
+  color: var(--signal);
+}
+
+.i-term-track > li[data-current]::before {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--signal);
+}
+
+.i-term-step[data-current] .i-term-glyph {
+  display: inline;
+}
+
+.i-term-hero {
+  font-size: 15px;
+}
+
+.i-term-hero .i-term-bar {
+  height: 44px;
+}
+
+.i-term-hero .i-term-name {
+  font-size: 13px;
+}
+
+/* The hero card holds its two steps; no fade, no fixed height. */
+.i-term-hero .i-term-body {
+  justify-content: flex-start;
+  height: auto;
+  padding: 28px 32px 34px;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.i-term-hero .i-term-track > li[data-current]::before {
+  left: -32px;
+}
+
+/* 03 Spec table (U10, dark skin) ------------------------------------------- */
+.i-spec {
+  padding: 160px 0 160px;
+}
+
+.i-spec-title {
+  padding-inline: var(--pad);
+  font-size: 40px;
+}
+
+.i-spec-frame {
+  position: relative;
+  margin-top: 48px;
+}
+
+.i-spec-table {
+  border-top: 1px solid var(--ink-2);
+}
+
+.i-spec-row {
+  display: grid;
+  grid-template-columns: 3fr 9fr;
+  align-items: center;
+  min-height: 62px;
+  padding-inline: var(--pad);
+  border-bottom: 1px solid var(--rail);
+}
+
+.i-spec-row-lead {
+  min-height: 86px;
+}
+
+.i-spec-row dt {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.i-spec-row dd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-1);
+  font-size: 16px;
+}
+
+.i-flip {
+  display: inline-grid;
+  perspective: 600px;
+}
+
+.i-flip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  grid-area: 1 / 1;
+  transform-origin: 50% 0;
+  backface-visibility: hidden;
+}
+
+.i-flip-item[hidden] {
+  display: none;
+}
+
+.i-spec-big {
+  font-size: 38px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.i-flip-rest {
+  margin-left: 16px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.i-flip[data-live] + .i-flip-rest {
+  display: none;
+}
+
+.i-glyph {
+  width: 28px;
+  height: 28px;
+  filter: grayscale(1) brightness(0) invert(0.93);
+}
+
+.i-glyph-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink-2);
+  border-radius: 6px;
+  color: var(--ink-1);
+  font: 500 12px/1 var(--font-text);
+}
+
+.i-row-glyph {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.i-token {
+  padding: 3px 8px;
+  border: 1px solid rgb(239 241 238 / 0.16);
+  border-radius: var(--r-1);
+  color: var(--ink-1);
+  font: 13px/1.4 var(--font-code);
+}
+
+/* ACE's corner crosses on the table frame, on the rails (issue #96). */
+.i-crosses i {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background:
+    linear-gradient(var(--ink-2), var(--ink-2)) center / 9px 1px no-repeat,
+    linear-gradient(var(--ink-2), var(--ink-2)) center / 1px 9px no-repeat;
+}
+
+.i-crosses i:nth-child(1) {
+  left: -5px;
+  top: -4px;
+}
+
+.i-crosses i:nth-child(2) {
+  right: -5px;
+  top: -4px;
+}
+
+.i-crosses i:nth-child(3) {
+  left: -5px;
+  bottom: -5px;
+}
+
+.i-crosses i:nth-child(4) {
+  right: -5px;
+  bottom: -5px;
+}
+
+/* 04 FAQ (U16, dark skin) --------------------------------------------------- */
+.i-faq {
+  display: grid;
+  grid-template-columns: 400px minmax(0, 1fr);
+  column-gap: 80px;
+  padding: 160px var(--pad);
+}
+
+.i-faq-title {
+  align-self: start;
+  position: sticky;
+  top: 112px;
+}
+
+.i-faq-list {
+  border-top: 1px solid var(--rail);
+}
+
+.i-faq-row {
+  border-bottom: 1px solid var(--rail);
+}
+
+.i-faq-row summary {
+  position: relative;
+  display: block;
+  padding: 22px 0 22px 30px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.i-faq-row summary::-webkit-details-marker {
+  display: none;
+}
+
+.i-faq-mark {
+  position: absolute;
+  left: 10px;
+  top: 29px;
+  overflow: visible;
+  fill: transparent;
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  transition:
+    transform 0.65s var(--ease-door),
+    fill 0.65s var(--ease-door);
+}
+
+.i-faq-row[open] .i-faq-mark,
+.i-faq-row summary:hover .i-faq-mark {
+  fill: var(--ink-1);
+  stroke: var(--ink-1);
+  transform: translateX(-10px);
+}
+
+.i-faq-q {
+  color: var(--ink-1);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.i-faq-a {
+  max-width: 560px;
+  padding: 0 0 26px 30px;
+  color: var(--ink-2);
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+/* 05 Closing (U06, legend variant) ------------------------------------------ */
+.i-closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 160px var(--pad) 176px;
+  text-align: center;
+}
+
+.i-h-close {
+  font-size: 48px;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+}
+
+.i-h-close > span {
+  display: block;
+}
+
+.i-legend-card {
+  position: relative;
+  width: min(588px, 100%);
+  margin-top: 34px;
+  padding: 34px 24px 18px;
+  border: 1px solid var(--edge);
+  border-radius: var(--r-1);
+  background: var(--bg-1);
+  text-align: left;
+}
+
+.i-legend {
+  position: absolute;
+  top: -8px;
+  left: 18px;
+  padding: 0 8px;
+  background: var(--bg-0);
+  color: var(--ink-3);
+  font: 11px/16px var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.i-prompt-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 6px 0 22px;
+  border: 1px solid var(--edge-2);
+  border-radius: 999px;
+  background: var(--bg-well);
+}
+
+.i-prompt-text {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--ink-1);
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.i-btn-pill {
+  height: 44px;
+  border-radius: 999px;
+}
+
+.i-legend-note {
+  margin-top: 14px;
+  padding-left: 22px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* Reduced motion: every engine shows its end state; transitions go. */
+@media (prefers-reduced-motion: reduce) {
+  .i-term-track,
+  .i-term-track > li,
+  .i-faq-mark {
+    transition: none;
+  }
+
+  .i-faq-row[open] .i-faq-mark,
+  .i-faq-row summary:hover .i-faq-mark {
+    transform: none;
+  }
+}
+
+/* Tablet and phone ----------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .i-hero-copy {
+    width: 520px;
+  }
+
+  .i-hero-object {
+    left: auto;
+    right: -200px;
+  }
+
+  .i-stage-grid {
+    grid-template-columns: minmax(0, 1fr) 112px minmax(0, 480px);
+  }
+}
+
+@media (max-width: 900px) {
+  .i-home {
+    --pad: 12px;
+  }
+
+  .i-h1 {
+    font-size: 42px;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+  }
+
+  .i-h2,
+  .i-spec-title {
+    font-size: 30px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+
+  .i-h-close {
+    font-size: 34px;
+  }
+
+  .i-hero {
+    display: block;
+    height: auto;
+    padding: 56px var(--pad) 72px;
+  }
+
+  .i-hero-copy {
+    width: auto;
+  }
+
+  .i-hero-copy .i-lead {
+    margin-top: 20px;
+    font-size: 16.5px;
+  }
+
+  .i-hero-object {
+    position: relative;
+    left: 0;
+    right: auto;
+    top: 0;
+    width: calc(100% + 40px);
+    margin-top: 44px;
+    transform: none;
+  }
+
+  .i-term-hero {
+    font-size: 12.5px;
+  }
+
+  .i-stage-frame {
+    min-height: 0;
+    padding: 72px 0;
+  }
+
+  .i-stage-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+  }
+
+  .i-ruler {
+    display: none;
+  }
+
+  .i-term {
+    font-size: 12px;
+  }
+
+  .i-term-body {
+    padding-inline: 20px;
+  }
+
+  .i-term-track > li[data-current]::before {
+    left: -20px;
+  }
+
+  .i-spec {
+    padding: 72px 0;
+  }
+
+  .i-spec-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding-block: 14px;
+  }
+
+  .i-spec-big {
+    font-size: 28px;
+  }
+
+  .i-flip-rest {
+    display: none;
+  }
+
+  .i-faq {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+    padding: 72px var(--pad);
+  }
+
+  .i-faq-title {
+    position: static;
+  }
+
+  .i-faq-q {
+    font-size: 16.5px;
+  }
+
+  .i-closing {
+    padding: 72px var(--pad) 96px;
+  }
+
+  .i-prompt-text {
+    font-size: 14px;
+  }
+}
