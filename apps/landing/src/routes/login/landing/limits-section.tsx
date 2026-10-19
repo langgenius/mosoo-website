@@ -64,9 +64,18 @@ export function LimitsSection(): ReactElement {
                 scope="row"
                 className="text-ink-900 py-4 pr-6 align-top text-[16px] leading-[1.5] font-semibold max-sm:block max-sm:p-0"
               >
+                {/* Phones drop the column headers from view, so each stacked
+                    row says which side it is on (the sr-only thead still
+                    names the columns for assistive technology). */}
+                <span aria-hidden="true" className="text-soil-fg block text-[14px] font-semibold sm:hidden">
+                  {t("Not included")}
+                </span>
                 {row.notIncluded}
               </th>
-              <td className="text-ink-500 py-4 align-top text-[16px] leading-[1.55] max-sm:block max-sm:p-0 max-sm:pt-1">
+              <td className="text-ink-500 py-4 align-top text-[16px] leading-[1.55] max-sm:block max-sm:p-0 max-sm:pt-2">
+                <span aria-hidden="true" className="text-ink-700 block text-[14px] font-semibold sm:hidden">
+                  {t("Do this instead")}
+                </span>
                 {row.instead}
               </td>
             </tr>
