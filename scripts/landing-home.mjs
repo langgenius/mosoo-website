@@ -1,12 +1,14 @@
-// Home page copy for the crawlable static HTML in /en, /zh and /ja: the
-// fallback that non-JS crawlers and coding agents read inside #root, and the
-// JSON-LD @graph. React replaces #root on mount, so this is what a reader sees
-// without JavaScript.
+// The home page in /en, /zh and /ja, as static HTML: the v4b "Paper" page
+// itself (no React on the home; apps/landing/src/main.tsx only adds styles and
+// the effect engines), and the JSON-LD @graph.
 //
 // Copy source: the v1 copy deck (sections 1 to 16), drawn from
 // langgenius/mosoo @ 7cb9866 (README, docs/SPEC.md). The FAQ strings are the
 // exact strings the FAQPage JSON-LD carries, and the React FAQ must show the
 // same text. Do not add facts here that the main repo does not state.
+
+import { OUTLINE } from "../apps/landing/src/shared/chrome/outline-geometry.mjs";
+import { renderPaperFooter, renderPaperNav } from "../apps/landing/src/shared/chrome/paper-chrome.mjs";
 
 const SITE = "https://mosoo.ai";
 const CONSOLE = "https://cloud.mosoo.ai";
@@ -102,134 +104,36 @@ const RELEASE_DATES = {
   "v0.4.0": "2026-09-30",
 };
 
-const FAQ = {
-  "en": [
-    {
-      "q": "What is mosoo?",
-      "a": "mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha."
-    },
-    {
-      "q": "Do I need to create or publish an Agent first?",
-      "a": "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one to attach Skills, MCP servers, or a non-default Environment."
-    },
-    {
-      "q": "Which runtimes and models can I use?",
-      "a": "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs."
-    },
-    {
-      "q": "Who pays for model usage?",
-      "a": "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices."
-    },
-    {
-      "q": "What happens when I reply hours or days later?",
-      "a": "The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness’s native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can’t be restored, the follow-up fails with an error instead of starting empty."
-    },
-    {
-      "q": "Do my API keys enter the sandbox?",
-      "a": "No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo’s proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections."
-    },
-    {
-      "q": "How do I follow progress and get results?",
-      "a": "Read the Thread’s status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks."
-    },
-    {
-      "q": "How long can a turn run?",
-      "a": "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If a turn needs a new sandbox and no capacity is free, it fails at once: its Run ends with the retryable runtime.capacity_exhausted error, and mosoo does not queue it."
-    },
-    {
-      "q": "Can I retry a request without running the work twice?",
-      "a": "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once."
-    },
-    {
-      "q": "Is mosoo open source, and is it ready for production?",
-      "a": "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development."
-    }
-  ],
-  "zh": [
-    {
-      "q": "mosoo 是什么？",
-      "a": "mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。它用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。你的后端发起任务、读取结果，执行、文件、事件和用量由 mosoo 负责。mosoo 目前处于 Alpha 阶段。"
-    },
-    {
-      "q": "需要先创建或发布 Agent 吗？",
-      "a": "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，挂载技能、MCP 服务器或使用非默认环境时才需要它。"
-    },
-    {
-      "q": "可以用哪些 runtime 和模型？",
-      "a": "共有 4 个 runtime：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。模型使用你自己的密钥，可选 Anthropic、OpenAI、DeepSeek、Gemini、Qwen、Kimi、Zhipu、MiniMax 和 OpenCode Zen，也可以接入自定义的 OpenAI 兼容 HTTPS 端点。每个 runtime 只接受特定的模型协议，不匹配的组合会在执行前被拒绝。"
-    },
-    {
-      "q": "模型费用由谁支付？",
-      "a": "由你直接支付。模型密钥属于你的项目，由模型供应商向你的账户计费。mosoo 不提供模型，也不设花费上限。用量 API 和用量页面显示实测的 token 数和估算成本，它们不是账单。"
-    },
-    {
-      "q": "隔几小时或几天再回复，会怎样？",
-      "a": "回复会在同一个 Session 里继续。在一个 turn 完成 1 分钟后还是 7 天后回复，语义完全相同，即使 sandbox 已被回收也是如此，只是冷启动可能更慢。mosoo 会从最近一次提交的检查点恢复工作目录、harness 的原生对话、冻结的配置和已记录的产出物。运行中的进程不会保留。检查点无法恢复时，后续消息会明确报错，不会从空白状态开始。"
-    },
-    {
-      "q": "我的 API 密钥会进入 sandbox 吗？",
-      "a": "不会。模型供应商密钥和 MCP 凭据留在 sandbox 之外，runtime 通过 mosoo 的代理访问模型和 MCP 服务器，代理在每次请求时注入凭据。环境变量则不同，sandbox 里的代码可以读取它们，所以模型密钥请放在模型供应商设置里，工具令牌请放在 MCP 连接里。"
-    },
-    {
-      "q": "怎样跟踪进度、拿到结果？",
-      "a": "读取 Thread 的状态和已保存的事件历史，或者打开 SSE 流，它会先发送最新的已保存事件。稳定的事件 ID 让重连的客户端可以跳过已经收到的事件。Agent 写到 outputs/ 下的文件会成为可下载的产出物。mosoo 不提供 Webhook。"
-    },
-    {
-      "q": "一个 turn 最长能运行多久？",
-      "a": "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果某个 turn 需要新的 sandbox 而没有空闲容量，它会立即失败：对应的 Run 以可重试的 runtime.capacity_exhausted 错误结束，mosoo 不会把它排队。"
-    },
-    {
-      "q": "重试请求会不会让任务执行两次？",
-      "a": "创建请求和后续消息都不会，前提是带上 Idempotency-Key 请求头。24 小时内，相同的 key 和请求体会返回原来的结果，不会产生新的执行；请求体变了则会被拒绝。幂等不保证外部工具的副作用只发生一次。"
-    },
-    {
-      "q": "mosoo 开源吗？可以用于生产环境吗？",
-      "a": "mosoo 以 Apache 2.0 许可证开源，源码在 GitHub 上。它目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。/api/v1 保持线上兼容，无法兼容的改动会作为新的 API 版本发布。最快的试用方式是托管控制台 cloud.mosoo.ai。README 也说明了如何在本地运行，方便开发。"
-    }
-  ],
-  "ja": [
-    {
-      "q": "mosoo とは何ですか？",
-      "a": "mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。バックエンドはタスクを開始して結果を受け取り、実行、ファイル、イベント、使用量は mosoo が担います。mosoo は現在 Alpha 版です。"
-    },
-    {
-      "q": "先に Agent を作成または公開する必要はありますか？",
-      "a": "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合、またはデフォルト以外の Environment を使う場合に必要です。"
-    },
-    {
-      "q": "どの runtime とモデルを使えますか？",
-      "a": "runtime は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。モデルはご自身のキーで利用し、Anthropic、OpenAI、DeepSeek、Gemini、Qwen、Kimi、Zhipu、MiniMax、OpenCode Zen のほか、OpenAI 互換のカスタム HTTPS エンドポイントも使えます。runtime ごとに対応するモデルプロトコルが決まっており、合わない組み合わせは実行前に拒否されます。"
-    },
-    {
-      "q": "モデルの利用料金は誰が支払いますか？",
-      "a": "お客様が直接支払います。モデルのキーはプロジェクトに属し、プロバイダーがお客様のアカウントに請求します。mosoo はモデルを提供せず、支出上限も設けません。使用量 API と使用量ページには計測したトークン数と推定コストが表示されますが、請求書ではありません。"
-    },
-    {
-      "q": "数時間後や数日後に返信するとどうなりますか？",
-      "a": "同じ Session で続きが実行されます。turn の完了から 1 分後でも 7 日後でも、sandbox が回収された後でも、返信の意味は変わりません。ただし、コールドスタートでは開始まで時間がかかることがあります。mosoo は最後にコミットされたチェックポイントから、作業ディレクトリ、harness のネイティブな会話、固定された設定、記録済みの成果物を復元します。実行中のプロセスは引き継がれません。チェックポイントを復元できない場合は、空の状態で始めずに明示的なエラーになります。"
-    },
-    {
-      "q": "API キーは sandbox に入りますか？",
-      "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外に置かれ、runtime は mosoo のプロキシ経由でモデルや MCP サーバーにアクセスします。認証情報はプロキシがリクエストごとに付与します。環境変数は例外で、sandbox 内のコードから読み取れます。モデルのキーはプロバイダー設定に、ツールのトークンは MCP 接続に保存してください。"
-    },
-    {
-      "q": "進捗の確認と結果の取得はどうしますか？",
-      "a": "Thread のステータスと保存済みのイベント履歴を読み取るか、SSE ストリームを開きます。SSE は最新の保存済みイベントから送信され、安定したイベント ID によって、再接続したクライアントは受信済みのイベントをスキップできます。Agent が outputs/ に書き込んだファイルは、ダウンロードできる成果物になります。Webhook はありません。"
-    },
-    {
-      "q": "1 つの turn はどのくらい実行できますか？",
-      "a": "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。turn に新しい sandbox が必要で空き容量がない場合、その turn はすぐに失敗し、Run は再試行可能な runtime.capacity_exhausted エラーで終わります。mosoo はその turn をキューに入れません。"
-    },
-    {
-      "q": "リクエストを再試行すると、処理が二重に実行されませんか？",
-      "a": "作成とフォローアップでは、Idempotency-Key ヘッダーを付ければ二重に実行されません。24 時間以内に同じキーと同じ本文を送ると、新しい処理を行わずに元の結果が返り、本文が異なる場合は拒否されます。ただし、外部ツールの副作用が 1 回だけになることまでは保証しません。"
-    },
-    {
-      "q": "mosoo はオープンソースですか？本番環境で使えますか？",
-      "a": "mosoo は Apache 2.0 ライセンスのオープンソースで、ソースコードは GitHub にあります。現在は Alpha 版のため、公開 API や製品の動作は変わる可能性があります。/api/v1 は互換性を維持し、互換性を保てない変更は新しい API バージョンとして公開されます。すぐに試すなら、ホスト版のコンソール cloud.mosoo.ai が最も手軽です。開発用にローカルで動かす手順は README にあります。"
-    }
-  ]
-};
+// PROVISIONAL (proposal b-paper §6, checked there against MAIN): six
+// questions for the U16 rows; the content stage rewrites and translates them.
+// The page, the FAQPage JSON-LD and llms.txt all read this one list.
+const FAQ_EN = [
+  {
+    q: "Is it hosted or open source?",
+    a: "Both. The hosted console at cloud.mosoo.ai is the quickest way to try mosoo. The source is Apache-2.0 on GitHub, and the README explains how to run it locally for development.",
+  },
+  {
+    q: "Whose Agent does it run?",
+    a: "Yours. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional.",
+  },
+  {
+    q: "Why not call a model API directly?",
+    a: "You can. Then you also build a sandbox per task, tool execution, file storage, an event stream, and resume after idle. mosoo handles execution, files, events, and usage behind one API.",
+  },
+  {
+    q: "What is Pi?",
+    a: "Pi is one of the four harnesses mosoo runs, next to OpenAI Codex, Claude Agent SDK, and OpenCode. In mosoo it works with multiple model providers and accepts text input only.",
+  },
+  {
+    q: "Who pays for model usage?",
+    a: "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap.",
+  },
+  {
+    q: "What happens when I reply days later?",
+    a: "The same Session continues, even after its sandbox was reclaimed. mosoo restores the working directory, the harness’s native conversation, and recorded artifacts from the last committed checkpoint. If that fails, the follow-up returns an error.",
+  },
+];
+const FAQ = { en: FAQ_EN, zh: FAQ_EN, ja: FAQ_EN };
 
 const SETUP_PROMPT = {
   "en": "# Set up mosoo\n\nUse this instruction with any coding agent. You are helping the user finish onboarding to mosoo, an open-source agent runtime: add a model provider key, then start a Session through the Thread API. Work through the steps in order and skip any step that is already done. Ask the user for values only they know. Never print or commit secrets.\n\n## Generated variables\n\n```text\nMOSOO_CONSOLE_URL=https://cloud.mosoo.ai\nMOSOO_DOCS_URL=https://mosoo.ai/docs\n```\n\n## 1. Install the mosoo CLI and sign in\n\n```bash\ncurl -fsSL https://install.mosoo.ai/install.sh | bash\n```\n\nThe installer adds the mosoo CLI and the @mosoo skill, then opens a browser sign-in and checks cloud readiness (doctor). The login callback authorizes the CLI and creates an account login credential for it automatically. If no browser can open, show the user the sign-in URL printed in the terminal and wait for them to finish it.\n\n## 2. Add a provider key (required before runs)\n\nSession runs need a model provider credential, for example OpenAI or Anthropic. This is the one step you cannot complete alone: ask the user which provider they want and have them add the key at MOSOO_CONSOLE_URL/providers. Do not start the first run until a provider key is configured.\n\n## 3. Create an API token (optional)\n\nThe CLI sign-in from step 1 already covers CLI usage. If this project calls the Thread API from a backend or script, create a token at MOSOO_CONSOLE_URL/project-settings/api-keys and store it in the project environment as MOSOO_API_TOKEN. Keep it out of source control.\n\n## 4. Run a first session\n\nStart a first session through the v2 Thread API with an inline configuration (harness, provider, model, instructions); no agent is needed. To save a reusable configuration instead, create an agent at MOSOO_CONSOLE_URL/agent?create=1 and start a session from the agent page. The API flow (create a thread, stream events, send follow-ups) is documented at MOSOO_DOCS_URL/quickstart and MOSOO_DOCS_URL/api-reference-v2.\n\n## Done when\n\n- The CLI is signed in and doctor reports the cloud is reachable.\n- A provider key is configured for the active Project.\n- At least one session has run: a Thread under MOSOO_CONSOLE_URL/threads, or a Preview on the agent page.",
@@ -1033,338 +937,230 @@ function link(href, label, attributes = "") {
 const codeBlock = (code, className = "") =>
   `<pre${className ? ` class="${className}"` : ""} translate="no"><code>${escapeText(code)}</code></pre>`;
 
-function renderHeader(locale, copy) {
-  const languages = LANGUAGES.map(
-    (language) =>
-      `<li>${link(
-        `/${language.locale}`,
-        language.label,
-        ` hreflang="${language.lang}" lang="${language.lang}"${language.locale === locale ? ' aria-current="page"' : ""}`,
-      )}</li>`,
-  ).join("");
+// ---------------------------------------------------------------------------
+// The v4b "Paper" home (UI-FORMS §f b-paper; locked slots in v4b/UI-LOCK.md).
+//
+// UI first, copy last: every string below is PROVISIONAL (UI-FORMS board
+// samples and proposal b-paper copy), sized to its slot, and is replaced by
+// the content stage. zh and ja reuse the English strings until then. The
+// letter in each comment is the slot id in UI-LOCK.md.
 
-  // The React topbar's Products menu (copy deck section 1) as a native
-  // disclosure, so it opens without JavaScript and crawlers read both entries.
-  const products = [
-    [LINKS.console, "mosoo", copy.nav.productMosoo],
-    [LINKS.computer, "Mosoo Computer", copy.nav.productComputer],
-  ]
-    .map(
-      ([href, name, description]) =>
-        `<li>${link(href, name, ' translate="no"')} <span class="mf-muted">${inline(description)}</span></li>`,
-    )
-    .join("");
-
-  return `<header class="mf-bar">
-<a href="/${locale}" aria-label="${escapeAttribute(copy.nav.home)}"><img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" width="102" height="22" /></a>
-<nav aria-label="Primary site links">
-<ul class="mf-row">
-<li><details class="mf-menu"><summary>${inline(copy.nav.products)}</summary><ul>${products}</ul></details></li>
-<li>${link(copy.docs, copy.nav.docs)}</li>
-<li>${link(`/${locale}/use-cases`, copy.nav.useCases)}</li>
-<li>${link(copy.blog, copy.nav.blog)}</li>
-<li>${link(LINKS.github, "GitHub", ` aria-label="${escapeAttribute(copy.nav.github)}"`)}</li>
-<li>${link(LINKS.signIn, copy.nav.signIn)}</li>
-<li>${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')}</li>
-</ul>
-<ul class="mf-row mf-languages" aria-label="${escapeAttribute(copy.nav.language)}">${languages}</ul>
-</nav>
-</header>`;
-}
-
-function renderHero(copy) {
-  // Keep the category noun on one line in every locale; the text is unchanged.
-  const title = inline(copy.hero.title).replace(
-    "Agent runtime",
-    '<span class="mf-nowrap">Agent runtime</span>',
-  );
-  return `<section class="mf-hero" aria-labelledby="mf-title">
-<h1 id="mf-title">${title}</h1>
-<p class="mf-lead">${inline(copy.hero.subhead)}</p>
-<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
-<p>${inline(copy.hero.hosted)}</p>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-</section>`;
-}
-
-function renderWall(copy) {
-  const wall = copy.wall;
-  const rows = RUNTIMES.map(
-    (runtime) =>
-      `<tr><td>${inline(runtime.name)}</td><td><code translate="no">${runtime.id}</code></td><td>${inline(wall.protocolsByRuntime[runtime.id])}</td></tr>`,
-  ).join("\n");
-  const providers = [...PROVIDERS, wall.customProvider].map((name) => `<li>${inline(name)}</li>`).join("");
-  const protocols = PROTOCOLS.map((name) => `<li>${inline(name)}</li>`).join("");
-
-  return `<section id="runtimes" aria-labelledby="mf-runtimes">
-<h2 id="mf-runtimes">${inline(wall.title)}</h2>
-<p class="mf-intro">${inline(wall.intro)}</p>
-<h3>${inline(wall.runtimes)}</h3>
-<div class="mf-table"><table>
-<thead><tr>${wall.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-<h3>${inline(wall.providers)}</h3>
-<ul class="mf-row mf-chips">${providers}</ul>
-<h3>${inline(wall.protocols)}</h3>
-<ul class="mf-row mf-chips">${protocols}</ul>
-${wall.notes.map((note) => `<p class="mf-muted">${inline(note)}</p>`).join("\n")}
-</section>`;
-}
-
-function renderFeatures(copy) {
-  const features = copy.features;
-  const items = features.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.proof)}</p>
-</li>`,
-    )
-    .join("\n");
-
-  return `<section id="features" aria-labelledby="mf-features">
-<h2 id="mf-features">${inline(features.title)}</h2>
-<ul class="mf-grid">
-${items}
-</ul>
-<p>${link(LINKS.spec, features.spec)}</p>
-</section>`;
-}
-
-function renderSteps(copy) {
-  const steps = copy.steps;
-  const items = steps.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.io)}</p>
-</li>`,
-    )
-    .join("\n");
-
-  return `<section id="how-it-works" aria-labelledby="mf-steps">
-<h2 id="mf-steps">${inline(steps.title)}</h2>
-<p class="mf-intro">${inline(steps.intro)}</p>
-<ol class="mf-steps">
-${items}
-</ol>
-<figure class="mf-code">
-<figcaption>${inline(steps.uploadLabel)}</figcaption>
-${codeBlock(UPLOAD_REQUEST)}
-</figure>
-<figure class="mf-code">
-<figcaption>${inline(steps.codeLabel)}</figcaption>
-${codeBlock(START_SESSION_REQUEST)}
-</figure>
-<p class="mf-muted">${inline(steps.note)}</p>
-<p>${link(copy.apiReferenceV2, steps.apiReference)}</p>
-</section>`;
-}
-
-function renderSplit(copy) {
-  const split = copy.split;
-  const list = (rows) =>
-    rows.map(([term, detail]) => `<dt>${inline(term)}</dt><dd>${inline(detail)}</dd>`).join("\n");
-
-  return `<section id="your-app-and-mosoo" aria-labelledby="mf-split">
-<h2 id="mf-split">${inline(split.title)}</h2>
-<div class="mf-cols">
-<div>
-<h3>${inline(split.app)}</h3>
-<dl>
-${list(split.appRows)}
-</dl>
-</div>
-<div>
-<h3>${inline(split.mosoo)}</h3>
-<dl>
-${list(split.mosooRows)}
-</dl>
-</div>
-</div>
-<p>${inline(split.path)}</p>
-<p class="mf-muted">${inline(split.footnote)}</p>
-</section>`;
-}
-
-function renderProof(locale, copy) {
-  const proof = copy.proof;
-  const releases = proof.releases.list
-    .map(
-      ([version, text]) =>
-        `<dt><span translate="no">${version}</span> <time datetime="${RELEASE_DATES[version]}">${RELEASE_DATES[version]}</time></dt><dd>${inline(text)}</dd>`,
-    )
-    .join("\n");
-
-  return `<section id="proof" aria-labelledby="mf-proof">
-<h2 id="mf-proof">${inline(proof.title)}</h2>
-<p class="mf-intro">${inline(proof.intro)}</p>
-<div class="mf-cols">
-<div>
-<h3>${inline(proof.source.title)}</h3>
-<p>${inline(proof.source.body)}</p>
-<p class="mf-row">${link(LINKS.github, copy.cta.source)} ${link(LINKS.spec, copy.features.spec)}</p>
-</div>
-<div>
-<h3>${inline(proof.releases.title)}</h3>
-<p>${inline(proof.releases.body)}</p>
-<dl class="mf-releases">
-${releases}
-</dl>
-<p>${link(LINKS.releases, proof.releases.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.status.title)}</h3>
-<p>${inline(proof.status.body)}</p>
-<p>${link(copy.health, proof.status.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.postmortems.title)}</h3>
-<p>${inline(proof.postmortems.body)}</p>
-<p>${link(LINKS.incidents, proof.postmortems.link)}</p>
-</div>
-<div>
-<h3>Codex Pet</h3>
-<p>${inline(proof.codexPet.body)}</p>
-<p>${link(`/${locale}/use-cases/codex-pet`, proof.codexPet.link)}</p>
-</div>
-<div>
-<h3>ghfind</h3>
-<p>${inline(proof.ghfind.body)}</p>
-<p class="mf-row">${link(`/${locale}/use-cases/ghfind`, proof.ghfind.link)} ${link(LINKS.ghfind, proof.ghfind.app)}</p>
-</div>
-</div>
-<p>${link(`/${locale}/use-cases`, proof.allUseCases)}</p>
-</section>`;
-}
-
-function renderLimits(copy) {
-  const limits = copy.limits;
-  const rows = limits.rows
-    .map(([gap, instead]) => `<tr><th scope="row">${inline(gap)}</th><td>${inline(instead)}</td></tr>`)
-    .join("\n");
-
-  return `<section id="limits" aria-labelledby="mf-limits">
-<h2 id="mf-limits">${inline(limits.title)}</h2>
-<p class="mf-intro">${inline(limits.intro)}</p>
-<div class="mf-table"><table>
-<thead><tr>${limits.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-</section>`;
-}
-
-function renderFaq(locale, copy) {
-  const items = FAQ[locale]
-    .map(({ q, a }) => `<div class="mf-qa">
-<h3>${escapeText(q)}</h3>
-<p>${faqAnswer(a)}</p>
-</div>`)
-    .join("\n");
-
-  return `<section id="faq" aria-labelledby="mf-faq">
-<h2 id="mf-faq">${inline(copy.faqTitle)}</h2>
-${items}
-</section>`;
-}
-
-function renderFinal(locale, copy) {
-  const final = copy.final;
-  return `<section id="start" aria-labelledby="mf-start">
-<h2 id="mf-start">${inline(final.title)}</h2>
-<div class="mf-cols">
-<div>
-<h3>${inline(final.consoleTitle)}</h3>
-<p>${inline(final.consoleBody)}</p>
-<p>${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')}</p>
-</div>
-<div>
-<h3>${inline(final.agentTitle)}</h3>
-<p>${inline(final.agentBody)}</p>
-${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
-<details>
-<summary>${inline(copy.hero.agentLabel)}</summary>
-${codeBlock(SETUP_PROMPT[locale], "mf-prompt")}
-</details>
-</div>
-</div>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-</section>`;
-}
-
-function footerHref(locale, copy, index) {
-  // Same order as copy.footer.groups.
-  return [
-    [LINKS.console, LINKS.computer, `/${locale}/use-cases`, copy.health],
-    [
-      copy.docs,
-      copy.quickstart,
-      copy.apiReferenceV2,
-      LINKS.openApiV2,
-      LINKS.openApiV1,
-      copy.cli,
-      LINKS.changelog,
-      LINKS.llms,
+const PAPER_EN = {
+  hero: {
+    // A: line 1 (ink), 1×18. B: lines 2-3 (ink-3), 2×22. H1 total ≤9 words.
+    titleInk: "A managed runtime",
+    titleSoft: "for the Agents in your backend.",
+    // C: 2×34, ≤11 words.
+    lead: "One API call starts a Session. Reply days later.",
+    // D, E: buttons, 1×12 each.
+    primary: "Try mosoo",
+    secondary: "Source",
+  },
+  // U08: three tabs, each with one fragment on the plate and one caption under it.
+  stage: [
+    {
+      tab: "Call.", // A 1×8
+      chip: "Codex", // B 1×12, with a runtime glyph
+      glyph: "openai-runtime",
+      ghost: "Read input.csv, chart the totals and save the report to outputs/", // C 1×56+, cut by the plate edge
+      controls: ["Files 2", "Resume ⌄"], // D 2×(1×10)
+      title: "One request, one Session.", // E 1×28
+      body: "Pick a harness, send a prompt, attach files. The sandbox starts on its own.", // F 2×52
+    },
+    {
+      tab: "Watch.",
+      chip: "Running",
+      glyph: "live",
+      ghost: "Writing outputs/report.md while the events stream back to you",
+      controls: ["Events", "Files"],
+      title: "Watch it work.",
+      body: "Events stream back while the agent runs. Files it writes land in outputs/.",
+    },
+    {
+      tab: "Return.",
+      chip: "Same Session",
+      glyph: "openai-runtime",
+      ghost: "Add last quarter to the report you made on Monday and keep the chart",
+      controls: ["Files 2", "Resume ⌄"],
+      title: "Come back days later.",
+      body: "Send the next turn to the same Session. It picks up where the last one ended.",
+    },
+  ],
+  // U01: A 1×22, B 1×22 (≤5 words each), C 1×50 (≤10 words).
+  voice: { a: "Close the laptop.", b: "The session waits.", sub: "Pick it up a minute or seven days later." },
+  // U11 ×2: A 1×18 mono caps, B 2×30 (≤10 words), C 2×32 (≤8 words).
+  said: [
+    {
+      cat: "Come back later",
+      quote: "“Add last quarter to the report you made on Monday.”",
+      result: "Monday’s Session picks it up, files and history intact.",
+    },
+    {
+      cat: "Start from code",
+      quote: "“Chart input.csv and save the report.”",
+      result: "One request, a fresh sandbox, a file in outputs/.",
+    },
+  ],
+  // U13: A 1×14, B 2×22 (two tones), C ×4 1×18, D ×4 1×14, E 1×44.
+  supply: {
+    eyebrow: "Harnesses",
+    titleInk: "Bring the agent.",
+    titleSoft: "We run the Session.",
+    cells: [
+      { name: "Claude Agent SDK", cat: "Anthropic", glyph: "claude-agent-sdk" },
+      { name: "OpenAI Codex", cat: "OpenAI", glyph: "openai-runtime" },
+      { name: "OpenCode", cat: "Open source", glyph: "acp-fallback" },
+      { name: "Pi", cat: "Open source", glyph: "pi" },
     ],
-    [LINKS.github, LINKS.releases, LINKS.spec, LINKS.driver, LINKS.license, LINKS.security, LINKS.incidents],
-    [copy.blog, LINKS.x, LINKS.issues],
-  ][index];
+    wide: "Your provider key, proxied on every request",
+  },
+  // U16: A 2×18 (two tones); questions 1-2×44; answers ≤40 words (FAQ below).
+  faq: { titleInk: "Questions", titleSoft: "before you wire it in." },
+  // Close: A 2×26 display 48; buttons reuse the hero's; F fine print 1×52.
+  close: { title: "Start your first Session.", fine: "mosoo is in Alpha. Public APIs may still change." },
+};
+
+const PAPER = { en: PAPER_EN, zh: PAPER_EN, ja: PAPER_EN };
+
+const GITHUB_MARK =
+  '<svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
+
+const glyph = (id) => `<img class="pp-glyph" src="/brand/runtime/${id}.svg" alt="" width="18" height="18">`;
+
+function renderPaperActions(copy) {
+  return `<div class="pp-actions">
+<a class="pp-btn pp-btn-ink" href="${LINKS.console}">${escapeText(copy.hero.primary)}</a>
+<a class="pp-btn pp-btn-line" href="${LINKS.github}">${GITHUB_MARK}${escapeText(copy.hero.secondary)}</a>
+</div>`;
 }
 
-function renderFooter(locale, copy) {
-  const groups = copy.footer.groups
-    .map(([label, labels], index) => {
-      const hrefs = footerHref(locale, copy, index);
-      if (hrefs.length !== labels.length) {
-        throw new Error(`Footer group ${label} has ${labels.length} labels for ${hrefs.length} links`);
-      }
-      const id = `mf-footer-${index}`;
-      const items = labels
-        .map((text, position) => {
-          const href = hrefs[position];
-          const english = locale !== "en" && href === LINKS.changelog ? ' hreflang="en"' : "";
-          return `<li>${link(href, text, english)}</li>`;
-        })
-        .join("");
-      return `<div><p id="${id}" class="mf-label">${inline(label)}</p><ul aria-labelledby="${id}">${items}</ul></div>`;
+function renderPaperHero(copy) {
+  const tabs = copy.stage
+    .map(
+      (step, i) =>
+        `<button class="pp-tab" type="button" role="tab" id="pp-tab-${i}" aria-controls="pp-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-tab><span class="pp-tab-track"><span class="pp-tab-bar" data-tab-bar></span></span>${escapeText(step.tab)}</button>`,
+    )
+    .join("\n");
+  const frags = copy.stage
+    .map((step, i) => {
+      const icon = step.glyph === "live" ? '<span class="pp-live"></span>' : glyph(step.glyph);
+      return `<div class="pp-frag" data-frag data-product-ui aria-hidden="true"${i === 0 ? "" : " hidden"}>
+<span class="pp-chip"><span class="pp-chip-ic">${icon}</span>${escapeText(step.chip)}</span>
+<p class="pp-ghost">${escapeText(step.ghost)}</p>
+<div class="pp-ctl"><span class="pp-plus">+</span>${step.controls.map((c) => `<span class="pp-pill">${escapeText(c)}</span>`).join("")}</div>
+</div>`;
     })
     .join("\n");
-
-  return `<footer class="mf-foot">
-<p class="mf-signoff">${inline(copy.footer.signoff)}</p>
-<p class="mf-muted">${inline(copy.footer.descriptor)}</p>
-<nav class="mf-groups" aria-label="Footer">
-${groups}
-</nav>
-<p class="mf-muted">${inline(copy.footer.copyright)}</p>
-</footer>`;
+  const panels = copy.stage
+    .map(
+      (step, i) =>
+        `<div class="pp-cap" role="tabpanel" id="pp-panel-${i}" aria-labelledby="pp-tab-${i}" data-panel${i === 0 ? "" : " hidden"}><h2>${escapeText(step.title)}</h2><p>${escapeText(step.body)}</p></div>`,
+    )
+    .join("\n");
+  return `<section class="pp-hero pp-wrap" aria-labelledby="hero-title">
+<div class="pp-hero-top">
+<h1 id="hero-title" class="pp-h1 pp-display">${escapeText(copy.hero.titleInk)} <span class="pp-soft">${escapeText(copy.hero.titleSoft)}</span></h1>
+<div class="pp-hero-side">
+<p class="pp-lead">${escapeText(copy.hero.lead)}</p>
+${renderPaperActions(copy)}
+</div>
+</div>
+<div class="pp-stage" data-effect="tabs">
+<div class="pp-tabs" role="tablist">
+${tabs}
+</div>
+<div class="pp-plate">
+${frags}
+</div>
+${panels}
+</div>
+</section>`;
 }
 
+function renderPaperVoice(copy) {
+  const line = (text) =>
+    `<span class="pp-fill-line"><span class="pp-fill-base">${escapeText(text)}</span><span class="pp-fill-ink" aria-hidden="true" data-fill-ink>${escapeText(text)}</span></span>`;
+  return `<section class="pp-section pp-wrap pp-voice" data-effect="fill" aria-label="${escapeAttribute(`${copy.voice.a} ${copy.voice.b}`)}">
+<p class="pp-voice-q pp-display">${line(copy.voice.a)}${line(copy.voice.b)}</p>
+<p class="pp-voice-sub">${escapeText(copy.voice.sub)}</p>
+</section>`;
+}
+
+function renderPaperSaid(copy) {
+  const cards = copy.said
+    .map(
+      (card) => `<figure class="pp-said-card">
+<figcaption class="pp-said-cat">${escapeText(card.cat)}</figcaption>
+<blockquote>${escapeText(card.quote)}</blockquote>
+<p class="pp-said-res">${escapeText(card.result)}</p>
+</figure>`,
+    )
+    .join("\n");
+  return `<section class="pp-section pp-wrap pp-said" aria-label="Sessions">
+${cards}
+</section>`;
+}
+
+function renderPaperSupply(copy) {
+  const cells = copy.supply.cells
+    .map(
+      (cell) =>
+        `<div><span class="pp-ib">${glyph(cell.glyph)}</span><div><p class="pp-mx-name">${escapeText(cell.name)}</p><p class="pp-mx-cat">${escapeText(cell.cat)}</p></div></div>`,
+    )
+    .join("\n");
+  return `<section id="runtimes" class="pp-section pp-wrap" aria-labelledby="supply-title">
+<div class="pp-supply">
+<p class="pp-eyebrow"><i></i>${escapeText(copy.supply.eyebrow)}</p>
+<h2 id="supply-title" class="pp-h2-40 pp-display">${escapeText(copy.supply.titleInk)}<br><span class="pp-soft">${escapeText(copy.supply.titleSoft)}</span></h2>
+<div class="pp-mx" data-product-ui>
+<i class="pp-hdl pp-hdl-1"></i><i class="pp-hdl pp-hdl-2"></i><i class="pp-hdl pp-hdl-3"></i><i class="pp-hdl pp-hdl-4"></i>
+${cells}
+<div class="pp-mx-wide"><span class="pp-ib"><img class="pp-glyph" src="/brand/runtime/key.svg" alt="" width="18" height="18"></span><p class="pp-mx-name">${escapeText(copy.supply.wide)}</p></div>
+</div>
+</div>
+</section>`;
+}
+
+function renderPaperFaq(locale, copy) {
+  const indicator = `<svg class="pp-ind" viewBox="${OUTLINE.faq.viewBox}" aria-hidden="true"><path d="${OUTLINE.faq.d}" stroke="currentColor" stroke-width="1"/></svg>`;
+  const rows = FAQ[locale]
+    .map(
+      ({ q, a }, i) =>
+        `<details class="pp-q" name="faq"${i === 0 ? " open" : ""}><summary>${indicator}${escapeText(q)}</summary><p class="pp-a">${faqAnswer(a)}</p></details>`,
+    )
+    .join("\n");
+  return `<section id="faq" class="pp-section pp-wrap pp-faq" aria-labelledby="faq-title">
+<h2 id="faq-title" class="pp-h2-44 pp-display">${escapeText(copy.faq.titleInk)}<br><span class="pp-soft">${escapeText(copy.faq.titleSoft)}</span></h2>
+<div class="pp-rows">
+${rows}
+</div>
+</section>`;
+}
+
+function renderPaperClose(copy) {
+  return `<section id="start" class="pp-section pp-wrap pp-close" aria-labelledby="close-title">
+<h2 id="close-title" class="pp-display">${escapeText(copy.close.title)}</h2>
+${renderPaperActions(copy)}
+<p class="pp-fine">${escapeText(copy.close.fine)}</p>
+</section>`;
+}
+
+const HOME_LANGUAGE_HREFS = { en: "/en", zh: "/zh", ja: "/ja" };
+
 export function renderHomeFallback(locale) {
-  const copy = copyFor(locale);
-  return `<div class="mosoo-fallback">
-<a class="mf-skip" href="#main">${inline(copy.nav.skip)}</a>
-${renderHeader(locale, copy)}
-<main id="main">
-${renderHero(copy)}
-${renderWall(copy)}
-${renderFeatures(copy)}
-${renderSteps(copy)}
-${renderSplit(copy)}
-${renderProof(locale, copy)}
-${renderLimits(copy)}
-${renderFaq(locale, copy)}
-${renderFinal(locale, copy)}
+  copyFor(locale);
+  const copy = PAPER[locale];
+  return `<div class="pp-page">
+${renderPaperNav({ locale })}
+<main id="main" tabindex="-1">
+${renderPaperHero(copy)}
+${renderPaperVoice(copy)}
+${renderPaperSaid(copy)}
+${renderPaperSupply(copy)}
+${renderPaperFaq(locale, copy)}
+${renderPaperClose(copy)}
 </main>
-${renderFooter(locale, copy)}
+${renderPaperFooter({ locale, languageHrefs: HOME_LANGUAGE_HREFS })}
 </div>`;
 }
 
@@ -1440,73 +1236,6 @@ export function renderHomeJsonLd(locale) {
 // Scoped to .mosoo-fallback, which only exists until React mounts. Warm paper
 // and forest ink match the landing palette; no web font beyond Geist, and CJK
 // text uses the platform fonts.
-export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
-.mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
-.mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
-.mosoo-fallback *{box-sizing:border-box}
-.mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
-.mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(15,26,2,.16)}
-.mosoo-fallback .mf-skip{position:absolute;left:-9999px}
-.mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
-.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
-.mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-top:16px;padding-bottom:16px;border-bottom:1px solid var(--mf-line)}
-.mosoo-fallback .mf-bar img{display:block;height:22px;width:auto}
-.mosoo-fallback .mf-bar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
-.mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none}
-.mosoo-fallback .mf-languages{font-size:14px}
-.mosoo-fallback .mf-menu summary{color:var(--mf-ink)}
-.mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
-.mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
-.mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
-.mosoo-fallback h1,.mosoo-fallback h2{font-family:var(--font-literata,Georgia,serif);font-weight:400}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:var(--font-literata-zh,"Songti SC",serif);font-weight:600}
-.mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:var(--font-literata-ja,"Hiragino Mincho ProN",serif);font-weight:600}
-.mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;letter-spacing:-.02em}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
-.mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;letter-spacing:-.01em}
-.mosoo-fallback h3{margin-top:28px;font-size:18px;line-height:1.35;font-weight:650}
-.mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:70ch}
-.mosoo-fallback p{margin:10px 0 0}
-.mosoo-fallback main>.mf-hero{padding:56px 0 48px;border-top:0}
-.mosoo-fallback .mf-nowrap{white-space:nowrap}
-.mosoo-fallback .mf-hero h1{margin-top:0}
-.mosoo-fallback .mf-lead{margin-top:20px;font-size:19px;color:var(--mf-muted)}
-.mosoo-fallback .mf-actions{margin-top:28px}
-.mosoo-fallback .mf-muted,.mosoo-fallback .mf-intro,.mosoo-fallback dd{color:var(--mf-muted)}
-.mosoo-fallback .mf-agent{margin-top:32px;padding-top:20px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback main>section,.mosoo-fallback .mf-figure{margin:0;padding:56px 0;border-top:1px solid var(--mf-line)}
-.mosoo-fallback figcaption{font-weight:600}
-.mosoo-fallback .mf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 40px;margin:0;padding:0;list-style:none}
-.mosoo-fallback .mf-steps{margin:8px 0 0;padding-left:1.4em;list-style:decimal}
-.mosoo-fallback .mf-steps>li::marker{font-weight:650}
-.mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
-.mosoo-fallback .mf-chips{gap:6px 18px;margin-top:10px}
-.mosoo-fallback code,.mosoo-fallback pre{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.mosoo-fallback code{font-size:.92em}
-.mosoo-fallback :not(pre)>code{overflow-wrap:anywhere}
-.mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:8px;background:var(--mf-panel);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
-.mosoo-fallback pre code{font-size:inherit}
-.mosoo-fallback .mf-prompt{max-height:420px}
-.mosoo-fallback .mf-code{margin:28px 0 0}
-.mosoo-fallback details{margin-top:16px}
-.mosoo-fallback summary{cursor:pointer;color:var(--mf-link);font-weight:600}
-.mosoo-fallback .mf-table{margin-top:16px;overflow-x:auto}
-.mosoo-fallback table{width:100%;border-collapse:collapse;font-size:15px}
-.mosoo-fallback th,.mosoo-fallback td{padding:10px 16px 10px 0;border-bottom:1px solid var(--mf-line);text-align:left;vertical-align:top}
-.mosoo-fallback th{font-weight:600}
-.mosoo-fallback dl{margin:8px 0 0}
-.mosoo-fallback dt{margin-top:12px;font-weight:600}
-.mosoo-fallback dd{margin:2px 0 0}
-.mosoo-fallback .mf-releases dt{font-weight:500}
-.mosoo-fallback .mf-qa h3{margin-top:32px}
-.mosoo-fallback .mf-foot{padding-top:48px;padding-bottom:48px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback .mf-signoff{margin:0;font-size:clamp(22px,3vw,28px);font-weight:650;line-height:1.25}
-.mosoo-fallback .mf-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:32px}
-.mosoo-fallback .mf-groups ul{margin:8px 0 0;padding:0;list-style:none}
-.mosoo-fallback .mf-groups li{margin-top:4px}
-.mosoo-fallback .mf-label{margin:0;font-weight:600}
-@media (min-width:768px){.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{padding-left:32px;padding-right:32px}.mosoo-fallback .mf-grid,.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
-</style>`;
+// The page's own stylesheet (paper.css) arrives as a <link> from the Vite
+// build; this only keeps the first paint on paper instead of white.
+export const HOME_FALLBACK_STYLE = `<style>html,body{margin:0;background:#f8f7f4}</style>`;

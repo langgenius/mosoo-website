@@ -1,50 +1,47 @@
 import type { ReactElement, ReactNode } from "react";
 
-import { t } from "@/shared/i18n";
+import { renderPaperFooter, renderPaperNav } from "@/shared/chrome/paper-chrome.mjs";
+import { LOCALES, locale, localeHref } from "@/shared/locale";
 
-import { LoginLandingTopbar } from "../topbar";
-import type { TopbarNav } from "../topbar";
+import "@/shared/styles/paper-fonts.css";
+import "@/shared/styles/paper.css";
+
+// The nav and footer are the same HTML the static home renders
+// (shared/chrome/paper-chrome.mjs), so every page shares one chrome.
+const NAV_HTML = { __html: renderPaperNav({ locale }) };
+const FOOTER_HTML = {
+  __html: renderPaperFooter({
+    locale,
+    languageHrefs: Object.fromEntries(LOCALES.map((code) => [code, localeHref(code)])) as Record<
+      (typeof LOCALES)[number],
+      string
+    >,
+  }),
+};
 
 /**
- * The chrome every landing page shares: skip link, sticky header, the page in
- * <main id="main">, and the footer.
- *
- * The document scrolls (there is no fixed inner scroll container). The footer
- * renders with the page, in normal flow, so it never shifts the layout when it
- * arrives; on large viewports app.css pins it under the content layer, which
- * peels up to reveal it at the end of the page.
+ * The chrome every landing subpage shares: skip link and nav, the page in
+ * <main id="main">, and the footer. The home page renders the same chrome as
+ * static HTML (scripts/landing-home.mjs).
  */
 export function LandingShell({
-  activeNav,
-  navVariant = "bar",
   theme = "landing",
   children,
 }: {
-  activeNav?: TopbarNav;
-  /** The header's shape: the full-width bar, or the home page's floating capsule. */
-  navVariant?: "bar" | "capsule";
-  // "landing" keeps the warm forest palette; "brand" drops it to inherit the
+  /** Kept for the subpages' call sites; the paper chrome has one nav. */
+  activeNav?: string;
+  // "landing" keeps the warm palette; "brand" drops it to inherit the
   // cool/bright :root palette the blog uses, so a page can match the blog.
   theme?: "landing" | "brand";
   children: ReactNode;
 }): ReactElement {
   return (
-    <div
-      data-theme={theme === "landing" ? "landing" : undefined}
-      className="landing-shell bg-paper-100 text-fg-1"
-    >
-      <a
-        href="#main"
-        className="bg-ink-900 text-paper-100 focus-visible:ring-ring sr-only rounded-md px-4 py-2.5 text-[15px] font-semibold outline-none focus:not-sr-only focus:fixed focus:top-3 focus:left-4 focus:z-[60] focus-visible:ring-2 focus-visible:ring-offset-2"
-      >
-        {t("Skip to content")}
-      </a>
-      <div className="landing-content-layer bg-paper-100 relative z-10">
-        <LoginLandingTopbar activeNav={activeNav} variant={navVariant} />
-        <main id="main" tabIndex={-1} className="outline-none">
-          {children}
-        </main>
-      </div>
+    <div data-theme={theme === "landing" ? "landing" : undefined} className="pp-page landing-shell text-fg-1">
+      <div dangerouslySetInnerHTML={NAV_HTML} />
+      <main id="main" tabIndex={-1} className="outline-none">
+        {children}
+      </main>
+      <div dangerouslySetInnerHTML={FOOTER_HTML} />
     </div>
   );
 }
