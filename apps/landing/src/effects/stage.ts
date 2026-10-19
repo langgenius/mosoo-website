@@ -1,9 +1,11 @@
-// The v4c signature effect: the hero window opens into a pinned three-act stage.
+// The v4c signature effect: the hero window opens into a pinned three-act stage. The hero is layer 0 of
+// the pinned stage, so the hero window and the portal mask are one window (brand/outline README L131):
 //
-//   portal  0.00-0.14  the acts show through the logo block (clip-path: path()), which grows from the hero
+//   hero    0.00-0.07  the hero's words and tiles leave; the hero window glides to the stage centre
+//   portal  0.07-0.19  the acts show through the logo block (clip-path: path()), which grows from the hero
 //                      window's 112 px to past the viewport (progress squared, brand/outline README §3)
-//   act 1   0.14-0.40  U10 spec table; the Harness slot flips every 2.4 s (rotateX, a13n first act)
-//   act 2   0.40-0.66  U04 feed; scrolling walks the feed from the first event to the newest
+//   act 1   0.19-0.43  U10 spec table; the Harness slot flips every 2.4 s (rotateX, a13n first act)
+//   act 2   0.43-0.66  U04 feed; scrolling walks the feed from the first event to the newest
 //   act 3   0.66-1.00  iris to night (clip-path: circle()), then the ruler's live dot travels to +7 days
 //
 // Sources: a13n pinned acts and night act (refs/a13n/cdp/d1440-y01554 / y02589 / y03165.jpg); Enter Pro
@@ -19,10 +21,22 @@ import { OUTLINE } from "../home/outline-geometry.ts";
 const SMOOTHING = 9;
 const FLIP_MS = 2400;
 const WINDOW_W = 112;
+/** The hero window's line sits this far below the block centre, in units of the block width. */
+const LINE_DROP = (45.79 - 21.68) / OUTLINE.w;
+
+const T = {
+  heroOut: [0, 0.07],
+  portal: [0.07, 0.19],
+  x12: [0.4, 0.47],
+  feed: [0.46, 0.64],
+  iris: [0.66, 0.75],
+  travel: [0.77, 0.95],
+} as const;
 
 const clamp = (v: number, lo = 0, hi = 1): number => Math.min(hi, Math.max(lo, v));
 const span = (p: number, a: number, b: number): number => clamp((p - a) / (b - a));
 const easeOut = (t: number): number => 1 - (1 - t) ** 3;
+const easeInOut = (t: number): number => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 
 /** The logo block (concave sides) as an SVG path of width w, centred on (cx, cy). */
 function blockPath(cx: number, cy: number, w: number): string {
@@ -43,8 +57,16 @@ function blockPath(cx: number, cy: number, w: number): string {
   );
 }
 
-function setStyle(el: HTMLElement | SVGElement, prop: "transform" | "opacity" | "clipPath", value: string): void {
+function setStyle(
+  el: HTMLElement | SVGElement,
+  prop: "transform" | "opacity" | "clipPath" | "visibility",
+  value: string,
+): void {
   if (el.style[prop] !== value) el.style[prop] = value;
+}
+
+function setAttr(el: Element, name: string, value: string): void {
+  if (el.getAttribute(name) !== value) el.setAttribute(name, value);
 }
 
 export function initStage(): void {
@@ -58,8 +80,14 @@ export function initStage(): void {
   const ruler = stage?.querySelector<HTMLElement>("[data-ruler]");
   const now = stage?.querySelector<HTMLElement>("[data-now]");
   const frame = stage?.querySelector<SVGSVGElement>("[data-portal-frame]");
+  const frameBlock = frame?.querySelector<SVGPathElement>("[data-frame-block]");
+  const frameLine = frame?.querySelector<SVGPathElement>("[data-frame-line]");
   const veil = stage?.querySelector<HTMLElement>("[data-portal-veil]");
+  const hero = stage?.querySelector<HTMLElement>("[data-hero]");
+  const heroWindow = hero?.querySelector<HTMLElement>("[data-hero-window]");
   if (!stage || !pin || !acts || !act1 || !act2 || !act3 || !feed || !ruler || !now || !frame || !veil) return;
+  if (!frameBlock || !frameLine || !hero || !heroWindow) return;
+  const heroParts = [...hero.querySelectorAll<HTMLElement>("[data-hero-part]")];
   const nav = document.querySelector<HTMLElement>("[data-nav]");
   const faces = [...stage.querySelectorAll<HTMLElement>("[data-face]")];
   const cards = [...feed.querySelectorAll<HTMLElement>("[data-card]")];
@@ -75,12 +103,22 @@ export function initStage(): void {
   let run = 1;
   let face = 0;
   let flipTimer = 0;
+  // Offset from the hero window's resting centre to the stage centre, where the portal opens.
+  let glideX = 0;
+  let glideY = 0;
 
   const progress = (): number => clamp((window.scrollY - top) / run);
 
   function measure(): void {
     top = stage!.getBoundingClientRect().top + window.scrollY;
     run = Math.max(1, stage!.offsetHeight - window.innerHeight);
+    const kept = heroWindow!.style.transform;
+    heroWindow!.style.transform = "none";
+    const r = heroWindow!.getBoundingClientRect();
+    const box = pin!.getBoundingClientRect();
+    heroWindow!.style.transform = kept;
+    glideX = box.left + box.width / 2 - (r.left + r.width / 2);
+    glideY = box.top + box.height / 2 - (r.top + r.height / 2);
   }
 
   function flip(on: boolean): void {
@@ -106,43 +144,64 @@ export function initStage(): void {
     const w = pin!.clientWidth;
     const h = pin!.clientHeight;
 
-    // Portal: the logo block grows from the hero window's width to well past the viewport.
-    const open = span(p, 0, 0.14) ** 2;
+    // Hero: words and tiles leave; the window glides to the centre and hands over to the portal there.
+    const out = span(p, T.heroOut[0], T.heroOut[1] * 0.65);
+    for (const part of heroParts) {
+      setStyle(part, "opacity", (1 - out).toFixed(3));
+      setStyle(part, "transform", `translateY(${(-24 * out).toFixed(1)}px)`);
+    }
+    const glide = easeInOut(span(p, T.heroOut[0] + 0.01, T.heroOut[1]));
+    setStyle(heroWindow!, "transform", `translate(${(glideX * glide).toFixed(1)}px, ${(glideY * glide).toFixed(1)}px)`);
+    const handed = p >= T.heroOut[1];
+    setStyle(hero!, "visibility", handed ? "hidden" : "visible");
+
+    // Portal: the logo block grows from the hero window's width to well past the viewport. The 1 px frame
+    // is redrawn at each size (not scaled), so its stroke stays one pixel.
+    const grow = span(p, T.portal[0], T.portal[1]);
+    const open = grow ** 2;
     const reach = Math.max(w, (h / (OUTLINE.h / OUTLINE.w)) * 1.02) * 1.35;
     const blockW = WINDOW_W + (reach - WINDOW_W) * open;
-    setStyle(acts!, "clipPath", open >= 1 ? "none" : `path("${blockPath(w / 2, h / 2 - 4, blockW)}")`);
-    setStyle(frame!, "transform", `scale(${(blockW / WINDOW_W).toFixed(4)})`);
-    setStyle(frame!, "opacity", (1 - span(open, 0, 0.35)).toFixed(3));
-    setStyle(veil!, "opacity", (1 - span(span(p, 0, 0.14), 0.05, 0.55)).toFixed(3));
+    const cx = w / 2;
+    const cy = h / 2 - 4;
+    setStyle(acts!, "clipPath", !handed ? "inset(50%)" : open >= 1 ? "none" : `path("${blockPath(cx, cy, blockW)}")`);
+    setAttr(frameBlock!, "d", blockPath(cx, cy, blockW));
+    const lineY = (cy + LINE_DROP * blockW).toFixed(1);
+    setAttr(frameLine!, "d", `M${(cx - blockW / 2).toFixed(1)} ${lineY}H${(cx + blockW / 2).toFixed(1)}`);
+    setStyle(frame!, "opacity", handed ? (1 - span(open, 0, 0.35)).toFixed(3) : "0");
+    setStyle(veil!, "opacity", (1 - span(grow, 0.05, 0.55)).toFixed(3));
 
     // Act 1 -> act 2: crossfade with a short lift.
-    const x12 = easeOut(span(p, 0.38, 0.46));
+    const x12 = easeOut(span(p, T.x12[0], T.x12[1]));
     setStyle(act1!, "opacity", (1 - x12).toFixed(3));
     setStyle(act1!, "transform", `translateY(${(-28 * x12).toFixed(1)}px)`);
     setStyle(act2!, "opacity", x12.toFixed(3));
     setStyle(act2!, "transform", `translateY(${(28 * (1 - x12)).toFixed(1)}px)`);
-    flip(p > 0.02 && p < 0.42);
+    flip(p > T.portal[0] && p < T.x12[1] - 0.03);
 
-    // Act 2: walk the feed from the oldest event (last card) to the newest (first card).
-    const col = feed!.parentElement?.clientHeight ?? 0;
+    // Act 2: walk the feed from the oldest event (last card) to the newest (first card). Each card in turn
+    // sits at the list's resting top, so the walk ends exactly on the static end state.
     const first = cards[0];
     const second = cards[1];
-    if (first && second && col) {
+    if (first && second) {
       const pitch = second.offsetTop - first.offsetTop;
-      const f = (cards.length - 1) * (1 - easeOut(span(p, 0.44, 0.64)));
-      setStyle(feed!, "transform", `translateY(${(col / 2 - (first.offsetTop + f * pitch + first.offsetHeight / 2)).toFixed(1)}px)`);
+      const f = (cards.length - 1) * (1 - easeOut(span(p, T.feed[0], T.feed[1])));
+      setStyle(feed!, "transform", `translateY(${(-f * pitch).toFixed(1)}px)`);
     }
 
     // Act 3: iris to night from the centre, then the live dot travels along the ruler.
-    const iris = easeOut(span(p, 0.66, 0.76));
-    setStyle(act3!, "clipPath", iris >= 1 ? "none" : `circle(${(iris * Math.hypot(w, h) * 0.52).toFixed(1)}px at 50% 52%)`);
-    const travel = easeOut(span(p, 0.78, 0.95));
+    const iris = easeOut(span(p, T.iris[0], T.iris[1]));
+    const radius = iris * Math.hypot(w, h) * 0.52;
+    setStyle(act3!, "clipPath", iris >= 1 ? "none" : `circle(${radius.toFixed(1)}px at 50% 52%)`);
+    const travel = easeOut(span(p, T.travel[0], T.travel[1]));
     setStyle(now!, "transform", `translateX(${(travel * ruler!.clientWidth * 0.96).toFixed(1)}px)`);
     if (nav) {
-      // Night while the dark act still sits under the nav.
-      const night = iris > 0.5 && stage!.getBoundingClientRect().bottom > nav.offsetHeight;
-      if ((nav.dataset["tone"] === "night") !== night) {
-        if (night) nav.dataset["tone"] = "night";
+      // While the iris opens, the nav is clear (no plate of its own over a half-night screen); its words
+      // turn light once the circle covers them, and the night plate returns when the iris is full.
+      const under = stage!.getBoundingClientRect().bottom > nav.offsetHeight;
+      const covered = radius >= Math.hypot(w / 2 - 80, h * 0.52);
+      const tone = !under || iris <= 0 ? "" : iris >= 1 ? "night" : covered ? "clear-night" : "clear";
+      if ((nav.dataset["tone"] ?? "") !== tone) {
+        if (tone) nav.dataset["tone"] = tone;
         else delete nav.dataset["tone"];
       }
     }
@@ -164,10 +223,11 @@ export function initStage(): void {
   }
 
   function reset(): void {
-    for (const el of [acts!, act1!, act2!, act3!, feed!, now!, frame!, veil!]) {
+    for (const el of [acts!, act1!, act2!, act3!, feed!, now!, frame!, veil!, hero!, heroWindow!, ...heroParts]) {
       el.style.removeProperty("clip-path");
       el.style.removeProperty("opacity");
       el.style.removeProperty("transform");
+      el.style.removeProperty("visibility");
     }
     flip(false);
     delete stage!.dataset["flip"];

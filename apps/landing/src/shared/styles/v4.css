@@ -164,14 +164,23 @@
 .v4-nav-link:hover {
   color: var(--ink);
 }
+/* While the third act's iris opens, the nav has no plate of its own (a plate would leave a band over the
+   half-night screen); its words turn light once the circle covers them. */
+.v4-nav:is([data-tone="clear"], [data-tone="clear-night"]) {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 .v4-nav[data-tone="night"] {
   background: rgb(14 15 13 / 0.82);
+}
+.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) {
   color: var(--night-ink);
 }
-.v4-nav[data-tone="night"] .v4-nav-link {
+.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) .v4-nav-link {
   color: rgb(242 244 242 / 0.7);
 }
-.v4-nav[data-tone="night"] .v4-btn-ink {
+.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) .v4-btn-ink {
   background: var(--night-ink);
   color: var(--night);
 }
@@ -189,6 +198,10 @@
 }
 .v4-foot .ask {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 48px;
+  align-items: end;
   background: #161815;
   color: #f2f4f2;
   border-radius: var(--r-plate);
@@ -215,10 +228,13 @@
   color: rgb(242 244 242 / 0.58);
 }
 .v4-foot .ask-pills {
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
-  margin-top: 24px;
+  max-width: 460px;
 }
 .v4-foot .ask-pill {
   display: inline-flex;
@@ -297,7 +313,12 @@
     display: none;
   }
   .v4-foot .ask {
+    display: block;
     padding: 26px 22px 24px;
+  }
+  .v4-foot .ask-pills {
+    justify-content: flex-start;
+    margin-top: 24px;
   }
   .v4-foot .ask::before {
     left: 22px;

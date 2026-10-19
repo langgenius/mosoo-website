@@ -71,7 +71,7 @@ body:has(.v4) {
   margin-left: -120px;
   margin-bottom: -120px;
   border-radius: 50%;
-  background: radial-gradient(circle, transparent 0 52%, #e4e1da 53% 66%, transparent 67%);
+  background: radial-gradient(circle, transparent 0 47%, #e4e1da 54% 62%, transparent 69%);
   transform: scale(0.5);
   opacity: 0.9;
   animation: v4-ripple 7.2s linear 2.5 forwards;
@@ -188,27 +188,28 @@ body:has(.v4) {
   width: 28px;
   height: 28px;
 }
+/* Anchored to the window, as Cardinal's tiles hug the wordmark (the window's top is 40 px into .hero-in). */
 .tile-1 {
-  left: calc(50% - 472px);
-  top: 15%;
+  left: calc(50% - 200px);
+  top: 32px;
   background: #e9e6df; /* stone */
   transform: rotate(-4deg);
 }
 .tile-2 {
-  left: calc(50% + 396px);
-  top: 9%;
+  left: calc(50% + 136px);
+  top: 12px;
   background: #e2e7ec; /* mist, h 250 */
   transform: rotate(3deg);
 }
 .tile-3 {
-  left: calc(50% - 548px);
-  top: 61%;
+  left: calc(50% - 232px);
+  top: 96px;
   background: #e8e3ec; /* lilac, h 300 */
   transform: rotate(4deg);
 }
 .tile-4 {
-  left: calc(50% + 468px);
-  top: 55%;
+  left: calc(50% + 168px);
+  top: 80px;
   background: #eee3dc; /* clay, h 40 */
   transform: rotate(-3deg);
 }
@@ -374,12 +375,12 @@ body:has(.v4) {
   margin-left: -260px;
   z-index: 2;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(transparent 0, #000 24%, #000 76%, transparent 100%);
-  mask-image: linear-gradient(transparent 0, #000 24%, #000 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(transparent 0, #000 10%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(transparent 0, #000 10%, #000 76%, transparent 100%);
 }
 .feed-list {
   margin: 0;
-  padding: 80px 0 0; /* end state: the newest card (the only live dot) sits in the clear band */
+  padding: 16px 0 0; /* end state: the newest card (the only live dot) sits at the top of the clear band */
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -402,7 +403,8 @@ body:has(.v4) {
   justify-content: space-between;
 }
 .fc-time {
-  font: 400 12px/1 var(--font-mono);
+  font: 400 12px/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
   color: var(--ink-3);
 }
 .fc-pill {
@@ -454,10 +456,8 @@ body:has(.v4) {
 }
 .ruler-card {
   margin-top: 48px;
-  padding: 22px 48px 14px;
-  border-radius: var(--r-plate);
-  background: #151614;
-  border: 1px solid rgb(242 244 242 / 0.06);
+  padding: 22px 0 14px;
+  border-top: 1px solid rgb(242 244 242 / 0.14);
 }
 .ruler {
   position: relative;
@@ -473,6 +473,8 @@ body:has(.v4) {
   top: 82px;
   height: 10px;
   background: repeating-linear-gradient(90deg, rgb(242 244 242 / 0.22) 0 1px, transparent 1px 8px);
+  -webkit-mask-image: linear-gradient(90deg, #000 44%, transparent 44% 96%, #000 96%);
+  mask-image: linear-gradient(90deg, #000 44%, transparent 44% 96%, #000 96%);
 }
 .ruler .base {
   top: 92px;
@@ -541,7 +543,18 @@ body:has(.v4) {
 
 /* ---------------------------------------------------------------- stage (pinned) */
 .stage[data-mode="pinned"] {
-  height: 380svh;
+  height: 440svh;
+  margin-top: calc(-1 * var(--nav-h));
+}
+.stage[data-mode="pinned"] .hero {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  padding-top: var(--nav-h);
+}
+.stage[data-mode="pinned"] .hero-window,
+.stage[data-mode="pinned"] [data-hero-part] {
+  will-change: transform, opacity;
 }
 .stage[data-mode="pinned"] .stage-pin {
   position: sticky;
@@ -577,30 +590,27 @@ body:has(.v4) {
 .stage[data-mode="pinned"] .portal-frame {
   display: block;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 117.2px;
-  height: 102.2px;
-  margin: -51.1px 0 0 -58.6px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
   stroke: var(--outline-ink);
+  stroke-width: 1;
   pointer-events: none;
-  will-change: transform, opacity;
-}
-.stage[data-mode="pinned"] .portal-frame path {
-  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  will-change: opacity;
 }
 
 /* ---------------------------------------------------------------- U15 statement with glyph circles
    #121 America.gov (crops/issue-121-inline-glyph-sentence.jpg); Frame keycap sentence. */
 .statement {
-  padding: 168px 0 152px;
+  padding: 152px 0 140px;
 }
 .statement-text {
-  width: min(760px, var(--w));
+  width: min(820px, var(--w));
   margin: 0 auto;
   text-align: center;
-  font: 400 44px/1.14 var(--font-display);
+  font: 400 52px/1.12 var(--font-display);
   letter-spacing: -0.022em;
   word-spacing: 0.04em;
   text-wrap: balance;
@@ -654,7 +664,7 @@ body:has(.v4) {
 .faq-row summary {
   position: relative;
   display: block;
-  padding: 22px 0 22px 30px;
+  padding: 22px 40px 22px 0;
   cursor: pointer;
   list-style: none;
 }
@@ -663,7 +673,7 @@ body:has(.v4) {
 }
 .faq-ind {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 29px;
   width: 11px;
   height: 9px;
@@ -686,8 +696,8 @@ body:has(.v4) {
   letter-spacing: -0.01em;
 }
 .faq-a {
-  max-width: 560px;
-  padding: 0 0 24px 30px;
+  max-width: 540px;
+  padding: 0 0 24px;
   font: 400 15.5px/1.65 var(--font-sans);
   color: var(--ink-2);
 }
@@ -892,10 +902,10 @@ body:has(.v4) {
     order: 2;
   }
   .feed-list {
-    padding-top: 72px;
+    padding-top: 16px;
   }
   .ruler-card {
-    padding: 18px 20px 12px;
+    padding: 18px 0 12px;
   }
   .ruler .mob-hide {
     display: none;
@@ -905,6 +915,7 @@ body:has(.v4) {
   }
   .statement-text {
     font-size: 30px;
+    line-height: 1.14;
   }
   .faq {
     grid-template-columns: 1fr;
@@ -929,6 +940,15 @@ body:has(.v4) {
   }
   .session-line {
     margin-top: 72px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: 0;
+  }
+  .hero-in {
+    padding-bottom: 72px;
   }
 }
 

@@ -63,16 +63,16 @@ function renderHero(copy: HomeCopy): string {
   const tiles = ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"]
     .map((id, i) => `<li class="tile tile-${i + 1}">${runtimeGlyph(id, "tile-glyph")}</li>`)
     .join("");
-  return `<section class="hero" aria-labelledby="hero-title">
+  return `<section class="hero" data-hero aria-labelledby="hero-title">
   <div class="hero-in">
-    <ul class="hero-tiles" aria-hidden="true">${tiles}</ul>
+    <ul class="hero-tiles" data-hero-part aria-hidden="true">${tiles}</ul>
     <div class="hero-window" data-hero-window aria-hidden="true">
       <div class="hero-ripple"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <svg class="hero-outline" viewBox="${HERO_WINDOW.viewBox}" fill="none"><path d="${HERO_WINDOW.block}"/><path d="${HERO_WINDOW.line}"/></svg>
     </div>
-    <h1 id="hero-title" class="hero-title"><span class="hero-a">${esc(copy.hero.lineA)}</span> <span class="hero-b">${esc(copy.hero.lineB)}</span></h1>
-    <p class="hero-lead">${esc(copy.hero.lead)}</p>
-    <a class="v4-btn v4-btn-ink v4-btn-lg hero-cta" href="${LINKS.console}">${esc(copy.hero.cta)}</a>
+    <h1 id="hero-title" class="hero-title" data-hero-part><span class="hero-a">${esc(copy.hero.lineA)}</span> <span class="hero-b">${esc(copy.hero.lineB)}</span></h1>
+    <p class="hero-lead" data-hero-part>${esc(copy.hero.lead)}</p>
+    <a class="v4-btn v4-btn-ink v4-btn-lg hero-cta" data-hero-part href="${LINKS.console}">${esc(copy.hero.cta)}</a>
   </div>
 </section>`;
 }
@@ -136,18 +136,20 @@ function renderAct3(copy: HomeCopy): string {
 </article>`;
 }
 
+/** The hero is layer 0 of the pinned stage: its window is the window the portal opens from. */
 function renderStage(copy: HomeCopy): string {
-  return `<section class="stage" data-stage>
+  return `<div class="stage" data-stage>
   <div class="stage-pin" data-pin>
+${renderHero(copy)}
     <div class="stage-acts" data-portal>
       <div class="portal-veil" data-portal-veil aria-hidden="true"></div>
 ${renderAct1(copy)}
 ${renderAct2(copy)}
 ${renderAct3(copy)}
     </div>
-    <svg class="portal-frame" data-portal-frame viewBox="${HERO_WINDOW.viewBox}" fill="none" aria-hidden="true"><path d="${HERO_WINDOW.block}"/><path d="${HERO_WINDOW.line}"/></svg>
+    <svg class="portal-frame" data-portal-frame fill="none" aria-hidden="true" focusable="false"><path data-frame-block d=""/><path data-frame-line d=""/></svg>
   </div>
-</section>`;
+</div>`;
 }
 
 function renderStatement(copy: HomeCopy): string {
@@ -225,7 +227,6 @@ export function renderHome(locale: HomeLocale): string {
   return `<div class="v4" data-v4-home>
 ${renderNav(locale, copy)}
 <main id="main" tabindex="-1">
-${renderHero(copy)}
 ${renderStage(copy)}
 ${renderStatement(copy)}
 ${renderFaq(copy)}
