@@ -349,7 +349,7 @@ const ZH_MESSAGES = {
   "The code, the releases, and the incident postmortems are public.":
     "代码、版本发布|和事故复盘|都是公开的。",
   "mosoo leaves these out on purpose.":
-    "这些是 mosoo|有意不做的事。",
+    "这些是 mosoo 有意不做的事。",
   "Start your first Session.":
     "启动你的|第一个 Session。",
   "Reply in a minute or in seven days.":
@@ -692,7 +692,7 @@ const JA_MESSAGES = {
   "mosoo handles execution, files, events, and usage.":
     "実行、ファイル、イベント、|使用量は mosoo が担います。",
   "One request starts a Session. A follow-up continues it.":
-    "1 つのリクエストで|Session が始まり、|フォローアップで|続きを実行します。",
+    "1 つのリクエストで Session が始まり、|フォローアップで|続きを実行します。",
   "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.":
     "たとえば、バックエンドで CSV ファイルのレポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートは `outputs/` 配下のファイルとして返ってきます。",
   "Change":
@@ -712,7 +712,7 @@ const JA_MESSAGES = {
   "Start your first Session.":
     "最初の Session を|始めましょう。",
   "Reply in a minute or in seven days.":
-    "返信は 1 分後でも|7 日後でもかまいません。",
+    "返信は 1 分後でも 7 日後でもかまいません。",
   "From your backend to a Session sandbox":
     "バックエンドから Session の sandbox まで",
   "Your backend":
