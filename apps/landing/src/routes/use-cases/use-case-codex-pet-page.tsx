@@ -24,14 +24,14 @@ const STEPS = [
   {
     body: () =>
       t(
-        "A Pet Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential.",
+        "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential.",
       ),
     title: () => t("Publish the Agent"),
   },
   {
     body: () =>
       t(
-        "Publishing generates an Instruction for LLM — an API contract sized for a prompt. Paste it into Codex and the integration work moves to the coding agent.",
+        "Publishing generates an Instruction for LLM: an API contract sized for a prompt. Paste it into Codex and the integration work moves to the coding agent.",
       ),
     title: () => t("Copy the Instruction for LLM"),
   },
@@ -73,7 +73,7 @@ function CaseHeader(): ReactElement {
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
-          "The Codex Pet case study shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API — one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.",
+          "The Codex Pet case study shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API: one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.",
         )}
       </p>
       <div className="mt-6 flex items-center gap-2.5">
@@ -192,7 +192,7 @@ function DemoVideo(): ReactElement {
           preload="none"
           poster={CODEX_PET_DEMO_POSTER}
           aria-label={t(
-            "Agent as API, end to end — from publishing the Agent to the downloaded pet.",
+            "Agent as API, end to end: from publishing the Agent to the downloaded pet.",
           )}
           onPlay={() => setStarted(true)}
           className="aspect-video w-full"

@@ -35,14 +35,14 @@ const STEPS = [
   {
     body: () =>
       t(
-        "Its trusted Worker maps each deck to a mosoo Thread, uploads the brief, starts a Run, and keeps the Mosoo token off the browser.",
+        "Its trusted Worker maps each deck to a mosoo Thread, uploads the brief, starts a Run, and keeps the mosoo token off the browser.",
       ),
     title: () => t("Run work through mosoo"),
   },
   {
     body: () =>
       t(
-        "PitchPilot reads Thread events and committed files through Mosoo's public API, then presents the Agent's HTML artifact in a sandboxed in-app preview with an explicit download.",
+        "PitchPilot reads Thread events and committed files through mosoo's public API, then presents the Agent's HTML artifact in a sandboxed in-app preview with an explicit download.",
       ),
     title: () => t("Return a product-native artifact"),
   },
@@ -188,7 +188,7 @@ function ArchitectureGallery(): ReactElement {
             <img
               src={APPLICATION_ARCHITECTURE_SCREENSHOT}
               alt={t(
-                "PitchPilot workspace beside a slide showing the Dify application layer and Mosoo managed Agent runtime as two responsibilities.",
+                "PitchPilot workspace beside a slide showing the Dify application layer and mosoo managed Agent runtime as two responsibilities.",
               )}
               width={1272}
               height={868}
@@ -197,7 +197,7 @@ function ArchitectureGallery(): ReactElement {
             />
             <figcaption className="border-border-soft text-fg-2 border-t px-4 py-3 text-[13px] leading-[1.55]">
               {t(
-                "Application boundary: Dify owns the product layer; Mosoo supplies the managed Agent backend.",
+                "Application boundary: Dify owns the product layer; mosoo supplies the managed Agent backend.",
               )}
             </figcaption>
           </figure>
@@ -207,7 +207,7 @@ function ArchitectureGallery(): ReactElement {
             <img
               src={RUNTIME_ARCHITECTURE_SCREENSHOT}
               alt={t(
-                "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside Mosoo.",
+                "PitchPilot workspace beside a slide showing Thread, Run, Harness Selection, MCP Tools, Delegated End-User Context, Normalized Events, and Artifacts inside mosoo.",
               )}
               width={1272}
               height={868}
@@ -246,7 +246,7 @@ function RequestPath(): ReactElement {
       </div>
       <p className="text-fg-3 mt-3 text-[13px] leading-[1.6]">
         {t(
-          "The application owns the user experience. Mosoo owns published Agent execution, Thread and Run lifecycle, event delivery, and Agent-produced files.",
+          "The application owns the user experience. mosoo owns published Agent execution, Thread and Run lifecycle, event delivery, and Agent-produced files.",
         )}
       </p>
     </Reveal>
