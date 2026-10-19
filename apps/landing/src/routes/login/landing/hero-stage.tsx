@@ -110,6 +110,10 @@ function measure(column: HTMLElement, island: HTMLElement): CulmLayout | null {
   };
 }
 
+// English sentences are joined by a space; Chinese and Japanese ones end in
+// "。" and are joined directly.
+const SENTENCE_GAP = locale === "en" ? " " : "";
+
 export function HeroStage(): ReactElement {
   const column = useRef<HTMLDivElement>(null);
   const island = useRef<HTMLDivElement>(null);
@@ -156,8 +160,10 @@ export function HeroStage(): ReactElement {
         </div>
       </div>
       <figcaption className="v2a-stage-caption">
-        <strong>{t("Example values.")}</strong>{" "}
-        {t("A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread.")}{" "}
+        <strong>{t("Example values.")}</strong>
+        {SENTENCE_GAP}
+        {t("A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread.")}
+        {SENTENCE_GAP}
         <span className="v2a-stage-caption-fact">{t("API Sessions have no inactivity deadline.")}</span>
       </figcaption>
     </figure>
