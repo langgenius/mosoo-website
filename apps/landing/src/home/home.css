@@ -518,14 +518,16 @@ body:has(.v4) {
 }
 .ruler .now {
   top: 84px;
-  left: 0;
+  left: 96%; /* end state: +7 days; the pinned stage starts it at +0 and moves it with transform */
   width: 9px;
   height: 9px;
   margin-left: -4px;
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 0 4px rgb(111 211 5 / 0.16);
-  transform: translateX(var(--now-x, 0px));
+}
+.stage[data-mode="pinned"] .ruler .now {
+  left: 0;
 }
 .ruler-note {
   margin-top: 4px;
