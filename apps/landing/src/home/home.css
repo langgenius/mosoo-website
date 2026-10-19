@@ -943,15 +943,6 @@ body:has(.v4) {
   }
 }
 
-@media (max-width: 600px) {
-  .hero {
-    min-height: 0;
-  }
-  .hero-in {
-    padding-bottom: 72px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hero-ripple,
   .hero-ripple i,
@@ -974,5 +965,14 @@ body:has(.v4) {
   word-break: keep-all;
 }
 .v4:lang(ja) :is(.hero-title, .act-title, .statement-text, .closing-title) {
+  word-break: auto-phrase;
+}
+/* Short running lines keep words whole too (zh: break at spaces and punctuation; ja: at phrases). */
+.v4:lang(zh) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note),
+.v4:lang(ja) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.v4:lang(ja) :is(.hero-lead, .ruler-note, .faq-q, .closing-fine, .ask-note) {
   word-break: auto-phrase;
 }

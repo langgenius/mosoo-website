@@ -83,7 +83,7 @@ export type HomeCopy = {
     /** S5-A: 2x18, display 48. */
     lineA: string;
     lineB: string;
-    /** S5-B legend 1x18; S5-C instruction 1x56; S5-D button 1x8; S5-E fine print 1x40. */
+    /** S5-B legend 1x18; S5-C instruction 1x48 (what the field shows at 1440); S5-D button 1x8; S5-E fine print 1x40. */
     legend: string;
     prompt: string;
     copy: string;
@@ -145,7 +145,7 @@ const EN: HomeCopy = {
     halfB: "a week later.",
     cards: [
       { time: "+7 days", event: "run.started", title: "Follow-up: add Q3", result: "Files and conversation restored.", live: true },
-      { time: "+3 min", event: "run.completed", title: "Turn 1 done", result: "Checkpoint saved. The sandbox can be reclaimed." },
+      { time: "+3 min", event: "run.completed", title: "Turn 1 done", result: "Checkpoint saved; the sandbox may go." },
       { time: "+2 min", event: "session_files.updated", title: "outputs/report.md written", result: "Ready to download as an artifact." },
       { time: "+1 min", event: "tool.use.completed", title: "python analyze.py", result: "Exit code 0." },
       { time: "+0", event: "run.started", title: "Analyze input.csv", result: "OpenAI Codex starts in a fresh sandbox." },
@@ -194,7 +194,7 @@ const EN: HomeCopy = {
     lineA: "Start a Session",
     lineB: "from your agent.",
     legend: "Paste to any agent",
-    prompt: "Read https://mosoo.ai/llms.txt and set up mosoo here.",
+    prompt: "Set up mosoo from https://mosoo.ai/llms.txt",
     copy: "Copy",
     copied: "Copied",
     fine: "Works in Claude Code, Codex and Cursor.",
@@ -297,7 +297,7 @@ const ZH: HomeCopy = {
     lineA: "在你的编码助手里",
     lineB: "开始一个 Session。",
     legend: "粘贴给编码助手",
-    prompt: "读取 https://mosoo.ai/llms.txt，在这里配置 mosoo。",
+    prompt: "按 https://mosoo.ai/llms.txt 配置 mosoo",
     copy: "复制",
     copied: "已复制",
     fine: "适用于 Claude Code、Codex 和 Cursor。",
@@ -332,7 +332,7 @@ const JA: HomeCopy = {
   hero: {
     lineA: "Agent Session を、",
     lineB: "バックエンドへ。",
-    lead: "1 回のリクエストで、専用の sandbox で Session が始まります。イベントとファイルが返ってきます。",
+    lead: "1 リクエストで、専用 sandbox の Session が始動。イベントとファイルが返る。",
     cta: "mosoo を試す",
   },
   act1: {
@@ -399,7 +399,7 @@ const JA: HomeCopy = {
     lineA: "エージェントから",
     lineB: "Session を始める。",
     legend: "エージェントに貼る",
-    prompt: "https://mosoo.ai/llms.txt を読んで、ここで mosoo を設定して。",
+    prompt: "https://mosoo.ai/llms.txt に沿って mosoo を設定",
     copy: "コピー",
     copied: "コピー済み",
     fine: "Claude Code、Codex、Cursor で使えます。",

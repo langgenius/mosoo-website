@@ -430,7 +430,7 @@ test("the static home page carries the whole page for readers without JavaScript
   ]);
   // The statement's glyph circles sit between each name and its comma.
   assert.match(textOf(en), /Run Codex ?, Claude Agent SDK ?, OpenCode or Pi behind one API, one sandbox each\./);
-  assert.match(en, /<span class="prompt-text" data-prompt>Read https:\/\/mosoo\.ai\/llms\.txt and set up mosoo here\.<\/span>/);
+  assert.match(en, /<span class="prompt-text" data-prompt>Set up mosoo from https:\/\/mosoo\.ai\/llms\.txt<\/span>/);
   assert.match(en, /<a class="v4-btn v4-btn-ink v4-btn-lg hero-cta" data-hero-part href="https:\/\/cloud\.mosoo\.ai">Try mosoo<\/a>/);
   // The pinned stage's end state is the static page: every act is in the HTML.
   for (const act of ["1", "2", "3"]) assert.match(en, new RegExp(`data-act="${act}"`));
