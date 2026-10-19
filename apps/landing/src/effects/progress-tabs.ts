@@ -3,9 +3,10 @@
 // tabs, refs/devices/crops/harvey-progress-accordion-texture-frame.jpg), then
 // the next fragment replaces the current one on the plate with a 200ms fade
 // and 8px rise. Each tab plays once and the stage rests on the last one.
-// Hover or focus pauses the line; a click takes over and stops autoplay.
-// Reduced motion or no JavaScript: no autoplay, the first tab is shown in full
-// and every tab is a working button (the markup's end state).
+// Hover or focus pauses the line; a click, or Arrow Left/Right, Home or End on
+// the tablist (WAI-ARIA tabs, automatic activation), takes over and stops
+// autoplay. Reduced motion or no JavaScript: no autoplay, the first tab is
+// shown in full and every tab is a working button (the markup's end state).
 import { clamp01, isProof, loop, prefersReducedMotion, registerSeek } from "./frame";
 
 const STEP_MS = 7500;
@@ -71,13 +72,31 @@ export function mountProgressTabs(root: HTMLElement): void {
   };
 
   root.dataset["fx"] = "on";
-  tabs.forEach((tab, i) =>
-    tab.addEventListener("click", () => {
-      stop();
-      show(i, 1);
-      setBar(i, 1);
-    }),
-  );
+  const select = (index: number): void => {
+    stop();
+    show(index, 1);
+    setBar(index, 1);
+  };
+  tabs.forEach((tab, i) => tab.addEventListener("click", () => select(i)));
+  root.querySelector<HTMLElement>('[role="tablist"]')?.addEventListener("keydown", (event) => {
+    const last = tabs.length - 1;
+    const next =
+      event.key === "ArrowRight"
+        ? (current + 1) % tabs.length
+        : event.key === "ArrowLeft"
+          ? (current + last) % tabs.length
+          : event.key === "Home"
+            ? 0
+            : event.key === "End"
+              ? last
+              : -1;
+    if (next < 0) {
+      return;
+    }
+    event.preventDefault();
+    select(next);
+    tabs[next]?.focus();
+  });
   registerSeek("tabs", (t) => {
     stop();
     render(t);

@@ -3,9 +3,11 @@
 // ploy-wordfill-midscroll.jpg). Ploy paints a gradient through
 // background-clip:text; here each line carries an aria-hidden ink copy over a
 // pale base and only that copy's clip-path moves, left to right, line 1 then
-// line 2. Start: the block's top at 80% of the viewport; end: its bottom at
-// the middle (Ploy's range). No JavaScript or reduced motion: the base stays
-// full ink, which is the end state.
+// line 2. Start: the block's top at 85% of the viewport; end: its centre at
+// 55%, so the sentence is whole by the time it reaches the middle of the
+// screen (Ploy's range ended later and left "The Session st|ays." half-filled
+// where people stop to read; review P2-2 / YC P1-3). No JavaScript or reduced
+// motion: the base stays full ink, which is the end state.
 import { clamp01, prefersReducedMotion, registerSeek } from "./frame";
 
 export function mountWordFill(root: HTMLElement): void {
@@ -23,7 +25,7 @@ export function mountWordFill(root: HTMLElement): void {
   const measure = (): number => {
     const box = root.getBoundingClientRect();
     const vh = window.innerHeight;
-    return clamp01((0.8 * vh - box.top) / (0.3 * vh + box.height));
+    return clamp01((0.85 * vh - box.top) / (0.3 * vh + box.height / 2));
   };
 
   root.dataset["fx"] = "on";
