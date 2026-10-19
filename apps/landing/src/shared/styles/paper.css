@@ -252,7 +252,7 @@
 }
 .pp-plate {
   position: relative;
-  height: 400px;
+  height: 448px; /* the caption under it starts below a 1440x900 first screen */
   overflow: hidden;
   border-radius: 12px;
   background: #d8d1c5 url("/landing/paper/plate-2400.webp") 50% 40% / cover no-repeat;
@@ -403,6 +403,7 @@
 }
 .pp-said-card {
   position: relative;
+  margin: 0;
   padding: 28px 30px 30px;
   border: 1px solid rgb(27 25 22 / 0.08);
   border-radius: 12px;
@@ -625,14 +626,16 @@
 }
 .pp-nest-dots {
   position: absolute;
-  background-image: radial-gradient(rgb(27 25 22 / 0.55) 1px, transparent 1.3px);
-  background-size: 9px 9px;
-  background-position: 50% 100%;
+  /* S3 dots over a faint S1 stone wash, both thinning upward from the floor line (brand/outline studies s3, s8). */
+  background-image: radial-gradient(rgb(27 25 22 / 0.55) 1px, transparent 1.3px),
+    linear-gradient(to top, #e6e2da, #f1efea);
+  background-size: 9px 9px, 100% 100%;
+  background-position: 50% 100%, 0 0;
   -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat,
-    linear-gradient(to top, #000 8%, transparent 92%);
+    linear-gradient(to top, #000 5%, transparent 64%);
   -webkit-mask-composite: source-in;
   mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat,
-    linear-gradient(to top, #000 8%, transparent 92%);
+    linear-gradient(to top, #000 5%, transparent 64%);
   mask-composite: intersect;
 }
 .pp-foot-links ul,
@@ -770,7 +773,7 @@
     font-size: 18px;
   }
   .pp-plate {
-    height: 300px;
+    height: 380px; /* U08 says 300; 380 keeps the caption below a 390x844 first screen (≤25 words) */
   }
   .pp-frag {
     top: 56px;

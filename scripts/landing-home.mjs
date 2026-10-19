@@ -950,7 +950,7 @@ const PAPER_EN = {
     // A: line 1 (ink), 1×18. B: lines 2-3 (ink-3), 2×22. H1 total ≤9 words.
     titleInk: "A managed runtime",
     titleSoft: "for the Agents in your backend.",
-    // C: 2×34, ≤11 words.
+    // C: 2×30, ≤10 words (hero total stays ≤25 above the fold, ≤40 in all).
     lead: "One API call starts a Session. Reply days later.",
     // D, E: buttons, 1×12 each.
     primary: "Try mosoo",
@@ -964,8 +964,8 @@ const PAPER_EN = {
       glyph: "openai-runtime",
       ghost: "Read input.csv, chart the totals and save the report to outputs/", // C 1×56+, cut by the plate edge
       controls: ["Files 2", "Resume ⌄"], // D 2×(1×10)
-      title: "One request, one Session.", // E 1×28
-      body: "Pick a harness, send a prompt, attach files. The sandbox starts on its own.", // F 2×52
+      title: "One request, one Session.", // E 1×28, ≤4 words
+      body: "Pick a harness, send a prompt, attach files.", // F 2×44, ≤11 words
     },
     {
       tab: "Watch.",
@@ -974,7 +974,7 @@ const PAPER_EN = {
       ghost: "Writing outputs/report.md while the events stream back to you",
       controls: ["Events", "Files"],
       title: "Watch it work.",
-      body: "Events stream back while the agent runs. Files it writes land in outputs/.",
+      body: "Events stream back while the agent works in its sandbox.",
     },
     {
       tab: "Return.",
@@ -983,7 +983,7 @@ const PAPER_EN = {
       ghost: "Add last quarter to the report you made on Monday and keep the chart",
       controls: ["Files 2", "Resume ⌄"],
       title: "Come back days later.",
-      body: "Send the next turn to the same Session. It picks up where the last one ended.",
+      body: "Send the next turn; the same Session picks it up.",
     },
   ],
   // U01: A 1×22, B 1×22 (≤5 words each), C 1×50 (≤10 words).
