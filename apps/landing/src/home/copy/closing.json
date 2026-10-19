@@ -1,0 +1,33 @@
+{
+  "$comment": "Slots of sections/closing.ts. h2a + h2b = the two-line H2 (<= 30 characters together); the setup-prompt card: legend (its label), prompt (the sentence the Copy button puts on the clipboard), copy / copied (button states, also announced); then the lime CTA (primary) and the caption. X placeholders of realistic length. Budgets: tests/home-copy-slots.test.mjs.",
+  "en": {
+    "h2a": "Xxxxx xxxx xxxxx",
+    "h2b": "Xxxxxxx.",
+    "legend": "Xxxxx xxxxxx",
+    "prompt": "Xxxx xxxxx.xx/xxxx.xxx xxx xxxxx xx xxxxx Xxxxxxx.",
+    "copy": "Xxxx",
+    "copied": "Xxxxxx",
+    "primary": "Xxx xxxxx",
+    "caption": "Xxxxx xxxx Xxxxx, Xxxxxx Xxxx, Xxxxxx."
+  },
+  "zh": {
+    "h2a": "ＸＸＸ",
+    "h2b": "ＸＸＸ Session。",
+    "legend": "ＸＸＸＸＸ",
+    "prompt": "Ｘ xxxxx.xx/xxxx.xxx，ＸＸＸＸＸＸ Session。",
+    "copy": "ＸＸ",
+    "copied": "ＸＸＸ",
+    "primary": "ＸＸＸＸＸ",
+    "caption": "ＸＸＸ Xxxxx、Xxxxxx Xxxx、Xxxxxx。"
+  },
+  "ja": {
+    "h2a": "ＸＸＸ",
+    "h2b": "Session ＸＸＸ。",
+    "legend": "ＸＸＸＸＸＸＸＸ",
+    "prompt": "xxxxx.xx/xxxx.xxx ＸＸＸ、ＸＸＸ Session ＸＸＸ。",
+    "copy": "ＸＸＸ",
+    "copied": "ＸＸＸＸ",
+    "primary": "ＸＸＸＸＸＸ",
+    "caption": "Xxxxx、Xxxxxx Xxxx、Xxxxxx ＸＸＸＸＸ。"
+  }
+}

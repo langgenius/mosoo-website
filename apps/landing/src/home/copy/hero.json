@@ -1,0 +1,43 @@
+{
+  "$comment": "Slots of sections/hero.ts. H1 = h1a + h1b (two-tone, one line each at 1440). Lead = '{lead.pre} [harness 1] [harness 2] [harness 3] {lead.or} [harness 4] {lead.post}', the harness names drawn as keycaps. X placeholders of realistic length; the content phase writes the words. Budgets: tests/home-copy-slots.test.mjs.",
+  "$temporary": {
+    "harnesses": "Product names as the task's lead format writes them (README L9: OpenAI Codex, Claude Agent SDK, OpenCode, Pi); not translated.",
+    "lead.or": "The joiner of the task's lead format ('... [OpenCode] or [Pi] ...'); zh / ja joiners are guesses for the content phase."
+  },
+  "en": {
+    "h1a": "Xxx xxxxxx xxxx xxxx xxxxxxx.",
+    "h1b": "Xxxxxxxx xxxx xxxx xxxxx.",
+    "lead": {
+      "pre": "Xxx xxx xxxx xxxxxx",
+      "or": "or",
+      "post": "xx xxx xxx xxxxxxx."
+    },
+    "harnesses": ["Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "Xxx xxxxx",
+    "secondary": "Xxxx xxx xxxxxxxxxx"
+  },
+  "zh": {
+    "h1a": "ＸＸＸＸＸ，ＸＸＸＸ。",
+    "h1b": "ＸＸＸ，ＸＸＸＸＸＸ。",
+    "lead": {
+      "pre": "ＸＸＸＸＸＸ",
+      "or": "或",
+      "post": "ＸＸＸＸＸＸＸＸ。"
+    },
+    "harnesses": ["Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "ＸＸＸＸＸ",
+    "secondary": "ＸＸＸＸ"
+  },
+  "ja": {
+    "h1a": "ＸＸＸＸＸ、ＸＸＸＸＸ。",
+    "h1b": "ＸＸＸ、ＸＸＸＸＸ。",
+    "lead": {
+      "pre": "ＸＸＸＸＸＸＸ",
+      "or": "か",
+      "post": "ＸＸＸＸＸＸＸＸＸ。"
+    },
+    "harnesses": ["Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "ＸＸＸＸＸＸ",
+    "secondary": "ＸＸＸＸＸＸＸ"
+  }
+}

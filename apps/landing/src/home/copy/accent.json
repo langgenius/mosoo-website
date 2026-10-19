@@ -1,0 +1,45 @@
+{
+  "$comment": "Slots of sections/accent.ts. Before the edge, on white: tab (a tab label) and gap (a short H2). On the full lime screen: h2a + h2b (two-tone H2), sub, and five cards (label + one line; BRIEF order Harness, Model key, Sandbox, Files, Resume). X placeholders of realistic length. Budgets: tests/home-copy-slots.test.mjs.",
+  "en": {
+    "tab": "Xxx xxxxxxx xxxxx",
+    "gap": "Xxxx xxxxx xxx.",
+    "h2a": "Xxx xxxxxxx xx xxxx.",
+    "h2b": "Xxx Xxxxxxx xxxxx.",
+    "sub": "Xxx xxxxxx xx xxxxxxx xx xxx Xxxxxxx; xxx xxxxxxx xxxx xxxx xxx xxxxx xxxx xxx xxxx.",
+    "cards": [
+      { "label": "Xxxxxxx", "line": "Xxx xx xxxx xxxxxx xxx xxxx xxx xxxxxxx." },
+      { "label": "Xxxxx xxx", "line": "Xxxx xxx xxxxx xxxxxx xxx xxxxxxx xxxxx." },
+      { "label": "Xxxxxxx", "line": "Xxx xxxxxxx xxx Xxxxxxx, xxxxxxxx xx xxx." },
+      { "label": "Xxxxx", "line": "Xxxxx xxx xxxxx xxxxx xxxxxxxx/ xxx xxxx." },
+      { "label": "Xxxxxx", "line": "Xxx xxxx Xxxxxxx xxxxx xxxx xxxx xxxxxx." }
+    ]
+  },
+  "zh": {
+    "tab": "ＸＸＸＸＸＸ",
+    "gap": "ＸＸＸＸＸ。",
+    "h2a": "ＸＸＸＸＸＸＸ。",
+    "h2b": "ＸＸＸＸＸＸＸＸ。",
+    "sub": "ＸＸＸＸＸＸＸＸＸ，ＸＸＸＸＸＸＸＸＸＸＸ；ＸＸＸＸＸＸＸＸ。",
+    "cards": [
+      { "label": "Harness", "line": "ＸＸＸＸＸＸＸＸ，ＸＸＸＸＸＸＸ。" },
+      { "label": "ＸＸＸＸ", "line": "ＸＸＸＸＸＸＸ，ＸＸＸＸＸＸＸＸ。" },
+      { "label": "Sandbox", "line": "ＸＸ Session ＸＸＸＸ，ＸＸＸＸＸ。" },
+      { "label": "ＸＸ", "line": "ＸＸＸＸＸ outputs/，ＸＸＸＸＸ。" },
+      { "label": "ＸＸ", "line": "ＸＸＸＸＸＸ，ＸＸ Session ＸＸＸ。" }
+    ]
+  },
+  "ja": {
+    "tab": "ＸＸＸＸＸＸＸ",
+    "gap": "ＸＸＸＸＸＸ。",
+    "h2a": "ＸＸＸＸＸＸＸＸ。",
+    "h2b": "ＸＸＸＸＸＸＸＸＸ。",
+    "sub": "ＸＸＸＸＸＸＸＸＸＸ、ＸＸＸＸＸＸＸＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸ。",
+    "cards": [
+      { "label": "Harness", "line": "ＸＸＸＸＸＸＸＸＸ、ＸＸＸＸＸＸＸＸ。" },
+      { "label": "ＸＸＸＸＸ", "line": "ＸＸＸＸＸＸＸＸ、ＸＸＸＸＸＸＸＸＸ。" },
+      { "label": "Sandbox", "line": "Session ＸＸＸＸＸ、ＸＸＸＸＸＸＸ。" },
+      { "label": "ＸＸＸＸ", "line": "outputs/ ＸＸＸＸＸ、ＸＸＸＸＸＸ。" },
+      { "label": "ＸＸ", "line": "ＸＸＸＸＸＸＸ、ＸＸ Session ＸＸＸＸ。" }
+    ]
+  }
+}

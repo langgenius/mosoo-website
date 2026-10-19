@@ -1,0 +1,120 @@
+{
+  "$comment": "Slots of sections/stage.ts. steps[k] = the step tag, then the caption (title + one line) that passes through on the right. kit = the props of the Session object (src/home/kit, renderSession) per state; the hero board shows the call state too. X placeholders: the kit's own xify of its sample strings (staging v5/tools/kit/build.ts), CJK as fullwidth X. Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state).",
+  "$temporary": {
+    "kit.harness": "Product name (README L9); not translated."
+  },
+  "en": {
+    "steps": [
+      {
+        "tag": "Xxxx",
+        "title": "Xxx xxxxxxx xxxxx x Xxxxxxx.",
+        "line": "Xxx xxxx xxxxxxx xx xxx xxxxxxx xxx xxx xxxxxx xxxx xxx xxxx."
+      },
+      {
+        "tag": "Xxxxx",
+        "title": "Xxxxx xxx xxxxxx xx xxxx xxxxxx.",
+        "line": "Xxxxxx xxxxxx xxxx xx xxxx xxxxxxx; xxxxx xxxx xx xxxxxxxx."
+      },
+      {
+        "tag": "Xxxxxx",
+        "title": "Xxx xxxx Xxxxxxx, x xxxx xxxxx.",
+        "line": "Xxxx x xxxxx xxxx xxxx xxx xxxx Xxxxxxx xxxxxx xxxxx xx xxxx."
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "call": {
+        "instruction": "Xxxx xxx xxxxxxxx xxxxx.xxx, xxxx xxxx xxxxxxx/xxxxxx.xx xxx xxxxx.xxx",
+        "attachment": "xxxxx.xxx"
+      },
+      "watch": {
+        "status": "Xxxxxxx",
+        "action": "Xxxxxxx {file} xxxx xxxxx.xxx",
+        "file": "xxxxxxx/xxxxxx.xx",
+        "stream": "Xxxx xxxxxxx",
+        "events": ["Xxxx xxxxxxx", "Xxxx xxxxxxxx", "Xxx xxxxxxx"]
+      },
+      "return": {
+        "turn": "Xxxx 0",
+        "after": "+0 xxxx",
+        "restored": "Xxxxxxxx xxxx xxx xxxx xxxx"
+      }
+    }
+  },
+  "zh": {
+    "steps": [
+      {
+        "tag": "ＸＸ",
+        "title": "ＸＸＸＸ，ＸＸＸＸＸＸ。",
+        "line": "ＸＸＸＸＸＸ Session，ＸＸＸＸＸＸＸＸＸＸ。"
+      },
+      {
+        "tag": "ＸＸ",
+        "title": "ＸＸＸＸＸＸＸ，ＸＸＸＸ。",
+        "line": "ＸＸＸＸＸＸＸＸＸ；ＸＸＸＸＸＸＸＸＸＸ。"
+      },
+      {
+        "tag": "ＸＸ",
+        "title": "ＸＸＸ，ＸＸＸＸＸＸＸ。",
+        "line": "ＸＸＸＸ，ＸＸ Session ＸＸＸＸＸＸＸＸＸＸ。"
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "call": {
+        "instruction": "ＸＸＸＸ xxxxx.xxx，Ｘ xxxxxx.xx Ｘ xxxxx.xxx ＸＸ xxxxxxx/",
+        "attachment": "xxxxx.xxx"
+      },
+      "watch": {
+        "status": "ＸＸＸ",
+        "action": "ＸＸＸＸ xxxxx.xxx ＸＸ {file}，ＸＸＸＸＸＸＸＸ",
+        "file": "xxxxxxx/xxxxxx.xx",
+        "stream": "ＸＸＸＸ",
+        "events": ["ＸＸＸＸＸ", "ＸＸＸＸＸＸ", "ＸＸＸＸ"]
+      },
+      "return": {
+        "turn": "Ｘ 0 Ｘ",
+        "after": "+0 Ｘ",
+        "restored": "ＸＸＸＸＸＸＸ"
+      }
+    }
+  },
+  "ja": {
+    "steps": [
+      {
+        "tag": "ＸＸＸ",
+        "title": "ＸＸＸＸＸ、ＸＸＸＸＸＸ。",
+        "line": "ＸＸＸＸＸＸ Session ＸＸＸ、ＸＸＸＸＸＸＸＸＸＸＸ。"
+      },
+      {
+        "tag": "ＸＸＸ",
+        "title": "ＸＸＸＸＸＸＸ、ＸＸＸＸＸ。",
+        "line": "ＸＸＸＸＸＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸＸ。"
+      },
+      {
+        "tag": "ＸＸＸ",
+        "title": "ＸＸＸＸ、ＸＸＸＸＸＸＸ。",
+        "line": "ＸＸＸＸＸ、ＸＸ Session ＸＸＸＸＸＸＸＸＸＸＸ。"
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "call": {
+        "instruction": "ＸＸＸ xxxxx.xxx ＸＸＸ、xxxxxx.xx Ｘ xxxxx.xxx Ｘ xxxxxxx/ ＸＸＸＸＸ",
+        "attachment": "xxxxx.xxx"
+      },
+      "watch": {
+        "status": "ＸＸＸ",
+        "action": "xxxxx.xxx ＸＸ {file} ＸＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸＸＸＸＸＸ",
+        "file": "xxxxxxx/xxxxxx.xx",
+        "stream": "ＸＸＸＸＸＸＸＸＸＸ",
+        "events": ["ＸＸＸＸＸＸ", "ＸＸＸＸＸ", "ＸＸＸＸ"]
+      },
+      "return": {
+        "turn": "ＸＸＸ 0",
+        "after": "+0 Ｘ",
+        "restored": "ＸＸＸＸＸＸＸＸＸＸ"
+      }
+    }
+  }
+}

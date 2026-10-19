@@ -1,0 +1,36 @@
+{
+  "$comment": "Slots of sections/nav.ts: the skip link, the bar's labels and its CTA. Budgets: tests/home-copy-slots.test.mjs. Keys starting with $ are notes, not copy.",
+  "$temporary": {
+    "*": "Real labels carried from v4d (scripts/landing-home.mjs SHELL.nav, home-copy.json hero.primary) because the task names these links (Docs, Use cases, GitHub, Sign in, Try mosoo); the content phase may rewrite them to the same widths."
+  },
+  "en": {
+    "skip": "Skip to content",
+    "home": "mosoo home",
+    "label": "Primary site links",
+    "docs": "Docs",
+    "useCases": "Use cases",
+    "github": "GitHub",
+    "signIn": "Sign in",
+    "cta": "Try mosoo"
+  },
+  "zh": {
+    "skip": "跳到正文",
+    "home": "mosoo 首页",
+    "label": "主要站点链接",
+    "docs": "文档",
+    "useCases": "用例",
+    "github": "GitHub",
+    "signIn": "登录",
+    "cta": "试用 mosoo"
+  },
+  "ja": {
+    "skip": "本文へスキップ",
+    "home": "mosoo ホーム",
+    "label": "主要なサイトリンク",
+    "docs": "ドキュメント",
+    "useCases": "ユースケース",
+    "github": "GitHub",
+    "signIn": "ログイン",
+    "cta": "mosoo を試す"
+  }
+}

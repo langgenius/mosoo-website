@@ -1,0 +1,96 @@
+{
+  "$comment": "Slots of sections/faq.ts. a + b = the two-tone title (left column); items = six questions in native <details name=\"faq\"> (first open). The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) repeats the en items: tests/worker.test.mjs keeps the three equal. Budgets: tests/home-copy-slots.test.mjs.",
+  "$temporary": {
+    "items": "The v4d FAQ (routes/login/landing/home-copy.json at 9e92312), kept verbatim in all three locales: llms.txt Direct answers must equal the en items, and the FAQPage JSON-LD needs real answers. Every en item fits the v5 budgets (question <= 48, answer <= 220 characters). When the content phase rewrites them, update src/worker.js in the same change."
+  },
+  "en": {
+    "a": "Xxxxxxxxx xxxxxx",
+    "b": "xxxxxx xxx xxxx xx.",
+    "items": [
+      {
+        "q": "Is it hosted, or do I run it?",
+        "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
+      },
+      {
+        "q": "What does it cost to start?",
+        "a": "Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
+      },
+      {
+        "q": "Why not call a model API directly?",
+        "a": "A model API returns a reply. mosoo runs the Agent around it: an isolated sandbox, files in and out, streamed events, recorded usage, and a working directory kept between turns."
+      },
+      {
+        "q": "Which harnesses and models can I use?",
+        "a": "Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key."
+      },
+      {
+        "q": "What happens when I reply days later?",
+        "a": "The reply continues the same Session, even after the sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer."
+      },
+      {
+        "q": "Do my keys enter the sandbox?",
+        "a": "No. Provider keys and MCP credentials stay outside; the sandbox only receives expiring grants for them. Environment variables are the exception: code in the sandbox can read them."
+      }
+    ]
+  },
+  "zh": {
+    "a": "ＸＸＸＸ，",
+    "b": "ＸＸＸＸＸＸＸ。",
+    "items": [
+      {
+        "q": "是托管服务，还是要自己运行？",
+        "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache 2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
+      },
+      {
+        "q": "开始使用要付费吗？",
+        "a": "免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不提供模型。"
+      },
+      {
+        "q": "为什么不直接调用模型 API？",
+        "a": "模型 API 只返回一条回复。mosoo 运行的是围绕它的 Agent：隔离的 sandbox、文件进出、流式事件、用量记录，以及在 turn 之间保留的工作目录。"
+      },
+      {
+        "q": "可以用哪些 harness 和模型？",
+        "a": "四种 harness：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。每个 Session 指定自己的 harness、模型供应商和模型，并使用你自己的供应商密钥。"
+      },
+      {
+        "q": "几天后再回复，会怎样？",
+        "a": "回复会在同一个 Session 里继续，即使 sandbox 已被回收。mosoo 会从最近一次提交的检查点恢复工作目录和原生对话。冷启动可能更慢。"
+      },
+      {
+        "q": "我的密钥会进入 sandbox 吗？",
+        "a": "不会。模型供应商密钥和 MCP 凭据留在 sandbox 之外，sandbox 只拿到会过期的授权。环境变量是例外：sandbox 里的代码可以读取它们。"
+      }
+    ]
+  },
+  "ja": {
+    "a": "ＸＸＸＸＸ",
+    "b": "ＸＸＸＸＸＸＸ。",
+    "items": [
+      {
+        "q": "ホスト版？それとも自分で動かす？",
+        "a": "ホスト版 cloud.mosoo.ai をすぐ使えます。ソースは Apache 2.0 で GitHub にあり、ローカルでの動かし方は README にあります。mosoo は Alpha 版で、公開 API は変わることがあります。"
+      },
+      {
+        "q": "始めるのに費用はかかりますか？",
+        "a": "無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーが請求します。mosoo はモデルを提供しません。"
+      },
+      {
+        "q": "モデル API を直接呼ぶのと何が違いますか？",
+        "a": "モデル API は返答を返すだけです。mosoo はその周りの Agent を動かします。隔離された sandbox、ファイルの入出力、イベントのストリーム、使用量の記録、turn をまたいで残る作業ディレクトリ。"
+      },
+      {
+        "q": "どの harness とモデルを使えますか？",
+        "a": "harness は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。Session ごとに harness、プロバイダー、モデルを指定し、ご自身のプロバイダーキーで動きます。"
+      },
+      {
+        "q": "数日後に返信するとどうなりますか？",
+        "a": "sandbox が回収された後でも、同じ Session で続きます。mosoo は最後にコミットしたチェックポイントから、作業ディレクトリとネイティブな会話を復元します。コールドスタートは遅くなりえます。"
+      },
+      {
+        "q": "キーは sandbox に入りますか？",
+        "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外にあり、sandbox には期限付きの許可だけが渡ります。環境変数は例外で、sandbox 内のコードが読めます。"
+      }
+    ]
+  }
+}
