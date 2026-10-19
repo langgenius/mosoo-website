@@ -12,6 +12,8 @@ import { stageHeadingStyle } from "./typography";
 
 const PLATE = "/landing/bamboo/bamboo-plate-pixel";
 
+
+
 export function PixelPlate({
   sizes,
   accent = false,
@@ -65,7 +67,9 @@ export function StageFigure({
   sizes,
   accent = false,
   className,
-  padClassName = "p-3 sm:p-6 lg:p-8",
+  // Phones give the island the whole frame (the kit's narrow layouts are
+  // measured from a 354px island); the plate shows from 640px.
+  padClassName = "p-0 sm:p-6 lg:p-8",
   windowClassName,
 }: {
   children: ReactNode;
@@ -81,7 +85,7 @@ export function StageFigure({
     <figure className={cn("m-0 min-w-0", className)}>
       <div className={cn("stage", padClassName)}>
         <PixelPlate sizes={sizes} accent={accent} lazy />
-        <div className={cn("stage-window overflow-hidden", windowClassName)}>{children}</div>
+        <div className={cn("stage-window stage-zoom overflow-hidden", windowClassName)}>{children}</div>
       </div>
       {caption === undefined ? null : (
         <figcaption className="text-ink-500 mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[16px] leading-[1.5]">

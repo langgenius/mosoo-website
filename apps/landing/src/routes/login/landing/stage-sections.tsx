@@ -47,8 +47,8 @@ function NonceEvidence(): ReactElement {
               {consoleText(locale, "sessionEvents.turn", { number: String(row.turn) })}
             </dt>
             <dd translate="no" className="text-ink-900 m-0 min-w-0 font-mono text-[14px] leading-[1.6]">
-              <span className="block truncate">
-                {row.file} <span className="text-ink-500">grand_total</span> {row.total}
+              <span className="block">
+                {row.file} <span className="text-ink-500 whitespace-nowrap">grand_total {row.total}</span>
               </span>
               <span className="mt-0.5 inline-block rounded-[4px] bg-[#edf9d8] px-1.5 text-[#2c5113]">{SHORT_HASH}</span>
             </dd>
@@ -216,10 +216,10 @@ function TurnTabs(): ReactElement {
         role="tabpanel"
         id={`${base}-panel`}
         aria-labelledby={`${base}-tab-${turn}`}
-        className="stage rounded-tl-none p-3 sm:p-8 lg:px-[12%] lg:py-14"
+        className="stage rounded-tl-none p-0 sm:p-8 lg:px-[12%] lg:py-14"
       >
         <PixelPlate sizes="(max-width: 1023px) calc(100vw - 32px), 90vw" lazy />
-        <div className="stage-window overflow-hidden">
+        <div className="stage-window stage-zoom overflow-hidden">
           <TurnReceipt key={turn} locale={locale} turn={turn} animate />
         </div>
       </div>
@@ -269,7 +269,7 @@ export function KeysSection(): ReactElement {
           className="mt-12"
           accent
           example={false}
-          padClassName="p-3 sm:p-8 lg:px-[8%] lg:py-14"
+          padClassName="p-0 sm:p-8 lg:px-[8%] lg:py-14"
           sizes="(max-width: 1023px) calc(100vw - 32px), 90vw"
           caption={t("Drawn from the product spec and the architecture notes. The console has no such screen.")}
         >

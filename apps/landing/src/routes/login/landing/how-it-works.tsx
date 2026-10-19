@@ -10,8 +10,9 @@ import { ArrowLink, WithCode } from "./ui";
 
 // Copy deck §6, told with the hero's CSV story: the two calls on the right
 // are the product kit's ApiCall (PM-11), the upload of input.csv and the
-// Session that attaches it, with their 201 responses. Code is set at the
-// body size (--kit-code-size, 1rem).
+// Session that attaches it, with their 201 responses. From 768px the island
+// is zoomed (.stage-zoom, 1.15), so --kit-code-size 0.875rem sets the code at
+// about 16px, the body size; phones keep 1rem unzoomed.
 
 function steps(): readonly { title: string; body: string; input: string; output: string }[] {
   return [
@@ -102,6 +103,7 @@ export function HowItWorks(): ReactElement {
           <StageFigure
             sizes="(max-width: 1023px) calc(100vw - 32px), 56vw"
             caption={t("Model IDs change often. Check the models available in your Project before you copy this.")}
+            windowClassName="md:[--kit-code-size:0.875rem]"
           >
             <ApiCall locale={locale} />
           </StageFigure>

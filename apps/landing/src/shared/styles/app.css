@@ -713,6 +713,16 @@ html:has(.landing-shell[data-theme="console"]) {
   border: 0;
 }
 
+/* From 768px the islands below the fold are zoomed so the console's smallest
+   chips (10.5px) read at 12px or more (product kit README, "Size": zoom, not
+   font sizes, so container queries see the unzoomed width). Phones keep the
+   console's own sizes, where the kit's narrow layouts are tested. */
+@media (min-width: 768px) {
+  .stage-zoom > [data-surface="console"] {
+    zoom: 1.15;
+  }
+}
+
 /* Hero: the outputs card is the turn's result. It lands when the turn
    commits, that is when the Preview's replay ends (the island drops its
    data-replaying flag). Without JavaScript, with reduced motion, and in
@@ -767,7 +777,7 @@ html:has(.landing-shell[data-theme="console"]) {
 
 @media (min-width: 1280px) {
   .hero-stage {
-    height: clamp(500px, calc(100svh - 190px), 650px);
+    height: clamp(500px, calc(100svh - 178px), 660px);
   }
 
   .hero-window {

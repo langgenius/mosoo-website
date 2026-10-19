@@ -20,6 +20,11 @@ const HERO_HEADLINE_STYLE = {
   lineHeight: locale === "en" ? 1.06 : 1.22,
 } satisfies CSSProperties;
 
+// CSS zoom on the Preview so its smallest console chips (11.5px) read at 12px
+// or more (product kit README, "Size"), while the reply still clears the
+// outputs tray in a 1280x800 first screen.
+const HERO_SCALE = 1.05;
+
 const PRODUCT_TERM = "Agent runtime";
 
 /** Keeps the product term on one line inside a translated headline. */
@@ -107,7 +112,7 @@ function HeroStage(): ReactElement {
       <div className="stage hero-stage px-3 pt-3 pb-3 sm:px-8 sm:pt-8 sm:pb-6">
         <PixelPlate sizes="(max-width: 1279px) calc(100vw - 32px), 58vw" />
         <div className="stage-window hero-window">
-          <PreviewReplay locale={locale} animate />
+          <PreviewReplay locale={locale} animate scale={HERO_SCALE} />
         </div>
         <OutputsTray />
       </div>
