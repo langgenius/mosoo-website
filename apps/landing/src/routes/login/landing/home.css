@@ -683,6 +683,12 @@
   border-radius: 999px;
 }
 
+.i-btn-icon {
+  display: none;
+  width: 18px;
+  height: 18px;
+}
+
 .i-legend-note {
   margin-top: 14px;
   padding-left: 22px;
@@ -918,5 +924,18 @@
 
   .i-prompt-text {
     font-size: 14px;
+  }
+
+  .i-btn-pill {
+    width: 44px;
+    padding: 0;
+  }
+
+  .i-btn-pill .i-btn-icon {
+    display: block;
+  }
+
+  .i-btn-pill .i-btn-label {
+    display: none;
   }
 }

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ReactElement } from "react";
 
+import { Check, Copy } from "@/shared/ui/console-glyphs";
+
 import { copy } from "./home-copy";
 
 /**
@@ -41,8 +43,18 @@ export function FinalCta(): ReactElement {
             className="i-btn i-btn-pill"
             onClick={copyPrompt}
             aria-live="polite"
+            aria-label={copied ? copy.closing.copied : copy.closing.copy}
           >
-            {copied ? copy.closing.copied : copy.closing.copy}
+            {/* Phones show the console's Copy / Check glyph (U06: the button
+                becomes an icon at 390). */}
+            {copied ? (
+              <Check className="i-btn-icon" aria-hidden />
+            ) : (
+              <Copy className="i-btn-icon" aria-hidden />
+            )}
+            <span className="i-btn-label">
+              {copied ? copy.closing.copied : copy.closing.copy}
+            </span>
           </button>
         </div>
         <p className="i-legend-note">{copy.closing.note}</p>
