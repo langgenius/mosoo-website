@@ -404,15 +404,16 @@ test("the FAQPage JSON-LD matches the FAQ a reader sees on the page", () => {
 test("the static home page carries the whole page for readers without JavaScript", () => {
   const en = home("en");
 
+  // v2b "Contract": seven of the eight h2s are plain assertions from README and SPEC.
   assert.deepEqual(headingsOf(en, 2), [
-    "Pick a runtime. Use your own model key.",
-    "What mosoo runs for your backend",
-    "From one request to a finished report",
     "Your app keeps its users. mosoo runs the Agent.",
-    "What you can check for yourself",
-    "What mosoo doesn’t do",
+    "A reply seven days later continues the same Session.",
+    "Provider keys never enter the sandbox.",
+    "Each Session freezes its runtime, model, and protocol.",
+    "The spec lists what mosoo promises and what it doesn’t do.",
+    "The source, the releases, and the postmortems are public.",
     "Questions to ask before you build on mosoo",
-    "Start your first Session",
+    "Your first sign-in creates a Default Project.",
   ]);
   assert.match(
     textOf(en),
@@ -421,6 +422,10 @@ test("the static home page carries the whole page for readers without JavaScript
   assert.match(en, /It starts with <code translate="no">msp_<\/code> and is shown once\./);
   assert.match(en, /curl https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\$MOSOO_PROJECT_ID\/threads/);
   assert.match(en, /"type": "inline",\n\s+"harness": "openai-runtime"/);
+  // One example universe: the kit's CSV story, not a second example.
+  assert.match(en, /curl https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\$MOSOO_PROJECT_ID\/files/);
+  assert.match(en, /"grand_total": 250/);
+  assert.doesNotMatch(en, /sales-q3|2 days later|report-001/);
   assert.match(en, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
   assert.match(en, /There are no Webhooks\./);
   assert.match(en, /mosoo is in Alpha\. Public APIs may still change\./);
@@ -434,12 +439,12 @@ test("the static home page carries the whole page for readers without JavaScript
 
     assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1, the positioning`);
     assert.deepEqual(sectionIdsOf(html), [
-      "runtimes",
-      "features",
-      "how-it-works",
       "your-app-and-mosoo",
-      "proof",
+      "durability",
+      "keys",
+      "runtimes",
       "limits",
+      "proof",
       "faq",
       "start",
     ]);
@@ -460,21 +465,16 @@ test("the static home page carries the whole page for readers without JavaScript
 // ones the FAQPage JSON-LD carries) and the same primary navigation.
 test("the React home page and the static fallback share anchors, FAQ text and navigation", () => {
   const landing = "apps/landing/src/routes/login/landing";
-  const sections = [
-    "supply-wall.tsx",
-    "features-section.tsx",
-    "how-it-works.tsx",
-    "split-section.tsx",
-    "proof-section.tsx",
-    "limits-section.tsx",
-    "faq-section.tsx",
-    "final-cta.tsx",
-  ]
-    .map((file) => read(`${landing}/${file}`))
-    .join("\n");
-  for (const id of sectionIdsOf(home("en"))) {
-    assert.match(sections, new RegExp(`<section id="${id}" `), `the React page has #${id} too`);
-  }
+  // The React sections pass their ids to ContractSection, which renders
+  // <section id={id}>, in the same order as the fallback.
+  const sections = read(`${landing}/contract-sections.tsx`);
+  assert.match(read(`${landing}/contract-ui.tsx`), /<section id=\{id\}/);
+  const reactIds = [...sections.matchAll(/<ContractSection\s+id="([^"]+)"/g)].map((match) => match[1]);
+  const order = [...sections.matchAll(/^      <(Boundary|Durability|Keys|Runtimes|PromisesAndLimits|Proof|Faq|Start) \/>$/gm)].map(
+    (match) => match[1],
+  );
+  assert.equal(order.length, 8, "the React page renders eight sections");
+  assert.deepEqual(reactIds.sort(), [...sectionIdsOf(home("en"))].sort(), "the React page has the fallback's anchors");
 
   const dictionary = read(`${landing}/i18n.ts`);
   for (const locale of LOCALES) {

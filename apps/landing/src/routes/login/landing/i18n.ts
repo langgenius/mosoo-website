@@ -350,6 +350,43 @@ const ZH_MESSAGES = {
     "mosoo 开源吗？可以用于生产环境吗？",
   "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
     "mosoo 以 Apache 2.0 许可证开源，源码在 GitHub 上。它目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。/api/v1 保持线上兼容，无法兼容的改动会作为新的 API 版本发布。最快的试用方式是托管控制台 cloud.mosoo.ai。README 也说明了如何在本地运行，方便开发。",
+  // v2b Contract (sourced in the v2b CHANGELOG, 文案偏离)
+  "Model or tool execution ending is not success.":
+    "模型或工具执行结束，不等于成功。",
+  "A reply seven days later continues the same Session.":
+    "7 天后回复，仍在同一个 Session 里继续。",
+  "Exhibit 2.":
+    "图 2",
+  "The same Session seven days later. The sandbox was reclaimed while idle, turn 2 restored the last checkpoint, and both outputs carry the same private_nonce_sha256. Turn 3 was cancelled, so turn 2 stays the last committed checkpoint.":
+    "7 天后的同一个 Session。sandbox 闲置后已被回收，turn 2 从最近一次检查点恢复，两份输出的 private_nonce_sha256 相同。turn 3 被取消，所以 turn 2 仍是最近一次提交的检查点。",
+  "Provider keys never enter the sandbox.":
+    "模型供应商密钥从不进入 sandbox。",
+  "Exhibit 3.":
+    "图 3",
+  "The two requests behind Exhibit 1: upload input.csv, then start a Session with the file attached.":
+    "图 1 背后的两个请求：先上传 input.csv，再启动一个带上这个文件的 Session。",
+  "Each Session freezes its runtime, model, and protocol.":
+    "每个 Session 都会固定自己的 runtime、模型和协议。",
+  "Anthropic models":
+    "Anthropic 模型",
+  "Text input":
+    "仅文本输入",
+  "Supported":
+    "支持",
+  "Not supported":
+    "不支持",
+  "The spec lists what mosoo promises and what it doesn’t do.":
+    "产品规格写明了 mosoo 承诺什么、不做什么。",
+  "Promised":
+    "承诺",
+  "Not provided":
+    "不提供",
+  "The source, the releases, and the postmortems are public.":
+    "源码、版本发布和事故复盘都是公开的。",
+  "Your first sign-in creates a Default Project.":
+    "首次登录会自动创建默认项目。",
+  "Sign in with email or Google. Add a provider key, then start a Session.":
+    "用邮箱或 Google 登录。添加模型供应商密钥后，就可以启动 Session。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -699,6 +736,43 @@ const JA_MESSAGES = {
     "mosoo はオープンソースですか？本番環境で使えますか？",
   "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
     "mosoo は Apache 2.0 ライセンスのオープンソースで、ソースコードは GitHub にあります。現在は Alpha 版のため、公開 API や製品の動作は変わる可能性があります。/api/v1 は互換性を維持し、互換性を保てない変更は新しい API バージョンとして公開されます。すぐに試すなら、ホスト版のコンソール cloud.mosoo.ai が最も手軽です。開発用にローカルで動かす手順は README にあります。",
+  // v2b Contract (sourced in the v2b CHANGELOG, 文案偏离)
+  "Model or tool execution ending is not success.":
+    "モデルやツールの実行が終わっただけでは成功ではない。",
+  "A reply seven days later continues the same Session.":
+    "7 日後の返信も、同じ Session で続きます。",
+  "Exhibit 2.":
+    "図 2",
+  "The same Session seven days later. The sandbox was reclaimed while idle, turn 2 restored the last checkpoint, and both outputs carry the same private_nonce_sha256. Turn 3 was cancelled, so turn 2 stays the last committed checkpoint.":
+    "7 日後の同じ Session。sandbox はアイドル中に回収され、turn 2 は最後のチェックポイントから復元されました。2 つの出力の private_nonce_sha256 は同じです。turn 3 はキャンセルされたため、turn 2 が最後にコミットされたチェックポイントのまま残ります。",
+  "Provider keys never enter the sandbox.":
+    "プロバイダーキーは sandbox に入りません。",
+  "Exhibit 3.":
+    "図 3",
+  "The two requests behind Exhibit 1: upload input.csv, then start a Session with the file attached.":
+    "図 1 の裏にある 2 つのリクエスト。input.csv をアップロードし、そのファイルを添付して Session を開始します。",
+  "Each Session freezes its runtime, model, and protocol.":
+    "各 Session は runtime、モデル、プロトコルを固定します。",
+  "Anthropic models":
+    "Anthropic のモデル",
+  "Text input":
+    "テキスト入力のみ",
+  "Supported":
+    "対応",
+  "Not supported":
+    "非対応",
+  "The spec lists what mosoo promises and what it doesn’t do.":
+    "製品仕様には、mosoo が約束することとやらないことが書かれています。",
+  "Promised":
+    "約束していること",
+  "Not provided":
+    "提供しないもの",
+  "The source, the releases, and the postmortems are public.":
+    "ソースコード、リリース、事後分析は公開されています。",
+  "Your first sign-in creates a Default Project.":
+    "初回ログイン時にデフォルトプロジェクトが作成されます。",
+  "Sign in with email or Google. Add a provider key, then start a Session.":
+    "メールアドレスまたは Google でログインします。プロバイダーキーを追加したら、Session を開始できます。",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };

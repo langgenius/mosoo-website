@@ -1,0 +1,787 @@
+/*
+ * v2b "Contract": the home page set as a document. Literata for display and
+ * reading text, Geist for interface text, Geist Mono for data. A narrow left
+ * margin carries citations of the product spec; exhibits (product moments from
+ * the product kit) run wider than the reading column. Emphasis comes from
+ * weight, size, white space and 1px rules only. Lime appears twice: the
+ * primary button and the one "committed" seal. Soil marks "Not provided".
+ *
+ * Scoped to .ct-page (the home page) and html[data-page="home"]; no other
+ * landing page loads this file.
+ */
+
+html[data-page="home"]:has(.landing-shell[data-theme="landing"]) {
+  background-color: #fdfdfb;
+}
+
+html[data-page="home"] .landing-shell[data-theme="landing"] {
+  /* Very light paper for the whole home page, header and content layer. */
+  --paper-100: #fdfdfb;
+  --paper-50: #ffffff;
+}
+
+.ct-page {
+  --ct-paper: #fdfdfb;
+  --ct-ink: var(--ink-900);
+  --ct-ink-2: var(--ink-500);
+  --ct-rule: var(--ink-900);
+  --ct-hair: rgba(11, 26, 20, 0.14);
+  --ct-lime: #6fd305;
+  --ct-lime-ink: #0f1a02;
+  --ct-soil: #7a5230;
+  --ct-serif: var(--font-literata);
+  --ct-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ct-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ct-body: 18px;
+  --ct-leading: 1.65;
+  --ct-measure: 66ch;
+  --ct-margin: 168px;
+  --ct-gap: 56px;
+
+  background: var(--ct-paper);
+  color: var(--ct-ink);
+  font-family: var(--ct-serif);
+  font-size: var(--ct-body);
+  line-height: var(--ct-leading);
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+
+:lang(zh) .ct-page {
+  --ct-serif: var(--font-literata-zh);
+  --ct-sans: "Geist", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --ct-body: 17px;
+  --ct-leading: 1.9;
+  --ct-measure: 38em;
+}
+
+:lang(ja) .ct-page {
+  --ct-serif: var(--font-literata-ja);
+  --ct-sans:
+    "Geist", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans CJK JP", Meiryo, sans-serif;
+  --ct-body: 17px;
+  --ct-leading: 1.9;
+  --ct-measure: 38em;
+  line-break: strict;
+}
+
+/* ---------------------------------------------------------------- grid */
+
+.ct-page {
+  padding: 0 16px;
+}
+
+.ct-section {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--ct-rule);
+}
+
+.ct-hero {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 0 56px;
+}
+
+.ct-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ct-body {
+  margin-top: 24px;
+  min-width: 0;
+}
+
+@media (min-width: 1080px) {
+  .ct-page {
+    padding: 0 40px;
+  }
+
+  .ct-section,
+  .ct-hero {
+    display: grid;
+    grid-template-columns: var(--ct-margin) minmax(0, 1fr);
+    column-gap: var(--ct-gap);
+  }
+
+  .ct-section {
+    padding: 72px 0 88px;
+  }
+
+  .ct-hero {
+    padding: 56px 0 72px;
+  }
+
+  .ct-head {
+    display: contents;
+  }
+
+  .ct-head > :is(h1, h2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .ct-body {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+/* --------------------------------------------------------- typography */
+
+.ct-page h1,
+.ct-page h2,
+.ct-page h3 {
+  margin: 0;
+  color: var(--ct-ink);
+  font-family: var(--ct-serif);
+  text-wrap: balance;
+}
+
+.ct-h1 {
+  max-width: 19em;
+  font-size: clamp(34px, 3.7vw, 54px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+}
+
+.ct-h2 {
+  max-width: 22em;
+  font-size: clamp(27px, 2.5vw, 36px);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -0.012em;
+}
+
+.ct-h3 {
+  font-size: 1.08em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+:lang(zh) .ct-page :is(.ct-h1, .ct-h2),
+:lang(ja) .ct-page :is(.ct-h1, .ct-h2) {
+  letter-spacing: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-height: 1.32;
+}
+
+:lang(zh) .ct-page .ct-h1,
+:lang(ja) .ct-page .ct-h1 {
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 600;
+}
+
+:lang(zh) .ct-page .ct-h2,
+:lang(ja) .ct-page .ct-h2 {
+  font-size: clamp(24px, 2.2vw, 31px);
+  font-weight: 600;
+}
+
+.ct-prose p,
+.ct-p {
+  max-width: var(--ct-measure);
+  margin: 0;
+  text-wrap: pretty;
+  hanging-punctuation: first;
+}
+
+.ct-prose p + p {
+  margin-top: 0.9em;
+}
+
+.ct-lead {
+  max-width: 34em;
+  margin: 22px 0 0;
+  color: var(--ct-ink);
+  font-size: 1.12em;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.ct-muted {
+  color: var(--ct-ink-2);
+}
+
+.ct-page code {
+  font-family: var(--ct-mono);
+  font-size: 0.84em;
+  overflow-wrap: anywhere;
+}
+
+.ct-nowrap {
+  white-space: nowrap;
+}
+
+.ct-page a:not(.ct-button) {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(11, 26, 20, 0.4);
+  text-underline-offset: 0.22em;
+}
+
+.ct-page a:not(.ct-button):hover {
+  text-decoration-color: currentColor;
+}
+
+.ct-page :is(a, button, pre, summary):focus-visible {
+  outline: 2px solid var(--ct-ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Interface text: citations, captions, buttons, labels. */
+.ct-ui {
+  font-family: var(--ct-sans);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ citation */
+
+.ct-cite {
+  margin: 0;
+  font-family: var(--ct-sans);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ct-ink-2);
+}
+
+.ct-cite a {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 0.4em;
+}
+
+.ct-cite + .ct-cite {
+  margin-top: 6px;
+}
+
+@media (min-width: 1080px) {
+  /* The citations sit level with the heading and may run past it, beside
+     the body, without pushing the body down. */
+  .ct-cites {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
+    padding-top: 0.75em;
+  }
+
+  .ct-cite a {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.ct-page .ct-cite a {
+  text-decoration: none;
+}
+
+.ct-page .ct-cite a > span:first-child {
+  color: var(--ct-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(11, 26, 20, 0.4);
+  text-underline-offset: 0.22em;
+}
+
+.ct-page .ct-cite a:hover > span:first-child {
+  text-decoration-color: currentColor;
+}
+
+.ct-cite-title {
+  color: var(--ct-ink-2);
+}
+
+/* -------------------------------------------------------------- hero */
+
+.ct-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: 30px;
+}
+
+.ct-button {
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 8px;
+  background: var(--ct-lime);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 26, 2, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: var(--ct-lime-ink);
+  font-family: var(--ct-sans);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+}
+
+.ct-button:hover {
+  background: #66c204;
+}
+
+.ct-button:active {
+  background: #5cb300;
+}
+
+.ct-link-ui {
+  font-family: var(--ct-sans);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ct-alpha {
+  margin: 18px 0 0;
+}
+
+/* ------------------------------------------------------------ exhibit */
+
+.ct-exhibit {
+  position: relative;
+  margin: 48px 0 0;
+}
+
+.ct-exhibit-frame {
+  position: relative;
+  border-top: 1px solid var(--ct-rule);
+  border-bottom: 1px solid var(--ct-hair);
+  padding: 20px 0;
+}
+
+.ct-exhibit figcaption {
+  max-width: 62ch;
+  margin-top: 14px;
+  color: var(--ct-ink-2);
+}
+
+.ct-exhibit-label {
+  color: var(--ct-ink);
+  font-weight: 600;
+}
+
+.ct-exhibit-note {
+  margin: 10px 0 0;
+  color: var(--ct-ink-2);
+}
+
+/* --------------------------------------------------------------- seal */
+
+.ct-seal {
+  position: absolute;
+  right: 6px;
+  bottom: -30px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: var(--ct-lime);
+  box-shadow: inset 0 0 0 5px var(--ct-lime), inset 0 0 0 6px rgba(15, 26, 2, 0.45);
+  color: var(--ct-lime-ink);
+  font-family: var(--ct-mono);
+  line-height: 1.2;
+  text-align: center;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.ct-seal-turn {
+  display: block;
+  font-size: 12px;
+}
+
+.ct-seal-word {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (min-width: 1080px) {
+  .ct-seal {
+    right: -28px;
+    bottom: 64px;
+    width: 116px;
+    height: 116px;
+  }
+}
+
+.ct-seal[data-state="waiting"] {
+  opacity: 0;
+}
+
+.ct-seal[data-state="stamping"] {
+  animation: ct-stamp 460ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@keyframes ct-stamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-18deg) scale(1.65);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(-7deg) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-8deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-seal[data-state] {
+    opacity: 1;
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------- ledger */
+
+.ct-ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px 48px;
+  margin-top: 36px;
+}
+
+@media (min-width: 760px) {
+  .ct-ledger {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ct-ledger-col > h3 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.ct-ledger dl,
+.ct-ledger ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ct-ledger-row {
+  padding: 14px 0 15px;
+  border-bottom: 1px solid var(--ct-hair);
+}
+
+.ct-ledger-row dt,
+.ct-ledger-term {
+  font-weight: 600;
+}
+
+.ct-ledger-row dd,
+.ct-ledger-detail {
+  margin: 2px 0 0;
+  color: var(--ct-ink-2);
+}
+
+.ct-ledger-col[data-tone="soil"] > h3 {
+  color: var(--ct-soil);
+  border-bottom-color: var(--ct-soil);
+}
+
+.ct-ledger-col[data-tone="soil"] .ct-ledger-term {
+  color: var(--ct-soil);
+}
+
+.ct-footnote {
+  max-width: var(--ct-measure);
+  margin: 28px 0 0;
+  color: var(--ct-ink-2);
+}
+
+/* ------------------------------------------------------------- quote */
+
+.ct-quote {
+  max-width: 30em;
+  margin: 36px 0;
+  padding: 0 0 0 22px;
+  border-left: 1px solid var(--ct-rule);
+}
+
+.ct-quote p {
+  margin: 0;
+  font-size: 1.3em;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.ct-quote footer {
+  margin-top: 8px;
+}
+
+/* -------------------------------------------------------------- table */
+
+.ct-table-wrap {
+  margin-top: 32px;
+  overflow-x: auto;
+}
+
+.ct-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-family: var(--ct-sans);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.ct-table th,
+.ct-table td {
+  padding: 13px 14px 13px 0;
+  border-bottom: 1px solid var(--ct-hair);
+  text-align: left;
+  vertical-align: top;
+}
+
+.ct-table thead th {
+  border-bottom: 1px solid var(--ct-rule);
+  font-weight: 500;
+  color: var(--ct-ink-2);
+  vertical-align: bottom;
+}
+
+.ct-table tbody th {
+  font-family: var(--ct-serif);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ct-table td.ct-cell {
+  text-align: center;
+  font-weight: 600;
+}
+
+.ct-table .ct-id {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--ct-mono);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ct-ink-2);
+}
+
+.ct-table .ct-note {
+  display: block;
+  font-family: var(--ct-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ct-ink-2);
+}
+
+.ct-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- faq */
+
+.ct-faq {
+  margin-top: 28px;
+  border-top: 1px solid var(--ct-hair);
+}
+
+.ct-qa {
+  padding: 22px 0 24px;
+  border-bottom: 1px solid var(--ct-hair);
+}
+
+.ct-qa p {
+  max-width: var(--ct-measure);
+  margin: 8px 0 0;
+  color: var(--ct-ink);
+}
+
+/* -------------------------------------------------------------- start */
+
+.ct-lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px 56px;
+  margin-top: 32px;
+}
+
+@media (min-width: 900px) {
+  .ct-lanes {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.ct-lane > h3 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ct-rule);
+}
+
+.ct-lane > p {
+  margin: 14px 0 0;
+}
+
+.ct-command {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--ct-hair);
+  border-bottom: 1px solid var(--ct-hair);
+}
+
+.ct-command code {
+  flex: 1 1 20rem;
+  min-width: 0;
+  overflow-x: auto;
+  font-size: 15px;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+.ct-prompt {
+  max-height: 15rem;
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  overflow: auto;
+  border: 1px solid var(--ct-hair);
+  border-radius: 6px;
+  background: #ffffff;
+  font-family: var(--ct-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ------------------------------------------------------------- proof */
+
+.ct-proof {
+  margin: 28px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--ct-hair);
+}
+
+.ct-proof > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px 32px;
+  padding: 18px 0 20px;
+  border-bottom: 1px solid var(--ct-hair);
+}
+
+@media (min-width: 760px) {
+  .ct-proof > div {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+}
+
+.ct-proof dt {
+  font-weight: 600;
+}
+
+.ct-proof dd {
+  margin: 0;
+  max-width: var(--ct-measure);
+}
+
+.ct-proof .ct-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 6px;
+}
+
+.ct-releases {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ct-releases li {
+  display: grid;
+  grid-template-columns: 6.5em minmax(0, 1fr);
+  gap: 0 12px;
+  padding: 4px 0;
+}
+
+.ct-releases .ct-version {
+  font-family: var(--ct-mono);
+  font-size: 15px;
+}
+
+.ct-releases time {
+  font-family: var(--ct-mono);
+  font-size: 15px;
+  color: var(--ct-ink-2);
+}
+
+/* ------------------------------------------------- exhibit placements */
+
+.ct-receipt {
+  position: relative;
+  padding-bottom: 56px;
+}
+
+@media (min-width: 1080px) {
+  /* Exhibit 1 keeps a right-hand column free for the seal, beside the
+     turn's header, so the seal never covers product text. */
+  .ct-receipt {
+    padding: 0 150px 0 0;
+  }
+
+  .ct-receipt .ct-seal {
+    top: 12px;
+    right: 6px;
+    bottom: auto;
+  }
+
+  .ct-zoom {
+    zoom: 1.12;
+  }
+}
+
+.ct-code {
+  --kit-code-size: 15px;
+}
+
+@media (min-width: 1080px) {
+  .ct-code {
+    --kit-code-size: 16px;
+  }
+}
+
+.ct-quote-tr {
+  margin-top: 6px !important;
+  font-size: 1em !important;
+  font-style: normal !important;
+  color: var(--ct-ink-2);
+}
+
+.ct-after-table {
+  margin-top: 24px;
+}
+
+.ct-copy-prompt {
+  margin-top: 12px;
+}
+
+.ct-lane > .ct-ui {
+  margin: 10px 0 0;
+}

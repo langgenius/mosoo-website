@@ -35,26 +35,49 @@ const LINKS = {
 
 const INSTALL_COMMAND = "curl -fsSL https://install.mosoo.ai/install.sh | bash";
 
-// The v2 inline request from the copy deck (How it works). Code stays ASCII.
+// The one example universe (apps/landing/src/product-kit/data/example-universe.ts,
+// the CSV acceptance run of langgenius/mosoo scripts/public-api-session-workflow.ts):
+// the two requests Exhibit 3 shows and the two outputs Exhibit 2 compares. IDs
+// and the hash are Example values. Code stays ASCII. Keep in step with the kit.
+const EXAMPLE = {
+  nonceSha256: "f4607af8347daf9ce0d677ca14d1464af63c0c876a983b8fcc22fd0e7680620f",
+  inputFile: "01M4QP7S669BBSX12Z2564J5F7",
+  instructions: "Use tools to analyze files, verify results and retain private working state for follow-up.",
+  prompt:
+    "Use real Python tools to read the attached input.csv and copy it into the working directory for analysis. Generate a random private nonce in .private/nonce outside outputs. Write outputs/initial.json with grand_total and private_nonce_sha256 (hash the raw file bytes). Save outputs/report.md and outputs/chart.svg. Keep input.csv and the nonce for our next turn. Do not return success if any tool fails.",
+};
+
+const UPLOAD_REQUEST = [
+  "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\",
+  '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
+  '  -F "file=@input.csv"',
+].join("\n");
+
 const START_SESSION_REQUEST = [
   "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/threads \\",
   '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
   '  -H "Content-Type: application/json" \\',
-  '  -H "Idempotency-Key: report-001" \\',
+  '  -H "Idempotency-Key: csv-report-create" \\',
   "  -d '{",
   '    "configuration": {',
   '      "type": "inline",',
   '      "harness": "openai-runtime",',
   '      "provider": "openai",',
   '      "model": "gpt-5.5",',
-  '      "instructions": "Analyze the supplied material and save the results."',
+  `      "instructions": "${EXAMPLE.instructions}"`,
   "    },",
   '    "input": {',
   '      "type": "user.message",',
-  '      "content": [{ "type": "text", "text": "Create an analysis report." }]',
-  "    }",
+  `      "content": [{ "type": "text", "text": "${EXAMPLE.prompt}" }]`,
+  "    },",
+  '    "resources": [',
+  `      { "type": "file", "file_id": "${EXAMPLE.inputFile}" }`,
+  "    ]",
   "  }'",
 ].join("\n");
+
+const outputJson = (grandTotal) =>
+  JSON.stringify({ grand_total: grandTotal, private_nonce_sha256: EXAMPLE.nonceSha256 }, null, 2);
 
 const RUNTIMES = [
   { name: "OpenAI Codex", id: "openai-runtime" },
@@ -228,6 +251,30 @@ const SETUP_PROMPT = {
 const COPY = {
   en: {
     lang: "en",
+    v2b: {
+      exhibit1: "Exhibit 1.",
+      exhibit2: "Exhibit 2.",
+      exhibit3: "Exhibit 3.",
+      exhibit1Caption: "Turn 1 of the CSV example, as the console records it. A turn succeeds only when its events, usage, and a checkpoint are committed together.",
+      exhibit2Caption: "The same Session seven days later. The sandbox was reclaimed while idle, turn 2 restored the last checkpoint, and both outputs carry the same private_nonce_sha256. Turn 3 was cancelled, so turn 2 stays the last committed checkpoint.",
+      exhibit3Caption: "The two requests behind Exhibit 1: upload input.csv, then start a Session with the file attached.",
+      example: "Example values",
+      committed: "committed",
+      durabilityTitle: "A reply seven days later continues the same Session.",
+      specQuote: null,
+      keysTitle: "Provider keys never enter the sandbox.",
+      runtimesTitle: "Each Session freezes its runtime, model, and protocol.",
+      anthropicModels: "Anthropic models",
+      textInput: "Text input",
+      supported: "Supported",
+      notSupported: "Not supported",
+      limitsTitle: "The spec lists what mosoo promises and what it doesn’t do.",
+      promised: "Promised",
+      notProvided: "Not provided",
+      proofTitle: "The source, the releases, and the postmortems are public.",
+      startTitle: "Your first sign-in creates a Default Project.",
+      consoleBody: "Sign in with email or Google. Add a provider key, then start a Session.",
+    },
     docs: `${SITE}/docs/`,
     quickstart: `${SITE}/docs/quickstart/`,
     apiReferenceV2: `${SITE}/docs/api-reference-v2/`,
@@ -261,12 +308,6 @@ const COPY = {
       agentLabel: "Set up with your coding agent",
       agentLine:
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
-    },
-    visual: {
-      caption: "A CSV analysis, started on day 1 and continued 2 days later in the same Session.",
-      badge: "Example values. Field names and event types come from the v2 OpenAPI document.",
-      description:
-        "Example Session record. Your backend sends one request with a CSV attachment. mosoo streams events while the Agent runs Python in the sandbox and saves a report, a chart, and a data file under outputs/. Two days later the backend sends a follow-up to the same Thread. The sandbox had been reclaimed in between, so mosoo restores the working directory and the conversation from the last checkpoint, and the Agent updates the report.",
     },
     wall: {
       title: "Pick a runtime. Use your own model key.",
@@ -495,6 +536,30 @@ const COPY = {
   },
   zh: {
     lang: "zh-CN",
+    v2b: {
+      exhibit1: "图 1",
+      exhibit2: "图 2",
+      exhibit3: "图 3",
+      exhibit1Caption: "CSV 示例的第 1 个 turn，按控制台的记录展示。事件、用量和检查点一起提交之后，turn 才算成功。",
+      exhibit2Caption: "7 天后的同一个 Session。sandbox 闲置后已被回收，turn 2 从最近一次检查点恢复，两份输出的 private_nonce_sha256 相同。turn 3 被取消，所以 turn 2 仍是最近一次提交的检查点。",
+      exhibit3Caption: "图 1 背后的两个请求：先上传 input.csv，再启动一个带上这个文件的 Session。",
+      example: "示例数据",
+      committed: "已提交",
+      durabilityTitle: "7 天后回复，仍在同一个 Session 里继续。",
+      specQuote: "模型或工具执行结束，不等于成功。",
+      keysTitle: "模型供应商密钥从不进入 sandbox。",
+      runtimesTitle: "每个 Session 都会固定自己的 runtime、模型和协议。",
+      anthropicModels: "Anthropic 模型",
+      textInput: "仅文本输入",
+      supported: "支持",
+      notSupported: "不支持",
+      limitsTitle: "产品规格写明了 mosoo 承诺什么、不做什么。",
+      promised: "承诺",
+      notProvided: "不提供",
+      proofTitle: "源码、版本发布和事故复盘都是公开的。",
+      startTitle: "首次登录会自动创建默认项目。",
+      consoleBody: "用邮箱或 Google 登录。添加模型供应商密钥后，就可以启动 Session。",
+    },
     docs: `${SITE}/docs/zh-Hans/`,
     quickstart: `${SITE}/docs/zh-Hans/quickstart/`,
     apiReferenceV2: `${SITE}/docs/zh-Hans/api-reference-v2/`,
@@ -528,12 +593,6 @@ const COPY = {
       agentLabel: "使用编码智能体设置",
       agentLine:
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
-    },
-    visual: {
-      caption: "示例：第 1 天开始一项 CSV 分析，2 天后在同一个 Session 里继续。",
-      badge: "示例数据。字段名和事件类型来自 v2 OpenAPI 文档。",
-      description:
-        "示例 Session 记录。你的后端发送一个带 CSV 附件的请求。Agent 在 sandbox 中运行 Python，mosoo 实时推送事件，并把报告、图表和数据文件保存到 outputs/ 下。2 天后，后端向同一个 Thread 发送后续消息。这期间 sandbox 已被回收，mosoo 从最近一次检查点恢复工作目录和对话，Agent 随后更新了报告。",
     },
     wall: {
       title: "选一个 runtime，用你自己的模型密钥。",
@@ -744,6 +803,30 @@ const COPY = {
   },
   ja: {
     lang: "ja",
+    v2b: {
+      exhibit1: "図 1",
+      exhibit2: "図 2",
+      exhibit3: "図 3",
+      exhibit1Caption: "CSV の例の turn 1 を、コンソールの記録どおりに示します。イベント、使用量、チェックポイントがまとめてコミットされて初めて、turn は成功します。",
+      exhibit2Caption: "7 日後の同じ Session。sandbox はアイドル中に回収され、turn 2 は最後のチェックポイントから復元されました。2 つの出力の private_nonce_sha256 は同じです。turn 3 はキャンセルされたため、turn 2 が最後にコミットされたチェックポイントのまま残ります。",
+      exhibit3Caption: "図 1 の裏にある 2 つのリクエスト。input.csv をアップロードし、そのファイルを添付して Session を開始します。",
+      example: "サンプル値",
+      committed: "コミット済み",
+      durabilityTitle: "7 日後の返信も、同じ Session で続きます。",
+      specQuote: "モデルやツールの実行が終わっただけでは成功ではない。",
+      keysTitle: "プロバイダーキーは sandbox に入りません。",
+      runtimesTitle: "各 Session は runtime、モデル、プロトコルを固定します。",
+      anthropicModels: "Anthropic のモデル",
+      textInput: "テキスト入力のみ",
+      supported: "対応",
+      notSupported: "非対応",
+      limitsTitle: "製品仕様には、mosoo が約束することとやらないことが書かれています。",
+      promised: "約束していること",
+      notProvided: "提供しないもの",
+      proofTitle: "ソースコード、リリース、事後分析は公開されています。",
+      startTitle: "初回ログイン時にデフォルトプロジェクトが作成されます。",
+      consoleBody: "メールアドレスまたは Google でログインします。プロバイダーキーを追加したら、Session を開始できます。",
+    },
     docs: `${SITE}/docs/ja/`,
     quickstart: `${SITE}/docs/ja/quickstart/`,
     apiReferenceV2: `${SITE}/docs/ja/api-reference-v2/`,
@@ -777,12 +860,6 @@ const COPY = {
       agentLabel: "コーディングエージェントでセットアップ",
       agentLine:
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
-    },
-    visual: {
-      caption: "例：1 日目に始めた CSV 分析を、2 日後に同じ Session で続ける。",
-      badge: "サンプル値です。フィールド名とイベントタイプは v2 OpenAPI ドキュメントに基づいています。",
-      description:
-        "Session 記録の例です。バックエンドが CSV を添付したリクエストを 1 つ送ります。Agent が sandbox 内で Python を実行するあいだ、mosoo はイベントを配信し、レポート、グラフ、データファイルを outputs/ に保存します。2 日後、バックエンドは同じ Thread にフォローアップを送ります。その間に sandbox は回収されていたため、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元し、Agent がレポートを更新します。",
     },
     wall: {
       title: "runtime を選び、自分のモデルキーを使う",
@@ -1109,107 +1186,69 @@ function renderHeader(locale, copy) {
 </header>`;
 }
 
+// Margin citations: the product spec section a block restates (v2b "Contract").
+const SPEC_SECTIONS = {
+  all: ["SPEC", "The product contract", ""],
+  s1: ["SPEC §1", "Product", "#1-product"],
+  s2: ["SPEC §2", "Projects, keys and credentials", "#2-projects-keys-and-credentials"],
+  s3: ["SPEC §3", "Configuration and presets", "#3-configuration-and-presets"],
+  s4: ["SPEC §4", "Sessions and durability", "#4-sessions-and-durability"],
+  s5: ["SPEC §5", "Execution and usage", "#5-execution-and-usage"],
+  s7: ["SPEC §7", "Acceptance", "#7-acceptance"],
+  s8: ["SPEC §8", "Scope", "#8-scope"],
+};
+
+function cites(...sections) {
+  return `<div class="mf-cites">${sections
+    .map((section) => {
+      const [label, title, anchor] = SPEC_SECTIONS[section];
+      return `<p class="mf-cite"><a href="${escapeAttribute(LINKS.spec + anchor)}" lang="en" translate="no"><span>${escapeText(label)}</span> <span class="mf-muted">${escapeText(title)}</span></a></p>`;
+    })
+    .join("")}</div>`;
+}
+
+// One block of the document: heading, citations, body.
+function section(id, title, citations, body) {
+  return `<section id="${id}" aria-labelledby="mf-${id}">
+<div class="mf-head"><h2 id="mf-${id}">${inline(title)}</h2>
+${citations}</div>
+<div class="mf-body">
+${body}
+</div>
+</section>`;
+}
+
+function exhibit(label, caption, body) {
+  return `<figure class="mf-exhibit">
+<div class="mf-frame">
+${body}
+</div>
+<figcaption><strong>${inline(label)}</strong> ${inline(caption)}</figcaption>
+</figure>`;
+}
+
 function renderHero(copy) {
   // Keep the category noun on one line in every locale; the text is unchanged.
   const title = inline(copy.hero.title).replace(
     "Agent runtime",
     '<span class="mf-nowrap">Agent runtime</span>',
   );
+  const v2b = copy.v2b;
   return `<section class="mf-hero" aria-labelledby="mf-title">
-<h1 id="mf-title">${title}</h1>
+<div class="mf-head"><h1 id="mf-title">${title}</h1>
+<div class="mf-cites"><p class="mf-cite"><a href="${GITHUB}#readme" lang="en" translate="no"><span>README</span> <span class="mf-muted">langgenius/mosoo</span></a></p></div></div>
+<div class="mf-body">
 <p class="mf-lead">${inline(copy.hero.subhead)}</p>
-<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)} ${link(LINKS.github, copy.cta.source)}</p>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-<div class="mf-agent">
-<p><strong>${inline(copy.hero.agentLabel)}</strong></p>
-<p>${inline(copy.hero.agentLine)}</p>
-${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
+<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
+<p class="mf-muted mf-ui">${inline(copy.alpha)}</p>
+${exhibit(
+  v2b.exhibit1,
+  v2b.exhibit1Caption,
+  `<p class="mf-ui"><span class="mf-seal">turn 1 ${inline(v2b.committed)}</span> <span class="mf-muted">${inline(v2b.example)}</span></p>
+<pre translate="no"><code>outputs/initial.json
+${escapeText(outputJson(230))}</code></pre>`,
+)}
 </div>
-</section>`;
-}
-
-function renderVisual(copy) {
-  return `<figure class="mf-figure">
-<figcaption>${inline(copy.visual.caption)}</figcaption>
-<p class="mf-muted">${inline(copy.visual.badge)}</p>
-<p>${inline(copy.visual.description)}</p>
-</figure>`;
-}
-
-function renderWall(copy) {
-  const wall = copy.wall;
-  const rows = RUNTIMES.map(
-    (runtime) =>
-      `<tr><td>${inline(runtime.name)}</td><td><code translate="no">${runtime.id}</code></td><td>${inline(wall.protocolsByRuntime[runtime.id])}</td></tr>`,
-  ).join("\n");
-  const providers = [...PROVIDERS, wall.customProvider].map((name) => `<li>${inline(name)}</li>`).join("");
-  const protocols = PROTOCOLS.map((name) => `<li>${inline(name)}</li>`).join("");
-
-  return `<section id="runtimes" aria-labelledby="mf-runtimes">
-<h2 id="mf-runtimes">${inline(wall.title)}</h2>
-<p class="mf-intro">${inline(wall.intro)}</p>
-<h3>${inline(wall.runtimes)}</h3>
-<div class="mf-table"><table>
-<thead><tr>${wall.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-<h3>${inline(wall.providers)}</h3>
-<ul class="mf-row mf-chips">${providers}</ul>
-<h3>${inline(wall.protocols)}</h3>
-<ul class="mf-row mf-chips">${protocols}</ul>
-${wall.notes.map((note) => `<p class="mf-muted">${inline(note)}</p>`).join("\n")}
-</section>`;
-}
-
-function renderFeatures(copy) {
-  const features = copy.features;
-  const items = features.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.proof)}</p>
-</li>`,
-    )
-    .join("\n");
-
-  return `<section id="features" aria-labelledby="mf-features">
-<h2 id="mf-features">${inline(features.title)}</h2>
-<p class="mf-intro">${inline(features.intro)}</p>
-<ul class="mf-grid">
-${items}
-</ul>
-<p>${link(LINKS.spec, features.spec)}</p>
-</section>`;
-}
-
-function renderSteps(copy) {
-  const steps = copy.steps;
-  const items = steps.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.io)}</p>
-</li>`,
-    )
-    .join("\n");
-
-  return `<section id="how-it-works" aria-labelledby="mf-steps">
-<h2 id="mf-steps">${inline(steps.title)}</h2>
-<p class="mf-intro">${inline(steps.intro)}</p>
-<ol class="mf-steps">
-${items}
-</ol>
-<figure class="mf-code">
-<figcaption>${inline(steps.codeLabel)}</figcaption>
-${codeBlock(START_SESSION_REQUEST)}
-</figure>
-<p class="mf-muted">${inline(steps.note)}</p>
-<p>${link(copy.apiReferenceV2, steps.apiReference)}</p>
 </section>`;
 }
 
@@ -1218,10 +1257,11 @@ function renderSplit(copy) {
   const list = (rows) =>
     rows.map(([term, detail]) => `<dt>${inline(term)}</dt><dd>${inline(detail)}</dd>`).join("\n");
 
-  return `<section id="your-app-and-mosoo" aria-labelledby="mf-split">
-<h2 id="mf-split">${inline(split.title)}</h2>
-<p class="mf-intro">${inline(split.intro)}</p>
-<div class="mf-cols">
+  return section(
+    "your-app-and-mosoo",
+    split.title,
+    cites("s1"),
+    `<div class="mf-cols">
 <div>
 <h3>${inline(split.app)}</h3>
 <dl>
@@ -1235,8 +1275,128 @@ ${list(split.mosooRows)}
 </dl>
 </div>
 </div>
-<p class="mf-muted">${inline(split.footnote)}</p>
-</section>`;
+<p class="mf-muted">${inline(split.footnote)}</p>`,
+  );
+}
+
+function renderDurability(copy) {
+  const v2b = copy.v2b;
+  const [, , f3, f4] = copy.features.items;
+  const quote = `<blockquote class="mf-quote"><p lang="en">“Model or tool execution ending is not success.”</p>${
+    v2b.specQuote ? `<p class="mf-muted">${inline(v2b.specQuote)}</p>` : ""
+  }<p class="mf-ui"><a href="${LINKS.spec}#checkpoint-gate" lang="en" translate="no">SPEC §4, Checkpoint gate</a></p></blockquote>`;
+  return section(
+    "durability",
+    v2b.durabilityTitle,
+    cites("s4"),
+    `<p>${inline(f3.body)}</p>
+<p>${inline(f3.proof)}</p>
+${quote}
+<p>${inline(f4.body)}</p>
+${exhibit(
+  v2b.exhibit2,
+  v2b.exhibit2Caption,
+  `<p class="mf-ui mf-muted">${inline(v2b.example)}</p>
+<div class="mf-cols">
+<pre translate="no"><code>outputs/initial.json
+${escapeText(outputJson(230))}</code></pre>
+<pre translate="no"><code>outputs/followup.json
+${escapeText(outputJson(250))}</code></pre>
+</div>`,
+)}`,
+  );
+}
+
+function renderKeys(copy) {
+  const v2b = copy.v2b;
+  const steps = copy.steps;
+  const f5 = copy.features.items[4];
+  return section(
+    "keys",
+    v2b.keysTitle,
+    cites("s5", "s2"),
+    `<p>${inline(steps.items[2].body)} ${inline(f5.body)}</p>
+<p>${inline(f5.proof)}</p>
+<p>${inline(steps.items[0].body)}</p>
+${exhibit(
+  v2b.exhibit3,
+  v2b.exhibit3Caption,
+  `<p class="mf-ui mf-muted">${inline(v2b.example)}</p>
+${codeBlock(UPLOAD_REQUEST)}
+<p class="mf-ui">${inline(steps.codeLabel)}</p>
+${codeBlock(START_SESSION_REQUEST)}`,
+)}
+<p class="mf-muted mf-ui">${inline(steps.note)} ${link(copy.apiReferenceV2, steps.apiReference)}</p>`,
+  );
+}
+
+function renderRuntimes(copy) {
+  const wall = copy.wall;
+  const v2b = copy.v2b;
+  const supports = {
+    "openai-runtime": ["Responses"],
+    "claude-agent-sdk": ["Anthropic Messages"],
+    "acp-fallback": PROTOCOLS,
+    pi: PROTOCOLS,
+  };
+  const notes = { "claude-agent-sdk": v2b.anthropicModels, pi: v2b.textInput };
+  const rows = RUNTIMES.map((runtime) => {
+    const cells = PROTOCOLS.map((protocol) =>
+      supports[runtime.id].includes(protocol)
+        ? `<td><span aria-hidden="true">✓</span><span class="mf-sr">${inline(v2b.supported)}</span></td>`
+        : `<td><span class="mf-sr">${inline(v2b.notSupported)}</span></td>`,
+    ).join("");
+    const note = notes[runtime.id] ? `<br /><span class="mf-muted">${inline(notes[runtime.id])}</span>` : "";
+    return `<tr><th scope="row"><span translate="no">${runtime.name}</span><br /><code translate="no">${runtime.id}</code>${note}</th>${cells}</tr>`;
+  }).join("\n");
+  const separator = copy.lang === "en" ? ", " : "、";
+  const end = copy.lang === "en" ? "." : "。";
+
+  return section(
+    "runtimes",
+    v2b.runtimesTitle,
+    cites("s3"),
+    `<p>${inline(wall.intro)}</p>
+<div class="mf-table"><table>
+<caption class="mf-sr">${inline(wall.protocols)}</caption>
+<thead><tr><th scope="col">${inline(wall.runtimes)}</th>${PROTOCOLS.map((protocol) => `<th scope="col" translate="no">${protocol}</th>`).join("")}</tr></thead>
+<tbody>
+${rows}
+</tbody>
+</table></div>
+<p><strong>${inline(wall.providers)}</strong> <span translate="no">${PROVIDERS.join(separator)}</span>${separator}${inline(wall.customProvider)}${end}</p>
+<p class="mf-muted">${wall.notes.map((note) => inline(note)).join(" ")}</p>`,
+  );
+}
+
+function renderPromises(copy) {
+  const v2b = copy.v2b;
+  const promised = copy.features.items
+    .map((item) => `<li><p><strong>${inline(item.title)}</strong></p><p class="mf-muted">${inline(item.proof)}</p></li>`)
+    .join("\n");
+  const gaps = copy.limits.rows
+    .map(([gap, instead]) => `<li><p class="mf-soil"><strong>${inline(gap)}</strong></p><p class="mf-muted">${inline(instead)}</p></li>`)
+    .join("\n");
+  return section(
+    "limits",
+    v2b.limitsTitle,
+    cites("s8"),
+    `<div class="mf-cols">
+<div>
+<h3>${inline(v2b.promised)}</h3>
+<ul class="mf-ledger">
+${promised}
+</ul>
+</div>
+<div>
+<h3 class="mf-soil">${inline(v2b.notProvided)}</h3>
+<ul class="mf-ledger">
+${gaps}
+</ul>
+</div>
+</div>
+<p class="mf-ui">${link(LINKS.spec, copy.features.spec)}</p>`,
+  );
 }
 
 function renderProof(locale, copy) {
@@ -1248,64 +1408,29 @@ function renderProof(locale, copy) {
     )
     .join("\n");
 
-  return `<section id="proof" aria-labelledby="mf-proof">
-<h2 id="mf-proof">${inline(proof.title)}</h2>
-<p class="mf-intro">${inline(proof.intro)}</p>
-<div class="mf-cols">
-<div>
-<h3>${inline(proof.source.title)}</h3>
-<p>${inline(proof.source.body)}</p>
-<p class="mf-row">${link(LINKS.github, copy.cta.source)} ${link(LINKS.spec, copy.features.spec)}</p>
-</div>
-<div>
-<h3>${inline(proof.releases.title)}</h3>
-<p>${inline(proof.releases.body)}</p>
-<dl class="mf-releases">
+  return section(
+    "proof",
+    copy.v2b.proofTitle,
+    cites("s7"),
+    `<p>${inline(proof.intro)}</p>
+<dl class="mf-proof">
+<dt>${inline(proof.source.title)}</dt>
+<dd>${inline(proof.source.body)} ${link(LINKS.github, copy.cta.source)} ${link(LINKS.spec, copy.features.spec)}</dd>
+<dt>${inline(proof.releases.title)}</dt>
+<dd><dl class="mf-releases">
 ${releases}
+</dl>${link(LINKS.releases, proof.releases.link)}</dd>
+<dt>${inline(proof.status.title)}</dt>
+<dd>${inline(proof.status.body)} ${link(copy.health, proof.status.link)}</dd>
+<dt>${inline(proof.postmortems.title)}</dt>
+<dd>${inline(proof.postmortems.body)} ${link(LINKS.incidents, proof.postmortems.link)}</dd>
+<dt translate="no">Codex Pet</dt>
+<dd>${inline(proof.codexPet.body)} ${link(`/${locale}/use-cases/codex-pet`, proof.codexPet.link)}</dd>
+<dt translate="no">ghfind</dt>
+<dd>${inline(proof.ghfind.body)} ${link(`/${locale}/use-cases/ghfind`, proof.ghfind.link)} ${link(LINKS.ghfind, proof.ghfind.app)}</dd>
 </dl>
-<p>${link(LINKS.releases, proof.releases.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.status.title)}</h3>
-<p>${inline(proof.status.body)}</p>
-<p>${link(copy.health, proof.status.link)}</p>
-</div>
-<div>
-<h3>${inline(proof.postmortems.title)}</h3>
-<p>${inline(proof.postmortems.body)}</p>
-<p>${link(LINKS.incidents, proof.postmortems.link)}</p>
-</div>
-<div>
-<h3>Codex Pet</h3>
-<p>${inline(proof.codexPet.body)}</p>
-<p>${link(`/${locale}/use-cases/codex-pet`, proof.codexPet.link)}</p>
-</div>
-<div>
-<h3>ghfind</h3>
-<p>${inline(proof.ghfind.body)}</p>
-<p class="mf-row">${link(`/${locale}/use-cases/ghfind`, proof.ghfind.link)} ${link(LINKS.ghfind, proof.ghfind.app)}</p>
-</div>
-</div>
-<p>${link(`/${locale}/use-cases`, proof.allUseCases)}</p>
-</section>`;
-}
-
-function renderLimits(copy) {
-  const limits = copy.limits;
-  const rows = limits.rows
-    .map(([gap, instead]) => `<tr><th scope="row">${inline(gap)}</th><td>${inline(instead)}</td></tr>`)
-    .join("\n");
-
-  return `<section id="limits" aria-labelledby="mf-limits">
-<h2 id="mf-limits">${inline(limits.title)}</h2>
-<p class="mf-intro">${inline(limits.intro)}</p>
-<div class="mf-table"><table>
-<thead><tr>${limits.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
-<tbody>
-${rows}
-</tbody>
-</table></div>
-</section>`;
+<p class="mf-ui">${link(`/${locale}/use-cases`, proof.allUseCases)}</p>`,
+  );
 }
 
 function renderFaq(locale, copy) {
@@ -1317,34 +1442,39 @@ function renderFaq(locale, copy) {
     .join("\n");
 
   return `<section id="faq" aria-labelledby="mf-faq">
-<h2 id="mf-faq">${inline(copy.faqTitle)}</h2>
+<div class="mf-head"><h2 id="mf-faq">${inline(copy.faqTitle)}</h2>
+${cites("all")}</div>
+<div class="mf-body">
 ${items}
+</div>
 </section>`;
 }
 
 function renderFinal(locale, copy) {
   const final = copy.final;
-  return `<section id="start" aria-labelledby="mf-start">
-<h2 id="mf-start">${inline(final.title)}</h2>
-<div class="mf-cols">
+  return section(
+    "start",
+    copy.v2b.startTitle,
+    cites("s2"),
+    `<div class="mf-cols">
 <div>
 <h3>${inline(final.consoleTitle)}</h3>
-<p>${inline(final.consoleBody)}</p>
+<p>${inline(copy.v2b.consoleBody)}</p>
 <p>${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')}</p>
 </div>
 <div>
 <h3>${inline(final.agentTitle)}</h3>
 <p>${inline(final.agentBody)}</p>
 ${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
+<p class="mf-ui">${link(LINKS.installScript, copy.cta.readScript)}</p>
 <details>
 <summary>${inline(copy.hero.agentLabel)}</summary>
 ${codeBlock(SETUP_PROMPT[locale], "mf-prompt")}
 </details>
 </div>
 </div>
-<p class="mf-muted">${inline(copy.alpha)}</p>
-</section>`;
+<p class="mf-muted mf-ui">${inline(copy.alpha)}</p>`,
+  );
 }
 
 function footerHref(locale, copy, index) {
@@ -1402,13 +1532,12 @@ export function renderHomeFallback(locale) {
 ${renderHeader(locale, copy)}
 <main id="main">
 ${renderHero(copy)}
-${renderVisual(copy)}
-${renderWall(copy)}
-${renderFeatures(copy)}
-${renderSteps(copy)}
 ${renderSplit(copy)}
+${renderDurability(copy)}
+${renderKeys(copy)}
+${renderRuntimes(copy)}
+${renderPromises(copy)}
 ${renderProof(locale, copy)}
-${renderLimits(copy)}
 ${renderFaq(locale, copy)}
 ${renderFinal(locale, copy)}
 </main>
@@ -1485,73 +1614,91 @@ export function renderHomeJsonLd(locale) {
   return `<script type="application/ld+json">\n${json}\n</script>`;
 }
 
-// Scoped to .mosoo-fallback, which only exists until React mounts. Warm paper
-// and forest ink match the landing palette; no web font beyond Geist, and CJK
-// text uses the platform fonts.
+// Scoped to .mosoo-fallback, which only exists until React mounts. It sets the
+// page the way the React page does (v2b "Contract"): very light paper, Literata
+// for reading text (its @font-face comes with the page stylesheet), Geist for
+// interface text, a margin column for spec citations from 1080px. CJK text uses
+// the platform serif faces.
 export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
-.mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
-.mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
+.mosoo-fallback{--mf-paper:#fdfdfb;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-rule:#0b1a14;--mf-lime:#6fd305;--mf-lime-ink:#0f1a02;--mf-soil:#7a5230;--mf-serif:Literata,"Literata Fallback",Georgia,serif;--mf-sans:Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 18px/1.65 var(--mf-serif);overflow-wrap:break-word}
+.mosoo-fallback:lang(zh){--mf-serif:"Literata Latin","Literata Latin Fallback","Songti SC","STSong","Noto Serif CJK SC","Noto Serif SC",serif;--mf-sans:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;font-size:17px;line-height:1.9}
+.mosoo-fallback:lang(ja){--mf-serif:"Literata Latin","Literata Latin Fallback","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","Noto Serif JP",serif;--mf-sans:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;font-size:17px;line-height:1.9;line-break:strict}
 .mosoo-fallback *{box-sizing:border-box}
-.mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
-.mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:var(--mf-ink);color:var(--mf-paper);font-weight:600;text-decoration:none}
+.mosoo-fallback a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-decoration-color:rgba(11,26,20,.4);text-underline-offset:.22em}
+.mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-ink);outline-offset:3px;border-radius:2px}
+.mosoo-fallback .mf-ui,.mosoo-fallback .mf-bar,.mosoo-fallback .mf-foot,.mosoo-fallback .mf-cite,.mosoo-fallback figcaption,.mosoo-fallback table{font-family:var(--mf-sans);font-size:15px;line-height:1.5}
+.mosoo-fallback .mf-btn{display:inline-block;padding:12px 24px;border-radius:8px;background:var(--mf-lime);box-shadow:inset 0 0 0 1px rgba(15,26,2,.22);color:var(--mf-lime-ink);font:600 16px/24px var(--mf-sans);text-decoration:none}
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
-.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
+.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1200px;margin:0 auto;padding-left:16px;padding-right:16px}
 .mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-top:16px;padding-bottom:16px;border-bottom:1px solid var(--mf-line)}
 .mosoo-fallback .mf-bar img{display:block;height:22px;width:auto}
 .mosoo-fallback .mf-bar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
+.mosoo-fallback .mf-bar .mf-btn{padding:6px 14px;background:var(--mf-ink);box-shadow:none;color:var(--mf-paper);font-size:15px}
 .mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none}
 .mosoo-fallback .mf-languages{font-size:14px}
-.mosoo-fallback .mf-menu summary{color:var(--mf-ink)}
 .mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
-.mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
-.mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
-.mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.02em}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
-.mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;font-weight:650;letter-spacing:-.01em}
-.mosoo-fallback h3{margin-top:28px;font-size:18px;line-height:1.35;font-weight:650}
-.mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:70ch}
-.mosoo-fallback p{margin:10px 0 0}
-.mosoo-fallback main>.mf-hero{padding:56px 0 48px;border-top:0}
+.mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch}
+.mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);font-family:var(--mf-serif);text-wrap:balance}
+.mosoo-fallback h1{max-width:19em;font-size:clamp(34px,3.7vw,54px);line-height:1.08;font-weight:500;letter-spacing:-.018em}
+.mosoo-fallback h2{max-width:22em;font-size:clamp(27px,2.5vw,36px);line-height:1.16;font-weight:500;letter-spacing:-.012em}
+.mosoo-fallback h3{margin-top:24px;font-size:1.08em;line-height:1.4;font-weight:600}
+.mosoo-fallback:lang(zh) :is(h1,h2),.mosoo-fallback:lang(ja) :is(h1,h2){letter-spacing:0;line-height:1.32;font-weight:600;word-break:keep-all;overflow-wrap:anywhere}
+.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{font-size:clamp(28px,3vw,44px)}
+.mosoo-fallback:lang(zh) h2,.mosoo-fallback:lang(ja) h2{font-size:clamp(24px,2.2vw,31px)}
+.mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:66ch}
+.mosoo-fallback p{margin:12px 0 0}
 .mosoo-fallback .mf-nowrap{white-space:nowrap}
-.mosoo-fallback .mf-hero h1{margin-top:0}
-.mosoo-fallback .mf-lead{margin-top:20px;font-size:19px;color:var(--mf-muted)}
-.mosoo-fallback .mf-actions{margin-top:28px}
-.mosoo-fallback .mf-muted,.mosoo-fallback .mf-intro,.mosoo-fallback dd{color:var(--mf-muted)}
-.mosoo-fallback .mf-agent{margin-top:32px;padding-top:20px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback main>section,.mosoo-fallback .mf-figure{margin:0;padding:56px 0;border-top:1px solid var(--mf-line)}
-.mosoo-fallback figcaption{font-weight:600}
-.mosoo-fallback .mf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 40px;margin:0;padding:0;list-style:none}
-.mosoo-fallback .mf-steps{margin:8px 0 0;padding-left:1.4em;list-style:decimal}
-.mosoo-fallback .mf-steps>li::marker{font-weight:650}
+.mosoo-fallback .mf-muted,.mosoo-fallback dd{color:var(--mf-muted)}
+.mosoo-fallback .mf-soil{color:var(--mf-soil)}
+.mosoo-fallback .mf-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mosoo-fallback main>section{margin:0;padding:56px 0 64px;border-top:1px solid var(--mf-rule)}
+.mosoo-fallback main>.mf-hero{padding:40px 0 56px;border-top:0}
+.mosoo-fallback .mf-head{display:flex;flex-direction:column;gap:10px}
+.mosoo-fallback .mf-cite{margin:0;color:var(--mf-muted)}
+.mosoo-fallback .mf-cite a{text-decoration:none}
+.mosoo-fallback .mf-cite a>span:first-child{color:var(--mf-ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.22em}
+.mosoo-fallback .mf-body{margin-top:24px;min-width:0}
+.mosoo-fallback .mf-lead{max-width:34em;margin-top:22px;font-size:1.12em;line-height:1.55}
+.mosoo-fallback .mf-actions{margin-top:30px;font-family:var(--mf-sans);font-size:16px;gap:14px 28px}
+.mosoo-fallback .mf-exhibit{margin:48px 0 0}
+.mosoo-fallback .mf-frame{padding:16px 0;border-top:1px solid var(--mf-rule);border-bottom:1px solid var(--mf-line)}
+.mosoo-fallback figcaption{max-width:62ch;margin-top:14px;color:var(--mf-muted)}
+.mosoo-fallback figcaption strong{color:var(--mf-ink)}
+.mosoo-fallback .mf-seal{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--mf-lime);color:var(--mf-lime-ink);font-family:"Geist Mono",ui-monospace,monospace;font-size:14px;font-weight:600}
+.mosoo-fallback .mf-quote{max-width:30em;margin:32px 0;padding:0 0 0 22px;border-left:1px solid var(--mf-rule)}
+.mosoo-fallback .mf-quote>p:first-child{margin:0;font-size:1.3em;font-style:italic;line-height:1.4}
 .mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
-.mosoo-fallback .mf-chips{gap:6px 18px;margin-top:10px}
+.mosoo-fallback .mf-ledger{margin:8px 0 0;padding:0;list-style:none}
+.mosoo-fallback .mf-ledger li{padding:12px 0;border-bottom:1px solid var(--mf-line)}
+.mosoo-fallback .mf-ledger p{margin:0}
 .mosoo-fallback code,.mosoo-fallback pre{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-.mosoo-fallback code{font-size:.92em}
+.mosoo-fallback code{font-size:.84em}
 .mosoo-fallback :not(pre)>code{overflow-wrap:anywhere}
-.mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:8px;background:var(--mf-panel);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:6px;background:#fff;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
 .mosoo-fallback pre code{font-size:inherit}
 .mosoo-fallback .mf-prompt{max-height:420px}
-.mosoo-fallback .mf-code{margin:28px 0 0}
 .mosoo-fallback details{margin-top:16px}
-.mosoo-fallback summary{cursor:pointer;color:var(--mf-link);font-weight:600}
-.mosoo-fallback .mf-table{margin-top:16px;overflow-x:auto}
-.mosoo-fallback table{width:100%;border-collapse:collapse;font-size:15px}
-.mosoo-fallback th,.mosoo-fallback td{padding:10px 16px 10px 0;border-bottom:1px solid var(--mf-line);text-align:left;vertical-align:top}
-.mosoo-fallback th{font-weight:600}
+.mosoo-fallback summary{cursor:pointer;font-family:var(--mf-sans);font-weight:600}
+.mosoo-fallback .mf-table{margin-top:24px;overflow-x:auto}
+.mosoo-fallback table{width:100%;border-collapse:collapse}
+.mosoo-fallback th,.mosoo-fallback td{padding:12px 14px 12px 0;border-bottom:1px solid var(--mf-line);text-align:left;vertical-align:top}
+.mosoo-fallback thead th{border-bottom:1px solid var(--mf-rule);font-weight:500;color:var(--mf-muted)}
+.mosoo-fallback tbody th{font-family:var(--mf-serif);font-size:18px;font-weight:600}
+.mosoo-fallback td{text-align:center;font-weight:600}
 .mosoo-fallback dl{margin:8px 0 0}
-.mosoo-fallback dt{margin-top:12px;font-weight:600}
+.mosoo-fallback dt{margin-top:16px;font-weight:600}
 .mosoo-fallback dd{margin:2px 0 0}
 .mosoo-fallback .mf-releases dt{font-weight:500}
-.mosoo-fallback .mf-qa h3{margin-top:32px}
-.mosoo-fallback .mf-foot{padding-top:48px;padding-bottom:48px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback .mf-signoff{margin:0;font-size:clamp(22px,3vw,28px);font-weight:650;line-height:1.25}
+.mosoo-fallback .mf-qa{padding:20px 0 22px;border-bottom:1px solid var(--mf-line)}
+.mosoo-fallback .mf-qa h3{margin-top:0}
+.mosoo-fallback .mf-qa p{color:var(--mf-ink)}
+.mosoo-fallback .mf-foot{padding-top:48px;padding-bottom:48px;border-top:1px solid var(--mf-rule)}
+.mosoo-fallback .mf-signoff{margin:0;font-family:var(--mf-serif);font-size:clamp(22px,3vw,28px);font-weight:500;line-height:1.25}
 .mosoo-fallback .mf-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:32px}
 .mosoo-fallback .mf-groups ul{margin:8px 0 0;padding:0;list-style:none}
 .mosoo-fallback .mf-groups li{margin-top:4px}
 .mosoo-fallback .mf-label{margin:0;font-weight:600}
-@media (min-width:768px){.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{padding-left:32px;padding-right:32px}.mosoo-fallback .mf-grid,.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:760px){.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1080px){.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{padding-left:40px;padding-right:40px}.mosoo-fallback main>section{display:grid;grid-template-columns:168px minmax(0,1fr);column-gap:56px;padding:72px 0 88px}.mosoo-fallback main>.mf-hero{padding:56px 0 72px}.mosoo-fallback .mf-head{display:contents}.mosoo-fallback .mf-head>:is(h1,h2){grid-column:2;grid-row:1}.mosoo-fallback .mf-cites{grid-column:1;grid-row:1/span 2;padding-top:.75em}.mosoo-fallback .mf-cite a{display:flex;flex-direction:column}.mosoo-fallback .mf-body{grid-column:2;grid-row:2}}
 </style>`;
