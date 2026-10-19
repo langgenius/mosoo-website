@@ -31,10 +31,10 @@ export function FinalCta(): ReactElement {
               "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.",
             )}
           </p>
-          <div className="mt-auto pt-8">
+          <div className="pt-6">
             <a
               href={MOSOO_CLOUD_URL}
-              className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring focus-visible:ring-offset-paper-50 inline-flex h-12 items-center rounded-md px-7 text-[16px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="focus-visible:ring-ring focus-visible:ring-offset-paper-50 inline-flex h-12 items-center rounded-[8px] bg-green-500 px-6 text-[16px] font-semibold text-[#0f1a02] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_0_0_1px_rgba(58,110,14,0.35)] transition-colors outline-none hover:bg-green-400 focus-visible:ring-2 focus-visible:ring-offset-2 active:bg-green-600"
             >
               {t("Try mosoo")}
             </a>

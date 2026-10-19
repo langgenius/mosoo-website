@@ -6,6 +6,8 @@ import { locale } from "@/shared/locale";
 // questions and answers are the same strings the FAQPage JSON-LD and llms.txt
 // use, so humans and crawlers read identical answers; change them together.
 const ZH_MESSAGES = {
+  "Turn receipts":
+    "各轮回执",
   "A follow-up 7 days later continues the same Session":
     "7 天后的后续消息，仍在同一个 Session 里继续",
   "Turn 2 finds `input.csv` and `.private/nonce` where turn 1 left them. The backend sends only the new message.":
@@ -16,8 +18,8 @@ const ZH_MESSAGES = {
     "runtime 和模型分开选择，执行前先校验",
   "Click a runtime: the model list keeps only the models its protocols can serve.":
     "点选一个 runtime：模型列表只保留它支持的协议能调用的模型。",
-  "Turn 1’s events in the console, in the order mosoo saved them.":
-    "控制台里第 1 轮的事件，按 mosoo 保存的顺序排列。",
+  "Each turn’s events in the console, in the order mosoo saved them.":
+    "控制台里每一轮的事件，按 mosoo 保存的顺序排列。",
   "Provider keys never enter the sandbox":
     "模型供应商密钥从不进入 sandbox",
   "Drawn from the product spec and the architecture notes. The console has no such screen.":
@@ -381,6 +383,8 @@ const ZH_MESSAGES = {
 type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
+  "Turn receipts":
+    "ターンの記録",
   "A follow-up 7 days later continues the same Session":
     "7 日後のフォローアップも、同じ Session で続きます",
   "Turn 2 finds `input.csv` and `.private/nonce` where turn 1 left them. The backend sends only the new message.":
@@ -391,8 +395,8 @@ const JA_MESSAGES = {
     "runtime とモデルは別々に選び、実行前に検証されます",
   "Click a runtime: the model list keeps only the models its protocols can serve.":
     "runtime をクリックすると、そのプロトコルで使えるモデルだけが一覧に残ります。",
-  "Turn 1’s events in the console, in the order mosoo saved them.":
-    "コンソールに表示される 1 ターン目のイベント。mosoo が保存した順に並んでいます。",
+  "Each turn’s events in the console, in the order mosoo saved them.":
+    "コンソールに表示される各ターンのイベント。mosoo が保存した順に並んでいます。",
   "Provider keys never enter the sandbox":
     "プロバイダーキーは sandbox に入りません",
   "Drawn from the product spec and the architecture notes. The console has no such screen.":

@@ -1,13 +1,15 @@
-import type { ReactElement } from "react";
+import { useId, useRef, useState } from "react";
+import type { KeyboardEvent, ReactElement } from "react";
 
 import { KeyBoundary } from "@/product-kit/components/key-boundary";
 import { RuntimeMatrix } from "@/product-kit/components/runtime-matrix";
 import { SessionContinuation } from "@/product-kit/components/session-continuation";
 import { TurnReceipt } from "@/product-kit/components/turn-receipt";
+import { consoleText, kitText } from "@/product-kit/i18n";
 import { locale } from "@/shared/locale";
 
 import { t } from "./i18n";
-import { Fact, Lede, StageFigure, StageHeading } from "./stage";
+import { ExampleBadge, Fact, Lede, PixelPlate, StageFigure, StageHeading } from "./stage";
 import { WithCode } from "./ui";
 
 // The four product moments after the hero, each one h2 assertion with the
@@ -107,6 +109,86 @@ function SplitHeader({
   );
 }
 
+type TurnNumber = 1 | 2;
+
+/**
+ * Folder tabs on the receipt's stage (the notched-tab mechanism): Turn 1, and
+ * Turn 2 seven days later. Both receipts are the kit's TurnReceipt with the
+ * story's real event rows; switching remounts it, so the chosen turn plays
+ * its last step once. WAI-ARIA tabs: arrow keys move between the two.
+ */
+function TurnTabs(): ReactElement {
+  const [turn, setTurn] = useState<TurnNumber>(1);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const base = useId();
+  const turns: readonly TurnNumber[] = [1, 2];
+
+  const label = (number: TurnNumber): string => {
+    const name = consoleText(locale, "sessionEvents.turn", { number: String(number) });
+    return number === 1 ? name : `${name} · ${kitText(locale, "daysLater")}`;
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>): void => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight" && event.key !== "Home" && event.key !== "End") {
+      return;
+    }
+    event.preventDefault();
+    const next: TurnNumber = event.key === "Home" ? 1 : event.key === "End" ? 2 : turn === 1 ? 2 : 1;
+    setTurn(next);
+    tabs.current[next - 1]?.focus();
+  };
+
+  return (
+    <figure className="m-0 mt-12 min-w-0">
+      <div role="tablist" aria-label={t("Turn receipts")} className="relative z-10 -mb-px flex gap-1">
+        {turns.map((number) => {
+          const selected = number === turn;
+          return (
+            <button
+              key={number}
+              ref={(node) => {
+                tabs.current[number - 1] = node;
+              }}
+              type="button"
+              role="tab"
+              id={`${base}-tab-${number}`}
+              aria-selected={selected}
+              aria-controls={`${base}-panel`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => {
+                setTurn(number);
+              }}
+              onKeyDown={onKeyDown}
+              className={
+                selected
+                  ? "bg-paper-100 text-ink-900 focus-visible:ring-ring rounded-t-[12px] px-4 py-2.5 text-[16px] font-semibold shadow-[inset_1px_1px_0_var(--border-default),inset_-1px_0_0_var(--border-default)] outline-none focus-visible:ring-2 focus-visible:ring-inset"
+                  : "text-ink-600 hover:text-ink-900 hover:bg-paper-200 focus-visible:ring-ring rounded-t-[12px] px-4 py-2.5 text-[16px] font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset"
+              }
+            >
+              {label(number)}
+            </button>
+          );
+        })}
+      </div>
+      <div
+        role="tabpanel"
+        id={`${base}-panel`}
+        aria-labelledby={`${base}-tab-${turn}`}
+        className="stage rounded-tl-none p-3 sm:p-8 lg:px-[12%] lg:py-14"
+      >
+        <PixelPlate sizes="(max-width: 1023px) calc(100vw - 32px), 90vw" lazy />
+        <div className="stage-window overflow-hidden">
+          <TurnReceipt key={turn} locale={locale} turn={turn} animate />
+        </div>
+      </div>
+      <figcaption className="text-ink-500 mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[16px] leading-[1.5]">
+        <ExampleBadge />
+        <span>{t("Each turn’s events in the console, in the order mosoo saved them.")}</span>
+      </figcaption>
+    </figure>
+  );
+}
+
 /** PM-01: what "completed" means, as the receipt the console keeps. */
 export function TurnsSection(): ReactElement {
   return (
@@ -120,14 +202,7 @@ export function TurnsSection(): ReactElement {
           </Lede>
           <Fact className="mt-4">{t("From the product spec: “Model or tool execution ending is not success.”")}</Fact>
         </SplitHeader>
-        <StageFigure
-          className="mt-12"
-          padClassName="p-3 sm:p-8 lg:px-[12%] lg:py-14"
-          sizes="(max-width: 1023px) calc(100vw - 32px), 90vw"
-          caption={t("Turn 1’s events in the console, in the order mosoo saved them.")}
-        >
-          <TurnReceipt locale={locale} animate />
-        </StageFigure>
+        <TurnTabs />
       </div>
     </section>
   );
