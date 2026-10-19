@@ -306,7 +306,7 @@ html:has(.i-page) {
 /* Page end: the nested outline with the lit inner window (S6) on its line. */
 .i-end {
   position: relative;
-  width: min(560px, 100%);
+  width: min(480px, 100%);
   margin: 0 auto;
   color: var(--ink-1);
 }
@@ -482,12 +482,13 @@ html:has(.i-page) {
 }
 
 @media (max-width: 720px) {
+  /* The closing card keeps its own screen; the outline starts below it. */
   .i-footer-shell {
-    padding: 72px 12px 0;
+    padding: 96px 12px 0;
   }
 
   .i-end {
-    width: min(360px, 100%);
+    width: min(300px, 100%);
   }
 
   .i-ask {

@@ -1055,7 +1055,7 @@ function renderHeader(locale, copy) {
     .join("");
 
   return `<header class="mf-bar">
-<a href="/${locale}" aria-label="${escapeAttribute(copy.nav.home)}"><img src="/brand/logo-wordmark-onlight.svg" alt="mosoo" width="102" height="22" /></a>
+<a href="/${locale}" aria-label="${escapeAttribute(copy.nav.home)}"><span class="mf-mark" role="img" aria-label="mosoo"></span></a>
 <nav aria-label="Primary site links">
 <ul class="mf-row">
 <li><details class="mf-menu"><summary>${inline(copy.nav.products)}</summary><ul>${products}</ul></details></li>
@@ -1436,22 +1436,23 @@ export function renderHomeJsonLd(locale) {
   return `<script type="application/ld+json">\n${json}\n</script>`;
 }
 
-// Scoped to .mosoo-fallback, which only exists until React mounts. Warm paper
-// and forest ink match the landing palette; no web font beyond Geist, and CJK
-// text uses the platform fonts.
+// Scoped to .mosoo-fallback, which only exists until React mounts. The
+// instrument canvas (v4a UI-LOCK §1): dark ground, 1px rails, the three
+// self-hosted faces the React page declares (Inter Text, Display Fallback,
+// Fragment Mono); CJK text uses the platform fonts.
 export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
-.mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
-.mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
+.mosoo-fallback{--mf-paper:#0e0f0d;--mf-ink:#eff1ee;--mf-muted:#a9aca8;--mf-line:#242623;--mf-link:#eff1ee;--mf-panel:#141513;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 "Inter Text",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
+.mosoo-fallback:lang(zh){font-family:"Inter Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+.mosoo-fallback:lang(ja){font-family:"Inter Text","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
 .mosoo-fallback *{box-sizing:border-box}
 .mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
 .mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(15,26,2,.16)}
+.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:4px;background:#eff1ee;color:#0e0f0d;font-weight:500;text-decoration:none}
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
 .mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
 .mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-top:16px;padding-bottom:16px;border-bottom:1px solid var(--mf-line)}
-.mosoo-fallback .mf-bar img{display:block;height:22px;width:auto}
+.mosoo-fallback .mf-mark{display:block;width:78px;height:17px;background:var(--mf-ink);-webkit-mask:url("/brand/logo-wordmark-ondark.svg") left center/contain no-repeat;mask:url("/brand/logo-wordmark-ondark.svg") left center/contain no-repeat}
 .mosoo-fallback .mf-bar nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px}
 .mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none}
 .mosoo-fallback .mf-languages{font-size:14px}
@@ -1459,9 +1460,9 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
 .mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
 .mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
-.mosoo-fallback h1,.mosoo-fallback h2{font-family:var(--font-literata,Georgia,serif);font-weight:400}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:var(--font-literata-zh,"Songti SC",serif);font-weight:600}
-.mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:var(--font-literata-ja,"Hiragino Mincho ProN",serif);font-weight:600}
+.mosoo-fallback h1,.mosoo-fallback h2{font-family:"Display Fallback",ui-serif,Georgia,serif;font-weight:400}
+.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:"Display Fallback","Songti SC","Noto Serif CJK SC",serif;font-weight:400}
+.mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:"Display Fallback","Hiragino Mincho ProN","Noto Serif CJK JP",serif;font-weight:400}
 .mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;letter-spacing:-.02em}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
@@ -1483,7 +1484,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-steps>li::marker{font-weight:650}
 .mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
 .mosoo-fallback .mf-chips{gap:6px 18px;margin-top:10px}
-.mosoo-fallback code,.mosoo-fallback pre{font-family:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mosoo-fallback code,.mosoo-fallback pre{font-family:"Fragment Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .mosoo-fallback code{font-size:.92em}
 .mosoo-fallback :not(pre)>code{overflow-wrap:anywhere}
 .mosoo-fallback pre{margin:14px 0 0;padding:14px 16px;overflow-x:auto;border:1px solid var(--mf-line);border-radius:8px;background:var(--mf-panel);font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}

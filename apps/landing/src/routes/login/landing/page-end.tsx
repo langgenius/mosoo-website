@@ -7,11 +7,14 @@ import {
   NESTED_VIEWBOX,
 } from "@/shared/brand/outline-paths";
 
-const OPACITY = { 0: 1, 1: 0.4, 2: 0.22 } as const;
+// Quieter than brand/outline §d's 22/40/100%: the inner 1px line was the
+// brightest shape on the page (UI review P2-7), so the outline reads as a
+// place, not a logo.
+const OPACITY = { 0: 0.64, 1: 0.32, 2: 0.18 } as const;
 
 /**
  * The page end: the logo outline at its one large size (three nested
- * windows, 22% / 40% / 100%), the inner window lit from below (study S6,
+ * windows, 18% / 32% / 64%), the inner window lit from below (study S6,
  * brand/outline/studies/s6-dark-glow.png), standing on its line with one 7px
  * live dot, the page's only green on an outline. Under the line, one quiet
  * status row (Forge's live strip, issue #99): an event name and a state.
