@@ -652,10 +652,7 @@
 /* The kit's JSON panels break long hashes anywhere; the global :lang(ja)
    auto-phrase rule (app.css, @layer base) would otherwise keep a hash whole
    and clip it in Japanese. */
-.v2a-shell [data-surface="console"] pre,
-.v2a-shell [data-surface="console"] pre * {
-  word-break: break-all;
-}
+
 
 /* Home page navigation: a low floating capsule (#99), the one translucent
    surface besides the stage shell. Phones keep the full-width bar. */

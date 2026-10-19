@@ -1,6 +1,5 @@
-import type { CSSProperties, ReactElement } from "react";
+import type { ReactElement } from "react";
 
-import { ApiCall } from "@/product-kit/components/api-call";
 import { locale } from "@/shared/locale";
 
 import { docsUrl } from "../links";
@@ -70,7 +69,6 @@ function KeepHyphenated({ text }: { text: string }): ReactElement {
 }
 
 // Code at the page's body size (the kit reads --kit-code-size).
-const CODE_SIZE = { "--kit-code-size": "16px" } as CSSProperties;
 
 export function HowItWorks(): ReactElement {
   return (
@@ -142,12 +140,6 @@ export function HowItWorks(): ReactElement {
         </div>
 
         <div className="self-start xl:sticky xl:top-24">
-          <div
-            className="rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-4"
-            style={CODE_SIZE}
-          >
-            <ApiCall fold locale={locale} />
-          </div>
           <div className="mt-5 flex flex-col gap-2">
             <ArrowLink href={docsUrl("api-reference-v2/")} className="self-start">
               {t("Open the v2 API reference")}

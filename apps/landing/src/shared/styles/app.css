@@ -1,8 +1,4 @@
 @import "tailwindcss";
-/* The product kit compiles its own scoped utilities (product-kit/console-island.css,
-   loaded only with a kit import); scanning it here would add its classes to
-   every page. tests/product-kit.test.mjs checks this build equals one without the kit. */
-@source not "../../product-kit";
 
 @font-face {
   font-family: "Geist";
@@ -487,8 +483,8 @@
   :lang(ja) :is(h1, h2, h3, h4, label, figcaption, caption, th, dt, button) {
     word-break: auto-phrase;
   }
-  :lang(ja) :is([data-surface="console"], pre, code),
-  :lang(ja) :is([data-surface="console"], pre, code) * {
+  :lang(ja) :is(pre, code),
+  :lang(ja) :is(pre, code) * {
     line-break: auto;
     word-break: normal;
   }
