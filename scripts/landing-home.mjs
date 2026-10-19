@@ -751,7 +751,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
 .mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1120px;margin:0 auto;padding-left:28px;padding-right:28px;border-left:1px solid var(--mf-line);border-right:1px solid var(--mf-line)}
-.mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;min-height:64px;border-bottom:1px solid var(--mf-line)}
+.mosoo-fallback .mf-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;min-height:64px;padding-top:12px;padding-bottom:12px;border-bottom:1px solid var(--mf-line)}
 .mosoo-fallback .mf-mark{display:block;width:78px;height:17px;background:var(--mf-ink);-webkit-mask:url("/brand/logo-wordmark-ondark.svg") left center/contain no-repeat;mask:url("/brand/logo-wordmark-ondark.svg") left center/contain no-repeat}
 .mosoo-fallback .mf-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:0;padding:0;list-style:none;font-size:14px}
 .mosoo-fallback .mf-bar a:not(.mf-btn){color:var(--mf-muted);text-decoration:none}
@@ -759,8 +759,9 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:"Display Fallback","Songti SC","Noto Serif CJK SC",serif;word-break:keep-all}
 .mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:"Display Fallback","Hiragino Mincho ProN","Noto Serif CJK JP",serif;word-break:auto-phrase}
 .mosoo-fallback h1{max-width:600px;font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.03em}
-.mosoo-fallback h2{max-width:22ch;font-size:clamp(30px,4vw,44px);line-height:1.06;letter-spacing:-.02em}
+.mosoo-fallback h2{max-width:600px;font-size:clamp(30px,4vw,44px);line-height:1.06;letter-spacing:-.02em}
 .mosoo-fallback .mf-soft{color:var(--mf-soft)}
+.mosoo-fallback h1 .mf-soft,.mosoo-fallback h2 .mf-soft{display:block}
 .mosoo-fallback p{margin:12px 0 0;max-width:62ch}
 .mosoo-fallback main>section{margin:0 -28px;padding:72px 28px;border-top:1px solid var(--mf-line)}
 .mosoo-fallback main>.mf-hero{padding-top:96px;border-top:0}
