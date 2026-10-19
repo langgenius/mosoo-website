@@ -740,9 +740,12 @@
     font-size: 34px;
   }
 
+  /* The hero keeps the whole first screen, so the next heading starts
+     below the fold (first-screen word budget). */
   .i-hero {
     display: block;
     height: auto;
+    min-height: calc(100svh - 64px);
     padding: 56px var(--pad) 72px;
   }
 

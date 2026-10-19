@@ -59,9 +59,10 @@
   --edge-2: rgb(255 255 255 / 0.13);
   --fill-1: rgb(255 255 255 / 0.06);
 
+  /* A licensed Arizona Mix: add its @font-face, then list it first here. */
   --font-display:
-    "ABC Arizona Mix", "Display Fallback", "Songti SC", "Noto Serif CJK SC",
-    "Source Han Serif SC", "Hiragino Mincho ProN", ui-serif, Georgia, serif;
+    "Display Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    "Hiragino Mincho ProN", ui-serif, Georgia, serif;
   --font-text:
     "Inter Text", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans",
     "Microsoft YaHei UI", "Noto Sans CJK SC", ui-sans-serif, system-ui,
@@ -513,4 +514,42 @@ html:has(.i-page) {
   .i-footer-bottom {
     padding-inline: 8px;
   }
+}
+
+/* The other landing pages (pricing, status, use cases) keep their own markup
+   and inherit the canvas by a token swap: the paper ramp becomes the dark
+   canvas, the ink ramp turns over to light inks, borders become white
+   alphas. The semantic tokens are re-pointed here because :root resolves
+   them against the light ramps. */
+.i-page,
+.i-page[data-theme="landing"] {
+  --paper-50: #141513;
+  --paper-100: #0e0f0d;
+  --paper-200: #181917;
+  --paper-300: #1f201e;
+  --paper-400: #2a2c29;
+  --ink-50: #141513;
+  --ink-100: #1c1d1b;
+  --ink-200: #2a2c29;
+  --ink-300: #4c4e4b;
+  --ink-400: #737572;
+  --ink-500: #8c8f8b;
+  --ink-600: #a9aca8;
+  --ink-700: #c9cbc8;
+  --ink-800: #e3e5e2;
+  --ink-900: #eff1ee;
+  --ink-950: #f7f8f6;
+  --bg: var(--paper-100);
+  --bg-elevated: #141513;
+  --bg-sunken: #080807;
+  --bg-canvas: #0e0f0d;
+  --bg-sidebar: #141513;
+  --fg-1: var(--ink-900);
+  --fg-2: var(--ink-600);
+  --fg-3: var(--ink-500);
+  --fg-muted: var(--ink-400);
+  --fg-inverse: var(--paper-100);
+  --border-soft: rgb(255 255 255 / 0.05);
+  --border-default: rgb(255 255 255 / 0.08);
+  --border-strong: rgb(255 255 255 / 0.14);
 }
