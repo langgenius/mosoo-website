@@ -1,14 +1,17 @@
 import type { ReactElement } from "react";
 
-import { cn } from "@/shared/lib/class-names";
+import { KeyBoundary } from "@/product-kit/components/key-boundary";
+import { locale } from "@/shared/locale";
 
 import { t } from "./i18n";
-import { SectionHeading, WithCode } from "./ui";
+import { WithCode } from "./ui";
 
 type Duty = { readonly term: string; readonly gloss: string };
 
 // Copy deck §7: the two halves of docs/SPEC.md §1, in the spec's order, with
-// one plain gloss each.
+// one plain gloss each. Under them, the system drawing (#129): the product
+// kit's credential boundary (SPEC §5, architecture §4), so "mosoo runs the
+// Agent" is shown as the parts that run it and where the keys stay.
 function appDuties(): readonly Duty[] {
   return [
     { term: t("Business logic"), gloss: t("What the task is for and what happens to the result") },
@@ -32,23 +35,15 @@ function mosooDuties(): readonly Duty[] {
   ];
 }
 
-function DutyList({
-  heading,
-  duties,
-  className,
-}: {
-  heading: string;
-  duties: readonly Duty[];
-  className?: string;
-}): ReactElement {
+function DutyList({ heading, duties, tone }: { heading: string; duties: readonly Duty[]; tone: "app" | "mosoo" }): ReactElement {
   return (
-    <div className={cn("p-6 md:p-8", className)}>
-      <h3 className="text-ink-900 text-[19px] font-semibold">{heading}</h3>
+    <div>
+      <h3 className={tone === "app" ? "v2a-h3" : "v2a-h3"}>{heading}</h3>
       <dl className="mt-5">
         {duties.map((duty) => (
           <div
             key={duty.term}
-            className="border-border-strong grid gap-1 border-t py-3.5 sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] sm:gap-5"
+            className="grid gap-1 border-t border-[rgba(109,120,106,0.35)] py-3 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:gap-5"
           >
             <dt className="text-ink-900 text-[16px] font-semibold">{duty.term}</dt>
             <dd className="text-ink-500 text-[16px] leading-[1.55]">
@@ -63,20 +58,22 @@ function DutyList({
 
 export function SplitSection(): ReactElement {
   return (
-    <section id="your-app-and-mosoo" aria-labelledby="split-title" className="px-4 py-20 md:px-6 md:py-24">
-      <SectionHeading
-        id="split-title"
-        title={t("Your app keeps its users. mosoo runs the Agent.")}
-        intro={t("This split comes straight from the product spec.")}
-      />
-      <div className="border-border-strong mt-12 grid overflow-hidden rounded-[14px] border md:grid-cols-2">
-        <DutyList heading={t("Your app keeps")} duties={appDuties()} className="bg-paper-50" />
-        <DutyList
-          heading={t("mosoo runs")}
-          duties={mosooDuties()}
-          className="border-border-strong border-t bg-green-50 md:border-t-0 md:border-l"
-        />
+    <section id="your-app-and-mosoo" aria-labelledby="split-title" className="v2a-section">
+      <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
+      <h2 id="split-title" className="v2a-display v2a-h2">
+        {t("Your app keeps its users. mosoo runs the Agent.")}
+      </h2>
+      <p className="v2a-intro">{t("This split comes straight from the product spec.")}</p>
+
+      <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-14">
+        <DutyList heading={t("Your app keeps")} duties={appDuties()} tone="app" />
+        <DutyList heading={t("mosoo runs")} duties={mosooDuties()} tone="mosoo" />
       </div>
+
+      <div className="mt-14 rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-5">
+        <KeyBoundary locale={locale} />
+      </div>
+
       <p className="text-ink-500 mt-6 max-w-[760px] text-[16px] leading-[1.6]">
         <WithCode
           text={t(

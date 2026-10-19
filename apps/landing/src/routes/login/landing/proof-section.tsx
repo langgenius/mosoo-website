@@ -9,7 +9,7 @@ import {
   statusPath,
 } from "../links";
 import { t } from "./i18n";
-import { ArrowLink, SectionHeading } from "./ui";
+import { ArrowLink } from "./ui";
 
 // Copy deck §8: only what a visitor can check. No logos, star counts or
 // success rates. Release facts were checked against GitHub Releases on
@@ -87,7 +87,7 @@ function releases(): readonly { version: string; date: string; change: string }[
 
 function ReleaseList(): ReactElement {
   return (
-    <ol aria-label={t("Releases")} className="border-border-strong mt-4 border-l pl-4">
+    <ol aria-label={t("Releases")} className="mt-4 border-l border-[rgba(109,120,106,0.6)] pl-4">
       {releases().map((release, index) => (
         <li key={release.version} className="py-1.5">
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -156,23 +156,25 @@ function useCaseCards(): readonly UseCaseCard[] {
 
 export function ProofSection(): ReactElement {
   return (
-    <section id="proof" aria-labelledby="proof-title" className="px-4 py-20 md:px-6 md:py-24">
-      <SectionHeading
-        id="proof-title"
-        title={t("What you can check for yourself")}
-        intro={t(
+    <section id="proof" aria-labelledby="proof-title" className="v2a-section v2a-tight">
+      <span aria-hidden="true" className="v2a-node" style={{ top: 94 }} />
+      <h2 id="proof-title" className="v2a-display v2a-h2">
+        {t("The code, the releases, and the incident postmortems are public.")}
+      </h2>
+      <p className="v2a-intro">
+        {t(
           "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.",
         )}
-      />
+      </p>
 
       <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
-        <ul className="border-border-strong border-t">
+        <ul className="border-t border-[rgba(109,120,106,0.35)]">
           {checkables().map((item) => (
             <li
               key={item.id}
-              className="border-border-strong grid gap-2 border-b py-6 sm:grid-cols-[11rem_minmax(0,1fr)] sm:gap-6"
+              className="grid gap-2 border-b border-[rgba(109,120,106,0.35)] py-6 sm:grid-cols-[11rem_minmax(0,1fr)] sm:gap-6"
             >
-              <h3 className="text-ink-900 text-[17px] font-semibold">{item.label}</h3>
+              <h3 className="v2a-label pt-1">{item.label}</h3>
               <div>
                 <p className="text-ink-500 text-[16px] leading-[1.6]">{item.copy}</p>
                 {item.id === "releases" ? <ReleaseList /> : null}

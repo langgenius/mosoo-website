@@ -1,7 +1,6 @@
 import type { ReactElement } from "react";
 
 import { FAQ_MESSAGES, t } from "./i18n";
-import { sectionHeadingStyle } from "./typography";
 import { WithCodeTokens } from "./ui";
 
 // API names styled as code inside the answers. Only presentation changes: the
@@ -21,23 +20,20 @@ const FAQ_CODE_TOKENS = [
  */
 export function FaqSection(): ReactElement {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="px-4 py-20 md:px-6 md:py-24">
+    <section id="faq" aria-labelledby="faq-title" className="v2a-section">
+      <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
       <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(220px,0.8fr)_1.9fr] md:gap-16">
         <div>
-          <h2
-            id="faq-title"
-            className="text-ink-900 [text-wrap:balance] md:sticky md:top-24"
-            style={sectionHeadingStyle}
-          >
+          <h2 id="faq-title" className="v2a-display v2a-h2 md:sticky md:top-24">
             {t("Questions to ask before you build on mosoo")}
           </h2>
         </div>
 
-        <div className="border-border-strong border-t">
+        <div className="border-t border-[rgba(109,120,106,0.35)]">
           {FAQ_MESSAGES.map((faq) => (
-            <div key={faq.q} className="border-border-strong border-b py-6">
+            <div key={faq.q} className="border-b border-[rgba(109,120,106,0.35)] py-6">
               <h3 className="text-ink-900 text-[18px] leading-[1.4] font-semibold">{t(faq.q)}</h3>
-              <p className="text-ink-500 mt-2.5 max-w-[720px] text-[16px] leading-[1.65]">
+              <p className="text-ink-700 mt-2.5 max-w-[720px] text-[16px] leading-[1.65]">
                 <WithCodeTokens text={t(faq.a)} tokens={FAQ_CODE_TOKENS} />
               </p>
             </div>

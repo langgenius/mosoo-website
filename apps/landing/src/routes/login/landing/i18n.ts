@@ -350,6 +350,38 @@ const ZH_MESSAGES = {
     "mosoo 开源吗？可以用于生产环境吗？",
   "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
     "mosoo 以 Apache 2.0 许可证开源，源码在 GitHub 上。它目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。/api/v1 保持线上兼容，无法兼容的改动会作为新的 API 版本发布。最快的试用方式是托管控制台 cloud.mosoo.ai。README 也说明了如何在本地运行，方便开发。",
+  "Anthropic models":
+    "Anthropic 模型",
+  "text input":
+    "文本输入",
+  "Accepted":
+    "支持",
+  "Not accepted":
+    "不支持",
+  "mosoo handles execution, files, events, and usage.":
+    "执行、文件、事件和用量由 mosoo 负责。",
+  "One request starts a Session. A follow-up continues it.":
+    "一个请求启动 Session，后续消息让它接着做。",
+  "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.":
+    "假设你的后端需要一份 CSV 数据报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告以 `outputs/` 下的文件返回。",
+  "Change":
+    "变化",
+  "The key is stored with your Project, outside every sandbox.":
+    "密钥保存在你的项目中，不进入任何 sandbox。",
+  "mosoo creates a durable Session, a Thread in the API, and runs the first turn.":
+    "mosoo 创建一个持久的 Session（API 中称为 Thread），并运行第一个 turn。",
+  "Events, usage, and a checkpoint are committed together.":
+    "事件、用量和检查点一起提交。",
+  "mosoo restores the working directory and the conversation from the last checkpoint.":
+    "mosoo 从最近一次检查点恢复工作目录和对话。",
+  "The code, the releases, and the incident postmortems are public.":
+    "代码、版本发布和事故复盘都是公开的。",
+  "mosoo leaves these out on purpose.":
+    "这些是 mosoo 有意不做的事。",
+  "Start your first Session.":
+    "启动你的第一个 Session。",
+  "Reply in a minute or in seven days.":
+    "1 分钟后或 7 天后回复都可以。",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -699,6 +731,38 @@ const JA_MESSAGES = {
     "mosoo はオープンソースですか？本番環境で使えますか？",
   "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development.":
     "mosoo は Apache 2.0 ライセンスのオープンソースで、ソースコードは GitHub にあります。現在は Alpha 版のため、公開 API や製品の動作は変わる可能性があります。/api/v1 は互換性を維持し、互換性を保てない変更は新しい API バージョンとして公開されます。すぐに試すなら、ホスト版のコンソール cloud.mosoo.ai が最も手軽です。開発用にローカルで動かす手順は README にあります。",
+  "Anthropic models":
+    "Anthropic のモデル",
+  "text input":
+    "テキスト入力",
+  "Accepted":
+    "対応",
+  "Not accepted":
+    "非対応",
+  "mosoo handles execution, files, events, and usage.":
+    "実行、ファイル、イベント、使用量は mosoo が担います。",
+  "One request starts a Session. A follow-up continues it.":
+    "1 つのリクエストで Session が始まり、フォローアップで続きを実行します。",
+  "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.":
+    "たとえば、バックエンドで CSV ファイルのレポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートは `outputs/` 配下のファイルとして返ってきます。",
+  "Change":
+    "変化",
+  "The key is stored with your Project, outside every sandbox.":
+    "キーはプロジェクトに保存され、どの sandbox にも入りません。",
+  "mosoo creates a durable Session, a Thread in the API, and runs the first turn.":
+    "mosoo が永続的な Session（API では Thread）を作成し、最初の turn を実行します。",
+  "Events, usage, and a checkpoint are committed together.":
+    "イベント、使用量、チェックポイントがまとめてコミットされます。",
+  "mosoo restores the working directory and the conversation from the last checkpoint.":
+    "mosoo が最後のチェックポイントから作業ディレクトリと会話を復元します。",
+  "The code, the releases, and the incident postmortems are public.":
+    "コード、リリース、インシデントの事後分析は公開されています。",
+  "mosoo leaves these out on purpose.":
+    "mosoo はこれらを意図的に提供していません。",
+  "Start your first Session.":
+    "最初の Session を始めましょう。",
+  "Reply in a minute or in seven days.":
+    "返信は 1 分後でも 7 日後でもかまいません。",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };

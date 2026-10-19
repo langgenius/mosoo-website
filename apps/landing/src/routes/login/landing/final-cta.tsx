@@ -6,7 +6,6 @@ import { MOSOO_CLOUD_URL, MOSOO_INSTALL_COMMAND, MOSOO_INSTALL_SCRIPT_URL } from
 import { CopyButton } from "./copy-button";
 import { t } from "./i18n";
 import { SETUP_PROMPT } from "./setup-prompt";
-import { sectionHeadingStyle } from "./typography";
 
 /**
  * Copy deck §11: say what happens on click, then offer the two ways in the
@@ -18,13 +17,18 @@ export function FinalCta(): ReactElement {
   const setupPrompt = SETUP_PROMPT[locale];
 
   return (
-    <section id="start" aria-labelledby="start-title" className="px-4 py-20 md:px-6 md:py-24">
-      <h2 id="start-title" className="text-ink-900 [text-wrap:balance]" style={sectionHeadingStyle}>
-        {t("Start your first Session")}
+    <section id="start" aria-labelledby="start-title" className="v2a-section pb-28">
+      <span aria-hidden="true" className="v2a-node" style={{ top: 117 }} />
+      {/* The hero's two-tone sentence, closing the page: the act in full ink,
+          the promise softer. */}
+      <h2 id="start-title" className="v2a-display v2a-h1">
+        <span>{t("Start your first Session.")}</span>
+        {locale === "en" ? " " : null}
+        <span className="v2a-tone-soft">{t("Reply in a minute or in seven days.")}</span>
       </h2>
 
-      <div className="border-border-strong mt-10 grid grid-cols-1 overflow-hidden rounded-[14px] border md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-        <div className="bg-paper-50 flex flex-col p-6 md:p-8">
+      <div className="mt-12 grid grid-cols-1 overflow-hidden rounded-[16px] bg-[rgba(251,251,249,0.94)] shadow-[0_0_0_1px_rgba(11,26,20,0.1)] md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+        <div className="flex flex-col p-6 md:p-8">
           <h3 className="text-ink-900 text-[20px] font-semibold">{t("In the console")}</h3>
           <p className="text-ink-500 mt-3 max-w-[440px] text-[16px] leading-[1.6]">
             {t(
@@ -32,16 +36,13 @@ export function FinalCta(): ReactElement {
             )}
           </p>
           <div className="mt-auto pt-8">
-            <a
-              href={MOSOO_CLOUD_URL}
-              className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring focus-visible:ring-offset-paper-50 inline-flex h-12 items-center rounded-md px-7 text-[16px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            >
+            <a href={MOSOO_CLOUD_URL} className="v2a-btn-primary">
               {t("Try mosoo")}
             </a>
           </div>
         </div>
 
-        <div className="border-border-strong bg-paper-50 min-w-0 border-t p-6 md:border-t-0 md:border-l md:p-8">
+        <div className="min-w-0 border-t border-[rgba(109,120,106,0.35)] p-6 md:border-t-0 md:border-l md:p-8">
           <h3 id="agent-lane-title" className="text-ink-900 text-[20px] font-semibold">
             {t("In your coding agent")}
           </h3>
@@ -53,7 +54,7 @@ export function FinalCta(): ReactElement {
           <pre
             tabIndex={0}
             aria-labelledby="agent-lane-title"
-            className="border-border-strong bg-paper-100 text-ink-700 focus-visible:ring-ring mt-5 max-h-56 overflow-auto rounded-[10px] border p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap outline-none focus-visible:ring-2"
+            className="border-border-strong bg-paper-100 text-ink-700 focus-visible:ring-ring mt-5 max-h-56 overflow-auto rounded-[10px] border p-4 font-mono text-[14px] leading-[1.6] whitespace-pre-wrap outline-none focus-visible:ring-2"
           >
             {setupPrompt}
           </pre>
