@@ -71,7 +71,8 @@
   line-gap-override: 0%;
 }
 
-:root {
+/* html:root outranks app.css's :root tokens on the subpages, so every page shares the paper type. */
+html:root {
   /* Raw stacks under their own names, so locale rules can swap them without a var() cycle. */
   --paper-display: "Display Fallback", "Display Local", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
     "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
@@ -87,7 +88,7 @@
 }
 
 /* Japanese pages: the display face falls to Mincho before the Chinese serif. */
-:root:lang(ja) {
+html:root:lang(ja) {
   --paper-display: "Display Fallback", "Display Local", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP",
     "Songti SC", ui-serif, Georgia, serif;
   --paper-sans: "Inter", "Inter Local", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo",
