@@ -34,52 +34,16 @@ const ZH_MESSAGES = {
     "有些事，mosoo 刻意不做",
   "The fastest way to try mosoo is the hosted console":
     "试用 mosoo 最快的方式是托管控制台",
-  "Pick a runtime. Use your own model key.":
-    "选一个 runtime，用你自己的模型密钥。",
-  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
-    "4 个 runtime、下列模型供应商，或任何兼容 OpenAI 的 HTTPS 端点。mosoo 会在执行前检查 runtime、模型和协议是否匹配。",
-  "Runtimes":
-    "Runtime",
-  "Model providers (your keys)":
-    "模型供应商（使用你的密钥）",
-  "Model protocols":
-    "模型协议",
-  "Name":
-    "名称",
-  "API id":
-    "API id",
-  "All 4":
-    "全部 4 种",
-  "All 4 (text input)":
-    "全部 4 种（仅文本输入）",
-  "Anthropic Messages (Anthropic models)":
-    "Anthropic Messages（Anthropic 模型）",
-  "Custom OpenAI-compatible endpoint":
-    "自定义 OpenAI 兼容端点",
   "Provider keys belong to your Project, and the provider bills your account directly.":
     "模型供应商密钥属于你的项目，费用由供应商直接向你的账户收取。",
   "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
     "名称和标志仅用于标明兼容的服务，不代表合作或背书。",
-  "What mosoo runs for your backend":
-    "mosoo 为你的后端承担的工作",
-  "Each of these is a promise in the product spec. The spec is linked below.":
-    "下面每一项都是产品规格里的承诺，规格链接在下方。",
   "Read the product spec":
     "阅读产品规格",
-  "Start a Session without creating an Agent":
-    "无需创建 Agent，直接启动 Session",
-  "Put the harness, provider, model, and instructions in one request. mosoo starts a durable Session and creates no Agent.":
-    "在一个请求里写明 harness、模型供应商、模型和指令，mosoo 就会启动持久 Session，不会创建 Agent。",
-  "`configuration.type: \"inline\"` on `POST /api/v2/projects/{projectId}/threads`. Saved presets are optional.":
-    "在 `POST /api/v2/projects/{projectId}/threads` 中使用 `configuration.type: \"inline\"`。保存的 Agent 预设是可选项。",
-  "Choose the runtime per Session":
-    "每个 Session 单独选择 runtime",
   "Run OpenAI Codex, Claude Agent SDK, OpenCode, or Pi. Each Session freezes its runtime, model, and protocol, and nothing falls back silently.":
     "可选 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi。每个 Session 会固定自己的 runtime、模型和协议，不会悄悄回退。",
   "A runtime and model protocol that don’t match are rejected before anything runs.":
     "runtime 与模型协议不匹配时，会在执行前被拒绝。",
-  "Reply 1 minute or 7 days later":
-    "1 分钟后或 7 天后回复，都能接着做",
   "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
     "后续消息会在同一个 Session 里继续，即使 sandbox 已被回收。工作目录、对话和文件都会从最近一次检查点恢复。",
   "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
@@ -90,22 +54,14 @@ const ZH_MESSAGES = {
     "完成意味着事件、用量和检查点已经一起提交。失败或取消的 turn 不会覆盖上一次成功的状态。",
   "From the product spec: “Model or tool execution ending is not success.”":
     "产品规格原文：“Model or tool execution ending is not success.”（模型或工具执行结束，不等于成功。）",
-  "Keys stay outside the sandbox":
-    "密钥留在 sandbox 之外",
   "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
     "模型供应商密钥和 MCP 凭据不会进入 sandbox。runtime 通过 mosoo 的代理访问模型和工具，代理在每次请求时注入凭据。",
   "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
     "sandbox 只拿到会过期的授权。环境变量则不同，sandbox 里的代码可以读取它们。",
-  "Attach files, stream events, download results":
-    "附件进，结果出，事件实时可见",
   "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
     "附件以只读方式挂载。Agent 写到 `outputs/` 下的文件会成为可下载的产出物。进度可以通过 SSE 实时查看，也可以读取已保存的历史。",
   "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
     "事件先保存再推送，稳定的 ID 让客户端重连时不会收到重复事件。mosoo 不提供 Webhook。",
-  "From one request to a finished report":
-    "从一个请求到一份完成的报告",
-  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
-    "假设你的后端需要一份调研报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告最后以文件的形式返回。",
   "Add your model key.":
     "添加模型密钥。",
   "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
@@ -142,82 +98,12 @@ const ZH_MESSAGES = {
     "输入",
   "Out":
     "输出",
-  "Start a Session":
-    "启动 Session",
-  "Copy request":
-    "复制请求",
-  "Request copied":
-    "请求已复制",
   "Open the v2 API reference":
     "查看 v2 API 参考",
   "Model IDs change often. Check the models available in your Project before you copy this.":
     "模型 ID 经常变化，复制前请先确认你的项目里有哪些可用模型。",
   "Copy failed.":
     "复制失败。",
-  "Your app keeps its users. mosoo runs the Agent.":
-    "你的应用管用户，mosoo 运行 Agent。",
-  "This split comes straight from the product spec.":
-    "这个分工直接来自产品规格。",
-  "Your app keeps":
-    "你的应用负责",
-  "mosoo runs":
-    "mosoo 负责",
-  "Business logic":
-    "业务逻辑",
-  "What the task is for and what happens to the result":
-    "任务为什么做，结果怎么用",
-  "End-user authentication":
-    "终端用户认证",
-  "mosoo never signs your users in":
-    "mosoo 不替你的用户登录",
-  "Business queues":
-    "业务队列",
-  "When work starts and in what order":
-    "什么时候开始、按什么顺序",
-  "Result validation":
-    "结果校验",
-  "You decide whether the report is right":
-    "报告对不对，由你判断",
-  "Business storage":
-    "业务存储",
-  "Keep the `thread.id` and whatever you extract":
-    "保存 `thread.id` 和你提取的结果",
-  "UI":
-    "界面",
-  "Your product, your screens":
-    "你的产品，你的页面",
-  "Agent execution":
-    "Agent 执行",
-  "The harness runs each turn: model calls, code, tools":
-    "harness 运行每个 turn：模型调用、代码、工具",
-  "Sandboxing":
-    "sandbox 隔离",
-  "One sandbox per Session, never shared":
-    "每个 Session 一个 sandbox，从不共享",
-  "Durable continuation":
-    "持久续接",
-  "Follow-ups restore the last checkpoint":
-    "后续消息从最近一次检查点恢复",
-  "Input files and artifacts":
-    "输入文件与产出物",
-  "Attachments in, `outputs/` out":
-    "附件进，`outputs/` 出",
-  "Events":
-    "事件",
-  "Saved first, then streamed over SSE":
-    "先保存，再通过 SSE 推送",
-  "Usage measurement":
-    "用量计量",
-  "One record per model call":
-    "每次模型调用一条记录",
-  "Runtime cleanup":
-    "运行时清理",
-  "Idle sandboxes are reclaimed; the Session’s state stays":
-    "闲置的 sandbox 会被回收，Session 的状态保留",
-  "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
-    "mosoo 不认证你的终端用户。如果你的 MCP 服务器需要知道是谁发起的请求，可以给 Thread 标上你自己的 `userId`。",
-  "What you can check for yourself":
-    "你可以亲自核实的内容",
   "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
     "mosoo 目前处于 Alpha 阶段。今天能核实的，是代码、版本发布、生产状态，以及两个基于它构建的项目。",
   "Source":
@@ -274,8 +160,6 @@ const ZH_MESSAGES = {
     "Codex Pet 应用的上传页面，访客在这里放入一张头像。",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
-  "What mosoo doesn’t do":
-    "mosoo 不做的事",
   "The product spec lists these on purpose. Plan around them before you build.":
     "这些是产品规格里明确写下的取舍。开始构建前，先把它们考虑进去。",
   "Not included":
@@ -312,8 +196,6 @@ const ZH_MESSAGES = {
     "这属于另一款产品 Mosoo Computer。",
   "Questions to ask before you build on mosoo":
     "开始构建前值得问的问题",
-  "Start your first Session":
-    "启动你的第一个 Session",
   "In the console":
     "在控制台中",
   "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.":
@@ -411,52 +293,16 @@ const JA_MESSAGES = {
     "mosoo が意図して扱わないこと",
   "The fastest way to try mosoo is the hosted console":
     "mosoo を試す一番の近道はホスト型コンソールです",
-  "Pick a runtime. Use your own model key.":
-    "runtime を選び、自分のモデルキーを使う",
-  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
-    "4 つの runtime、以下のプロバイダー、そして OpenAI 互換の任意の HTTPS エンドポイントに対応します。mosoo は実行前に runtime、モデル、プロトコルの組み合わせを確認します。",
-  "Runtimes":
-    "runtime",
-  "Model providers (your keys)":
-    "モデルプロバイダー（ご自身のキー）",
-  "Model protocols":
-    "モデルプロトコル",
-  "Name":
-    "名前",
-  "API id":
-    "API id",
-  "All 4":
-    "4 種類すべて",
-  "All 4 (text input)":
-    "4 種類すべて（テキスト入力のみ）",
-  "Anthropic Messages (Anthropic models)":
-    "Anthropic Messages（Anthropic のモデル）",
-  "Custom OpenAI-compatible endpoint":
-    "OpenAI 互換のカスタムエンドポイント",
   "Provider keys belong to your Project, and the provider bills your account directly.":
     "プロバイダーキーはプロジェクトに属し、料金はプロバイダーからお客様のアカウントに直接請求されます。",
   "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
     "名称とロゴは互換性のあるサービスを示すもので、提携や推奨を意味するものではありません。",
-  "What mosoo runs for your backend":
-    "mosoo がバックエンドの代わりに担うこと",
-  "Each of these is a promise in the product spec. The spec is linked below.":
-    "どれも製品仕様に書かれた約束です。仕様へのリンクは下にあります。",
   "Read the product spec":
     "製品仕様を読む",
-  "Start a Session without creating an Agent":
-    "Agent を作らずに Session を開始",
-  "Put the harness, provider, model, and instructions in one request. mosoo starts a durable Session and creates no Agent.":
-    "1 つのリクエストに harness、プロバイダー、モデル、指示を書くだけで、mosoo は永続的な Session を開始します。Agent は作成されません。",
-  "`configuration.type: \"inline\"` on `POST /api/v2/projects/{projectId}/threads`. Saved presets are optional.":
-    "`POST /api/v2/projects/{projectId}/threads` で `configuration.type: \"inline\"` を指定します。保存済みプリセットは任意です。",
-  "Choose the runtime per Session":
-    "runtime は Session ごとに選べる",
   "Run OpenAI Codex, Claude Agent SDK, OpenCode, or Pi. Each Session freezes its runtime, model, and protocol, and nothing falls back silently.":
     "OpenAI Codex、Claude Agent SDK、OpenCode、Pi から選べます。各 Session は runtime、モデル、プロトコルを固定し、黙って別のものに切り替わることはありません。",
   "A runtime and model protocol that don’t match are rejected before anything runs.":
     "runtime とモデルプロトコルが合わない組み合わせは、実行前に拒否されます。",
-  "Reply 1 minute or 7 days later":
-    "1 分後でも 7 日後でも続きから",
   "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
     "フォローアップは、sandbox が回収された後でも同じ Session で続きます。作業ディレクトリ、会話、ファイルは最後のチェックポイントから戻ります。",
   "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
@@ -467,22 +313,14 @@ const JA_MESSAGES = {
     "完了とは、イベント、使用量、チェックポイントがまとめてコミットされたことを意味します。失敗やキャンセルした turn が、直前の正常な状態を上書きすることはありません。",
   "From the product spec: “Model or tool execution ending is not success.”":
     "製品仕様の原文：“Model or tool execution ending is not success.”（モデルやツールの実行が終わっただけでは成功ではない）",
-  "Keys stay outside the sandbox":
-    "キーは sandbox の外に",
   "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
     "プロバイダーキーと MCP の認証情報は sandbox に入りません。runtime は mosoo のプロキシ経由でモデルやツールにアクセスし、認証情報はプロキシがリクエストごとに付与します。",
   "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
     "sandbox が受け取るのは期限付きの権限だけです。環境変数は例外で、sandbox 内のコードから読み取れます。",
-  "Attach files, stream events, download results":
-    "ファイルを渡し、イベントを追い、結果を受け取る",
   "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
     "添付ファイルは読み取り専用でマウントされます。Agent が `outputs/` に書き込んだものは、ダウンロードできる成果物になります。進捗は SSE でも保存済みの履歴でも確認できます。",
   "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
     "イベントは保存してから送信され、安定した ID によって再接続しても重複しません。Webhook はありません。",
-  "From one request to a finished report":
-    "1 つのリクエストから、完成したレポートまで",
-  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
-    "たとえば、バックエンドで調査レポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートはファイルとして返ってきます。",
   "Add your model key.":
     "モデルのキーを追加する。",
   "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
@@ -519,82 +357,12 @@ const JA_MESSAGES = {
     "入力",
   "Out":
     "出力",
-  "Start a Session":
-    "Session を開始",
-  "Copy request":
-    "リクエストをコピー",
-  "Request copied":
-    "リクエストをコピーしました",
   "Open the v2 API reference":
     "v2 API リファレンスを開く",
   "Model IDs change often. Check the models available in your Project before you copy this.":
     "モデル ID はよく変わります。コピーする前に、プロジェクトで使えるモデルを確認してください。",
   "Copy failed.":
     "コピーに失敗しました。",
-  "Your app keeps its users. mosoo runs the Agent.":
-    "ユーザーはアプリが持ち、Agent は mosoo が動かす",
-  "This split comes straight from the product spec.":
-    "この役割分担は、製品仕様そのままです。",
-  "Your app keeps":
-    "アプリが担うこと",
-  "mosoo runs":
-    "mosoo が担うこと",
-  "Business logic":
-    "ビジネスロジック",
-  "What the task is for and what happens to the result":
-    "タスクの目的と、結果の使い道",
-  "End-user authentication":
-    "エンドユーザー認証",
-  "mosoo never signs your users in":
-    "mosoo がユーザーをログインさせることはありません",
-  "Business queues":
-    "業務キュー",
-  "When work starts and in what order":
-    "いつ、どの順で始めるか",
-  "Result validation":
-    "結果の検証",
-  "You decide whether the report is right":
-    "レポートが正しいかを判断する",
-  "Business storage":
-    "業務データの保存",
-  "Keep the `thread.id` and whatever you extract":
-    "`thread.id` と抽出した結果を保存する",
-  "UI":
-    "UI",
-  "Your product, your screens":
-    "あなたのプロダクトの画面",
-  "Agent execution":
-    "Agent の実行",
-  "The harness runs each turn: model calls, code, tools":
-    "harness が turn ごとにモデル呼び出し、コード、ツールを実行",
-  "Sandboxing":
-    "sandbox による分離",
-  "One sandbox per Session, never shared":
-    "Session ごとに 1 つ、共有しない",
-  "Durable continuation":
-    "永続的な継続",
-  "Follow-ups restore the last checkpoint":
-    "フォローアップは最後のチェックポイントから復元",
-  "Input files and artifacts":
-    "入力ファイルと成果物",
-  "Attachments in, `outputs/` out":
-    "添付ファイルを受け取り、`outputs/` を返す",
-  "Events":
-    "イベント",
-  "Saved first, then streamed over SSE":
-    "保存してから SSE で配信",
-  "Usage measurement":
-    "使用量の計測",
-  "One record per model call":
-    "モデル呼び出しごとに 1 件",
-  "Runtime cleanup":
-    "runtime の後片付け",
-  "Idle sandboxes are reclaimed; the Session’s state stays":
-    "アイドルの sandbox は回収し、Session の状態は残す",
-  "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
-    "mosoo はエンドユーザーを認証しません。MCP サーバーが依頼者を知る必要がある場合は、Thread に独自の `userId` を付けてください。",
-  "What you can check for yourself":
-    "自分で確かめられること",
   "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
     "mosoo は現在 Alpha 版です。今確かめられるのは、コード、リリース、本番環境のステータス、そして mosoo で作られた 2 つのプロジェクトです。",
   "Source":
@@ -651,8 +419,6 @@ const JA_MESSAGES = {
     "Codex Pet アプリのアップロード画面。ここにアバターを 1 枚ドロップします。",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
-  "What mosoo doesn’t do":
-    "mosoo がやらないこと",
   "The product spec lists these on purpose. Plan around them before you build.":
     "以下は製品仕様に明記された判断です。作り始める前に、前提として織り込んでください。",
   "Not included":
@@ -689,8 +455,6 @@ const JA_MESSAGES = {
     "それは別のプロダクト、Mosoo Computer の領域です。",
   "Questions to ask before you build on mosoo":
     "使い始める前に確認したいこと",
-  "Start your first Session":
-    "最初の Session を始める",
   "In the console":
     "コンソールで",
   "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.":
