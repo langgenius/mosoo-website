@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 
 import { MOSOO_SPEC_URL } from "../links";
@@ -33,6 +33,26 @@ export function SpecCite({ section }: { section: SpecSection }): ReactElement {
   );
 }
 
+/**
+ * Headings in zh and ja set word-break: keep-all, so a line only breaks at a
+ * space or at a "|" in the dictionary string, which renders as <wbr>. The
+ * text itself is unchanged; English strings carry no marks.
+ */
+export function Phrases({ text }: { text: string }): ReactElement {
+  const parts = text.split("|");
+  return (
+    <>
+      {parts.map((part, index) => (
+        // Fragments of a static string: the index is a stable key.
+        <Fragment key={index}>
+          {index > 0 ? <wbr /> : null}
+          {part}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 /** One block of the document: heading, its citations, then the body. */
 export function ContractSection({
   id,
@@ -50,7 +70,7 @@ export function ContractSection({
     <section id={id} aria-labelledby={titleId} className="ct-section">
       <div className="ct-head">
         <h2 id={titleId} className="ct-h2">
-          {title}
+          <Phrases text={title} />
         </h2>
         <div className="ct-cites">
           {cites.map((section) => (

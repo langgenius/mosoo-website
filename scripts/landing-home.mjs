@@ -545,19 +545,19 @@ const COPY = {
       exhibit3Caption: "图 1 背后的两个请求：先上传 input.csv，再启动一个带上这个文件的 Session。",
       example: "示例数据",
       committed: "已提交",
-      durabilityTitle: "7 天后回复，仍在同一个 Session 里继续。",
+      durabilityTitle: "7 天后回复，|仍在同一个 Session 里继续。",
       specQuote: "模型或工具执行结束，不等于成功。",
-      keysTitle: "模型供应商密钥从不进入 sandbox。",
-      runtimesTitle: "每个 Session 都会固定自己的 runtime、模型和协议。",
+      keysTitle: "模型供应商密钥|从不进入 sandbox。",
+      runtimesTitle: "每个 Session 都会固定|自己的 runtime、|模型和协议。",
       anthropicModels: "Anthropic 模型",
       textInput: "仅文本输入",
       supported: "支持",
       notSupported: "不支持",
-      limitsTitle: "产品规格写明了 mosoo 承诺什么、不做什么。",
+      limitsTitle: "产品规格写明了 mosoo|承诺什么、|不做什么。",
       promised: "承诺",
       notProvided: "不提供",
-      proofTitle: "源码、版本发布和事故复盘都是公开的。",
-      startTitle: "首次登录会自动创建默认项目。",
+      proofTitle: "源码、|版本发布|和事故复盘|都是公开的。",
+      startTitle: "首次登录|会自动创建|默认项目。",
       consoleBody: "用邮箱或 Google 登录。添加模型供应商密钥后，就可以启动 Session。",
     },
     docs: `${SITE}/docs/zh-Hans/`,
@@ -1207,10 +1207,11 @@ function cites(...sections) {
     .join("")}</div>`;
 }
 
-// One block of the document: heading, citations, body.
+// One block of the document: heading, citations, body. A "|" in a zh or ja
+// heading marks where a line may break (keep-all headings), as <wbr>.
 function section(id, title, citations, body) {
   return `<section id="${id}" aria-labelledby="mf-${id}">
-<div class="mf-head"><h2 id="mf-${id}">${inline(title)}</h2>
+<div class="mf-head"><h2 id="mf-${id}">${inline(title).replaceAll("|", "<wbr>")}</h2>
 ${citations}</div>
 <div class="mf-body">
 ${body}
@@ -1643,7 +1644,9 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback h1{max-width:19em;font-size:clamp(34px,3.7vw,54px);line-height:1.08;font-weight:500;letter-spacing:-.018em}
 .mosoo-fallback h2{max-width:22em;font-size:clamp(27px,2.5vw,36px);line-height:1.16;font-weight:500;letter-spacing:-.012em}
 .mosoo-fallback h3{margin-top:24px;font-size:1.08em;line-height:1.4;font-weight:600}
-.mosoo-fallback:lang(zh) :is(h1,h2),.mosoo-fallback:lang(ja) :is(h1,h2){letter-spacing:0;line-height:1.32;font-weight:600;word-break:keep-all;overflow-wrap:anywhere}
+.mosoo-fallback:lang(zh) :is(h1,h2),.mosoo-fallback:lang(ja) :is(h1,h2){letter-spacing:0;line-height:1.32;font-weight:600}
+.mosoo-fallback:lang(zh) :is(h1,h2,h3){word-break:keep-all;overflow-wrap:anywhere}
+.mosoo-fallback:lang(ja) :is(h1,h2,h3){word-break:auto-phrase}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{font-size:clamp(28px,3vw,44px)}
 .mosoo-fallback:lang(zh) h2,.mosoo-fallback:lang(ja) h2{font-size:clamp(24px,2.2vw,31px)}
 .mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:66ch}

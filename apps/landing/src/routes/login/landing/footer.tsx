@@ -165,7 +165,7 @@ export function LandingFooter(): ReactElement {
 
             {footerGroups().map((group) => (
               <div key={group.heading}>
-                <h2 className="text-paper-100 text-[15px] font-semibold">{group.heading}</h2>
+                <p className="text-paper-100 text-[15px] font-semibold">{group.heading}</p>
                 <ul className="mt-4 flex flex-col gap-2.5">
                   {group.links.map((link) => (
                     <li key={link.href}>

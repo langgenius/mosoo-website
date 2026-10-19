@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { ReactElement } from "react";
 
 import { TurnReceipt } from "@/product-kit/components/turn-receipt";
@@ -7,21 +8,24 @@ import { docsUrl, MOSOO_CLOUD_URL, MOSOO_GITHUB_URL } from "../links";
 import { t } from "./above-fold-i18n";
 import { Exhibit, Seal, useCommitSeal } from "./contract-ui";
 
-const PRODUCT_TERM = "Agent runtime";
+// Terms that must not break across lines inside the translated title.
+const KEEP_TOGETHER = /(Agent runtime|API ファースト|API 优先)/;
 
-/** Keeps the product term on one line inside a translated headline. */
-function KeepProductTerm({ text }: { text: string }): ReactElement {
-  const [before, after] = text.split(PRODUCT_TERM);
-  if (after === undefined) {
-    return <>{text}</>;
-  }
+/** Keeps the product terms on one line inside a translated headline. */
+function KeepTerms({ text }: { text: string }): ReactElement {
+  const parts = text.split(KEEP_TOGETHER);
   return (
     <>
-      {before}
-      <span translate="no" className="ct-nowrap">
-        {PRODUCT_TERM}
-      </span>
-      {after}
+      {parts.map((part, index) =>
+        index % 2 === 1 ? (
+          // Fragments of a static string: the index is a stable key.
+          <span key={index} translate={part === "Agent runtime" ? "no" : undefined} className="ct-nowrap">
+            {part}
+          </span>
+        ) : (
+          <Fragment key={index}>{part}</Fragment>
+        ),
+      )}
     </>
   );
 }
@@ -39,7 +43,7 @@ export function Hero(): ReactElement {
     <section aria-labelledby="hero-title" className="ct-hero">
       <div className="ct-head">
         <h1 id="hero-title" className="ct-h1">
-          <KeepProductTerm text={t("An open-source, API-first managed Agent runtime for application backends.")} />
+          <KeepTerms text={t("An open-source, API-first managed Agent runtime for application backends.")} />
         </h1>
         <div className="ct-cites">
           <p className="ct-cite">

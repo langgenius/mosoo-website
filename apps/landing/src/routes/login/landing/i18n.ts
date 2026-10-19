@@ -127,7 +127,7 @@ const ZH_MESSAGES = {
   "Copy failed.":
     "复制失败。",
   "Your app keeps its users. mosoo runs the Agent.":
-    "你的应用管用户，mosoo 运行 Agent。",
+    "你的应用管用户，|mosoo 运行 Agent。",
   "This split comes straight from the product spec.":
     "这个分工直接来自产品规格。",
   "Your app keeps":
@@ -283,7 +283,7 @@ const ZH_MESSAGES = {
   "That’s Mosoo Computer, a separate product.":
     "这属于另一款产品 Mosoo Computer。",
   "Questions to ask before you build on mosoo":
-    "开始构建前值得问的问题",
+    "开始构建前|值得问的问题",
   "Start your first Session":
     "启动你的第一个 Session",
   "In the console":
@@ -354,19 +354,19 @@ const ZH_MESSAGES = {
   "Model or tool execution ending is not success.":
     "模型或工具执行结束，不等于成功。",
   "A reply seven days later continues the same Session.":
-    "7 天后回复，仍在同一个 Session 里继续。",
+    "7 天后回复，|仍在同一个 Session 里继续。",
   "Exhibit 2.":
     "图 2",
   "The same Session seven days later. The sandbox was reclaimed while idle, turn 2 restored the last checkpoint, and both outputs carry the same private_nonce_sha256. Turn 3 was cancelled, so turn 2 stays the last committed checkpoint.":
     "7 天后的同一个 Session。sandbox 闲置后已被回收，turn 2 从最近一次检查点恢复，两份输出的 private_nonce_sha256 相同。turn 3 被取消，所以 turn 2 仍是最近一次提交的检查点。",
   "Provider keys never enter the sandbox.":
-    "模型供应商密钥从不进入 sandbox。",
+    "模型供应商密钥|从不进入 sandbox。",
   "Exhibit 3.":
     "图 3",
   "The two requests behind Exhibit 1: upload input.csv, then start a Session with the file attached.":
     "图 1 背后的两个请求：先上传 input.csv，再启动一个带上这个文件的 Session。",
   "Each Session freezes its runtime, model, and protocol.":
-    "每个 Session 都会固定自己的 runtime、模型和协议。",
+    "每个 Session 都会固定|自己的 runtime、|模型和协议。",
   "Anthropic models":
     "Anthropic 模型",
   "Text input":
@@ -376,15 +376,15 @@ const ZH_MESSAGES = {
   "Not supported":
     "不支持",
   "The spec lists what mosoo promises and what it doesn’t do.":
-    "产品规格写明了 mosoo 承诺什么、不做什么。",
+    "产品规格写明了 mosoo|承诺什么、|不做什么。",
   "Promised":
     "承诺",
   "Not provided":
     "不提供",
   "The source, the releases, and the postmortems are public.":
-    "源码、版本发布和事故复盘都是公开的。",
+    "源码、|版本发布|和事故复盘|都是公开的。",
   "Your first sign-in creates a Default Project.":
-    "首次登录会自动创建默认项目。",
+    "首次登录|会自动创建|默认项目。",
   "Sign in with email or Google. Add a provider key, then start a Session.":
     "用邮箱或 Google 登录。添加模型供应商密钥后，就可以启动 Session。",
 } as const;

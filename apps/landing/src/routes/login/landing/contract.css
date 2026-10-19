@@ -167,9 +167,19 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 :lang(zh) .ct-page :is(.ct-h1, .ct-h2),
 :lang(ja) .ct-page :is(.ct-h1, .ct-h2) {
   letter-spacing: 0;
+  line-height: 1.32;
+}
+
+/* zh: break only at spaces and at the dictionary's <wbr> phrase marks. */
+:lang(zh) .ct-page :is(.ct-h1, .ct-h2, .ct-h3) {
   word-break: keep-all;
   overflow-wrap: anywhere;
-  line-height: 1.32;
+}
+
+/* ja: phrase-aware breaking where supported (Chrome 119+), else normal
+   kinsoku line breaking. */
+:lang(ja) .ct-page :is(.ct-h1, .ct-h2, .ct-h3) {
+  word-break: auto-phrase;
 }
 
 :lang(zh) .ct-page .ct-h1,
@@ -322,7 +332,7 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
   color: var(--ct-lime-ink);
   font-family: var(--ct-sans);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 120ms ease;
@@ -338,7 +348,7 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 
 .ct-link-ui {
   font-family: var(--ct-sans);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
 }
 
@@ -784,4 +794,46 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 
 .ct-lane > .ct-ui {
   margin: 10px 0 0;
+}
+
+/* ------------------------------------------------------------ rhythm */
+
+/* Not one padding for every block: exhibits get more air after them, the
+   reference blocks (matrix, proof) sit tighter, the closing block opens up. */
+@media (min-width: 1080px) {
+  .ct-section:has(.ct-exhibit) {
+    padding-bottom: 120px;
+  }
+
+  #runtimes.ct-section,
+  #proof.ct-section {
+    padding-top: 60px;
+    padding-bottom: 72px;
+  }
+
+  #start.ct-section {
+    padding-top: 96px;
+    padding-bottom: 128px;
+  }
+}
+
+/* ------------------------------------------------------------ footer */
+
+/* The shared footer keeps its markup; on the home page its sign-off is set
+   in the document's face (the component sets the display face inline). */
+html[data-page="home"] .landing-footer > div > p:first-child {
+  font-family: var(--font-literata) !important;
+  font-style: italic;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em !important;
+}
+
+html[data-page="home"]:lang(zh) .landing-footer > div > p:first-child {
+  font-family: var(--font-literata-zh) !important;
+  font-style: normal;
+}
+
+html[data-page="home"]:lang(ja) .landing-footer > div > p:first-child {
+  font-family: var(--font-literata-ja) !important;
+  font-style: normal;
 }
