@@ -56,6 +56,31 @@ function DutyList({ heading, duties, tone }: { heading: string; duties: readonly
   );
 }
 
+/**
+ * The way in (#129): your backend calls the mosoo API over HTTPS with a
+ * Project API key, and every Session runs in its own sandbox. The kit's
+ * credential boundary below shows what happens inside.
+ */
+function SystemPath(): ReactElement {
+  return (
+    <ol className="v2a-path" aria-label={t("From your backend to a Session sandbox")}>
+      <li className="v2a-path-node">{t("Your backend")}</li>
+      <li className="v2a-path-edge">
+        <span>{t("HTTPS and a Project API key")}</span>
+      </li>
+      <li className="v2a-path-node" translate="no">
+        mosoo API
+      </li>
+      <li className="v2a-path-edge">
+        <span>{t("One sandbox per Session, never shared")}</span>
+      </li>
+      <li className="v2a-path-node" translate="no">
+        Session sandbox
+      </li>
+    </ol>
+  );
+}
+
 export function SplitSection(): ReactElement {
   return (
     <section id="your-app-and-mosoo" aria-labelledby="split-title" className="v2a-section">
@@ -70,8 +95,11 @@ export function SplitSection(): ReactElement {
         <DutyList heading={t("mosoo runs")} duties={mosooDuties()} tone="mosoo" />
       </div>
 
-      <div className="mt-14 rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-5">
-        <KeyBoundary locale={locale} />
+      <div className="mt-16">
+        <SystemPath />
+        <div className="mt-6 rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-5">
+          <KeyBoundary locale={locale} />
+        </div>
       </div>
 
       <p className="text-ink-500 mt-6 max-w-[760px] text-[16px] leading-[1.6]">

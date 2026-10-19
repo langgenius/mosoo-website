@@ -87,9 +87,9 @@ function releases(): readonly { version: string; date: string; change: string }[
 
 function ReleaseList(): ReactElement {
   return (
-    <ol aria-label={t("Releases")} className="mt-4 border-l border-[rgba(109,120,106,0.6)] pl-4">
+    <ol aria-label={t("Releases")} className="v2a-releases mt-4 border-l border-[rgba(109,120,106,0.6)] pl-4">
       {releases().map((release, index) => (
-        <li key={release.version} className="py-1.5">
+        <li key={release.version} className="relative py-1.5">
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span translate="no" className="text-ink-900 font-mono text-[14px] font-semibold">
               {release.version}

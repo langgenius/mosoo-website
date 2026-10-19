@@ -574,3 +574,109 @@
     min-height: calc(100svh - 66px);
   }
 }
+
+/* The way in (#129): nodes and labelled 1px edges, one row on wide screens,
+   one column on phones. */
+.v2a-path {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v2a-path-node {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(11, 26, 20, 0.16);
+  color: var(--v2a-ink);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.v2a-path-edge {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 140px;
+  padding: 0 14px 22px;
+  text-align: center;
+}
+
+.v2a-path-edge::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 6px;
+  bottom: 10px;
+  height: 1px;
+  background: var(--v2a-sage);
+}
+
+.v2a-path-edge::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+  border-left: 7px solid var(--v2a-sage);
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+}
+
+.v2a-path-edge span {
+  display: block;
+  color: var(--v2a-ink-2);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+@media (max-width: 767px) {
+  .v2a-path {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .v2a-path-edge {
+    flex: none;
+    min-width: 0;
+    margin-left: 22px;
+    padding: 12px 0 14px 22px;
+    text-align: left;
+  }
+
+  .v2a-path-edge::before {
+    left: 0;
+    right: auto;
+    top: 0;
+    bottom: 6px;
+    width: 1px;
+    height: auto;
+  }
+
+  .v2a-path-edge::after {
+    left: -4px;
+    right: auto;
+    bottom: 0;
+    border-top: 7px solid var(--v2a-sage);
+    border-left: 4.5px solid transparent;
+    border-right: 4.5px solid transparent;
+    border-bottom: 0;
+  }
+}
+
+/* Releases hang on the same culm line: a node ring at each version. */
+.v2a-releases > li::before {
+  content: "";
+  position: absolute;
+  left: -23px;
+  top: 15px;
+  width: 13px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--v2a-paper);
+  box-shadow: 0 0 0 1px var(--v2a-sage);
+}
+

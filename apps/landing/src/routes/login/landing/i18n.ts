@@ -382,6 +382,12 @@ const ZH_MESSAGES = {
     "启动你的第一个 Session。",
   "Reply in a minute or in seven days.":
     "1 分钟后或 7 天后回复都可以。",
+  "From your backend to a Session sandbox":
+    "从你的后端到 Session sandbox",
+  "Your backend":
+    "你的后端",
+  "HTTPS and a Project API key":
+    "HTTPS 和 Project API 密钥",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -763,6 +769,12 @@ const JA_MESSAGES = {
     "最初の Session を始めましょう。",
   "Reply in a minute or in seven days.":
     "返信は 1 分後でも 7 日後でもかまいません。",
+  "From your backend to a Session sandbox":
+    "バックエンドから Session の sandbox まで",
+  "Your backend":
+    "あなたのバックエンド",
+  "HTTPS and a Project API key":
+    "HTTPS と Project API キー",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
