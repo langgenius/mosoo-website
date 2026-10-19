@@ -1,2 +1,421 @@
-/* 2 Stage (sections/stage.ts): owned by the hero + stage agent. Scope every rule under .v5-stage; tokens, type, buttons, the
-   line language and the engine contracts come from ../system.css (see ./README.md). Empty until the section lands. */
+/* 2 Stage (sections/stage.ts), owned by the hero + stage agent. One plate, three states of the T4 Session.
+   Two layouts from one DOM (each step is an <article>: tag, object layer, caption):
+   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates;
+   - pinned ([data-stage-mode="pinned"], src/effects/v5/stage.ts): the articles are layers of one plate that sticks
+     88px from the top (under the 68px floating nav), the tag row and the captions switch with the object.
+   Plate composition (721px and up): tags top-left (32, 28); object from (50% - 140px, 96), Call and Watch running
+   off the right edge; caption bottom-left (32, 32), at most 560 wide. 50% - 140px keeps the object's left edge on
+   the line field's knot at any plate width (the "hero" host is centred, 1120 x 720, see .v5-lf--wide below).
+   Phones: a column (tag, object, caption) per plate. Every rule is scoped under .v5-stage (sections/README.md).
+   Values and references: staging v5/sections/hero-stage/NOTES.md. */
+
+.v5-stage {
+  --pin-top: 88px; /* the floating nav ends at 68 (12 + 56) */
+  --plate-h: clamp(560px, 100vh - 120px, 720px);
+  --plate-r: 16px;
+  --obj-top: 96px;
+  --obj-x: calc(50% - 140px);
+  --kit-size: 17px; /* the kit's root size (kit.css .kit--stage); 20px where the plate is full size */
+  margin-top: 48px;
+}
+
+@media (min-width: 1280px) and (min-height: 840px) {
+  .v5-stage {
+    --kit-size: 20px;
+  }
+}
+
+/* ------------------------------------------------------------------------------------- default: stacked */
+/* The outer plate is only a column of plates here; each article carries the field. */
+.v5-stage .v5-stage-plate {
+  display: grid;
+  gap: 24px;
+  background-image: none;
+  background-color: transparent;
+}
+
+.v5-stage .v5-stage-plate::before {
+  content: none;
+}
+
+.v5-stage .v5-stage-tags {
+  display: none;
+}
+
+.v5-stage .v5-step {
+  position: relative;
+  height: var(--plate-h);
+  overflow: hidden;
+  border-radius: var(--plate-r);
+}
+
+.v5-stage .v5-step-lines {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The "hero" line field: 1120 x 720, centred on the plate, so its knot (420, 214) lands on the object's left edge,
+   50% - 140px, at every plate width; a narrower plate crops both sides. */
+.v5-stage .v5-lf--wide {
+  inset: 0 auto auto calc(50% - 560px);
+  width: 1120px;
+  height: 720px;
+}
+
+.v5-stage .v5-step-tag {
+  position: absolute;
+  z-index: 5;
+  top: 28px;
+  left: 32px;
+}
+
+.v5-stage .v5-step-screen {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+}
+
+.v5-stage .v5-step-obj {
+  position: absolute;
+  top: var(--obj-top);
+  left: var(--obj-x);
+  width: calc(50% + 100px); /* to 40px short of the right edge */
+}
+
+.v5-stage .v5-step-cap {
+  position: absolute;
+  z-index: 4;
+  left: 32px;
+  bottom: 32px;
+  width: min(560px, 100% - 64px);
+}
+
+/* ---------------------------------------------------------------------------------- tags and captions */
+/* A step tag: the keycap's line language (1px ink, r8, white, Frame's 0 1px 3px shadow) in Inter. */
+.v5-stage .v5-stage-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  max-width: 220px;
+  padding: 0 12px;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  color: var(--ink);
+  font: 500 15px/1 var(--font-sans);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+.v5-stage .v5-step-title {
+  color: var(--ink);
+  font: 500 22px/1.3 var(--font-sans);
+  letter-spacing: -0.014em;
+  text-wrap: balance;
+}
+
+.v5-stage .v5-step-line {
+  margin-top: 8px;
+  color: var(--ink-2);
+  font: 400 16px/1.55 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.v5-stage .v5-step-line:lang(ja) {
+  word-break: auto-phrase;
+}
+
+/* ------------------------------------------------------------------------------------------ the objects */
+/* Call: v4b's fragment, 45k wide from the knot, cut by the plate (kit proof 04). */
+.v5-stage .v5-step-obj > .kit[data-kit-state="call"] {
+  width: 45em;
+}
+
+/* Watch, stream form: the Session card runs off the edge like Call; the connector drops from under the status chip
+   into the event card, which starts under the chip and stays inside the plate. */
+.v5-stage .v5-step-obj > .kit-flow {
+  width: 45em;
+  align-items: flex-start;
+}
+
+.v5-stage .v5-step-obj > .kit-flow > .kit-wire--down {
+  margin-left: calc(var(--k) * 2.75);
+}
+
+.v5-stage .v5-step-obj > .kit-flow > .kit-stream {
+  width: min(26em, 100% - var(--k) * 1.6);
+  margin-left: calc(var(--k) * 0.8);
+}
+
+/* Return: the F19 stack, whole (its right-hand "+N days" and the track's harness end must show). */
+.v5-stage .v5-step-obj > .kit-stack {
+  width: min(31em, 100%);
+}
+
+/* TOOLS-REVIEW T4: the stream card's label in sentence case, not the all-caps kicker. */
+.v5-stage .kit-eyebrow {
+  font-size: 0.8em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* TOOLS-REVIEW T4: the running dot at v4b's 8px, its 1px ink ring kept (kit.css draws 6px at this size). */
+.v5-stage .kit-live {
+  width: 8px;
+  height: 8px;
+}
+
+/* The grey sentence: ink-3 only where it sets at 24px (kit 20px); ink-2 below that (contrast under 24px). */
+.v5-stage .kit-line {
+  color: var(--kit-ink-2);
+}
+
+@media (min-width: 1280px) and (min-height: 840px) {
+  .v5-stage .kit-line {
+    color: var(--kit-ink-3);
+  }
+}
+
+/* ----------------------------------------------------------------------------------------------- pinned */
+.v5-stage[data-stage-mode="pinned"] {
+  height: 300vh; /* about three screens (BRIEF §3.4), not the contract's 350vh */
+}
+
+.v5-stage[data-stage-mode="pinned"] [data-stage-pin] {
+  top: var(--pin-top);
+  height: var(--plate-h);
+}
+
+/* The outer element becomes the plate: field, grain, clip. */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-plate {
+  position: relative;
+  display: block;
+  height: var(--plate-h);
+  overflow: hidden;
+  border-radius: var(--plate-r);
+  background-image: var(--v5-field-img);
+  background-color: var(--v5-field-base);
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-stage-plate::before {
+  content: "";
+}
+
+/* The articles become transparent layers of it; everything they hold shares the plate's stacking context:
+   lines 0, objects 1-3 (the contract's past / active / next), captions 4, tags 5. */
+.v5-stage[data-stage-mode="pinned"] .v5-step {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  overflow: visible;
+  isolation: auto;
+  border-radius: 0;
+  background: none;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step::before {
+  content: none;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-tag {
+  display: none;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-stage-screen {
+  margin: 0; /* the contract's -8px bleed is for opaque screens; these are transparent layers */
+}
+
+/* Tag row: active = the full tag; past = compact (13px, no shadow, hairline at 18% ink); next = not there yet. */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-tags {
+  position: absolute;
+  z-index: 5;
+  top: 28px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.v5-stage .v5-stage-tags > [data-stage-state="past"] {
+  height: 26px;
+  padding: 0 9px;
+  border-color: rgb(22 24 21 / 0.18);
+  background-color: rgb(255 255 255 / 0.6);
+  box-shadow: none;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.v5-stage .v5-stage-tags > [data-stage-state="next"] {
+  max-width: 0;
+  margin-left: -6px;
+  padding: 0;
+  border-width: 0;
+  opacity: 0;
+}
+
+/* Captions: each clips its own box and rolls its text through it (past up, next below), cross-fading on the way: the
+   old caption is gone by 0.45 s, the new one is in from 0.15 s, so at a switch there is always one caption on screen
+   and never two legible at once. */
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap {
+  overflow: hidden;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap:is([data-stage-state="past"], [data-stage-state="next"]) > .v5-step-cap-in {
+  opacity: 0;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap[data-stage-state="past"] > .v5-step-cap-in {
+  translate: 0 -100%;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap[data-stage-state="next"] > .v5-step-cap-in {
+  translate: 0 100%;
+}
+
+/* Transitions only once the engine is ready (its first pinned paint never animates), with the switch's 0.9 s. */
+.v5-stage[data-stage-ready] .v5-stage-tags > li {
+  transition:
+    max-width 0.9s var(--ease-stage),
+    height 0.9s var(--ease-stage),
+    padding 0.9s var(--ease-stage),
+    margin 0.9s var(--ease-stage),
+    border-color 0.9s var(--ease-stage),
+    border-width 0.9s var(--ease-stage),
+    background-color 0.9s var(--ease-stage),
+    box-shadow 0.9s var(--ease-stage),
+    color 0.9s var(--ease-stage),
+    font-size 0.9s var(--ease-stage),
+    opacity 0.6s var(--ease-stage);
+}
+
+.v5-stage[data-stage-ready] .v5-step-cap-in {
+  transition:
+    translate 0.9s var(--ease-stage),
+    opacity 0.45s var(--ease-theme);
+}
+
+.v5-stage[data-stage-ready] .v5-step-cap[data-stage-state="active"] > .v5-step-cap-in {
+  transition:
+    translate 0.9s var(--ease-stage),
+    opacity 0.6s var(--ease-theme) 0.15s;
+}
+
+/* The plate fades in with the hero's lead and CTA row (system.css v5-rise-fade), a beat later. */
+@media (prefers-reduced-motion: no-preference) {
+  .v5-stage .v5-stage-plate {
+    animation: v5-rise-fade 1s var(--ease-quart) 0.2s both;
+  }
+}
+
+/* Reduced motion never pins, so its stacked plates need not match the pinned one: 620 still clears Watch (to 486 at
+   the 20px kit) above the caption (from 527). */
+@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
+  .v5-stage {
+    --plate-h: 620px;
+  }
+}
+
+/* ------------------------------------------------------------------------------------- tablets, 721-900 */
+/* Never pinned here: three plates of the desktop composition, a little shorter, the kit at 16px. */
+@media (min-width: 721px) and (max-width: 900px) {
+  .v5-stage {
+    --plate-h: 600px;
+    --kit-size: 16px;
+  }
+}
+
+/* -------------------------------------------------------------------------------------- phones, to 720 */
+@media (max-width: 720px) {
+  .v5-stage {
+    --plate-r: 14px;
+    --kit-size: 15px;
+    margin-top: 32px;
+  }
+
+  .v5-stage .v5-stage-plate {
+    gap: 16px;
+  }
+
+  /* A column with the caption at the bottom (Mintlify's label), at least 460 tall: the plates line up, and the first
+     one's caption stays under the 844px fold of a 390 phone (the tag is the only plate word on the first screen). */
+  .v5-stage .v5-step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    min-height: 460px;
+    padding: 20px 20px 22px;
+  }
+
+  .v5-stage .v5-step-tag {
+    position: relative;
+    top: auto;
+    left: auto;
+  }
+
+  .v5-stage .v5-step-screen {
+    position: relative;
+    inset: auto;
+    align-self: stretch;
+  }
+
+  .v5-stage .v5-step-obj {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    margin-top: 16px;
+  }
+
+  /* Call and Watch run off the right edge, as on the desktop plate. */
+  .v5-stage .v5-step-obj > .kit[data-kit-state="call"],
+  .v5-stage .v5-step-obj > .kit-flow {
+    width: calc(100% + 64px);
+  }
+
+  .v5-stage .v5-step-obj > .kit-flow > .kit-stream {
+    width: calc(100% - 64px - var(--k) * 0.8);
+  }
+
+  .v5-stage .v5-step-obj > .kit-stack {
+    width: 100%;
+  }
+
+  .v5-stage .v5-step-cap {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto;
+    margin-top: auto;
+    padding-top: 20px;
+    align-self: stretch;
+  }
+
+  .v5-stage .v5-step-title {
+    font-size: 18px;
+  }
+
+  /* Ink, not ink-2: the phone field (hero-358x460) is darkest under the caption's right half (mean #a8b5c8), where
+     15px ink-2 measures 3.1:1; ink stays above 7:1 (staging v5/sections/hero-stage/NOTES.md §5). */
+  .v5-stage .v5-step-line {
+    margin-top: 6px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption,
+     whose top sits at 364 in a 460 plate. */
+  .v5-stage .v5-lf--phone {
+    inset: 0 auto auto 0;
+    width: 720px;
+    height: 460px;
+    mask-image: linear-gradient(#000 300px, transparent 352px);
+  }
+}

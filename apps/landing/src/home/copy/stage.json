@@ -1,5 +1,5 @@
 {
-  "$comment": "Slots of sections/stage.ts. steps[k] = the step tag, then the caption (title + one line) that passes through on the right. kit = the props of the Session object (src/home/kit, renderSession) per state; the hero board shows the call state too. X placeholders: the kit's own xify of its sample strings (staging v5/tools/kit/build.ts), CJK as fullwidth X. Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state).",
+  "$comment": "Slots of sections/stage.ts (one plate, three states of the Session object; staging v5/sections/hero-stage/NOTES.md has the slot table with lines at 1440 / 390). steps[k].tag: the step tag at the plate's top-left (Inter 500 15px; pinned, the past tags shrink to 13px in one row). steps[k].title + steps[k].line: the caption at the plate's bottom-left (Inter 500 22px + Inter 16px, max 560 wide: one line each at 1440; phones 18 / 15px, title 1-2 lines, line 2 lines). kit: the props of the kit Session (src/home/kit renderSession) per state. kit.call.instruction is the first screen's sentence: at most 6 words (first-screen object words = 6 keycap words + Call's words <= 16); it sits on one line and runs off the plate's edge from about 58 characters at 1440. X placeholders of realistic length; CJK as fullwidth X with the punctuation real copy carries. Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state).",
   "$temporary": {
     "kit.harness": "Product name (README L9); not translated."
   },
@@ -24,7 +24,7 @@
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "Xxxx xxx xxxxxxxx xxxxx.xxx, xxxx xxxx xxxxxxx/xxxxxx.xx xxx xxxxx.xxx",
+        "instruction": "Xxxxxxxxx xxxxx.xxx xxx xxxx xxxxxxx/xxxxxx.xx",
         "attachment": "xxxxx.xxx"
       },
       "watch": {
@@ -62,7 +62,7 @@
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "ＸＸＸＸ xxxxx.xxx，Ｘ xxxxxx.xx Ｘ xxxxx.xxx ＸＸ xxxxxxx/",
+        "instruction": "ＸＸ xxxxx.xxx，ＸＸＸ xxxxxxx/xxxxxx.xx",
         "attachment": "xxxxx.xxx"
       },
       "watch": {
@@ -100,7 +100,7 @@
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "ＸＸＸ xxxxx.xxx ＸＸＸ、xxxxxx.xx Ｘ xxxxx.xxx Ｘ xxxxxxx/ ＸＸＸＸＸ",
+        "instruction": "xxxxx.xxx ＸＸＸＸ、xxxxxxx/xxxxxx.xx ＸＸＸＸ",
         "attachment": "xxxxx.xxx"
       },
       "watch": {

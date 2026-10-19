@@ -1,2 +1,62 @@
-/* 1 Hero (sections/hero.ts): owned by the hero + stage agent. Scope every rule under .v5-hero; tokens, type, buttons, the
-   line language and the engine contracts come from ../system.css (see ./README.md). Empty until the section lands. */
+/* 1 Hero (sections/hero.ts), owned by the hero + stage agent. v4d's centred first screen, measured from 9e92312
+   d-object.css: .d-hero padding-top 64 (phones 40), .d-h1 72/1 (here .v5-h1 from ../system.css), .d-lead 22px below
+   the H1, .d-actions 28px below the lead. Changed from v4d: the lead carries the four harness keycaps, so it is
+   wider (760 instead of 600) and balanced, which breaks it after [Claude Agent SDK] at 1440 (two lines; the slot
+   table in staging v5/sections/hero-stage/NOTES.md); the secondary CTA is the system's ink button instead of
+   v4d's text link. The plate below the CTA row is the stage's (./stage.css sets the gap). Every rule is scoped
+   under .v5-hero (sections/README.md). */
+
+.v5-hero .v5-hero-in {
+  padding-top: 64px;
+  text-align: center;
+}
+
+.v5-hero .v5-hero-h1 {
+  margin-inline: auto;
+}
+
+.v5-hero .v5-hero-lead {
+  max-width: 760px;
+  margin: 22px auto 0;
+  text-wrap: balance;
+}
+
+.v5-hero .v5-hero-actions {
+  margin-top: 28px;
+}
+
+/* The glyph variant of the keycap (KEYCAP_GLYPHS in hero.ts, off): a 12px ink runtime glyph before the name, on
+   the name's x-height band. */
+.v5-hero .v5-hero-kc--g {
+  padding-left: 11px;
+}
+
+.v5-hero .v5-hero-kc-g {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 7px;
+  vertical-align: -1px;
+}
+
+/* Tablets: 72px holds a 32-character first line only from about 1180px of measure; between the phone breakpoint
+   and the desktop the H1 scales with the viewport so each line breaks at most once. */
+@media (min-width: 721px) and (max-width: 1199px) {
+  .v5-hero .v5-hero-h1 {
+    font-size: clamp(56px, 4.4vw + 20px, 72px);
+  }
+}
+
+@media (max-width: 720px) {
+  .v5-hero .v5-hero-in {
+    padding-top: 40px;
+  }
+
+  .v5-hero .v5-hero-lead {
+    margin-top: 18px;
+  }
+
+  .v5-hero .v5-hero-actions {
+    margin-top: 24px;
+  }
+}
