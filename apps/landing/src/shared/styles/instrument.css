@@ -106,11 +106,11 @@
   line-break: strict;
 }
 
-.i-page:lang(zh) .i-display {
+.i-page:lang(zh) :is(.i-display, .i-lead) {
   word-break: keep-all;
 }
 
-.i-page:lang(ja) .i-display {
+.i-page:lang(ja) :is(.i-display, .i-lead, .i-faq-q, .i-faq-a, .i-ask-lead) {
   word-break: auto-phrase;
 }
 

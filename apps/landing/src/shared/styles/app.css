@@ -612,9 +612,6 @@ html {
   scroll-padding-top: 5rem;
 }
 
-html:has(.landing-shell[data-theme="landing"]) {
-  background-color: #f7f6f1;
-}
 
 .landing-shell {
   overflow-x: clip;

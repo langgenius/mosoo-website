@@ -800,5 +800,6 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-label{margin:0;color:var(--mf-label);font-size:13px}
 .mosoo-fallback .mf-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:56px;padding-top:20px;border-top:1px solid var(--mf-line);color:var(--mf-label);font-size:13px}
 .mosoo-fallback .mf-bottom p{margin:0}
+html:has(.mosoo-fallback){background:#0e0f0d;color-scheme:dark}
 @media (min-width:901px){.mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{padding-left:48px;padding-right:48px}.mosoo-fallback main>section{margin:0 -48px;padding:120px 48px}.mosoo-fallback .mf-spec div{grid-template-columns:200px minmax(0,1fr);padding:20px 0}}
 </style>`;

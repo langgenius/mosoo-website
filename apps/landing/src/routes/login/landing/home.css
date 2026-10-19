@@ -399,9 +399,11 @@
 }
 
 /* The hero card holds its two steps; no fade, no fixed height. */
+/* The hero card keeps U12's locked body height (312) at its enlarged size,
+   lines from the top, no fade: the running line waits above open space. */
 .i-term-hero .i-term-body {
   justify-content: flex-start;
-  height: auto;
+  height: 312px;
   padding: 32px 36px 36px;
   -webkit-mask-image: none;
   mask-image: none;
@@ -894,6 +896,24 @@
 
   .i-term-body {
     padding-inline: 20px;
+  }
+
+  .i-term-hero .i-term-body {
+    height: auto;
+  }
+
+  /* Phones do not pin the stage, so its card shows the end state whole: it
+     continues the hero card's Session (same first prompt and Read, shown just
+     above), from the first result on, four steps and no clipped line. */
+  .i-term-stage .i-term-body {
+    height: auto;
+    padding-top: 24px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .i-term-stage .i-term-track > li:nth-child(-n + 2) {
+    display: none;
   }
 
   .i-term-track > li[data-current]::before {
