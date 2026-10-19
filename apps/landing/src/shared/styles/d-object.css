@@ -1070,8 +1070,14 @@ html:has(.d-shell) {
   letter-spacing: -0.01em;
 }
 
-:lang(ja) :is(.d-lead, .d-verb-p, .d-pc-a, .d-plate-cap p, .d-footer-line) {
+:lang(ja) :is(.d-lead, .d-verb-p, .d-pc-q, .d-pc-a, .d-plate-cap p, .d-ccard-p, .d-footer-line) {
   word-break: auto-phrase;
+}
+
+/* zh has no phrase segmentation in CSS; keep-all breaks at the spaces and
+   punctuation the copy already carries, so "一个" never splits. */
+:lang(zh) :is(.d-pc-q, .d-verb-p) {
+  word-break: keep-all;
 }
 
 /* ------------------------------------------------------------ phones (390) */
