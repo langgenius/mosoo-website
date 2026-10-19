@@ -476,7 +476,8 @@
   font-family: "Geist Mono", ui-monospace, monospace;
   font-size: 14px;
   line-height: 1.4;
-  color: var(--v2a-ink-soft);
+  /* 5.5:1 on the paper, 5.1:1 on the How it works band. */
+  color: #5d665c;
 }
 
 /* What mosoo leaves out: soil, the console's boundary colour. */
