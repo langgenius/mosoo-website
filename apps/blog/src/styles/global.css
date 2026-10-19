@@ -1,15 +1,114 @@
 @import "tailwindcss";
 @import "@mosoo/design-tokens/mosoo.css";
 
-/* The signature "culm" texture — a barely-there vertical hairline every 64px,
-   the bamboo-segment rhythm called out in the design system. Used on the hero
-   band; pull it back to ~2.5% opacity so it reads as paper grain, not stripes. */
-.culm-band {
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 64px,
-    rgba(15, 20, 12, 0.025) 64px 65px
-  );
+/* ============================================================================
+   v5 type (BRIEF §3.2): Hedvig Letters Serif 400 for display, Inter for text
+   and UI, Fragment Mono for code. Same files, family names, metric overrides,
+   unicode ranges and CJK stacks as the landing (apps/landing/src/shared/
+   styles/app.css), so a title here sets exactly like one on the home page.
+   The files are referenced from apps/landing/public/fonts the way
+   @mosoo/design-tokens references the old ones: Vite emits hashed copies into
+   this build. Licences: the OFL / licence texts next to those files.
+   The tokens below override the design-tokens stacks (Cabinet Grotesk,
+   Geist, Geist Mono); nothing on the blog asks for those faces any more, so
+   browsers never download them. Live covers set their labels in the site
+   fonts by design (src/covers/registry.ts), so they follow this switch too.
+   ========================================================================== */
+@font-face {
+  font-family: "Display Fallback";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/HedvigLettersSerif-Regular-latin.woff2") format("woff2");
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-2FFF;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/Inter-Variable-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF;
+}
+
+:root {
+  --font-display:
+    "Display Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Hiragino Mincho ProN",
+    "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
+  --font-sans:
+    "Inter", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans", "Microsoft YaHei UI", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* v5 colour tokens (BRIEF §3.1). Prefixed, because @mosoo/design-tokens
+     still owns --paper (#fbfbfc), --accent (#6fd305) and the ink ramp that the
+     article pages use. --v5-ink-3 is for text of 24px and up only. */
+  --v5-frame: #f4f4f4;
+  --v5-paper: #ffffff;
+  --v5-ink: #161815;
+  --v5-ink-2: #515350;
+  --v5-ink-3: #7f817e;
+  --v5-line: rgb(22 24 21 / 0.1);
+  --v5-line-2: rgb(22 24 21 / 0.18);
+
+  /* The page surface behind the header and footer: paper by default, the
+     #F4F4F4 frame on the index pages (BaseLayout surface="frame"). */
+  --blog-bg: var(--paper);
+
+  /* One content width for the header, the index and the footer: Intent's
+     1440 layout (40px gutters, so three 440px cards with 20px gaps). */
+  --blog-max: 1440px;
+  --blog-gutter: 16px;
+}
+@media (min-width: 640px) {
+  :root {
+    --blog-gutter: 24px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --blog-gutter: 40px;
+  }
+}
+
+/* Japanese needs Japanese system faces ahead of the Simplified Chinese ones
+   (same order as the landing). */
+:root:lang(ja) {
+  --font-display:
+    "Display Fallback", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Noto Serif CJK JP", ui-serif, Georgia,
+    serif;
+  --font-sans:
+    "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
+    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+}
+
+body[data-surface="frame"] {
+  --blog-bg: var(--v5-frame);
+}
+
+.blog-wrap {
+  width: 100%;
+  max-width: var(--blog-max);
+  margin-inline: auto;
+  padding-inline: var(--blog-gutter);
+}
+
+/* Keyboard focus: a 2px ink ring (v5; never lime). */
+:focus-visible {
+  outline: 2px solid var(--v5-ink);
+  outline-offset: 2px;
 }
 
 /* ============================================================================
@@ -17,8 +116,9 @@
 
      none  · no entrance motion; hover micro-transitions only
      fade  · the page fades in once as a unit (opacity, 480ms)
-     rise  · masthead/featured/cards fade in and rise 12px with a short
-             stagger; below-fold cards reveal as they scroll into view
+     rise  · the article header and hero fade in and rise 12px with a short
+             stagger ([data-reveal]). The index cards do not use this: they
+             enter with the landing's v5 rise engine (BlogIndex.astro).
 
    Entrance styles only apply once JS has confirmed itself (html.js), so
    content is never hidden without a script to reveal it. Only opacity and
@@ -64,6 +164,17 @@ html.js[data-motion="rise"] [data-reveal].is-revealed {
   }
 }
 
+/* The index cards use the landing's v5 rise engine (data-rise="card"), which
+   hides below-the-fold cards with inline styles until they scroll in. Paper
+   never scrolls them in, so print shows every card. */
+@media print {
+  [data-rise] {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+}
+
 /* Headings keep their rag balanced; body copy avoids one-word orphans. */
 h1,
 h2,
@@ -74,9 +185,10 @@ p {
   text-wrap: pretty;
 }
 
-/* Reading view — calm paper, Hanken Grotesk body, generous line-height. The
-   article body sets its own type scale so prose stays consistent regardless of
-   the parent layout. */
+/* Reading view — calm paper, Inter body, generous line-height. The article
+   body sets its own type scale so prose stays consistent regardless of the
+   parent layout. Hedvig ships one weight (400): the serif headings stay at 400
+   so the browser never fakes a bold; h4 is an Inter heading. */
 .prose-mosoo {
   font-family: var(--font-sans);
   font-size: var(--text-body-lg);
@@ -96,9 +208,9 @@ p {
 .prose-mosoo h2 {
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-regular);
   line-height: var(--lh-heading);
-  letter-spacing: var(--ls-heading);
+  letter-spacing: -0.015em;
   color: var(--ink-950);
   margin-top: var(--space-12);
   margin-bottom: var(--space-3);
@@ -106,15 +218,15 @@ p {
 .prose-mosoo h3 {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-regular);
   line-height: var(--lh-heading);
-  letter-spacing: var(--ls-heading);
+  letter-spacing: -0.01em;
   color: var(--ink-950);
   margin-top: var(--space-8);
   margin-bottom: var(--space-2);
 }
 .prose-mosoo h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: var(--text-h4);
   font-weight: var(--fw-semibold);
   color: var(--ink-950);
@@ -151,6 +263,9 @@ p {
   padding: 0.12em 0.36em;
   border-radius: var(--r-xs);
   border: 1px solid var(--border);
+  /* A long inline token (wss://api.openai.com/v1/responses) may break on a phone rather than push the page
+     sideways; Fragment Mono is ~3% wider than Geist Mono, which tipped it over at 360. Code blocks scroll. */
+  overflow-wrap: anywhere;
 }
 .prose-mosoo pre {
   font-family: var(--font-mono);
@@ -244,6 +359,9 @@ p {
   padding: var(--space-3) var(--space-3);
   text-align: left;
   vertical-align: top;
+  /* Long code tokens (session:{sessionId}) may break, so a three-column table fits a phone instead of
+     pushing the page sideways (it overflowed 15px at 390 before the v5 fonts, 24px after). */
+  overflow-wrap: anywhere;
 }
 .prose-mosoo th {
   font-weight: var(--fw-semibold);

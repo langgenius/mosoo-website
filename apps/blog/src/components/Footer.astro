@@ -12,8 +12,8 @@ const copy = footerCopyByLocale[locale] ?? footerCopyByLocale.en;
 const landingHref = `/${locale}`;
 ---
 
-<footer class="mt-24 border-t border-[color:var(--border)] bg-[color:var(--paper)]">
-  <div class="mx-auto flex w-full max-w-[1180px] flex-col gap-4 px-7 py-10 md:flex-row md:items-center md:justify-between">
+<footer class="mt-24 border-t border-[color:var(--border)] bg-[color:var(--blog-bg)]">
+  <div class="blog-wrap flex flex-col gap-4 py-10 md:flex-row md:items-center md:justify-between">
     <p class="text-[13px] text-[color:var(--fg-muted)]">
       {copy}
     </p>

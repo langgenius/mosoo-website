@@ -4,6 +4,10 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { MOTION_VARIANT } from "../lib/motion";
 import type { Locale } from "../lib/i18n";
+// The two faces every page sets first (titles, text); the same files as the @font-face rules in
+// styles/global.css, so the preload and the stylesheet resolve to one hashed URL.
+import displayFontUrl from "../../../landing/public/fonts/HedvigLettersSerif-Regular-latin.woff2?url";
+import textFontUrl from "../../../landing/public/fonts/Inter-Variable-latin.woff2?url";
 
 type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "ja" | "x-default", string>>;
 
@@ -20,6 +24,8 @@ interface Props {
   hreflang?: HreflangAlternates;
   availableLocales?: Locale[];
   robots?: string;
+  /** "frame": the index pages, white cards on the v5 #F4F4F4 frame. Articles stay on paper. */
+  surface?: "paper" | "frame";
 }
 const {
   title,
@@ -34,6 +40,7 @@ const {
   hreflang,
   availableLocales,
   robots = "index, follow, max-image-preview:large",
+  surface = "paper",
 } = Astro.props;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 const ogImageUrl = ogImage ?? new URL("/brand/social-card-20261019.png", Astro.site).href;
@@ -69,6 +76,8 @@ const alternateOgLocales = [
         <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
       ))
     }
+    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={textFontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg" />
     <link
       rel="alternate"
@@ -111,7 +120,7 @@ const alternateOgLocales = [
     </script>
     <slot name="head" />
   </head>
-  <body class="min-h-screen bg-[color:var(--paper)] text-[color:var(--ink-900)]">
+  <body class="min-h-screen bg-[color:var(--blog-bg)] text-[color:var(--ink-900)]" data-surface={surface}>
     <Header availableLocales={availableLocales} />
     <slot />
     <Footer lang={lang} />

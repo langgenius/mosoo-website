@@ -17,6 +17,7 @@ const posts = (await getCollection("blog", ({ data }) => isListed(data) && data.
   description="mosoo 团队关于 Agent 产品、运行时和生产化路径的手记。"
   lang="zh-CN"
   hreflang={getIndexHreflangAlternates(base)}
+  surface="frame"
 >
   <BlogIndex
     posts={posts}

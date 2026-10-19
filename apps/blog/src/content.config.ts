@@ -14,7 +14,16 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     titleAccent: z.string().optional(),
+    // Optional short title for the index card: one serif line within about 24
+    // Latin or 10 CJK characters (measured; see src/content/blog/README.md).
+    // Falls back to `title`, which may wrap to two or three lines. The article
+    // page, feeds and metadata always use `title`.
+    cardTitle: z.string().optional(),
     description: z.string(),
+    // Optional phrase, copied exactly from `description`, that the index card
+    // sets in bold (Intent's one emphasised phrase). Without it the card shows
+    // `description` plain.
+    descriptionEmphasis: z.string().optional(),
     date: z.coerce.date(),
     category: z.enum(CATEGORIES),
     author: z.string().default("mosoo team"),
@@ -53,6 +62,9 @@ const blog = defineCollection({
     // cover: it remains the Open Graph image, the JSON-LD image and the
     // fallback for feeds and crawlers.
     heroCover: z.string().optional(),
+  }).refine((data) => !data.descriptionEmphasis || data.description.includes(data.descriptionEmphasis), {
+    message: "descriptionEmphasis must be copied exactly from description",
+    path: ["descriptionEmphasis"],
   }),
 });
 

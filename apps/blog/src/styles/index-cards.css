@@ -1,0 +1,327 @@
+/* Blog index (v5). The cards follow Intent's light feature cards (staging refs/intent/v5/STUDY.md §2.4, measured
+   at 1440: 440px white cards on #F0F0EB, 11:8 media, 50px text padding, serif title 26/26, Inter 16/20.8 text,
+   32px between them, one phrase at 600) on the v5 tokens (BRIEF §3.1-3.2): the #F4F4F4 frame, white paper,
+   ink / ink-2 text, radius 24 like the v5 white cards on the lime screen (v5/tools/linefig cards.html).
+   What differs from Intent, on purpose: a grid instead of a carousel (a carousel hides every post after the third),
+   category · date at the foot, and the row tracks shared by subgrid, so titles of different lengths still start
+   every description on one line across a row. Plain CSS, like the landing's locked forms. */
+
+.bi-masthead {
+  padding-block: 56px 40px;
+}
+
+.bi-eyebrow {
+  margin: 0;
+  font: 500 14px/20px var(--font-sans);
+  color: var(--v5-ink-2);
+}
+
+.bi-title {
+  margin: 12px 0 0;
+  max-width: 16em;
+  font: 400 40px/1.05 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--v5-ink);
+}
+
+.bi-lede {
+  margin: 16px 0 0;
+  max-width: 34rem;
+  font: 400 17px/1.5 var(--font-sans);
+  color: var(--v5-ink-2);
+}
+
+.bi-all {
+  padding-block: 72px 0;
+}
+
+.bi-all-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.bi-h2 {
+  margin: 0;
+  font: 400 30px/1.1 var(--font-display);
+  letter-spacing: -0.015em;
+  color: var(--v5-ink);
+}
+
+.bi-count {
+  font: 400 14px/20px var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  color: var(--v5-ink-2);
+}
+
+.bi-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px 20px;
+  margin-top: 32px;
+}
+
+.bi-empty {
+  margin: 32px 0 0;
+  padding: 48px;
+  border: 1px dashed var(--v5-line-2);
+  border-radius: 24px;
+  text-align: center;
+  font: 400 15px/1.5 var(--font-sans);
+  color: var(--v5-ink-2);
+}
+
+/* ------------------------------------------------------------------------------------------------- the card */
+.bc {
+  --bc-pad: 32px;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--v5-paper);
+  color: var(--v5-ink);
+}
+
+/* Media, title, description and meta share the row tracks of the cards beside them. */
+@supports (grid-template-rows: subgrid) {
+  .bi-grid .bc {
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+}
+
+.bc-media {
+  --cover-x: var(--cover-focus, 50%);
+  position: relative;
+  aspect-ratio: 11 / 8;
+  overflow: hidden;
+  background: #ecebe8;
+}
+
+/* A live cover keeps its own 16:9 box at the media's height, and slides so that its focus (src/covers/card-focus.ts)
+   sits in the middle of the 11:8 window: the material and the SVG move together, nothing is re-sliced. */
+.bc-media .cv-root {
+  right: auto;
+  left: 50%;
+  width: auto;
+  aspect-ratio: 16 / 9;
+  translate: calc(var(--cover-x) * -1) 0;
+}
+
+.bc-title {
+  margin: 0;
+  padding: var(--bc-pad) var(--bc-pad) 0;
+  font: 400 24px/1.08 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--v5-ink);
+  text-wrap: balance;
+}
+
+/* CJK line breaks, as on the landing (d-object.css): Japanese breaks at phrases (auto-phrase, Chrome; elsewhere the
+   default); Chinese has no phrase segmentation in CSS, so titles keep words whole and break at the spaces and
+   punctuation the title carries ("超出期待，/ 需要多少人类时间？"), never inside 时间 or 一个. A cardTitle for zh
+   should carry its break as a space or a comma. */
+:lang(ja) :is(.bi-title, .bi-lede, .bc-title, .bc-desc) {
+  word-break: auto-phrase;
+}
+
+:lang(zh) :is(.bi-title, .bc-title) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* The title's link is the card's one link; its ::after covers the card, so a click anywhere opens the post. */
+.bc-link {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 150ms linear;
+}
+
+.bc-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.bc-desc {
+  margin: 0;
+  padding: 32px var(--bc-pad) 0;
+  font: 400 16px/1.3 var(--font-sans);
+  letter-spacing: -0.005em;
+  color: var(--v5-ink-2);
+  text-wrap: pretty;
+}
+
+/* Intent: the phrase is only heavier at rest, same colour; it darkens with the card. */
+.bc-desc strong {
+  font-weight: 600;
+  color: inherit;
+  transition: color 150ms linear;
+}
+
+.bc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  margin: 0;
+  padding: 32px var(--bc-pad) var(--bc-pad);
+  font: 400 14px/20px var(--font-sans);
+  color: var(--v5-ink-2);
+}
+
+.bc-category {
+  font-weight: 500;
+  color: var(--v5-ink);
+}
+
+/* Play / pause sits on the artwork, above the link's cover. */
+.bc-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bc:hover .bc-link {
+    text-decoration-color: currentColor;
+  }
+
+  .bc:hover .bc-desc strong {
+    color: var(--v5-ink);
+  }
+}
+
+/* Focus: the ring goes round the whole card (the link's area), 2px ink. */
+.bc-link:focus-visible {
+  outline: none;
+  text-decoration-color: currentColor;
+}
+
+.bc:has(.bc-link:focus-visible) {
+  outline: 2px solid var(--v5-ink);
+  outline-offset: 3px;
+}
+
+.bc:has(.bc-link:focus-visible) .bc-desc strong {
+  color: var(--v5-ink);
+}
+
+@supports not selector(:has(*)) {
+  .bc-link:focus-visible::after {
+    outline: 2px solid var(--v5-ink);
+    outline-offset: -2px;
+    border-radius: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc-link,
+  .bc-desc strong {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------- the lead card */
+/* It shows its cover whole, at every width (11:8 would cut the featured cover's edges at 2px). */
+.bc--lead .bc-media {
+  --cover-x: 50%;
+  aspect-ratio: 16 / 9;
+}
+
+.bc--lead .bc-title {
+  font-size: 30px;
+  line-height: 1.07;
+}
+
+.bc--lead .bc-desc {
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------------------------------------- widths */
+@media (min-width: 640px) {
+  .bi-masthead {
+    padding-block: 72px 48px;
+  }
+
+  .bi-title {
+    font-size: 56px;
+  }
+
+  .bi-lede {
+    font-size: 18px;
+  }
+
+  .bi-h2 {
+    font-size: 32px;
+  }
+
+  .bi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .bc-title {
+    font-size: 26px;
+  }
+
+  .bc--lead .bc-title {
+    font-size: 36px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .bc {
+    --bc-pad: clamp(38px, 3.5vw, 50px);
+  }
+
+  .bi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* The lead card: its text in the first column of the grid below, the 16:9 cover over the other two. */
+  .bc--lead {
+    grid-template-columns: calc((100% - 40px) / 3) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 20px;
+  }
+
+  .bc--lead .bc-media {
+    grid-column: 2;
+    grid-row: 1 / -1;
+  }
+
+  /* Its play / pause stays on the artwork, which now starts after the text column. */
+  .bc--lead .bc-controls {
+    left: calc((100% - 40px) / 3 + 32px);
+  }
+
+  .bc--lead .bc-title {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 40px;
+    line-height: 1.05;
+  }
+
+  .bc--lead .bc-desc {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 18px;
+  }
+
+  .bc--lead .bc-meta {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: end;
+  }
+}

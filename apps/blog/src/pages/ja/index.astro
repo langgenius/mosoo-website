@@ -17,6 +17,7 @@ const posts = (await getCollection("blog", ({ data }) => isListed(data) && data.
   description="Agent プロダクト、ランタイム設計、プロダクションへの道のりについて綴る mosoo チームのノート。"
   lang="ja"
   hreflang={getIndexHreflangAlternates(base)}
+  surface="frame"
 >
   <BlogIndex
     posts={posts}

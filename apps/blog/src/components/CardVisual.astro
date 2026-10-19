@@ -5,14 +5,16 @@ import CoverVisual from "./CoverVisual.astro";
 
 interface Props {
   slug: string;
-  ratio?: "16/9" | "4/3" | "3/2" | "21/9";
+  /** "fill" fills a parent that sets its own size (the index cards crop the 16:9 covers to 11:8 there). */
+  ratio?: "16/9" | "4/3" | "3/2" | "21/9" | "fill";
   heroImage?: string | undefined;
+  /** An empty string marks the visual as decorative (the index cards, where the title beside it is the link). */
   heroAlt?: string | undefined;
   /** Live cover id + a page-unique uid that pairs it with its CoverControls. */
   heroCover?: string | undefined;
   coverUid?: string | undefined;
   eager?: boolean;
-  label?: string;
+  label?: string | undefined;
 }
 const {
   slug,
@@ -26,17 +28,19 @@ const {
 } = Astro.props;
 const visual = gradientFromSlug(slug);
 const liveCover = getCover(heroCover);
-const aspect =
-  ratio === "16/9"
-    ? "aspect-[16/9]"
-    : ratio === "4/3"
-      ? "aspect-[4/3]"
-      : ratio === "21/9"
-        ? "aspect-[21/9]"
-        : "aspect-[3/2]";
+const box =
+  ratio === "fill"
+    ? "absolute inset-0"
+    : ratio === "16/9"
+      ? "relative aspect-[16/9]"
+      : ratio === "4/3"
+        ? "relative aspect-[4/3]"
+        : ratio === "21/9"
+          ? "relative aspect-[21/9]"
+          : "relative aspect-[3/2]";
 ---
 
-<div class:list={["relative w-full overflow-hidden bg-[color:var(--ink-50)]", aspect]}>
+<div class:list={["w-full overflow-hidden bg-[color:var(--ink-50)]", box]}>
   {
     liveCover ? (
       <CoverVisual cover={liveCover.id} uid={coverUid ?? `cover-${slug}`} alt={heroAlt ?? ""} eager={eager} />
@@ -63,7 +67,7 @@ const aspect =
   }
   {
     label && (
-      <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-[var(--r-sm)] bg-white/90 px-2 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ink-900)] backdrop-blur-sm">
+      <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-[var(--r-sm)] bg-white/90 px-2 py-1 font-mono text-[10.5px] font-normal uppercase tracking-[0.08em] text-[color:var(--ink-900)] backdrop-blur-sm">
         <span class="block h-1.5 w-1.5 rounded-full bg-[color:var(--green-500)]" />
         {label}
       </span>

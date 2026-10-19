@@ -17,8 +17,8 @@ const landingHref = `/${currentLocale}`;
 const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
 ---
 
-<header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--paper)]/85 backdrop-blur-md">
-  <div class="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:flex-nowrap sm:gap-6 sm:px-7">
+<header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--blog-bg)]/85 backdrop-blur-md">
+  <div class="blog-wrap flex flex-wrap items-center justify-between gap-3 py-3.5 sm:flex-nowrap sm:gap-6">
     <div class="flex shrink-0 items-center gap-3 whitespace-nowrap text-[color:var(--fg)]">
       <a href={landingHref} aria-label="mosoo home">
         <img src={`${base}/brand-wordmark.svg`} alt="mosoo" class="h-5 w-auto" />
@@ -40,7 +40,7 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
         >RSS</a
       >
       <div
-        class="flex shrink-0 items-center overflow-hidden whitespace-nowrap rounded-[var(--r-sm)] border border-[color:var(--border)] font-mono text-[12px] font-semibold uppercase tracking-[0.08em]"
+        class="flex shrink-0 items-center overflow-hidden whitespace-nowrap rounded-[var(--r-sm)] border border-[color:var(--border)] text-[13px] font-medium"
         aria-label={copy.languageLabel}
       >
         {

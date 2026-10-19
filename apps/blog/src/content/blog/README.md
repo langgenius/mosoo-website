@@ -18,12 +18,34 @@ locale: "en" # en | zh | ja, defaults to en
 permalink: "post-title" # optional shared slug for localized posts
 translationKey: "post-title" # optional key linking localized versions
 titleAccent: "If" # optional colored substring in the title
+cardTitle: "Short card title." # optional, index card only; see Index card below
+descriptionEmphasis: "a phrase from the description" # optional, index card only
 featured: false # at most one true — wins the hero slot on the index
 draft: false # true keeps the post out of the build
 heroImage: "/blog/blog/<slug>/hero.jpg" # optional, see Images below
 heroAlt: "..." # optional alt for heroImage
 ---
 ```
+
+## Index card
+
+The index shows each post as a white card (`src/components/Card.astro`,
+`src/styles/index-cards.css`): the cover cut to 11:8, a serif title, the
+description in full, then category · date.
+
+- `cardTitle` replaces `title` on the card only (the article, feeds and
+  metadata keep `title`). It is one line when it stays within about
+  **24 Latin characters or 10 CJK characters**: measured with Hedvig Letters
+  Serif 26px, that is one line at 1280 and wider, in the two-column layout
+  and on phones; the 1200–1279 band fits about 22. Without it the full
+  title wraps to two or three lines, and the cards in a row still start their
+  descriptions on one line. A Chinese card title breaks only at spaces and
+  punctuation, so give it a comma or a space where the line may turn.
+- `descriptionEmphasis` is a phrase copied exactly from `description` (two to
+  four words) that the card sets in bold; it darkens with the card on hover.
+  The build fails if it is not found in `description`.
+- The 11:8 window is centred on the cover unless `src/covers/card-focus.ts`
+  moves it; check a new live cover there before publishing.
 
 ## Images
 
@@ -70,7 +92,9 @@ over ~500 KB should be downsized.
 - `description` shows up in the OG card, the index dek, and the search
   snippet. Make it stand alone.
 - The first paragraph is the lede — write it like a magazine opener.
-- Code samples render in JetBrains Mono on the carbon dark surface; keep
-  them under ~80 chars per line so they don't scroll on mobile.
-- Block-quotes pull in DM Sans display and bend left of the column — use
-  sparingly, for a real quote or a thesis line.
+- Type is the site's v5 set: Hedvig Letters Serif for titles and headings,
+  Inter for text, Fragment Mono for code. Code samples render on the carbon
+  dark surface; keep them under ~80 chars per line so they don't scroll on
+  mobile.
+- Block-quotes set in the serif and bend left of the column — use sparingly,
+  for a real quote or a thesis line.

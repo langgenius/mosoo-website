@@ -16,7 +16,7 @@ const entry = getCover(cover);
 
 {
   entry && (
-    <div data-cover={entry.id} data-cover-uid={uid} data-state="static" role="img" aria-label={alt} class="cv-root" style={`background:${entry.ground}`}>
+    <div data-cover={entry.id} data-cover-uid={uid} data-state="static" role={alt ? "img" : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : "true"} class="cv-root" style={`background:${entry.ground}`}>
       <img src={entry.material} alt="" aria-hidden="true" loading={eager ? "eager" : "lazy"} decoding="async" class="cv-material" />
       <Fragment set:html={entry.svg} />
     </div>
