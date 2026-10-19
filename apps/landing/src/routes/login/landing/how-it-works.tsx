@@ -53,7 +53,9 @@ export function HowItWorks(): ReactElement {
   return (
     <section id="how-it-works" aria-labelledby="how-title" className="border-border-strong border-t px-4 py-20 md:px-6 lg:py-28">
       <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-14">
-        <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+        {/* Not sticky: the steps run taller than a laptop screen, and a
+            sticky column that tall hides its own end. */}
+        <div className="min-w-0">
           <StageHeading id="how-title">{t("One request starts a Session and its first turn")}</StageHeading>
           <Lede>
             <WithCode
