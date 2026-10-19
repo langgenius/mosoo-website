@@ -26,8 +26,6 @@ const ZH_MESSAGES = {
     "模型供应商密钥属于你的项目，费用由供应商直接向你的账户收取。",
   "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
     "名称和标志仅用于标明兼容的服务，不代表合作或背书。",
-  "What mosoo runs for your backend":
-    "mosoo 为你的后端承担的工作",
   "Read the product spec":
     "阅读产品规格",
   "Start a Session without creating an Agent":
@@ -42,12 +40,6 @@ const ZH_MESSAGES = {
     "可选 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi。每个 Session 会固定自己的 runtime、模型和协议，不会悄悄回退。",
   "A runtime and model protocol that don’t match are rejected before anything runs.":
     "runtime 与模型协议不匹配时，会在执行前被拒绝。",
-  "Reply 1 minute or 7 days later":
-    "1 分钟后或 7 天后回复，都能接着做",
-  "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
-    "后续消息会在同一个 Session 里继续，即使 sandbox 已被回收。工作目录、对话和文件都会从最近一次检查点恢复。",
-  "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
-    "检查点无法恢复时，后续消息会明确报错。API Session 不会因闲置而过期。",
   "A turn succeeds only when its results are saved":
     "结果保存好，turn 才算成功",
   "Completion means the events, usage, and a checkpoint were committed together. A failed or cancelled turn never overwrites the last good state.":
@@ -56,20 +48,12 @@ const ZH_MESSAGES = {
     "产品规格原文：“Model or tool execution ending is not success.”（模型或工具执行结束，不等于成功。）",
   "Keys stay outside the sandbox":
     "密钥留在 sandbox 之外",
-  "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
-    "模型供应商密钥和 MCP 凭据不会进入 sandbox。runtime 通过 mosoo 的代理访问模型和工具，代理在每次请求时注入凭据。",
-  "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
-    "sandbox 只拿到会过期的授权。环境变量则不同，sandbox 里的代码可以读取它们。",
   "Attach files, stream events, download results":
     "附件进，结果出，事件实时可见",
   "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
     "附件以只读方式挂载。Agent 写到 `outputs/` 下的文件会成为可下载的产出物。进度可以通过 SSE 实时查看，也可以读取已保存的历史。",
   "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
     "事件先保存再推送，稳定的 ID 让客户端重连时不会收到重复事件。mosoo 不提供 Webhook。",
-  "From one request to a finished report":
-    "从一个请求到一份完成的报告",
-  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
-    "假设你的后端需要一份调研报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告最后以文件的形式返回。",
   "Add your model key.":
     "添加模型密钥。",
   "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
@@ -178,8 +162,6 @@ const ZH_MESSAGES = {
     "闲置的 sandbox 会被回收，Session 的状态保留",
   "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
     "mosoo 不认证你的终端用户。如果你的 MCP 服务器需要知道是谁发起的请求，可以给 Thread 标上你自己的 `userId`。",
-  "What you can check for yourself":
-    "你可以亲自核实的内容",
   "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
     "mosoo 目前处于 Alpha 阶段。今天能核实的，是代码、版本发布、生产状态，以及两个基于它构建的项目。",
   "Source":
@@ -237,8 +219,6 @@ const ZH_MESSAGES = {
   "spritesheet, 8 columns × 9 rows": "精灵图，8 列 × 9 行",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
-  "What mosoo doesn’t do":
-    "mosoo 不做的事",
   "Plan around them before you build.": "开始构建前，先把它们考虑进去。",
   "Not included":
     "不包含",
@@ -405,8 +385,6 @@ const JA_MESSAGES = {
     "プロバイダーキーはプロジェクトに属し、料金はプロバイダーからお客様のアカウントに直接請求されます。",
   "Names and logos identify compatible services and don’t imply a partnership or endorsement.":
     "名称とロゴは互換性のあるサービスを示すもので、提携や推奨を意味するものではありません。",
-  "What mosoo runs for your backend":
-    "mosoo がバックエンドの代わりに担うこと",
   "Read the product spec":
     "製品仕様を読む",
   "Start a Session without creating an Agent":
@@ -421,12 +399,6 @@ const JA_MESSAGES = {
     "OpenAI Codex、Claude Agent SDK、OpenCode、Pi から選べます。各 Session は runtime、モデル、プロトコルを固定し、黙って別のものに切り替わることはありません。",
   "A runtime and model protocol that don’t match are rejected before anything runs.":
     "runtime とモデルプロトコルが合わない組み合わせは、実行前に拒否されます。",
-  "Reply 1 minute or 7 days later":
-    "1 分後でも 7 日後でも続きから",
-  "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.":
-    "フォローアップは、sandbox が回収された後でも同じ Session で続きます。作業ディレクトリ、会話、ファイルは最後のチェックポイントから戻ります。",
-  "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.":
-    "チェックポイントを復元できない場合はエラーになります。API の Session は放置しても期限切れになりません。",
   "A turn succeeds only when its results are saved":
     "結果が保存されて初めて turn は成功",
   "Completion means the events, usage, and a checkpoint were committed together. A failed or cancelled turn never overwrites the last good state.":
@@ -435,20 +407,12 @@ const JA_MESSAGES = {
     "製品仕様の原文：“Model or tool execution ending is not success.”（モデルやツールの実行が終わっただけでは成功ではない）",
   "Keys stay outside the sandbox":
     "キーは sandbox の外に",
-  "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.":
-    "プロバイダーキーと MCP の認証情報は sandbox に入りません。runtime は mosoo のプロキシ経由でモデルやツールにアクセスし、認証情報はプロキシがリクエストごとに付与します。",
-  "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.":
-    "sandbox が受け取るのは期限付きの権限だけです。環境変数は例外で、sandbox 内のコードから読み取れます。",
   "Attach files, stream events, download results":
     "ファイルを渡し、イベントを追い、結果を受け取る",
   "Attachments mount read-only. Anything the Agent writes under `outputs/` becomes a downloadable artifact. Watch progress over SSE or read the saved history.":
     "添付ファイルは読み取り専用でマウントされます。Agent が `outputs/` に書き込んだものは、ダウンロードできる成果物になります。進捗は SSE でも保存済みの履歴でも確認できます。",
   "Events are saved before they’re sent, and stable IDs let a client reconnect without duplicates. There are no Webhooks.":
     "イベントは保存してから送信され、安定した ID によって再接続しても重複しません。Webhook はありません。",
-  "From one request to a finished report":
-    "1 つのリクエストから、完成したレポートまで",
-  "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.":
-    "たとえば、バックエンドで調査レポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートはファイルとして返ってきます。",
   "Add your model key.":
     "モデルのキーを追加する。",
   "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.":
@@ -557,8 +521,6 @@ const JA_MESSAGES = {
     "アイドルの sandbox は回収し、Session の状態は残す",
   "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.":
     "mosoo はエンドユーザーを認証しません。MCP サーバーが依頼者を知る必要がある場合は、Thread に独自の `userId` を付けてください。",
-  "What you can check for yourself":
-    "自分で確かめられること",
   "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.":
     "mosoo は現在 Alpha 版です。今確かめられるのは、コード、リリース、本番環境のステータス、そして mosoo で作られた 2 つのプロジェクトです。",
   "Source":
@@ -616,8 +578,6 @@ const JA_MESSAGES = {
   "spritesheet, 8 columns × 9 rows": "スプライトシート、8 列 × 9 行",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
-  "What mosoo doesn’t do":
-    "mosoo がやらないこと",
   "Plan around them before you build.": "作り始める前に、前提として織り込んでください。",
   "Not included":
     "含まれないもの",
