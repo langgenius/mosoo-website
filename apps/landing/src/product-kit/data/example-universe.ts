@@ -14,9 +14,8 @@
 // the files it wrote (the hash is the sha256 of the random 32-byte nonce that
 // run generated). Event types and tool names are the console's
 // (SESSION_PROCESS_EVENT_TYPES, domain.ts); contents follow
-// pkgs/runtime-events/src/process-draft.ts (run.* carry the run ID,
-// runtime timing lands as session.status, outputs scan as
-// "Session files updated."), and durations follow
+// pkgs/runtime-events/src/process-draft.ts (run.* carry the run ID, outputs
+// scan as "Session files updated."), and durations follow
 // apps/api/.../session-process-events.service.ts (time to the next event in
 // the same run, 0 for the last).
 //
@@ -315,12 +314,6 @@ export const TURN_1: ExampleTurn = {
       type: "run.started",
     },
     {
-      content: "Runtime timing prepare_run: 2210 ms.",
-      id: "01M4QP80MTHRT28MRC0732P8SR",
-      occurredAt: "2026-10-12T09:14:05.850Z",
-      type: "session.status",
-    },
-    {
       content: TOOL_CALLS.turn1Analyze.toolName,
       id: "01M4QP81WW23DTHSAYWS4S80Y8",
       occurredAt: "2026-10-12T09:14:07.132Z",
@@ -382,12 +375,6 @@ export const TURN_2: ExampleTurn = {
       id: "01M59QD4BN864T7KH7A5S37XRX",
       occurredAt: "2026-10-19T09:20:41.845Z",
       type: "run.started",
-    },
-    {
-      content: "Runtime timing prepare_run: 4820 ms.",
-      id: "01M59QD9298TMKAN8EZRF814N3",
-      occurredAt: "2026-10-19T09:20:46.665Z",
-      type: "session.status",
     },
     {
       content: TOOL_CALLS.turn2Append.toolName,
@@ -468,12 +455,6 @@ export const TURN_3: ExampleTurn = {
       id: "01M59QGEK65NHH9P1RPM78N3VE",
       occurredAt: "2026-10-19T09:22:30.630Z",
       type: "run.started",
-    },
-    {
-      content: "Runtime timing prepare_run: 540 ms.",
-      id: "01M59QGF42A1FR21F84XTA9ZTQ",
-      occurredAt: "2026-10-19T09:22:31.170Z",
-      type: "session.status",
     },
     {
       content: TOOL_CALLS.turn3Sleep.toolName,

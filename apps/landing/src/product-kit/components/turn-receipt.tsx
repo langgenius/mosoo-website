@@ -43,6 +43,8 @@ import { TurnHeader } from "./turn-parts";
 export interface TurnReceiptProps extends MomentProps {
   /** Which CSV turn to show; the receipt is designed around turn 1. */
   turn?: 1 | 2 | undefined;
+  /** Show the console's made-up durations (previews only; never on the website). */
+  showTimings?: boolean | undefined;
 }
 
 const REPLAY_MS = 3600;
@@ -191,10 +193,13 @@ function SessionTimelineBar({
 export function TurnReceiptView({
   elapsed,
   locale,
+  showTimings = false,
   turn,
 }: {
   elapsed: number | null;
   locale: KitLocale;
+  /** The timeline's 0:00 and total labels and the header's duration (made-up values; off on the website). */
+  showTimings?: boolean | undefined;
   turn: ExampleTurn;
 }): ReactElement {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -214,15 +219,18 @@ export function TurnReceiptView({
         events={arrivedEvents}
         index={turn.index}
         locale={locale}
+        showDuration={showTimings}
         status={status}
         trailing={<ExampleValues className="mt-0.5" locale={locale} />}
       />
       <div className="border-border-soft bg-paper-100 flex flex-col gap-1.5 border-t p-2.5">
         <div className="flex flex-col gap-2 px-1 pt-0.5 pb-1.5">
-          <div className="text-fg-3 flex items-center justify-between text-[10.5px] tabular-nums">
-            <span>0:00</span>
-            <span>{formatTotalDuration(timelineMs)}</span>
-          </div>
+          {showTimings ? (
+            <div className="text-fg-3 flex items-center justify-between text-[10.5px] tabular-nums">
+              <span>0:00</span>
+              <span>{formatTotalDuration(timelineMs)}</span>
+            </div>
+          ) : null}
           <SessionTimelineBar
             events={arrivedFeed}
             grow={(event) => progress(elapsed, arrivalOf(event), arrivalOf(event) + GROW_MS)}
@@ -256,6 +264,7 @@ export function TurnReceipt({
   locale,
   replayAt,
   scale,
+  showTimings = false,
   turn = 1,
 }: TurnReceiptProps): ReactElement {
   const replay = useReplay({ animate, durationMs: REPLAY_MS, exclusive, replayAt });
@@ -264,7 +273,7 @@ export function TurnReceipt({
 
   return (
     <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
-      <TurnReceiptView elapsed={replay.elapsed} locale={locale} turn={example} />
+      <TurnReceiptView elapsed={replay.elapsed} locale={locale} showTimings={showTimings} turn={example} />
       <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );

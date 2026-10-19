@@ -505,6 +505,35 @@ test("the static markup export carries the story's facts in every locale", async
   }
 });
 
+// The example's timings are made up, so no island the website renders may
+// state one: no turn duration, no timeline 0:00 or total, no "prepare_run" ms.
+// Clock times (09:14:03 AM) are example timestamps, not durations.
+test("no kit island states a duration in seconds or milliseconds", async () => {
+  const { renderProductKitMarkup } = await import(
+    pathToFileURL(join(root, "scripts/export-product-kit-markup.mjs")).href
+  );
+  const { moments } = await renderProductKitMarkup();
+  const u = await import(pathToFileURL(join(kit, "data/example-universe.ts")).href);
+  // The script's own prompts are quoted verbatim (turn 3 asks for a long sleep).
+  const prompts = u.TURNS.map((turn) => turn.prompt);
+  const timing = /(?<![\w.])\d+(?:[.:]\d+)?\s?(?:ms|s|sec|seconds|秒|ミリ秒|毫秒)(?![\w])|(?<![:\d])\d{1,2}:\d\d(?![:\d])|prepare_run/;
+  for (const [id, byLocale] of Object.entries(moments)) {
+    for (const [locale, html] of Object.entries(byLocale)) {
+      const decoded = html
+        .replace(/<[^>]+>/g, " ")
+        .replaceAll("&quot;", '"')
+        .replaceAll("&#x27;", "'")
+        .replaceAll("&#39;", "'")
+        .replaceAll("&lt;", "<")
+        .replaceAll("&gt;", ">")
+        .replaceAll("&amp;", "&");
+      const text = prompts.reduce((rest, prompt) => rest.replaceAll(prompt, " "), decoded);
+      const match = text.match(timing);
+      assert.equal(match, null, `${id} (${locale}) states a timing: ${match?.[0]}`);
+    }
+  }
+});
+
 // The no-JS home page (scripts/landing-home.mjs) prints the story's two calls
 // as plain text; they must stay the kit's calls, character for character.
 test("the static home page shows the kit's upload and create calls verbatim", async (t) => {

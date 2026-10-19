@@ -4,6 +4,9 @@
 // moment adds nothing to the page's heading outline. The console's header is
 // a button with an expand chevron; here the card does not expand, so the
 // header is plain text and has no chevron.
+// The console's duration chip is off by default: the example's timings are
+// made up, and the website states no measured duration (copy deck section 0.1).
+// A console-fidelity preview can turn it on with showDuration.
 
 import type { ReactElement, ReactNode } from "react";
 
@@ -48,12 +51,18 @@ export function TurnHeader({
   events,
   index,
   locale,
+  showDuration = false,
+  showStats = true,
   status,
   trailing,
 }: {
   events: readonly SessionProcessEvent[];
   index: number;
   locale: KitLocale;
+  /** The console's duration chip; off on the website (invented timings). */
+  showDuration?: boolean | undefined;
+  /** The per-domain event counts under the title. */
+  showStats?: boolean | undefined;
   status: SessionTurnStatus;
   trailing?: ReactNode;
 }): ReactElement {
@@ -72,14 +81,18 @@ export function TurnHeader({
           >
             {turnStatusLabel(status, locale)}
           </span>
-          <span className="text-fg-3 inline-flex items-center gap-1 text-[11px] tabular-nums">
-            <Clock3 className="size-3" />
-            {formatTotalDuration(calculateTurnDurationMs(events))}
-          </span>
+          {showDuration ? (
+            <span className="text-fg-3 inline-flex items-center gap-1 text-[11px] tabular-nums">
+              <Clock3 className="size-3" />
+              {formatTotalDuration(calculateTurnDurationMs(events))}
+            </span>
+          ) : null}
         </div>
-        <div className="mt-1">
-          <TurnStats events={events} locale={locale} />
-        </div>
+        {showStats ? (
+          <div className="mt-1">
+            <TurnStats events={events} locale={locale} />
+          </div>
+        ) : null}
       </div>
       {trailing}
     </div>
