@@ -640,6 +640,25 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   color: var(--ct-ink);
 }
 
+/* Desktop: the answers run in two columns, like an appendix, so all ten stay
+   open without a page of single-column text (v1 review, owner Q1). */
+@media (min-width: 1080px) {
+  .ct-faq {
+    columns: 2;
+    column-gap: 48px;
+    border-top: 1px solid var(--ct-rule);
+  }
+
+  .ct-qa {
+    break-inside: avoid;
+    font-size: 17px;
+  }
+
+  .ct-qa:first-child {
+    padding-top: 18px;
+  }
+}
+
 /* -------------------------------------------------------------- start */
 
 .ct-lanes {
