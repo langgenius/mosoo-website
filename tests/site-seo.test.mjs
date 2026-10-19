@@ -18,6 +18,11 @@ import {
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const LOCALES = ["en", "zh", "ja"];
 const HTML_LANG = { en: "en", zh: "zh-CN", ja: "ja" };
+// The home page's landmark names, the same words the React topbar and footer use.
+const MAIN_NAV = { en: "Main", zh: "主导航", ja: "メインナビゲーション" };
+const FOOTER_NAV = { en: "Footer", zh: "页脚", ja: "フッター" };
+const homeNavOf = (html, locale) =>
+  new RegExp(`<nav class="mf-nav" aria-label="${MAIN_NAV[locale]}">[\\s\\S]*?</nav>`).exec(html)?.[0] ?? "";
 // The home page as served at /en, /zh and /ja (index.html after the locale build).
 const home = (locale) => renderLandingLocale(read("apps/landing/index.html"), locale);
 
@@ -86,7 +91,8 @@ const assertHomeSiteLinks = (html, locale) => {
   const links = HOME_LINKS[locale];
   const hrefs = hrefsOf(html);
 
-  assert.match(html, /<nav aria-label="Primary site links">/);
+  assert.ok(homeNavOf(html, locale), `${locale} home page has its Main navigation`);
+  assert.match(html, new RegExp(`<nav class="mf-groups" aria-label="${FOOTER_NAV[locale]}">`));
   for (const href of [
     "/en",
     "/zh",
@@ -294,13 +300,13 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, /<meta property="og:url" content="https:\/\/mosoo\.ai\/zh" \/>/);
   assert.match(zh, /<title>面向应用后端的开源 Agent runtime \| mosoo<\/title>/);
   assert.match(zh, /content="开源、API 优先的托管 Agent runtime，面向应用后端"/);
-  assert.match(zh, /<h2 id="mf-faq">开始构建前值得问的问题<\/h2>/);
+  assert.ok(headingsOf(zh, 2).includes("开始构建前值得问的问题"));
   assert.match(zh, /需要先创建或发布 Agent 吗？/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
   assert.match(ja, /<meta property="og:url" content="https:\/\/mosoo\.ai\/ja" \/>/);
   assert.match(ja, /<title>アプリのバックエンド向けオープンソース Agent runtime \| mosoo<\/title>/);
-  assert.match(ja, /<h2 id="mf-faq">使い始める前に確認したいこと<\/h2>/);
+  assert.ok(headingsOf(ja, 2).includes("使い始める前に確認したいこと"));
   assert.match(ja, /先に Agent を作成または公開する必要はありますか？/);
   for (const html of [en, zh, ja]) {
     assert.match(html, /<link rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en" \/>/);
@@ -351,7 +357,9 @@ test("the home JSON-LD graph is valid and states only what the main repo states"
     const app = nodes.SoftwareApplication;
     assert.equal(app["@id"], "https://mosoo.ai/#software");
     assert.equal(app.name, "mosoo");
-    assert.equal(app.url, url);
+    // One entity on all three pages: one url (the x-default page); only the
+    // description and inLanguage follow the page.
+    assert.equal(app.url, "https://mosoo.ai/en");
     assert.equal(app.inLanguage, HTML_LANG[locale]);
     assert.ok(app.description.startsWith(homeHeadline(locale)), "description leads with the positioning");
     for (const runtime of ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"]) {
@@ -404,29 +412,39 @@ test("the FAQPage JSON-LD matches the FAQ a reader sees on the page", () => {
 test("the static home page carries the whole page for readers without JavaScript", () => {
   const en = home("en");
 
+  // Statement headings: read in order, they say what mosoo is.
   assert.deepEqual(headingsOf(en, 2), [
-    "Pick a runtime. Use your own model key.",
-    "What mosoo runs for your backend",
-    "From one request to a finished report",
+    "One request starts a Session. A follow-up continues it 2 days later.",
+    "Every Session runs one of 4 runtimes on your own model key.",
     "Your app keeps its users. mosoo runs the Agent.",
-    "What you can check for yourself",
-    "What mosoo doesn’t do",
+    "The source, the releases, and production status are public.",
+    "mosoo has no Webhooks, tool approvals, or billing.",
     "Questions to ask before you build on mosoo",
     "Start your first Session",
   ]);
   assert.match(
     textOf(en),
-    /mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox\./,
+    /Start an agent task with one API call, then continue the same Session a minute or 7 days later\./,
   );
-  assert.match(en, /It starts with <code translate="no">msp_<\/code> and is shown once\./);
+  const runtimeRow = /<div class="mf-runtimes">[\s\S]*?<\/div>/.exec(en)?.[0] ?? "";
+  assert.match(runtimeRow, /One API, 4 runtimes:/);
+  for (const runtime of ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"]) {
+    assert.ok(runtimeRow.includes(`>${runtime}</li>`), `the hero names ${runtime}`);
+  }
+  assert.match(en, /It starts with <code translate="no">msp_<\/code>, is shown once, and stays on your backend\./);
   assert.match(en, /curl https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\$MOSOO_PROJECT_ID\/threads/);
-  assert.match(en, /"type": "inline",\n\s+"harness": "openai-runtime"/);
+  assert.match(en, /"type": "inline",\n\s+"harness": "claude-agent-sdk"/);
+  // The day 1 turn copies the attachment into the working directory, which is
+  // what the day 3 follow-up reads (attachments are not mounted again).
+  assert.match(en, /cp session-files\/sales\.csv \. &amp;&amp; python analyze\.py sales\.csv/);
+  assert.match(en, /python analyze\.py sales\.csv --by channel/);
   assert.match(en, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
   assert.match(en, /There are no Webhooks\./);
   assert.match(en, /mosoo is in Alpha\. Public APIs may still change\./);
-  assert.match(en, /<details>\s*<summary>Set up with your coding agent<\/summary>/);
+  assert.match(en, /<details><summary class="mf-phrase">Read the setup prompt<\/summary>/);
   assert.match(en, /# Set up mosoo/);
   assert.match(en, /<a href="https:\/\/cloud\.mosoo\.ai" class="mf-btn">Try mosoo<\/a>/);
+  assert.match(textOf(en), /then asks you to add a provider key in the console, the one step it can’t do for you\./);
 
   for (const locale of LOCALES) {
     const html = home(locale);
@@ -434,16 +452,15 @@ test("the static home page carries the whole page for readers without JavaScript
 
     assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1, the positioning`);
     assert.deepEqual(sectionIdsOf(html), [
-      "runtimes",
-      "features",
       "how-it-works",
+      "runtimes",
       "your-app-and-mosoo",
       "proof",
       "limits",
       "faq",
       "start",
     ]);
-    assert.equal(headingsOf(html, 2).length, 8);
+    assert.equal(headingsOf(html, 2).length, 7);
     assert.match(html, /<main id="main">/);
     assert.match(html, /<footer class="mf-foot">/);
     assert.match(html, /<div id="root"><div class="mosoo-fallback">/);
@@ -461,9 +478,8 @@ test("the static home page carries the whole page for readers without JavaScript
 test("the React home page and the static fallback share anchors, FAQ text and navigation", () => {
   const landing = "apps/landing/src/routes/login/landing";
   const sections = [
+    "product-visual.tsx",
     "supply-wall.tsx",
-    "features-section.tsx",
-    "how-it-works.tsx",
     "split-section.tsx",
     "proof-section.tsx",
     "limits-section.tsx",
@@ -477,13 +493,36 @@ test("the React home page and the static fallback share anchors, FAQ text and na
   }
 
   const dictionary = read(`${landing}/i18n.ts`);
+  const dictionaries = [
+    dictionary,
+    read(`${landing}/above-fold-i18n.ts`),
+    read("apps/landing/src/shared/i18n.ts"),
+  ].join("\n");
   for (const locale of LOCALES) {
     for (const { q, a } of homeFaq(locale)) {
       assert.ok(dictionary.includes(JSON.stringify(q)), `the React FAQ asks (${locale}): ${q}`);
       assert.ok(dictionary.includes(JSON.stringify(a)), `the React FAQ answers (${locale}): ${q}`);
     }
 
-    const nav = /<nav aria-label="Primary site links">[\s\S]*?<\/nav>/.exec(home(locale))?.[0] ?? "";
+    // Every Chinese and Japanese line the static page shows, phrase marks
+    // included, is a line the React page shows too.
+    if (locale !== "en") {
+      const shown = textOf(home(locale).replace(/<script[\s\S]*?<\/script>|<style>[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>/g, " "));
+      const copy = read("scripts/landing-home.mjs");
+      const localeBlock = copy.slice(copy.indexOf(`  ${locale}: {`), copy.indexOf(locale === "zh" ? "  ja: {" : "export const HOME_LOCALES"));
+      // The page copy only: the JSON-LD strings are not shown on the page.
+      const block = localeBlock.slice(0, localeBlock.indexOf("    jsonLd: {"));
+      for (const match of block.matchAll(/"((?:[^"\\]|\\.)*)"/g)) {
+        const value = match[1];
+        if (!/[\u3040-\u30ff\u3400-\u9fff]/.test(value)) continue;
+        if (!shown.includes(value.replaceAll("|", "").replaceAll("`", ""))) continue;
+        // The static header's menu disclosure; React shows an icon button.
+        if (value === "菜单" || value === "メニュー") continue;
+        assert.ok(dictionaries.includes(JSON.stringify(value)), `the React page says it too (${locale}): ${value}`);
+      }
+    }
+
+    const nav = homeNavOf(home(locale), locale);
     assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai" translate="no">mosoo<\/a>/);
     assert.match(nav, /<a href="https:\/\/computer\.mosoo\.ai" translate="no">Mosoo Computer<\/a>/);
     assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai\/login">/);

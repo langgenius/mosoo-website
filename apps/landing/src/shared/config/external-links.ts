@@ -13,7 +13,8 @@ export const MOSOO_CHANGELOG_URL = `${MOSOO_DOCS_URL}changelog/`;
 
 export const MOSOO_RELEASES_URL = `${MOSOO_GITHUB_URL}releases`;
 export const MOSOO_LICENSE_URL = `${MOSOO_GITHUB_URL}blob/main/LICENSE`;
-export const MOSOO_SECURITY_URL = `${MOSOO_GITHUB_URL}security`;
+// No Security link: the repository has no SECURITY.md and private
+// vulnerability reporting is off, so its Security tab states no policy yet.
 export const MOSOO_SPEC_URL = `${MOSOO_GITHUB_URL}blob/main/docs/SPEC.md`;
 export const MOSOO_ISSUES_LIST_URL = `${MOSOO_GITHUB_URL}issues`;
 export const MOSOO_AGENT_DRIVER_URL = "https://github.com/langgenius/mosoo-agent-driver";
@@ -35,6 +36,9 @@ export const MOSOO_CLOUD_URL = "https://cloud.mosoo.ai";
 export const MOSOO_LOGIN_URL = `${MOSOO_CLOUD_URL}/login`;
 export const MOSOO_COMPUTER_URL = "https://computer.mosoo.ai";
 export const MOSOO_OPENAPI_V2_URL = `${MOSOO_CLOUD_URL}/api/v2/openapi.json`;
+export const MOSOO_OPENAPI_V1_URL = `${MOSOO_CLOUD_URL}/api/v1/openapi.json`;
+// The product index for coding agents and other LLM readers (src/worker.js).
+export const MOSOO_LLMS_TXT_URL = "https://mosoo.ai/llms.txt";
 
 // The console's onboarding installs the CLI and the @mosoo skill with this
 // script (mosoo apps/web onboarding-setup-prompt.ts).

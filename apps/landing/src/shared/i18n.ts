@@ -2,7 +2,9 @@ import { locale } from "./locale";
 
 // Strings for the site shell every landing page renders: the topbar, the mobile
 // menu, the Products menu and the footer. Copy source: the v1 copy deck §1, §12
-// and §18 (nav and footer microcopy).
+// and §18 (nav and footer microcopy). "|" in a Chinese or Japanese string marks
+// a phrase edge where display text may wrap; t() strips it, tp() keeps it for
+// Phrases (routes/login/landing/ui.tsx).
 const ZH_MESSAGES = {
   "Skip to content": "跳到正文",
   "mosoo home": "mosoo 首页",
@@ -19,7 +21,9 @@ const ZH_MESSAGES = {
   "Try mosoo": "试用 mosoo",
   "Open menu": "打开菜单",
   "Close menu": "关闭菜单",
-  "Take root, and grow a bamboo sea.": "扎下根，长成一片竹海。",
+  Main: "主导航",
+  Footer: "页脚",
+  "Take root, and grow a bamboo sea.": "扎下根，|长成一片竹海。",
   "An open-source, API-first managed Agent runtime for application backends.":
     "开源、API 优先的托管 Agent runtime，面向应用后端。",
   Product: "产品",
@@ -34,7 +38,6 @@ const ZH_MESSAGES = {
   Releases: "版本发布",
   "Product spec": "产品规格",
   License: "许可证",
-  Security: "安全",
   "Incident postmortems": "事故复盘",
 } as const;
 
@@ -57,7 +60,9 @@ const JA_MESSAGES = {
   "Try mosoo": "mosoo を試す",
   "Open menu": "メニューを開く",
   "Close menu": "メニューを閉じる",
-  "Take root, and grow a bamboo sea.": "根を張り、竹の海を育てよう。",
+  Main: "メインナビゲーション",
+  Footer: "フッター",
+  "Take root, and grow a bamboo sea.": "根を張り、|竹の海を育てよう。",
   "An open-source, API-first managed Agent runtime for application backends.":
     "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
   Product: "プロダクト",
@@ -72,12 +77,17 @@ const JA_MESSAGES = {
   Releases: "リリース",
   "Product spec": "製品仕様",
   License: "ライセンス",
-  Security: "セキュリティ",
   "Incident postmortems": "インシデントの事後分析",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
 
-export function t(message: Message): string {
+/** The string with its phrase marks, for <Phrases>. */
+export function tp(message: Message): string {
   return locale === "en" ? message : MESSAGES[locale][message];
+}
+
+/** The string as running text, without phrase marks. */
+export function t(message: Message): string {
+  return tp(message).replaceAll("|", "");
 }

@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 
 import { cn } from "@/shared/lib/class-names";
 
-import { sectionHeadingStyle } from "./typography";
+import { evidenceHeadingStyle, sectionHeadingStyle, statementHeadingStyle } from "./typography";
 
 /** Uppercase overline with the single green accent dot. Used by the use-case
     pages; the home page uses no overlines (house copy rules). */
@@ -38,6 +38,79 @@ export function Eyebrow({
 
 const INLINE_CODE_CLASS =
   "bg-paper-200 text-ink-900 rounded-[4px] px-1 py-px font-mono text-[0.88em] [overflow-wrap:anywhere]";
+
+/**
+ * Chinese and Japanese headings, labels and buttons wrap only between
+ * phrases. The dictionaries mark phrase edges with "|" (see phraseText in
+ * the i18n modules); Phrases turns each mark into <wbr>, and app.css sets
+ * word-break: keep-all on elements with PHRASE_CLASS, so a line never ends
+ * inside a word such as 托管 or 竹の海. English strings carry no marks.
+ */
+export const PHRASE_CLASS = "cjk-phrase";
+export const PHRASE_MARK = "|";
+
+// Terms that read as one word and must not break across lines, in any locale.
+const KEEP_TOGETHER = [
+  "Agent runtime",
+  "API ファースト",
+  "open-source",
+  "API-first",
+  "OpenAI Codex",
+  "Claude Agent SDK",
+  "Mosoo Computer",
+] as const;
+// Chinese and Japanese set a space between Latin and CJK text. Two of those
+// spaces must not become line breaks: between a Latin word and the Japanese
+// particle after it ("Agent のタスク"), and between a number and its counter
+// ("7 天后", "1 回").
+const LATIN_WORD_WITH_PARTICLE = "[A-Za-z0-9][\\w./-]* (?:の|で|を|が|は|に|と|も|へ|や|ごと|から|まで)";
+const NUMBER_WITH_COUNTER = "\\d+ [\\u3040-\\u30ff\\u3400-\\u9fff]";
+const KEPT = [...KEEP_TOGETHER, LATIN_WORD_WITH_PARTICLE, NUMBER_WITH_COUNTER].join("|");
+const KEEP_TOGETHER_PATTERN = new RegExp(`(${KEPT})`);
+const IS_KEPT = new RegExp(`^(?:${KEPT})$`);
+const UNTRANSLATED_TERMS: ReadonlySet<string> = new Set([
+  "Agent runtime",
+  "OpenAI Codex",
+  "Claude Agent SDK",
+  "Mosoo Computer",
+]);
+
+function KeepTogether({ text }: { text: string }): ReactElement {
+  return (
+    <>
+      {text.split(KEEP_TOGETHER_PATTERN).map((part, index) =>
+        IS_KEPT.test(part) ? (
+          // Pieces of a static string: the index is a stable key.
+          <span
+            key={index}
+            translate={UNTRANSLATED_TERMS.has(part) ? "no" : undefined}
+            className="whitespace-nowrap"
+          >
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
+/** Renders a phrase-marked string: <wbr> at each mark, fixed terms unbroken. */
+export function Phrases({ text }: { text: string }): ReactElement {
+  const phrases = text.split(PHRASE_MARK);
+  return (
+    <>
+      {phrases.map((phrase, index) => (
+        // Phrases of a static string: the index is a stable key.
+        <Fragment key={index}>
+          {index > 0 ? <wbr /> : null}
+          <KeepTogether text={phrase} />
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
 /** Offers a line break after each "/" so API paths wrap at segment edges. */
 export function BreakAfterSlashes({ text }: { text: string }): ReactElement {
@@ -111,24 +184,45 @@ export function WithCodeTokens({
   );
 }
 
+/**
+ * A section's h2 and its optional intro. `title` may carry phrase marks
+ * (pass the tp() form of the string); `intro` is plain running text.
+ */
+const HEADING_SCALE = {
+  evidence: evidenceHeadingStyle,
+  section: sectionHeadingStyle,
+  statement: statementHeadingStyle,
+} as const;
+
 export function SectionHeading({
   id,
   title,
   intro,
+  scale = "section",
   className,
 }: {
   id: string;
   title: string;
-  intro?: string;
+  intro?: ReactNode;
+  /** evidence: quiet sections; statement: the page's one loud heading. */
+  scale?: keyof typeof HEADING_SCALE;
   className?: string;
 }): ReactElement {
   return (
     <div className={className}>
-      <h2 id={id} className="text-ink-900 max-w-[860px] [text-wrap:balance]" style={sectionHeadingStyle}>
-        {title}
+      <h2
+        id={id}
+        className={cn(
+          PHRASE_CLASS,
+          "text-ink-900 [text-wrap:balance]",
+          scale === "statement" ? "max-w-[1100px]" : "max-w-[900px]",
+        )}
+        style={HEADING_SCALE[scale]}
+      >
+        <Phrases text={title} />
       </h2>
       {intro === undefined ? null : (
-        <p className="text-ink-500 mt-4 max-w-[640px] text-[17px] leading-[1.6] [text-wrap:pretty]">
+        <p className="text-ink-700 mt-4 max-w-[760px] text-[17px] leading-[1.6] [text-wrap:pretty]">
           {intro}
         </p>
       )}

@@ -8,10 +8,12 @@ import { productHost, PRODUCTS, PRODUCTS_TRIGGER_CLASS } from "./products";
 
 // Loaded after the topbar's first paint (see LazyProductsMenu in topbar.tsx).
 // The popup is portalled to <body>, outside the landing shell, so it carries
-// its own data-theme to pick up the landing palette.
+// its own data-theme to pick up the landing palette. The root renders a <div>:
+// the menu sits inside the topbar's "Main" nav, and a nav inside a nav would
+// only add a second landmark for one button.
 export function ProductsMenu(): ReactElement {
   return (
-    <NavigationMenu.Root aria-label={t("Products")}>
+    <NavigationMenu.Root render={<div />}>
       <NavigationMenu.List className="flex">
         <NavigationMenu.Item>
           <NavigationMenu.Trigger className={PRODUCTS_TRIGGER_CLASS}>

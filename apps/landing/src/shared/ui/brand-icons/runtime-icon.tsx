@@ -11,10 +11,13 @@ export function RuntimeIcon({
   className,
   runtimeId,
   size = 20,
+  loading = "lazy",
 }: {
   className?: string;
   runtimeId: string;
   size?: number;
+  /** "eager" for marks in the first viewport. */
+  loading?: "lazy" | "eager";
 }): ReactElement | null {
   const iconUrl = RUNTIME_ICON_URL[runtimeId];
 
@@ -28,7 +31,7 @@ export function RuntimeIcon({
       alt=""
       width={size}
       height={size}
-      loading="lazy"
+      loading={loading}
       decoding="async"
       className={cn("inline-block object-contain", className)}
       src={iconUrl}

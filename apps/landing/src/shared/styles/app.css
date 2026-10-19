@@ -53,6 +53,32 @@
     url("/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
     url("/fonts/GeistMono-Variable.woff2") format("woff2");
 }
+/* CJK faces for display type (typography.ts DISPLAY_FONT). Cabinet Grotesk
+   has no CJK glyphs, so ideographs and kana fell through to the system font
+   at whatever weight it chose for 500: PingFang SC came out Medium, heavier
+   than the Latin around it, and Hiragino Sans lighter. Each alias names one
+   installed face and declares one weight (400), so the variable system fonts
+   cannot be pulled to another weight: PingFang SC Regular and Hiragino Sans
+   W4, matched by eye against Cabinet Grotesk 500. Only CJK code points use
+   them; where none of these fonts is installed, the stack moves on to the
+   system font. No web font is downloaded. */
+@font-face {
+  font-family: "mosoo CJK SC";
+  font-weight: 400;
+  src:
+    local("PingFangSC-Regular"), local("NotoSansCJKsc-Regular"), local("Noto Sans CJK SC Regular"),
+    local("SourceHanSansSC-Regular"), local("MicrosoftYaHei"), local("Microsoft YaHei");
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+@font-face {
+  font-family: "mosoo CJK JP";
+  font-weight: 400;
+  src:
+    local("HiraginoSans-W4"), local("HiraKakuProN-W3"), local("NotoSansCJKjp-Regular"),
+    local("Noto Sans CJK JP Regular"), local("YuGothic-Medium"), local("Yu Gothic Medium"),
+    local("Meiryo");
+  unicode-range: U+3000-30FF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
 
 :root {
   /* Brand green — the bright Moso-bamboo shoot (#6FD305). A disciplined accent
@@ -471,11 +497,19 @@
   * {
     box-sizing: border-box;
   }
-  /* Japanese line breaking: strict kinsoku (no line-initial ー or small
-     kana) plus phrase-based wrapping where supported (Chromium BudouX), so
-     words like メーター never split mid-katakana. */
+  /* Chinese and Japanese line breaking. Running text breaks between any two
+     characters, as CJK typesetting expects, with strict kinsoku (no
+     line-initial punctuation, ー or small kana). Headings, labels and buttons
+     are short enough that a break inside a word reads as a mistake (托 / 管,
+     竹の / 海), so they wrap only between phrases: see .cjk-phrase below. */
+  :lang(zh),
   :lang(ja) {
     line-break: strict;
+  }
+  /* Headings and labels without hand-placed phrase marks still get
+     Chromium's phrase analysis in Japanese; paragraphs and code do not,
+     because it left lines ending at half the measure. */
+  :is(h1, h2, h3, h4, th, dt, label, summary):lang(ja) {
     word-break: auto-phrase;
   }
   html,
@@ -499,9 +533,33 @@
     background: var(--green-200);
     color: var(--ink-900);
   }
+  /* Running text avoids a last line of one word, or one CJK character. In
+     the base layer, so a component's own text-wrap utility still wins. */
+  .landing-shell :is(p, li, dd, td, figcaption) {
+    text-wrap: pretty;
+  }
 }
 
 @layer components {
+  /* Display text, labels and buttons that render dictionary strings through
+     Phrases (routes/login/landing/ui.tsx): in Chinese and Japanese they wrap
+     only at spaces, punctuation and the <wbr> phrase marks, the same in every
+     browser, and overflow-wrap rescues a phrase that is wider than the line
+     by itself. 'halt' sets full-width punctuation at half width where the
+     font has it (Hiragino does; PingFang does not, so the Chinese H1 breaks
+     at its comma instead). */
+  .cjk-phrase:is(:lang(zh), :lang(ja)) {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    font-feature-settings: "ss01", "halt";
+  }
+  /* FAQ questions carry no phrase marks (they must equal the FAQPage
+     JSON-LD), so Chinese ones wrap at their punctuation and spaces. */
+  .faq-question:lang(zh) {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
   .h-display {
     font-family: var(--font-display);
     font-size: var(--fs-64);
@@ -605,6 +663,7 @@ html:has(.landing-shell[data-theme="landing"]) {
   overflow-x: clip;
 }
 
+
 .landing-footer {
   position: relative;
   z-index: 0;
@@ -625,25 +684,99 @@ html:has(.landing-shell[data-theme="landing"]) {
   }
 }
 
-/* Home page product visual: the event rows of the example Session arrive one
-   after another, once, on load. Opacity only (transforms on table rows are not
-   reliable everywhere). Reduced motion renders the finished record at once. */
-@keyframes product-visual-row-in {
+/* ----------------------------------------------------------------------------
+   Home page product stage (product-visual.tsx).
+   Arrival cue: when a beat first comes into view (data-arrived, set once by an
+   IntersectionObserver), a light passes down its rows in order and the
+   checkpoint rings settle in. Rows never start hidden, so nothing that is
+   already on screen, or painted by the static page, disappears. Reduced
+   motion shows the record as it is.
+   --------------------------------------------------------------------------- */
+@keyframes stage-row-arrive {
   from {
-    opacity: 0;
+    background-color: var(--green-100);
   }
   to {
+    background-color: transparent;
+  }
+}
+
+@keyframes stage-ring-settle {
+  from {
+    transform: scaleX(0.4);
+    opacity: 0.3;
+  }
+  to {
+    transform: scaleX(1);
     opacity: 1;
   }
 }
 
-.product-visual-row {
-  animation: product-visual-row-in 260ms var(--ease-out) both;
-  animation-delay: calc(var(--row-index, 0) * 60ms + 180ms);
+.stage-beat[data-arrived] .stage-row {
+  animation: stage-row-arrive 900ms var(--ease-out) both;
+  animation-delay: calc(var(--row, 0) * 110ms);
+}
+
+.stage-beat[data-arrived] .stage-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: stage-ring-settle 420ms var(--ease-out) both;
+  animation-delay: 160ms;
+}
+
+.stage-beat[data-arrived] .stage-ring-late {
+  animation-delay: 520ms;
+}
+
+/* A horizontally scrolling code block fades at its right edge on phones,
+   where it is cut, so the cut reads as "more this way". */
+@media (max-width: 639px) {
+  .stage-scroll-fade::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 28px;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, var(--ink-900));
+  }
+
+  /* Phones: the stage is a vertical timeline. A rail runs down the left
+     edge and each beat hangs a dot on it. */
+  .stage-track {
+    position: relative;
+    padding-left: 22px;
+  }
+
+  .stage-track::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 5px;
+    width: 1px;
+    background: var(--border-strong);
+  }
+
+  .stage-beat {
+    position: relative;
+  }
+
+  .stage-beat::before {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: -21px;
+    width: 11px;
+    height: 11px;
+    border-radius: 9999px;
+    background: var(--ink-900);
+    box-shadow: 0 0 0 3px var(--paper-100);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .product-visual-row {
+  .stage-beat[data-arrived] .stage-row,
+  .stage-beat[data-arrived] .stage-ring {
     animation: none;
   }
 }
@@ -730,6 +863,13 @@ html:has(.landing-shell[data-theme="landing"]) {
     opacity: 1;
     transform: none;
   }
+}
+
+/* The static page (scripts/landing-home.mjs) already showed the hero before
+   React mounted (main.tsx sets the flag), so the hero must not fade out and
+   back in: visible content is never hidden again. */
+:root[data-fallback-painted] .landing-hero-reveal {
+  animation: none;
 }
 
 ::-webkit-scrollbar {

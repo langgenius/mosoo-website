@@ -13,11 +13,7 @@ import {
 
 export function LanguageMenu(): ReactElement {
   return (
-    <label title={t("Change language")} className="relative inline-flex h-9 min-w-[64px] items-center">
-      <span
-        aria-hidden="true"
-        className="bg-green-500 pointer-events-none absolute top-1/2 left-2.5 z-10 size-1.5 -translate-y-1/2 rounded-[1px]"
-      />
+    <label title={t("Change language")} className="relative inline-flex h-9 min-w-[56px] items-center">
       <select
         aria-label={t("Change language")}
         value={locale}
@@ -25,7 +21,7 @@ export function LanguageMenu(): ReactElement {
           const nextLocale = event.currentTarget.value;
           if (isLocale(nextLocale) && nextLocale !== locale) navigateToLocale(nextLocale);
         }}
-        className="text-fg-2 hover:border-border-soft hover:bg-paper-200/70 hover:text-fg-1 focus-visible:ring-ring h-full w-full cursor-pointer appearance-none rounded-md border border-transparent bg-transparent pr-7 pl-5 font-mono text-[13px] font-semibold transition-colors outline-none focus-visible:ring-2"
+        className="text-fg-2 hover:border-border-soft hover:bg-paper-200/70 hover:text-fg-1 focus-visible:ring-ring h-full w-full cursor-pointer appearance-none rounded-md border border-transparent bg-transparent pr-7 pl-2.5 font-mono text-[13px] font-semibold transition-colors outline-none focus-visible:ring-2"
       >
         {LOCALES.map((nextLocale) => (
           <option key={nextLocale} value={nextLocale} lang={htmlLanguage[nextLocale]}>

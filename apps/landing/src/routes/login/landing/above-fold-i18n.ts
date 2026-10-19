@@ -1,43 +1,63 @@
 import { locale } from "@/shared/locale";
 
 // Strings for the first screen of the home page: the hero and the product
-// visual, plus the copy-button feedback both use. Kept apart from the
+// stage, plus the copy-button feedback both use. Kept apart from the
 // below-the-fold dictionary so the initial bundle carries only these.
-// Copy source: v1 copy deck §2, §3 and §18.
+//
+// "|" in a Chinese or Japanese string marks a phrase edge where a heading,
+// label or button may wrap (rendered as <wbr> by Phrases in ui.tsx). t()
+// strips the marks for running text and attributes; tp() keeps them.
 const ZH_MESSAGES = {
-  "An open-source, API-first managed Agent runtime": "开源、API 优先的托管 Agent runtime，",
-  "for application backends.": "面向应用后端。",
-  "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.":
-    "mosoo 用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。",
+  "An open-source, API-first managed Agent runtime": "开源、|API 优先的|托管 Agent runtime，|",
+  "for application backends.": "面向|应用后端。",
+  "Start an agent task with one API call, then continue the same Session a minute or 7 days later.":
+    "一次 API 调用启动 Agent 任务，|1 分钟后或 7 天后|都能在同一个 Session 里|接着做。",
   "Try mosoo": "试用 mosoo",
-  "Read the quickstart": "阅读快速开始",
-  "View source": "查看源码",
-  "mosoo is in Alpha. Public APIs may still change.":
-    "mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。",
-  "Set up with your coding agent": "使用编码智能体设置",
-  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.":
-    "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
-  "Copy setup prompt": "复制设置提示",
-  "Copy command": "复制命令",
+  "Read the quickstart": "阅读|快速开始",
+  "Using a coding agent?": "在用编码智能体？",
+  "One API, 4 runtimes:": "一个 API，4 个 runtime：",
+  "mosoo is in Alpha. Public APIs may still change.": "mosoo 目前处于 Alpha 阶段，|公开 API 仍可能变化。",
+  "Copy setup prompt": "复制|设置提示",
   "Setup prompt copied": "设置提示已复制",
-  "Command copied": "命令已复制",
   "Copy failed.": "复制失败。",
-  "Read the install script": "查看安装脚本",
-  "A CSV analysis, started on day 1 and continued 2 days later in the same Session.":
-    "示例：第 1 天开始一项 CSV 分析，2 天后在同一个 Session 里继续。",
+  "One request starts a Session. A follow-up continues it 2 days later.":
+    "一个请求|启动 Session，|2 天后|再发一条消息，|接着做。",
   "Example values. Field names and event types come from the v2 OpenAPI document.":
     "示例数据。字段名和事件类型来自 v2 OpenAPI 文档。",
-  "Example Session record. Your backend sends one request with a CSV attachment. mosoo streams events while the Agent runs Python in the sandbox and saves a report, a chart, and a data file under outputs/. Two days later the backend sends a follow-up to the same Thread. The sandbox had been reclaimed in between, so mosoo restores the working directory and the conversation from the last checkpoint, and the Agent updates the report.":
-    "示例 Session 记录。你的后端发送一个带 CSV 附件的请求。Agent 在 sandbox 中运行 Python，mosoo 实时推送事件，并把报告、图表和数据文件保存到 outputs/ 下。2 天后，后端向同一个 Thread 发送后续消息。这期间 sandbox 已被回收，mosoo 从最近一次检查点恢复工作目录和对话，Agent 随后更新了报告。",
+  "Start a Session": "启动 Session",
   "Your backend": "你的后端",
-  Request: "请求",
+  "With a provider key in your Project, one request starts the Session. Keep the `thread.id` it returns.":
+    "项目里有模型供应商密钥后，一个请求就能启动 Session。保存返回的 `thread.id`。",
+  "mosoo runs the turn": "mosoo 执行|这个 turn",
   "Event stream (SSE)": "事件流（SSE）",
-  Files: "文件",
-  "Day 1": "第 1 天",
+  "The Agent runs code in the Session’s own sandbox, and your keys stay outside it. Events are saved, then streamed. The turn ends with artifacts, usage, and a checkpoint.":
+    "Agent 在这个 Session 自己的 sandbox 里运行代码，你的密钥始终在 sandbox 之外。事件先保存再推送。turn 结束时留下产出物、用量和检查点。",
+  "Artifacts in outputs/": "outputs/ 里的|产出物",
   "2 days later": "2 天后",
-  "Sandbox reclaimed while idle": "sandbox 闲置后已回收",
-  "Restored from the last checkpoint": "从最近一次检查点恢复",
+  "Turn committed": "turn 已提交",
+  "Sandbox reclaimed while idle": "sandbox 闲置后|已回收",
+  "Restored from the last checkpoint": "从最近一次|检查点|恢复",
+  "Reply whenever you’re ready. A follow-up to the same `thread.id` continues the Session, and `sales.csv`, copied into the working directory on day 1, comes back with the checkpoint.":
+    "准备好了再回复。向同一个 `thread.id` 发送后续消息，Session 就会继续；第 1 天复制到工作目录的 `sales.csv` 会随检查点一起恢复。",
+  "Follow-up": "后续消息",
   "Same thread.id": "同一个 thread.id",
+  "Show the full request": "查看|完整请求",
+  "Show all 12 events": "查看|全部 12 个事件",
+  "Show all 7 events": "查看|全部 7 个事件",
+  "Copy request": "复制|请求",
+  "Open the v2 API reference": "查看 v2 API 参考",
+  "Request copied": "请求已复制",
+  "A Project API key. It starts with `msp_`, is shown once, and stays on your backend.":
+    "Project API 密钥。它以 `msp_` 开头，只显示一次，只放在你的后端。",
+  "The runtime for this Session: openai-runtime, claude-agent-sdk, acp-fallback, or pi.":
+    "这个 Session 使用的 runtime：openai-runtime、claude-agent-sdk、acp-fallback 或 pi。",
+  "A model your provider key can use. Model IDs change often, so check your Project first.":
+    "你的模型供应商密钥可用的模型。模型 ID 经常变化，请先在项目里确认。",
+  "What the Agent does in this Session.": "Agent 在这个 Session 里要做的事。",
+  "Files uploaded first with POST /api/v2/projects/{projectId}/files.":
+    "先通过 POST /api/v2/projects/{projectId}/files 上传的文件。",
+  "Retry with the same key for 24 hours without running the work twice.":
+    "24 小时内用同一个 key 重试，不会重复执行。",
   "Which regions grew fastest last quarter?": "上个季度哪些地区增长最快？",
   "Now split it by sales channel. Keep the same chart style.":
     "再按销售渠道拆分一下，图表样式保持不变。",
@@ -47,39 +67,57 @@ type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
   "An open-source, API-first managed Agent runtime":
-    "オープンソースで API ファーストなマネージド Agent runtime",
-  "for application backends.": "アプリケーションのバックエンドのための、",
-  "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.":
-    "mosoo は OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行します。Session ごとに専用の sandbox が割り当てられます。",
+    "オープンソースで API ファーストな|マネージド Agent runtime",
+  "for application backends.": "アプリケーションの|バックエンドのための、|",
+  "Start an agent task with one API call, then continue the same Session a minute or 7 days later.":
+    "API を 1 回呼ぶだけで Agent のタスクを始め、|1 分後でも 7 日後でも|同じ Session で|続きを実行できます。",
   "Try mosoo": "mosoo を試す",
-  "Read the quickstart": "クイックスタートを読む",
-  "View source": "ソースコードを見る",
+  "Read the quickstart": "クイックスタートを|読む",
+  "Using a coding agent?": "コーディングエージェントを使うなら",
+  "One API, 4 runtimes:": "1 つの API で 4 つの runtime：",
   "mosoo is in Alpha. Public APIs may still change.":
-    "mosoo は現在 Alpha 版です。公開 API は変更される可能性があります。",
-  "Set up with your coding agent": "コーディングエージェントでセットアップ",
-  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.":
-    "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
-  "Copy setup prompt": "セットアッププロンプトをコピー",
-  "Copy command": "コマンドをコピー",
+    "mosoo は現在 Alpha 版です。|公開 API は|変更される可能性があります。",
+  "Copy setup prompt": "セットアップ|プロンプトを|コピー",
   "Setup prompt copied": "セットアッププロンプトをコピーしました",
-  "Command copied": "コマンドをコピーしました",
   "Copy failed.": "コピーに失敗しました。",
-  "Read the install script": "インストールスクリプトを確認する",
-  "A CSV analysis, started on day 1 and continued 2 days later in the same Session.":
-    "例：1 日目に始めた CSV 分析を、2 日後に同じ Session で続ける。",
+  "One request starts a Session. A follow-up continues it 2 days later.":
+    "1 つのリクエストで Session を開始。|2 日後の|フォローアップで|続きを実行。",
   "Example values. Field names and event types come from the v2 OpenAPI document.":
     "サンプル値です。フィールド名とイベントタイプは v2 OpenAPI ドキュメントに基づいています。",
-  "Example Session record. Your backend sends one request with a CSV attachment. mosoo streams events while the Agent runs Python in the sandbox and saves a report, a chart, and a data file under outputs/. Two days later the backend sends a follow-up to the same Thread. The sandbox had been reclaimed in between, so mosoo restores the working directory and the conversation from the last checkpoint, and the Agent updates the report.":
-    "Session 記録の例です。バックエンドが CSV を添付したリクエストを 1 つ送ります。Agent が sandbox 内で Python を実行するあいだ、mosoo はイベントを配信し、レポート、グラフ、データファイルを outputs/ に保存します。2 日後、バックエンドは同じ Thread にフォローアップを送ります。その間に sandbox は回収されていたため、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元し、Agent がレポートを更新します。",
+  "Start a Session": "Session を|開始",
   "Your backend": "あなたのバックエンド",
-  Request: "リクエスト",
+  "With a provider key in your Project, one request starts the Session. Keep the `thread.id` it returns.":
+    "プロジェクトにプロバイダーキーがあれば、1 つのリクエストで Session が始まります。返ってきた `thread.id` を保存してください。",
+  "mosoo runs the turn": "mosoo が turn を実行",
   "Event stream (SSE)": "イベントストリーム（SSE）",
-  Files: "ファイル",
-  "Day 1": "1 日目",
+  "The Agent runs code in the Session’s own sandbox, and your keys stay outside it. Events are saved, then streamed. The turn ends with artifacts, usage, and a checkpoint.":
+    "Agent はその Session 専用の sandbox でコードを実行し、キーは sandbox の外に置かれたままです。イベントは保存してから配信されます。turn は成果物、使用量、チェックポイントを残して終わります。",
+  "Artifacts in outputs/": "outputs/ の|成果物",
   "2 days later": "2 日後",
-  "Sandbox reclaimed while idle": "アイドル中に sandbox を回収",
-  "Restored from the last checkpoint": "最後のチェックポイントから復元",
+  "Turn committed": "turn を|コミット",
+  "Sandbox reclaimed while idle": "アイドル中に sandbox を|回収",
+  "Restored from the last checkpoint": "最後の|チェックポイントから|復元",
+  "Reply whenever you’re ready. A follow-up to the same `thread.id` continues the Session, and `sales.csv`, copied into the working directory on day 1, comes back with the checkpoint.":
+    "準備ができたら返信してください。同じ `thread.id` にフォローアップを送れば Session が続き、1 日目に作業ディレクトリへコピーした `sales.csv` もチェックポイントから戻ります。",
+  "Follow-up": "フォローアップ",
   "Same thread.id": "同じ thread.id",
+  "Show the full request": "リクエスト全体を|見る",
+  "Show all 12 events": "12 件の|イベントを|すべて見る",
+  "Show all 7 events": "7 件の|イベントを|すべて見る",
+  "Copy request": "リクエストを|コピー",
+  "Open the v2 API reference": "v2 API リファレンスを開く",
+  "Request copied": "リクエストをコピーしました",
+  "A Project API key. It starts with `msp_`, is shown once, and stays on your backend.":
+    "Project API キー。`msp_` で始まり、表示は一度だけで、バックエンドにだけ置きます。",
+  "The runtime for this Session: openai-runtime, claude-agent-sdk, acp-fallback, or pi.":
+    "この Session の runtime：openai-runtime、claude-agent-sdk、acp-fallback、pi のいずれか。",
+  "A model your provider key can use. Model IDs change often, so check your Project first.":
+    "プロバイダーキーで使えるモデル。モデル ID はよく変わるので、先にプロジェクトで確認してください。",
+  "What the Agent does in this Session.": "この Session で Agent が行うこと。",
+  "Files uploaded first with POST /api/v2/projects/{projectId}/files.":
+    "先に POST /api/v2/projects/{projectId}/files でアップロードしたファイル。",
+  "Retry with the same key for 24 hours without running the work twice.":
+    "24 時間以内なら、同じキーで再試行しても処理は二重に実行されません。",
   "Which regions grew fastest last quarter?": "前四半期に最も伸びた地域はどこですか？",
   "Now split it by sales channel. Keep the same chart style.":
     "販売チャネル別にも分けてください。グラフのスタイルはそのままでお願いします。",
@@ -87,6 +125,12 @@ const JA_MESSAGES = {
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
 
-export function t(message: Message): string {
+/** The string with its phrase marks, for <Phrases>. */
+export function tp(message: Message): string {
   return locale === "en" ? message : MESSAGES[locale][message];
+}
+
+/** The string as running text, without phrase marks. */
+export function t(message: Message): string {
+  return tp(message).replaceAll("|", "");
 }

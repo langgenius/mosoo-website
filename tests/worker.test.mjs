@@ -242,7 +242,7 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   assert.match(markdown, /mosoo is in Alpha\./);
   assert.match(
     markdown,
-    /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads with an inline configuration and a Project API key \(msp_\)\. No Agent is required\./,
+    /`POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads` with an inline configuration and a Project API key \(msp_\)\. No Agent is required\./,
   );
   assert.match(markdown, /POST \/api\/v2\/threads\/\{threadId\}\/events/);
   assert.match(markdown, /Follow events over SSE\. There are no Webhooks\./);
@@ -265,7 +265,7 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
 
 test("worker answers localized homepages with Markdown in their language", async () => {
   const cases = [
-    { pathname: "/", language: "en", text: /^mosoo is an open-source, API-first managed Agent runtime/m },
+    { pathname: "/", language: "en", text: /^> mosoo is an open-source, API-first managed Agent runtime/m },
     { pathname: "/en", language: "en", text: /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects/ },
     {
       pathname: "/zh",
@@ -299,6 +299,33 @@ test("worker answers localized homepages with Markdown in their language", async
     if (entry.docs) assert.ok(markdown.includes(entry.docs), `${entry.pathname} links ${entry.docs}`);
     assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
     assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+  }
+});
+
+test("the Markdown home pages state the same facts and links in every language", async () => {
+  const bodies = {};
+  for (const pathname of ["/en", "/zh", "/ja"]) {
+    const response = await worker.fetch(
+      new Request(`https://mosoo.ai${pathname}`, { headers: { accept: "text/markdown" } }),
+      envFor({}),
+    );
+    bodies[pathname] = await response.text();
+  }
+  const bullets = (markdown) => markdown.split("\n").filter((line) => line.startsWith("- ")).length;
+  const links = (markdown) =>
+    [...markdown.matchAll(/https:\/\/[^\s)`，。]+/g)]
+      .map((match) => match[0].replace(/\/docs\/(?:zh-Hans|ja)\//, "/docs/"))
+      .sort();
+  for (const pathname of ["/zh", "/ja"]) {
+    assert.equal(bullets(bodies[pathname]), bullets(bodies["/en"]), `${pathname} lists as many facts and links`);
+    assert.deepEqual(links(bodies[pathname]), links(bodies["/en"]), `${pathname} links the same resources`);
+  }
+  for (const body of Object.values(bodies)) {
+    for (const harness of ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"]) {
+      assert.ok(body.includes(`\`${harness}\``), `every Markdown home page names ${harness}`);
+    }
+    assert.match(body, /Apache 2\.0/);
+    assert.match(body, /https:\/\/mosoo\.ai\/llms\.txt/);
   }
 });
 

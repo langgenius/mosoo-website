@@ -15,10 +15,11 @@ export function LoginLanding(): ReactElement {
   const loadBelowFold = useIdleReady();
 
   return (
-    <div className="px-4 md:px-6">
+    <div className="sm:px-4 md:px-6">
       {/* A single framed column: continuous left/right hairlines run the full
-          height, and sections are split by horizontal dividers. */}
-      <div className="border-border-strong divide-border-strong mx-auto w-full max-w-[1280px] divide-y border-x">
+          height, and sections are split by horizontal dividers. Phones drop
+          the outer gutter and the side hairlines, so text gets the width. */}
+      <div className="border-border-strong divide-border-strong mx-auto w-full max-w-[1280px] divide-y sm:border-x">
         <Hero />
         <ProductVisual />
         {loadBelowFold ? (

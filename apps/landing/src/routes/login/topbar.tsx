@@ -81,9 +81,8 @@ function LanguageMenuFallback(): ReactElement {
       type="button"
       aria-label={t("Change language")}
       disabled
-      className="text-fg-2 inline-flex h-9 min-w-[64px] cursor-default items-center justify-center gap-2 rounded-md border border-transparent px-2.5 font-mono text-[13px] font-semibold outline-none"
+      className="text-fg-2 inline-flex h-9 min-w-[56px] cursor-default items-center justify-center gap-1.5 rounded-md border border-transparent px-2.5 font-mono text-[13px] font-semibold outline-none"
     >
-      <span aria-hidden="true" className="bg-green-500 size-1.5 rounded-[1px]" />
       {LOCALE_LABELS[locale].short}
       <ChevronDown aria-hidden="true" className="size-3" />
     </button>
@@ -123,6 +122,7 @@ function MobileMenu({
   return (
     <nav
       id={id}
+      aria-label={t("Main")}
       hidden={!open}
       className="border-border-strong bg-paper-100 absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b shadow-[var(--shadow-lg)] lg:hidden"
     >
@@ -251,7 +251,9 @@ export function LoginLandingTopbar({
         <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 md:px-6">
           <Brand />
 
-          <div className="hidden min-w-0 flex-1 items-center justify-between gap-4 lg:flex">
+          {/* One landmark for the desktop links, the Products menu included.
+              Below lg the same links live in the menu panel's own nav. */}
+          <nav aria-label={t("Main")} className="hidden min-w-0 flex-1 items-center justify-between gap-4 lg:flex">
             <div className="flex items-center gap-1 pl-4">
               {loadDeferredMenus ? (
                 <Suspense fallback={<ProductsMenuFallback />}>
@@ -295,7 +297,7 @@ export function LoginLandingTopbar({
                 {t("Try mosoo")}
               </a>
             </div>
-          </div>
+          </nav>
 
           <div className="flex items-center gap-2 lg:hidden">
             <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "h-11 text-[15px]")}>
