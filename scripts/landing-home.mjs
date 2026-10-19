@@ -35,24 +35,35 @@ const LINKS = {
 
 const INSTALL_COMMAND = "curl -fsSL https://install.mosoo.ai/install.sh | bash";
 
-// The v2 inline request from the copy deck (How it works). Code stays ASCII.
+// The two calls that start the one example story (product kit
+// data/example-universe.ts API_CALLS): upload input.csv, then start the
+// Session with it attached. Code stays ASCII.
+const UPLOAD_REQUEST = [
+  "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\",
+  '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
+  '  -F "file=@input.csv"',
+].join("\n");
+
 const START_SESSION_REQUEST = [
   "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/threads \\",
   '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
   '  -H "Content-Type: application/json" \\',
-  '  -H "Idempotency-Key: report-001" \\',
+  '  -H "Idempotency-Key: csv-report-create" \\',
   "  -d '{",
   '    "configuration": {',
   '      "type": "inline",',
   '      "harness": "openai-runtime",',
   '      "provider": "openai",',
   '      "model": "gpt-5.5",',
-  '      "instructions": "Analyze the supplied material and save the results."',
+  '      "instructions": "Use tools to analyze files, verify results and retain private working state for follow-up."',
   "    },",
   '    "input": {',
   '      "type": "user.message",',
-  '      "content": [{ "type": "text", "text": "Create an analysis report." }]',
-  "    }",
+  '      "content": [{ "type": "text", "text": "Use real Python tools to read the attached input.csv and copy it into the working directory for analysis. Generate a random private nonce in .private/nonce outside outputs. Write outputs/initial.json with grand_total and private_nonce_sha256 (hash the raw file bytes). Save outputs/report.md and outputs/chart.svg. Keep input.csv and the nonce for our next turn. Do not return success if any tool fails." }]',
+  "    },",
+  '    "resources": [',
+  '      { "type": "file", "file_id": "01M4QP7S669BBSX12Z2564J5F7" }',
+  "    ]",
   "  }'",
 ].join("\n");
 
@@ -263,10 +274,10 @@ const COPY = {
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
     },
     visual: {
-      caption: "A CSV analysis, started on day 1 and continued 2 days later in the same Session.",
-      badge: "Example values. Field names and event types come from the v2 OpenAPI document.",
+      caption: "The CSV story: turn 1 totals 230. Seven days later the sandbox is gone, and turn 2 continues from the checkpoint to 250 with the same private nonce hash.",
+      badge: "Example values. Event types and field names come from the mosoo console and the v2 API.",
       description:
-        "Example Session record. Your backend sends one request with a CSV attachment. mosoo streams events while the Agent runs Python in the sandbox and saves a report, a chart, and a data file under outputs/. Two days later the backend sends a follow-up to the same Thread. The sandbox had been reclaimed in between, so mosoo restores the working directory and the conversation from the last checkpoint, and the Agent updates the report.",
+        "Example Session record. Your backend uploads input.csv and starts a Session with it attached. In turn 1 the Agent runs Python in the sandbox, writes outputs/initial.json with grand_total 230, a report and a chart, and keeps a private nonce outside outputs/. Seven days later the sandbox has been reclaimed. The follow-up that appends south,20 goes to the same Thread: mosoo restores the working directory and the conversation from the last checkpoint, and outputs/followup.json has grand_total 250 and the same private_nonce_sha256.",
     },
     wall: {
       title: "Pick a runtime. Use your own model key.",
@@ -289,7 +300,7 @@ const COPY = {
       ],
     },
     features: {
-      title: "What mosoo runs for your backend",
+      title: "mosoo handles execution, files, events, and usage.",
       intro: "Each of these is a promise in the product spec. The spec is linked below.",
       spec: "Read the product spec",
       items: [
@@ -305,21 +316,9 @@ const COPY = {
           proof: "A runtime and model protocol that don’t match are rejected before anything runs.",
         },
         {
-          title: "Reply 1 minute or 7 days later",
-          body: "Follow-ups continue the same Session, even after the sandbox was reclaimed. The working directory, conversation, and files return from the last checkpoint.",
-          proof:
-            "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.",
-        },
-        {
           title: "A turn succeeds only when its results are saved",
           body: "Completion means the events, usage, and a checkpoint were committed together. A failed or cancelled turn never overwrites the last good state.",
           proof: "From the product spec: “Model or tool execution ending is not success.”",
-        },
-        {
-          title: "Keys stay outside the sandbox",
-          body: "Provider keys and MCP credentials never enter the sandbox. The runtime reaches models and tools through mosoo’s proxies, which add the credential per request.",
-          proof:
-            "The sandbox only gets expiring grants. Environment variables are different. Code in the sandbox can read them.",
         },
         {
           title: "Attach files, stream events, download results",
@@ -330,31 +329,32 @@ const COPY = {
       ],
     },
     steps: {
-      title: "From one request to a finished report",
+      title: "One request starts a Session. A follow-up continues it.",
       intro:
-        "Say your backend needs a research report. It calls mosoo over HTTPS with a Project API key, and the report comes back as a file.",
+        "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.",
       items: [
         {
           title: "Add your model key.",
           body: "Add a provider key to your Project, then create a Project API key. It starts with `msp_` and is shown once.",
-          io: "In: your provider key. Out: a Project API key.",
+          io: "In: your provider key. Change: the key is stored with your Project, outside every sandbox. Out: a Project API key.",
         },
         {
           title: "Start a Session.",
           body: "Send one request with the harness, provider, model, instructions, input, and any files. Save the `thread.id` you get back.",
-          io: "In: one request. Out: a `thread.id`.",
+          io: "In: one request. Change: mosoo creates a durable Session, a Thread in the API, and runs the first turn. Out: a `thread.id`.",
         },
         {
           title: "mosoo runs the turn.",
           body: "The harness writes code and runs tools in the Session’s own sandbox. Your keys stay outside it.",
-          io: "In: the turn. Out: events, artifacts, usage, and a checkpoint.",
+          io: "In: the turn. Change: events, usage, and a checkpoint are committed together. Out: events, artifacts, usage, and a checkpoint.",
         },
         {
           title: "Follow, download, continue.",
           body: "Stream events over SSE, download files from `outputs/`, and read the usage of every model call. Reply to the same Thread whenever you’re ready.",
-          io: "In: a follow-up, now or days later. Out: the next turn in the same Session.",
+          io: "In: a follow-up, now or days later. Change: mosoo restores the working directory and the conversation from the last checkpoint. Out: the next turn in the same Session.",
         },
       ],
+      uploadLabel: "Upload input.csv",
       codeLabel: "Start a Session",
       apiReference: "Open the v2 API reference",
       note: "Model IDs change often. Check the models available in your Project before you copy this.",
@@ -385,7 +385,7 @@ const COPY = {
         "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.",
     },
     proof: {
-      title: "What you can check for yourself",
+      title: "The code, the releases, and the incident postmortems are public.",
       intro:
         "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.",
       source: {
@@ -428,7 +428,7 @@ const COPY = {
       allUseCases: "See all use cases",
     },
     limits: {
-      title: "What mosoo doesn’t do",
+      title: "mosoo leaves these out on purpose.",
       intro: "The product spec lists these on purpose. Plan around them before you build.",
       columns: ["Not included", "Do this instead"],
       rows: [
@@ -452,7 +452,7 @@ const COPY = {
     },
     faqTitle: "Questions to ask before you build on mosoo",
     final: {
-      title: "Start your first Session",
+      title: "Start your first Session. Reply in a minute or in seven days.",
       consoleTitle: "In the console",
       consoleBody:
         "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.",
@@ -530,10 +530,10 @@ const COPY = {
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
     },
     visual: {
-      caption: "示例：第 1 天开始一项 CSV 分析，2 天后在同一个 Session 里继续。",
-      badge: "示例数据。字段名和事件类型来自 v2 OpenAPI 文档。",
+      caption: "CSV 示例：第 1 轮的 grand_total 是 230。7 天后 sandbox 已被回收，第 2 轮从检查点继续，得到 250，private nonce 的哈希不变。",
+      badge: "示例数据。事件类型和字段名来自 mosoo 控制台和 v2 API。",
       description:
-        "示例 Session 记录。你的后端发送一个带 CSV 附件的请求。Agent 在 sandbox 中运行 Python，mosoo 实时推送事件，并把报告、图表和数据文件保存到 outputs/ 下。2 天后，后端向同一个 Thread 发送后续消息。这期间 sandbox 已被回收，mosoo 从最近一次检查点恢复工作目录和对话，Agent 随后更新了报告。",
+        "示例 Session 记录。你的后端上传 input.csv，并带着这个附件启动一个 Session。第 1 轮里，Agent 在 sandbox 中运行 Python，写出 grand_total 为 230 的 outputs/initial.json、一份报告和一张图表，并在 outputs/ 之外保存一个 private nonce。7 天后，sandbox 已被回收。追加 south,20 的后续消息仍发往同一个 Thread：mosoo 从最近一次检查点恢复工作目录和对话，outputs/followup.json 的 grand_total 为 250，private_nonce_sha256 不变。",
     },
     wall: {
       title: "选一个 runtime，用你自己的模型密钥。",
@@ -556,7 +556,7 @@ const COPY = {
       ],
     },
     features: {
-      title: "mosoo 为你的后端承担的工作",
+      title: "执行、文件、事件和用量由 mosoo 负责。",
       intro: "下面每一项都是产品规格里的承诺，规格链接在下方。",
       spec: "阅读产品规格",
       items: [
@@ -572,20 +572,10 @@ const COPY = {
           proof: "runtime 与模型协议不匹配时，会在执行前被拒绝。",
         },
         {
-          title: "1 分钟后或 7 天后回复，都能接着做",
-          body: "后续消息会在同一个 Session 里继续，即使 sandbox 已被回收。工作目录、对话和文件都会从最近一次检查点恢复。",
-          proof: "检查点无法恢复时，后续消息会明确报错。API Session 不会因闲置而过期。",
-        },
-        {
           title: "结果保存好，turn 才算成功",
           body: "完成意味着事件、用量和检查点已经一起提交。失败或取消的 turn 不会覆盖上一次成功的状态。",
           proof:
             "产品规格原文：“Model or tool execution ending is not success.”（模型或工具执行结束，不等于成功。）",
-        },
-        {
-          title: "密钥留在 sandbox 之外",
-          body: "模型供应商密钥和 MCP 凭据不会进入 sandbox。runtime 通过 mosoo 的代理访问模型和工具，代理在每次请求时注入凭据。",
-          proof: "sandbox 只拿到会过期的授权。环境变量则不同，sandbox 里的代码可以读取它们。",
         },
         {
           title: "附件进，结果出，事件实时可见",
@@ -595,31 +585,32 @@ const COPY = {
       ],
     },
     steps: {
-      title: "从一个请求到一份完成的报告",
+      title: "一个请求启动 Session，后续消息让它接着做。",
       intro:
-        "假设你的后端需要一份调研报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告最后以文件的形式返回。",
+        "假设你的后端需要一份 CSV 数据报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告以 `outputs/` 下的文件返回。",
       items: [
         {
           title: "添加模型密钥。",
           body: "在项目里添加模型供应商密钥，再创建 Project API 密钥。它以 `msp_` 开头，只显示一次。",
-          io: "输入：你的模型供应商密钥。输出：Project API 密钥。",
+          io: "输入：你的模型供应商密钥。变化：密钥保存在你的项目中，不进入任何 sandbox。输出：Project API 密钥。",
         },
         {
           title: "启动 Session。",
           body: "发送一个请求，带上 harness、模型供应商、模型、指令、输入和可选文件。保存返回的 `thread.id`。",
-          io: "输入：一个请求。输出：`thread.id`。",
+          io: "输入：一个请求。变化：mosoo 创建一个持久的 Session（API 中称为 Thread），并运行第一个 turn。输出：`thread.id`。",
         },
         {
           title: "mosoo 执行这个 turn。",
           body: "harness 在该 Session 自己的 sandbox 里写代码、运行工具。你的密钥始终在 sandbox 之外。",
-          io: "输入：这个 turn。输出：事件、产出物、用量和检查点。",
+          io: "输入：这个 turn。变化：事件、用量和检查点一起提交。输出：事件、产出物、用量和检查点。",
         },
         {
           title: "跟进、下载、继续。",
           body: "通过 SSE 接收事件，下载 `outputs/` 里的文件，查看每次模型调用的用量。准备好后，再向同一个 Thread 发送后续消息。",
-          io: "输入：后续消息，现在或几天后都可以。输出：同一个 Session 里的下一个 turn。",
+          io: "输入：后续消息，现在或几天后都可以。变化：mosoo 从最近一次检查点恢复工作目录和对话。输出：同一个 Session 里的下一个 turn。",
         },
       ],
+      uploadLabel: "上传 input.csv",
       codeLabel: "启动 Session",
       apiReference: "查看 v2 API 参考",
       note: "模型 ID 经常变化，复制前请先确认你的项目里有哪些可用模型。",
@@ -650,7 +641,7 @@ const COPY = {
         "mosoo 不认证你的终端用户。如果你的 MCP 服务器需要知道是谁发起的请求，可以给 Thread 标上你自己的 `userId`。",
     },
     proof: {
-      title: "你可以亲自核实的内容",
+      title: "代码、版本发布和事故复盘都是公开的。",
       intro:
         "mosoo 目前处于 Alpha 阶段。今天能核实的，是代码、版本发布、生产状态，以及两个基于它构建的项目。",
       source: {
@@ -690,7 +681,7 @@ const COPY = {
       allUseCases: "查看全部用例",
     },
     limits: {
-      title: "mosoo 不做的事",
+      title: "这些是 mosoo 有意不做的事。",
       intro: "这些是产品规格里明确写下的取舍。开始构建前，先把它们考虑进去。",
       columns: ["不包含", "可以这样做"],
       rows: [
@@ -708,7 +699,7 @@ const COPY = {
     },
     faqTitle: "开始构建前值得问的问题",
     final: {
-      title: "启动你的第一个 Session",
+      title: "启动你的第一个 Session。1 分钟后或 7 天后回复都可以。",
       consoleTitle: "在控制台中",
       consoleBody: "用邮箱或 Google 登录。首次登录会自动创建默认项目。添加模型供应商密钥后，就可以启动 Session。",
       agentTitle: "在编码智能体中",
@@ -779,10 +770,10 @@ const COPY = {
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
     },
     visual: {
-      caption: "例：1 日目に始めた CSV 分析を、2 日後に同じ Session で続ける。",
-      badge: "サンプル値です。フィールド名とイベントタイプは v2 OpenAPI ドキュメントに基づいています。",
+      caption: "CSV の例：ターン 1 の grand_total は 230 です。7 日後には sandbox が回収されていますが、ターン 2 はチェックポイントから続きを実行して 250 になり、private nonce のハッシュも同じです。",
+      badge: "サンプル値です。イベントタイプとフィールド名は mosoo コンソールと v2 API に基づいています。",
       description:
-        "Session 記録の例です。バックエンドが CSV を添付したリクエストを 1 つ送ります。Agent が sandbox 内で Python を実行するあいだ、mosoo はイベントを配信し、レポート、グラフ、データファイルを outputs/ に保存します。2 日後、バックエンドは同じ Thread にフォローアップを送ります。その間に sandbox は回収されていたため、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元し、Agent がレポートを更新します。",
+        "Session 記録の例です。バックエンドが input.csv をアップロードし、それを添付して Session を開始します。ターン 1 では Agent が sandbox 内で Python を実行し、grand_total が 230 の outputs/initial.json、レポート、グラフを書き出し、outputs/ の外に private nonce を保存します。7 日後、sandbox は回収されています。south,20 を追加するフォローアップは同じ Thread に送られ、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元します。outputs/followup.json の grand_total は 250 で、private_nonce_sha256 は同じです。",
     },
     wall: {
       title: "runtime を選び、自分のモデルキーを使う",
@@ -805,7 +796,7 @@ const COPY = {
       ],
     },
     features: {
-      title: "mosoo がバックエンドの代わりに担うこと",
+      title: "実行、ファイル、イベント、使用量は mosoo が担います。",
       intro: "どれも製品仕様に書かれた約束です。仕様へのリンクは下にあります。",
       spec: "製品仕様を読む",
       items: [
@@ -821,22 +812,10 @@ const COPY = {
           proof: "runtime とモデルプロトコルが合わない組み合わせは、実行前に拒否されます。",
         },
         {
-          title: "1 分後でも 7 日後でも続きから",
-          body: "フォローアップは、sandbox が回収された後でも同じ Session で続きます。作業ディレクトリ、会話、ファイルは最後のチェックポイントから戻ります。",
-          proof:
-            "チェックポイントを復元できない場合はエラーになります。API の Session は放置しても期限切れになりません。",
-        },
-        {
           title: "結果が保存されて初めて turn は成功",
           body: "完了とは、イベント、使用量、チェックポイントがまとめてコミットされたことを意味します。失敗やキャンセルした turn が、直前の正常な状態を上書きすることはありません。",
           proof:
             "製品仕様の原文：“Model or tool execution ending is not success.”（モデルやツールの実行が終わっただけでは成功ではない）",
-        },
-        {
-          title: "キーは sandbox の外に",
-          body: "プロバイダーキーと MCP の認証情報は sandbox に入りません。runtime は mosoo のプロキシ経由でモデルやツールにアクセスし、認証情報はプロキシがリクエストごとに付与します。",
-          proof:
-            "sandbox が受け取るのは期限付きの権限だけです。環境変数は例外で、sandbox 内のコードから読み取れます。",
         },
         {
           title: "ファイルを渡し、イベントを追い、結果を受け取る",
@@ -846,31 +825,32 @@ const COPY = {
       ],
     },
     steps: {
-      title: "1 つのリクエストから、完成したレポートまで",
+      title: "1 つのリクエストで Session が始まり、フォローアップで続きを実行します。",
       intro:
-        "たとえば、バックエンドで調査レポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートはファイルとして返ってきます。",
+        "たとえば、バックエンドで CSV ファイルのレポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートは `outputs/` 配下のファイルとして返ってきます。",
       items: [
         {
           title: "モデルのキーを追加する。",
           body: "プロジェクトにプロバイダーキーを追加し、Project API キーを作成します。キーは `msp_` で始まり、表示されるのは一度だけです。",
-          io: "入力：プロバイダーキー。出力：Project API キー。",
+          io: "入力：プロバイダーキー。変化：キーはプロジェクトに保存され、どの sandbox にも入りません。出力：Project API キー。",
         },
         {
           title: "Session を開始する。",
           body: "harness、プロバイダー、モデル、指示、入力、必要なファイルを 1 つのリクエストで送ります。返ってきた `thread.id` を保存してください。",
-          io: "入力：1 つのリクエスト。出力：`thread.id`。",
+          io: "入力：1 つのリクエスト。変化：mosoo が永続的な Session（API では Thread）を作成し、最初の turn を実行します。出力：`thread.id`。",
         },
         {
           title: "mosoo が turn を実行する。",
           body: "harness がその Session 専用の sandbox でコードを書き、ツールを実行します。キーは sandbox の外に置かれたままです。",
-          io: "入力：turn。出力：イベント、成果物、使用量、チェックポイント。",
+          io: "入力：turn。変化：イベント、使用量、チェックポイントがまとめてコミットされます。出力：イベント、成果物、使用量、チェックポイント。",
         },
         {
           title: "追跡し、ダウンロードし、続ける。",
           body: "SSE でイベントを受け取り、`outputs/` のファイルをダウンロードし、モデル呼び出しごとの使用量を確認します。準備ができたら、同じ Thread にフォローアップを送ります。",
-          io: "入力：今すぐ、または数日後のフォローアップ。出力：同じ Session での次の turn。",
+          io: "入力：今すぐ、または数日後のフォローアップ。変化：mosoo が最後のチェックポイントから作業ディレクトリと会話を復元します。出力：同じ Session での次の turn。",
         },
       ],
+      uploadLabel: "input.csv をアップロード",
       codeLabel: "Session を開始",
       apiReference: "v2 API リファレンスを開く",
       note: "モデル ID はよく変わります。コピーする前に、プロジェクトで使えるモデルを確認してください。",
@@ -901,7 +881,7 @@ const COPY = {
         "mosoo はエンドユーザーを認証しません。MCP サーバーが依頼者を知る必要がある場合は、Thread に独自の `userId` を付けてください。",
     },
     proof: {
-      title: "自分で確かめられること",
+      title: "コード、リリース、インシデントの事後分析は公開されています。",
       intro:
         "mosoo は現在 Alpha 版です。今確かめられるのは、コード、リリース、本番環境のステータス、そして mosoo で作られた 2 つのプロジェクトです。",
       source: {
@@ -944,7 +924,7 @@ const COPY = {
       allUseCases: "すべてのユースケースを見る",
     },
     limits: {
-      title: "mosoo がやらないこと",
+      title: "mosoo はこれらを意図的に提供していません。",
       intro: "以下は製品仕様に明記された判断です。作り始める前に、前提として織り込んでください。",
       columns: ["含まれないもの", "代わりの方法"],
       rows: [
@@ -971,7 +951,7 @@ const COPY = {
     },
     faqTitle: "使い始める前に確認したいこと",
     final: {
-      title: "最初の Session を始める",
+      title: "最初の Session を始めましょう。返信は 1 分後でも 7 日後でもかまいません。",
       consoleTitle: "コンソールで",
       consoleBody:
         "メールアドレスまたは Google でログインします。初回ログイン時にデフォルトプロジェクトが作成されます。プロバイダーキーを追加したら、Session を開始できます。",
@@ -1118,14 +1098,8 @@ function renderHero(copy) {
   return `<section class="mf-hero" aria-labelledby="mf-title">
 <h1 id="mf-title">${title}</h1>
 <p class="mf-lead">${inline(copy.hero.subhead)}</p>
-<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)} ${link(LINKS.github, copy.cta.source)}</p>
+<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
 <p class="mf-muted">${inline(copy.alpha)}</p>
-<div class="mf-agent">
-<p><strong>${inline(copy.hero.agentLabel)}</strong></p>
-<p>${inline(copy.hero.agentLine)}</p>
-${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
-</div>
 </section>`;
 }
 
@@ -1204,6 +1178,10 @@ function renderSteps(copy) {
 <ol class="mf-steps">
 ${items}
 </ol>
+<figure class="mf-code">
+<figcaption>${inline(steps.uploadLabel)}</figcaption>
+${codeBlock(UPLOAD_REQUEST)}
+</figure>
 <figure class="mf-code">
 <figcaption>${inline(steps.codeLabel)}</figcaption>
 ${codeBlock(START_SESSION_REQUEST)}

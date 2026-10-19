@@ -406,13 +406,13 @@ test("the static home page carries the whole page for readers without JavaScript
 
   assert.deepEqual(headingsOf(en, 2), [
     "Pick a runtime. Use your own model key.",
-    "What mosoo runs for your backend",
-    "From one request to a finished report",
+    "mosoo handles execution, files, events, and usage.",
+    "One request starts a Session. A follow-up continues it.",
     "Your app keeps its users. mosoo runs the Agent.",
-    "What you can check for yourself",
-    "What mosoo doesn’t do",
+    "The code, the releases, and the incident postmortems are public.",
+    "mosoo leaves these out on purpose.",
     "Questions to ask before you build on mosoo",
-    "Start your first Session",
+    "Start your first Session. Reply in a minute or in seven days.",
   ]);
   assert.match(
     textOf(en),
