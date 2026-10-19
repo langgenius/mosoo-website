@@ -575,7 +575,7 @@
   fill: currentColor;
 }
 .pp-a {
-  max-width: 590px;
+  max-width: 590px; /* 560 of text: U16 answer width, plus the 30px row indent */
   margin-top: -12px;
   padding: 0 0 22px 30px;
   color: var(--pp-ink-2);
