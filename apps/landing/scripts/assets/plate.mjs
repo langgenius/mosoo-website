@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Gesso plate + paper grain for the v4b "Paper" home (proposal b-paper §10 #1 and #2).
+// Stone plate + paper grain for the v4b "Paper" home (UI-FORMS U08; proposal b-paper §10 #1 and #2).
 //
 //   node apps/landing/scripts/assets/plate.mjs [outDir=apps/landing/public/landing/paper] [seed=23]
 //
@@ -24,9 +24,11 @@ const H = 1300;
 const PLATE_BUDGET = 180_000;
 const GRAIN_BUDGET = 12_000;
 
-// Warm neutrals only (hue 70-85, PROPOSAL.md §2.1); no green anywhere in the asset.
-const GROUND = [106, 100, 93]; // warm graphite primer
-const GESSO = [231, 227, 219]; // pale gesso coat, a step below --paper #f8f7f4 so the white sheet still reads
+// Warm neutrals only (hue 70-85, PROPOSAL.md §2.1); no green anywhere in the asset. UI-FORMS U08 locks the plate to
+// a warm stone ramp #eeeae2 -> #cfc8bb (oklch C <= 0.02): the brushed coat keeps the b-paper hand (Harvey's dry-brush
+// edge) but only between those two stones, so the white fragment on top stays the brightest thing on the board.
+const GROUND = [207, 200, 187]; // #cfc8bb, the darker stone under the coat
+const GESSO = [238, 234, 226]; // #eeeae2, the pale coat brushed over the top
 
 function mulberry32(a) {
   return () => {
@@ -143,8 +145,9 @@ function renderPlate(s) {
       // Coat-internal variation: bristle marks lighten/darken each coat a little; a slow tint drift avoids flatness.
       const drift = tintN(x / 1100, y / 700) - 0.5;
       const mark = bristle - 0.5;
-      const g = 1 + 0.08 * mark + 0.07 * drift + 0.1 * (stroke - 0.5) + 0.34 * (tooth - 0.5);
-      const k = 1 + 0.03 * mark + 0.025 * drift + 0.05 * (tooth - 0.5);
+      // Light stones show grain far more than graphite did, so the tooth term is a third of the old 0.34.
+      const g = 1 + 0.05 * mark + 0.05 * drift + 0.06 * (stroke - 0.5) + 0.11 * (tooth - 0.5);
+      const k = 1 + 0.02 * mark + 0.02 * drift + 0.04 * (tooth - 0.5);
       const o = (y * W + x) * 3;
       for (let ch = 0; ch < 3; ch++) {
         const ground = GROUND[ch] * g;
