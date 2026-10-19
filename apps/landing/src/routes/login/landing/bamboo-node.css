@@ -1,0 +1,537 @@
+/* v2a "Bamboo Node": the home page only (imported from main.tsx).
+   Warm paper, Literata display, Geist body, Geist Mono data. Lime is
+   punctuation: the primary button and the committed nodes. Soil marks
+   boundaries and what mosoo leaves out. */
+
+.v2a {
+  --v2a-paper: #f7f6f1;
+  --v2a-ink: #0b1a14;
+  --v2a-ink-2: #434c46;
+  /* 4.8:1 on the paper: the softer half of the two-tone headings. */
+  --v2a-ink-soft: #667065;
+  --v2a-sage: #6d786a;
+  --v2a-rail: rgba(109, 120, 106, 0.5);
+  --v2a-lime: #6fd305;
+  --v2a-lime-hover: #66c600;
+  --v2a-lime-press: #5cb300;
+  --v2a-lime-ink: #0f1a02;
+  --v2a-soil: #7a5230;
+  --v2a-soil-tint: #f4ece2;
+  --v2a-link: #086030;
+  --v2a-rail-x: 20px;
+  --v2a-indent: 72px;
+}
+
+/* Display type ------------------------------------------------------------ */
+
+.v2a-display {
+  font-family: var(--font-literata);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  letter-spacing: -0.018em;
+  color: var(--v2a-ink);
+  text-wrap: balance;
+}
+
+:lang(zh) .v2a-display {
+  font-family: var(--font-literata-zh);
+  letter-spacing: 0;
+  /* Songti reads lighter than Literata at the same weight. */
+  font-weight: 600;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-break: strict;
+}
+
+:lang(ja) .v2a-display {
+  font-family: var(--font-literata-ja);
+  letter-spacing: 0;
+  font-weight: 600;
+  word-break: auto-phrase;
+  line-break: strict;
+}
+
+.v2a-tone-soft {
+  color: var(--v2a-ink-soft);
+}
+
+.v2a-h1 {
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 1.06;
+  max-width: 13.5em;
+}
+
+:lang(zh) .v2a-h1 {
+  font-size: clamp(32px, 3.4vw, 48px);
+  line-height: 1.24;
+}
+
+:lang(ja) .v2a-h1 {
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.3;
+}
+
+.v2a-h2 {
+  font-size: clamp(30px, 3.1vw, 44px);
+  line-height: 1.1;
+  max-width: 18em;
+}
+
+:lang(zh) .v2a-h2,
+:lang(ja) .v2a-h2 {
+  font-size: clamp(26px, 2.6vw, 36px);
+  line-height: 1.3;
+}
+
+.v2a-h3 {
+  font-family: var(--font-literata);
+  font-weight: 500;
+  font-size: 23px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--v2a-ink);
+  text-wrap: balance;
+}
+
+:lang(zh) .v2a-h3 {
+  font-family: var(--font-literata-zh);
+  font-weight: 600;
+  font-size: 21px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+:lang(ja) .v2a-h3 {
+  font-family: var(--font-literata-ja);
+  font-weight: 600;
+  font-size: 20px;
+  word-break: auto-phrase;
+}
+
+.v2a-intro {
+  margin-top: 16px;
+  max-width: 600px;
+  color: var(--v2a-ink-2);
+  font-size: 18px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Hero --------------------------------------------------------------------- */
+
+.v2a-hero {
+  display: grid;
+  gap: 40px;
+  padding: 28px 0 64px;
+}
+
+.v2a-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.v2a-lead {
+  margin-top: 22px;
+  max-width: 30em;
+  color: var(--v2a-ink-2);
+  font-size: 18px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.v2a-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+}
+
+.v2a-alpha {
+  margin-top: 22px;
+  color: var(--v2a-ink-soft);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+@media (min-width: 1024px) {
+  .v2a-hero {
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    align-items: center;
+    gap: 48px;
+    min-height: calc(100svh - 64px);
+    padding: 0 0 8px;
+  }
+
+}
+
+/* The one primary button: lime fill, dark ink, a fine inner highlight. */
+.v2a-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 10px;
+  background: var(--v2a-lime);
+  color: var(--v2a-lime-ink);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1px rgba(15, 26, 2, 0.16),
+    0 1px 2px rgba(15, 26, 2, 0.14);
+  transition:
+    background-color 150ms ease-out,
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+  outline: none;
+}
+
+.v2a-btn-primary:hover {
+  background: var(--v2a-lime-hover);
+}
+
+.v2a-btn-primary:active {
+  background: var(--v2a-lime-press);
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 2px rgba(15, 26, 2, 0.25),
+    inset 0 0 0 1px rgba(15, 26, 2, 0.2);
+}
+
+.v2a-btn-primary:focus-visible {
+  outline: 2px solid var(--v2a-ink);
+  outline-offset: 3px;
+}
+
+.v2a-btn-primary[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.v2a-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--v2a-ink);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(11, 26, 20, 0.3);
+  text-underline-offset: 5px;
+  border-radius: 3px;
+  outline: none;
+  transition: text-decoration-color 150ms ease-out;
+}
+
+.v2a-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.v2a-link:focus-visible {
+  outline: 2px solid var(--v2a-ink);
+  outline-offset: 3px;
+}
+
+/* Product stage: the halftone grove plate, one shell, the culm beside it. */
+.v2a-stage {
+  position: relative;
+  margin: 0;
+  padding: 18px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--v2a-paper);
+  box-shadow: inset 0 0 0 1px rgba(11, 26, 20, 0.08);
+}
+
+.v2a-stage-plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.v2a-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 10px;
+  padding: 14px 14px 10px 10px;
+  border-radius: 14px;
+  background: rgba(251, 251, 249, 0.94);
+  box-shadow:
+    0 0 0 1px rgba(11, 26, 20, 0.1),
+    0 18px 40px -18px rgba(11, 26, 20, 0.28);
+}
+
+.v2a-culm-column {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.v2a-culm {
+  position: absolute;
+  top: 0;
+  overflow: visible;
+}
+
+.v2a-culm-internode {
+  fill: #e3e8d9;
+  stroke: var(--v2a-sage);
+  stroke-width: 1.1px;
+}
+
+.v2a-culm-idle {
+  fill: none;
+  stroke: var(--v2a-sage);
+  stroke-width: 1.1px;
+  stroke-dasharray: 4px 3px;
+}
+
+.v2a-culm-ring {
+  fill: var(--v2a-lime);
+  stroke: #3a6e0e;
+  stroke-width: 0.75px;
+}
+
+/* Grows once, about 3.6 s, then stays. Nothing loops. */
+@keyframes v2a-culm-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes v2a-culm-commit {
+  from {
+    fill: var(--v2a-paper);
+    transform: scaleX(0.6);
+  }
+  to {
+    fill: var(--v2a-lime);
+    transform: scaleX(1);
+  }
+}
+
+.v2a-culm > * {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+
+.v2a-culm-ring {
+  transform-origin: 50% 50%;
+}
+
+.v2a-culm-step-1 {
+  animation: v2a-culm-grow 1000ms cubic-bezier(0.33, 1, 0.68, 1) 200ms both;
+}
+
+.v2a-culm-step-2 {
+  animation: v2a-culm-commit 320ms ease-out 1200ms both;
+}
+
+.v2a-culm-step-3 {
+  animation: v2a-culm-grow 900ms linear 1550ms both;
+}
+
+.v2a-culm-step-4 {
+  animation: v2a-culm-grow 800ms cubic-bezier(0.33, 1, 0.68, 1) 2500ms both;
+}
+
+.v2a-culm-step-5 {
+  animation: v2a-culm-commit 320ms ease-out 3300ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2a-culm > * {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .v2a-stage {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .v2a-shell {
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 6px;
+    padding: 10px 10px 8px 6px;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The stage runs off the right edge of the page (the product overflows
+     its frame), so the plate's grove shows beside the shell. */
+  .v2a-stage {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    margin-right: calc((min(100vw - 48px, 1280px) - 100vw) / 2);
+    padding: 36px 40px 36px 32px;
+    border-radius: 22px 0 0 22px;
+  }
+
+  .v2a-stage-plate {
+    object-position: 100% 50%;
+  }
+
+  .v2a-shell {
+    width: 100%;
+    max-width: 700px;
+  }
+}
+
+/* The culm line through the page --------------------------------------------
+   Each section below the hero hangs off one 1px line in the left margin, with
+   a node ring at its heading. Wide screens only; phones keep the full width. */
+
+.v2a-section {
+  position: relative;
+  padding: 88px 0;
+}
+
+.v2a-node {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .v2a-section {
+    padding-left: var(--v2a-indent);
+  }
+
+  .v2a-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--v2a-rail-x);
+    width: 1px;
+    background: var(--v2a-rail);
+  }
+
+  .v2a-node {
+    display: block;
+    position: absolute;
+    left: calc(var(--v2a-rail-x) - 7px);
+    width: 15px;
+    height: 4px;
+    border-radius: 1px;
+    background: var(--v2a-paper);
+    box-shadow: 0 0 0 1px var(--v2a-sage);
+  }
+
+  .v2a-section-first::before {
+    top: 0;
+    background: linear-gradient(to bottom, transparent, var(--v2a-rail) 88px);
+  }
+}
+
+/* Section rhythm: each section takes the room its content needs, so the
+   page does not beat at one interval. */
+.v2a-tight {
+  padding-top: 72px;
+  padding-bottom: 64px;
+}
+
+.v2a-roomy {
+  padding-top: 112px;
+  padding-bottom: 104px;
+}
+
+@media (max-width: 767px) {
+  .v2a-section {
+    padding: 64px 0;
+  }
+
+  .v2a-roomy {
+    padding: 80px 0 72px;
+  }
+
+  .v2a-tight {
+    padding: 56px 0 48px;
+  }
+}
+
+/* One full-bleed paper band (How it works), painted outside the section box
+   so the layout and the culm line are untouched. */
+.v2a-band {
+  background: #efede4;
+  box-shadow: 0 0 0 100vmax #efede4;
+  clip-path: inset(0 -100vmax);
+}
+
+/* Proof column and small labels. */
+.v2a-label {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--v2a-ink-soft);
+}
+
+/* What mosoo leaves out: soil, the console's boundary colour. */
+.v2a-soil {
+  color: var(--v2a-soil);
+}
+
+.v2a-limit-row {
+  border-top: 1px solid rgba(122, 82, 48, 0.28);
+}
+
+.v2a-limit-row:last-child {
+  border-bottom: 1px solid rgba(122, 82, 48, 0.28);
+}
+
+.v2a-limit-mark {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  margin-right: 10px;
+  vertical-align: 0.32em;
+  border-top: 1.5px dashed var(--v2a-soil);
+}
+
+/* Semantic line drawings (#126): 1.25px sage strokes, one idea each. */
+.v2a-drawing {
+  color: var(--v2a-sage);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.v2a-drawing .v2a-drawing-lime {
+  fill: var(--v2a-lime);
+  stroke: #3a6e0e;
+  stroke-width: 0.75px;
+}
+
+.v2a-drawing .v2a-drawing-ink {
+  stroke: var(--v2a-ink);
+}
+
+.v2a-drawing .v2a-drawing-soil {
+  stroke: var(--v2a-soil);
+}
+
+.v2a-drawing .v2a-drawing-fill {
+  fill: #e3e8d9;
+}
+
+.v2a-drawing text {
+  fill: var(--v2a-ink-2);
+  stroke: none;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 11px;
+}
