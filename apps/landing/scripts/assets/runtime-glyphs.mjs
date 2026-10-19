@@ -17,14 +17,23 @@
 //   key, copy    -> Hugeicons Free 4.2.3 (MIT) Key02 / Copy01 as the console registers them
 //                   (MAIN apps/web/src/shared/ui/icons.tsx), read from the staging byte copies.
 // Writes apps/landing/src/home/runtime-glyphs.ts.
+// Paths outside this repo come from the environment: MOSOO_STAGING (the redesign staging folder) and
+// MOSOO_MAIN (a checkout of the mosoo main repo).
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+const env = (name) => {
+  const value = process.env[name];
+  if (!value) throw new Error(`set ${name}; see the comment at the top of this file`);
+  return value;
+};
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ICONS = resolve(HERE, "../../../../node_modules/@lobehub/icons-static-svg/icons");
-const PI = resolve(process.argv[2] ?? "/Users/chenxiefan/Documents/mosoo-website-redesign-staging/refs/devices/elements/svg/runtime-pi.src.svg");
+const STAGING_SVG = join(env("MOSOO_STAGING"), "refs/devices/elements/svg");
+const PI = resolve(process.argv[2] ?? join(STAGING_SVG, "runtime-pi.src.svg"));
 const OUT = resolve(HERE, "../../src/home/runtime-glyphs.ts");
 
 const SOURCES = [
@@ -34,8 +43,7 @@ const SOURCES = [
   { id: "pi", name: "Pi", file: PI },
 ];
 
-const STAGING_SVG = "/Users/chenxiefan/Documents/mosoo-website-redesign-staging/refs/devices/elements/svg";
-const MAIN = "/Users/chenxiefan/.superset/worktrees/mosoo/excellent-frost-5baed21b";
+const MAIN = env("MOSOO_MAIN");
 const UI_SOURCES = [
   { id: "environments", file: join(MAIN, "docs/design/assets/sidebar-icons/environments.svg") },
   { id: "key", file: join(STAGING_SVG, "glyph-KeyRound.src.svg") },

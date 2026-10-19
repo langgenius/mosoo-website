@@ -4,7 +4,7 @@
 //   node apps/landing/scripts/assets/fonts.mjs [<candidatesDir>]
 //
 // Input: the OFL candidates the font study downloaded from Google Fonts
-// (default /Users/chenxiefan/Documents/mosoo-website-redesign-staging/refs/fonts/candidates).
+// (default $MOSOO_STAGING/refs/fonts/candidates, where MOSOO_STAGING is the redesign staging folder).
 // Output (apps/landing/public/fonts/):
 //   hedvig-letters-serif-400.woff2 + HedvigLettersSerif-OFL.txt  (display stand-in for ABC Arizona Mix)
 //   inter-latin-var.woff2          + Inter-OFL.txt               (text, variable 100-900, Latin subset)
@@ -23,9 +23,10 @@ import { brotliDecompressSync } from "node:zlib";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(HERE, "../../public/fonts");
-const SRC = resolve(
-  process.argv[2] ?? "/Users/chenxiefan/Documents/mosoo-website-redesign-staging/refs/fonts/candidates",
-);
+if (!process.argv[2] && !process.env.MOSOO_STAGING) {
+  throw new Error("pass <candidatesDir> or set MOSOO_STAGING to the redesign staging folder");
+}
+const SRC = resolve(process.argv[2] ?? join(process.env.MOSOO_STAGING, "refs/fonts/candidates"));
 const BUDGET = 125 * 1024;
 
 const FACES = [
