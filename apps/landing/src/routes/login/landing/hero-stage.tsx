@@ -127,7 +127,6 @@ export function HeroStage(): ReactElement {
         height={1500}
         alt=""
         decoding="async"
-        fetchPriority="low"
       />
       <div className="v2a-shell">
         <div ref={column} className="v2a-culm-column">
