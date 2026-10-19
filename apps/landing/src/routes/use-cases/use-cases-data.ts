@@ -48,7 +48,7 @@ export const PITCHPILOT: UseCase = {
 };
 
 export const GO_GYM: UseCase = {
-  author: { avatar: "/brand/brand-mark.svg", name: "mosoo team" },
+  author: { avatar: "/brand/v5/mark-solid.svg", name: "mosoo team" },
   detailPath: `/${locale}/use-cases/go-gym`,
   image: "/landing/use-cases/go-gym-dashboard.png",
   imageAlt: t("The Go Gym dashboard after the Agent recorded a day of meals and training."),
@@ -62,7 +62,7 @@ export const GO_GYM: UseCase = {
 };
 
 export const CODEX_PET: UseCase = {
-  author: { avatar: "/brand/brand-mark.svg", name: "mosoo team" },
+  author: { avatar: "/brand/v5/mark-solid.svg", name: "mosoo team" },
   detailPath: `/${locale}/use-cases/codex-pet`,
   image: "/landing/use-cases/codex-pet-app.png",
   imageAlt: t("The Codex Pet app: one avatar in, nine animation states out."),

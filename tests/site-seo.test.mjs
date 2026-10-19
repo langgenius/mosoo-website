@@ -138,7 +138,8 @@ const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
   assert.match(html, /href="https:\/\/cloud\.mosoo\.ai">mosoo<\/a>/);
   assert.match(html, /href="https:\/\/computer\.mosoo\.ai">Mosoo Computer<\/a>/);
-  assert.match(html, new RegExp(`href="/${locale}/pricing"`));
+  // Pricing is unlinked until it is rewritten (staging REVIEW-v4 G9, #138).
+  assert.doesNotMatch(html, /href="\/(?:en|zh|ja)\/pricing"/);
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
   assert.match(html, new RegExp(`href="${locale === "en" ? "/health" : `/${locale}/health`}"`));
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/"/);

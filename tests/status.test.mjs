@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -254,4 +255,32 @@ test("egress classification preserves failed run terminal events", () => {
   assert.equal(events[0].succeeded, true);
   assert.equal(events[1].type, "run");
   assert.equal(events[1].status, "failed");
+});
+
+// The page (v5 subpage clean-up, staging REVIEW-v4 G9 and §4.10): no green fill
+// anywhere, no logo of its own (the site nav carries the ink mark), one ink button.
+const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+const GREEN = /green-\d|#6fd305|#66c600|#5cb300|status-brand|--accent\b|#bcf870|\blime\b/i;
+
+test("the status page carries no green and no logo of its own", () => {
+  const page = read("apps/landing/src/routes/status/status-page.tsx");
+  const code = page.split("\n").filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line)).join("\n");
+  assert.doesNotMatch(code, GREEN, "status-page.tsx names a green");
+  assert.doesNotMatch(page, /logo-mark\.svg|<img\b/, "the page draws no mark of its own");
+  assert.doesNotMatch(page, /DISPLAY_FONT|Cabinet/, "the title takes the display token, not Cabinet Grotesk");
+  assert.match(page, /<Menu\.Trigger className="sp-btn">/, "Get updates is the ink button");
+
+  // Every rule the page's classes use (app.css, from the status block on) stays neutral or amber/ember.
+  const css = read("apps/landing/src/shared/styles/app.css");
+  const statusCss = css.slice(css.indexOf("/* ---------------------------------------------------------------- status */"));
+  assert.ok(statusCss.length > 1000, "the status block is in app.css");
+  assert.doesNotMatch(statusCss, GREEN, "the status CSS names a green");
+  assert.doesNotMatch(css, /\.status-brand/, "the old green ramp is gone");
+  assert.match(statusCss, /\.sp-btn \{[^}]*background: var\(--sub-ink\);/);
+  assert.match(statusCss, /\.sp-day--operational \{\s*background: var\(--sub-ink-2\);/);
+
+  // The static page served before (and without) JavaScript.
+  const html = read("apps/landing/status.html");
+  assert.doesNotMatch(html, GREEN, "status.html names a green");
+  assert.doesNotMatch(html, /href="\/[a-z]{2}\/pricing"/, "status.html links no pricing page");
 });

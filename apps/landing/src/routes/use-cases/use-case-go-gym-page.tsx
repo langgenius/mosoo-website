@@ -1,16 +1,15 @@
 import { ArrowLeft, ArrowUpRight, CheckCircle2 } from "lucide-react";
-import type { CSSProperties, ReactElement } from "react";
+import type { ReactElement } from "react";
 
 import { locale } from "@/shared/locale";
 
 import { Reveal } from "../login/landing/motion";
-import { DISPLAY_FONT, sectionHeadingStyle } from "../login/landing/typography";
-import { Eyebrow } from "../login/landing/ui";
 import {
   MOSOO_API_REFERENCE_URL,
   MOSOO_DOCS_URL,
   MOSOO_GITHUB_URL,
 } from "../login/links";
+import { displayStyle, sectionHeadingStyle } from "./display";
 import { t } from "./i18n";
 import { GO_GYM } from "./use-cases-data";
 
@@ -20,13 +19,7 @@ const CLOUDFLARE_CONTAINERS_URL =
 const SUPABASE_RLS_URL =
   "https://supabase.com/docs/guides/database/postgres/row-level-security";
 
-const PAGE_HEADLINE_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(36px, 4.6vw, 60px)",
-  fontWeight: 500,
-  letterSpacing: "-0.032em",
-  lineHeight: 1.05,
-} satisfies CSSProperties;
+const PAGE_HEADLINE_STYLE = displayStyle("clamp(36px, 4.6vw, 60px)", "-0.028em", 1.04);
 
 const VALUE = [
   {
@@ -173,8 +166,10 @@ function CaseHeader(): ReactElement {
         {t("Use cases")}
       </a>
       <div className="mt-8 flex flex-wrap items-center gap-3">
-        <Eyebrow>{t("Use case")}</Eyebrow>
-        <span className="text-green-700 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
+        <span className="text-fg-2 text-[11px] font-semibold tracking-[0.12em] uppercase">
+          {t("Use case")}
+        </span>
+        <span className="text-fg-2 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
           {GO_GYM.name}
         </span>
       </div>
@@ -231,7 +226,7 @@ function ProductionProof(): ReactElement {
     <section className="mt-16 grid gap-8 md:mt-20 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <Reveal>
         <div className="border-border-strong border-t pt-5">
-          <p className="text-green-700 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
+          <p className="text-fg-2 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
             {t("Production smoke test")}
           </p>
           <h2 className="text-fg-1 mt-4" style={sectionHeadingStyle}>
@@ -257,7 +252,7 @@ function ProductionProof(): ReactElement {
               >
                 <CheckCircle2
                   aria-hidden="true"
-                  className="text-green-700 size-4 shrink-0"
+                  className="text-fg-1 size-4 shrink-0"
                 />
                 {t(result)}
               </li>

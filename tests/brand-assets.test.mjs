@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { createHash } from "node:crypto";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { dirname, join, relative } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -8,9 +9,11 @@ import { fileURLToPath } from "node:url";
 // outline files stay out of the website's CSS, CJK headings keep their own
 // punctuation, and the manifest matches the files. The bamboo kit is gone
 // from the site (d-object redesign), so its plate and manifest checks went
-// with it.
+// with it. The v5 clean-up (2026-10-20) adds the social card and font guards
+// at the end of this file.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const publicDir = join(root, "apps/landing/public");
 const outline = join(root, "apps/landing/public/brand/outline");
 const fonts = join(root, "apps/landing/public/fonts");
 const literataCss = readFileSync(join(root, "apps/landing/src/shared/styles/literata.css"), "utf8");
@@ -82,5 +85,122 @@ test("MANIFEST.md lists every brand kit file with its current size", () => {
     assert.ok(row, `${path} has a row in MANIFEST.md`);
     const bytes = statSync(join(root, path)).size.toLocaleString("en-US");
     assert.ok(row.includes(`| ${bytes} |`), `${path}: MANIFEST.md says ${row.split("|")[2].trim()}, the file has ${bytes} bytes`);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Social cards (staging REVIEW-v4 §4.7 and §6.2): no page shares a bamboo card.
+
+// The v3 cards: a bamboo-grove photograph with the green solid mark. The geist
+// file is deleted; both hashes stay, so a copy under any name is still caught.
+const BAMBOO_CARDS = {
+  "social-card-20261019.png": "fd744e4902b145737ab28320b566b49ffa03da441557ffbb7235afe5b5c7e8bd",
+  "social-card-geist-20260917.png": "31c8f6e3f2c0459494019090c080a38b43315ac2d578833cacd0c578358ce388",
+};
+const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261020.png";
+// Pages owned by other v5 tracks that still point at the bamboo card. The
+// integrator empties this when the home and the blog take a v5 card
+// (staging v5/subpages/NOTES.md, requests 3 and 4).
+const PENDING_BAMBOO = new Set(["apps/landing/index.html", "apps/blog/src/layouts/BaseLayout.astro"]);
+
+const sha256 = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
+const filesUnder = (dir) =>
+  readdirSync(dir, { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile())
+    .map((entry) => join(entry.parentPath ?? entry.path, entry.name));
+
+/** Every landing HTML entry and the blog layout, with the share images each one names. */
+function shareImages() {
+  const pages = [
+    ...readdirSync(join(root, "apps/landing")).filter((name) => name.endsWith(".html")).map((name) => `apps/landing/${name}`),
+    ...readdirSync(join(root, "apps/landing/use-cases")).map((name) => `apps/landing/use-cases/${name}`),
+  ];
+  const images = pages.flatMap((page) => {
+    const html = readFileSync(join(root, page), "utf8");
+    return [
+      ...html.matchAll(/<meta\s+property="og:image"\s+content="([^"]+)"/g),
+      ...html.matchAll(/<meta\s+name="twitter:image"\s+content="([^"]+)"/g),
+    ].map((match) => ({ page, url: match[1] }));
+  });
+  const blogLayout = "apps/blog/src/layouts/BaseLayout.astro";
+  for (const match of readFileSync(join(root, blogLayout), "utf8").matchAll(/new URL\("(\/[^"]+\.(?:png|jpe?g|webp))", Astro\.site\)/g)) {
+    images.push({ page: blogLayout, url: `https://mosoo.ai${match[1]}` });
+  }
+  return images;
+}
+
+/** Why an image URL is a bamboo card, or null. Files served from apps/landing/public are hashed too. */
+function bambooReason(url) {
+  const { pathname } = new URL(url, "https://mosoo.ai");
+  const name = pathname.split("/").at(-1);
+  if (name in BAMBOO_CARDS) return `${name} is a bamboo card`;
+  const file = join(publicDir, pathname);
+  if (pathname.startsWith("/brand/") || pathname.startsWith("/landing/")) {
+    if (!existsSync(file)) return `${pathname} does not exist in apps/landing/public`;
+    const hash = sha256(file);
+    const twin = Object.keys(BAMBOO_CARDS).find((card) => BAMBOO_CARDS[card] === hash);
+    if (twin) return `${pathname} is a copy of ${twin}`;
+  }
+  return null;
+}
+
+test("no page's og:image or twitter:image is a bamboo card", () => {
+  const images = shareImages();
+  assert.ok(images.length >= 10, `found ${images.length} share images`);
+  const violations = images
+    .map(({ page, url }) => ({ page, url, reason: bambooReason(url) }))
+    .filter(({ reason }) => reason !== null);
+  const unexpected = violations.filter(({ page }) => !PENDING_BAMBOO.has(page));
+  assert.deepEqual(unexpected, [], "pages that share a bamboo card");
+});
+
+test("status, use cases and pricing share the v5 card, a 1200 x 630 PNG", () => {
+  for (const page of ["apps/landing/status.html", "apps/landing/use-cases.html", "apps/landing/pricing.html"]) {
+    const urls = shareImages().filter((image) => image.page === page).map((image) => image.url);
+    assert.deepEqual(urls, [V5_CARD, V5_CARD], `${page} og:image and twitter:image`);
+  }
+  const png = readFileSync(join(publicDir, new URL(V5_CARD).pathname));
+  assert.equal(png.subarray(1, 4).toString("latin1"), "PNG");
+  assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1200, 630], "IHDR width and height");
+  assert.ok(png.length < 100_000, `the card stays light (${png.length} B)`);
+});
+
+test("public/ ships no bamboo file and no orphan social card", () => {
+  const files = filesUnder(publicDir).map((file) => relative(publicDir, file));
+  assert.deepEqual(files.filter((file) => /bamboo|culm|grove/i.test(file)), []);
+  const named = new Set(shareImages().map(({ url }) => new URL(url, "https://mosoo.ai").pathname));
+  const cards = files.filter((file) => /^brand\/social-card-[^/]+\.png$/.test(file));
+  assert.ok(cards.length > 0);
+  for (const card of cards) {
+    assert.ok(named.has(`/${card}`), `${card} is shared by no page: delete it`);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Fonts (staging REVIEW-v4 §6.3, #146): every face that ships has its licence
+// text next to it.
+
+const FONT_LICENCES = {
+  FragmentMono: "FragmentMono-OFL.txt",
+  // vercel/geist-font: one OFL text covers Geist and Geist Mono.
+  Geist: "GeistMono-LICENSE.txt",
+  GeistMono: "GeistMono-LICENSE.txt",
+  HedvigLettersSerif: "HedvigLettersSerif-OFL.txt",
+  Inter: "Inter-LICENSE.txt",
+  InterVariable: "Inter-LICENSE.txt",
+  Literata: "Literata-LICENSE.txt",
+};
+// Cabinet Grotesk has no licence file (the ITF Free Font License, unverified). The landing no longer loads it
+// (app.css); @mosoo/design-tokens (pkgs/design-tokens/mosoo.css, the blog) still references the file, so it
+// stays until that reference goes. Then delete the font and this entry (v5/subpages/NOTES.md, request 5).
+const PENDING_LICENCE = new Set(["CabinetGrotesk-Variable.woff2"]);
+
+test("every font that ships has its licence text next to it", () => {
+  for (const file of readdirSync(fonts).filter((name) => /\.(woff2?|ttf|otf)$/.test(name))) {
+    if (PENDING_LICENCE.has(file)) continue;
+    const family = file.replace(/-.*$/, "").replace(/\.\w+$/, "");
+    const licence = FONT_LICENCES[family];
+    assert.ok(licence, `${file}: no licence is known for the ${family} family`);
+    assert.ok(existsSync(join(fonts, licence)), `${file}: ${licence} is missing`);
   }
 });

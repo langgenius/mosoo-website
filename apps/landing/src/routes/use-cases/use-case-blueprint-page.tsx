@@ -1,23 +1,16 @@
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import type { CSSProperties, ReactElement } from "react";
+import type { ReactElement } from "react";
 
 import { locale } from "@/shared/locale";
 
 import { GithubMark } from "../login/github-mark";
 import { Reveal } from "../login/landing/motion";
-import { DISPLAY_FONT, sectionHeadingStyle } from "../login/landing/typography";
-import { Eyebrow } from "../login/landing/ui";
 import { MOSOO_DOCS_URL } from "../login/links";
+import { displayStyle, sectionHeadingStyle } from "./display";
 import { t } from "./i18n";
 import { BLUEPRINT } from "./use-cases-data";
 
-const PAGE_HEADLINE_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(36px, 4.6vw, 60px)",
-  fontWeight: 500,
-  letterSpacing: "-0.032em",
-  lineHeight: 1.05,
-} satisfies CSSProperties;
+const PAGE_HEADLINE_STYLE = displayStyle("clamp(36px, 4.6vw, 60px)", "-0.028em", 1.04);
 
 const STEPS = [
   {
@@ -62,8 +55,10 @@ function CaseHeader(): ReactElement {
         {t("Use cases")}
       </a>
       <div className="mt-8 flex flex-wrap items-center gap-3">
-        <Eyebrow>{t("Use case")}</Eyebrow>
-        <span className="text-green-700 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
+        <span className="text-fg-2 text-[11px] font-semibold tracking-[0.12em] uppercase">
+          {t("Use case")}
+        </span>
+        <span className="text-fg-2 font-mono text-[11px] font-semibold tracking-[0.18em] uppercase">
           {BLUEPRINT.name}
         </span>
       </div>
@@ -173,8 +168,8 @@ function RequestPath(): ReactElement {
         <div className="overflow-x-auto px-4 py-4 font-mono text-[13px] leading-[2]">
           {PIPELINE.map((stage, index) => (
             <div key={stage} className="whitespace-nowrap">
-              {index > 0 ? <span className="text-green-700 mr-2">{"->"}</span> : null}
-              <span className={index === PIPELINE.length - 1 ? "text-green-800" : "text-fg-1"}>
+              {index > 0 ? <span className="text-fg-3 mr-2">{"->"}</span> : null}
+              <span className="text-fg-1">
                 {stage}
               </span>
             </div>
