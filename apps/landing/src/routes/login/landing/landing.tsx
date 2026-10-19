@@ -4,7 +4,7 @@ import type { CSSProperties, ReactElement } from "react";
 import { dockOnScroll, shouldUndock } from "@/effects/dock";
 import { revealOnce } from "@/effects/reveal";
 import { RuntimeIcon } from "@/shared/ui/brand-icons";
-import { FileText, Loader2 } from "@/shared/ui/console-glyphs";
+import { Check, CircleDashed, Copy, FileText, Loader2, RotateCcw, SquareTerminal } from "@/shared/ui/console-glyphs";
 import { FaqIndicator, OutlineNested, OutlineWindow } from "@/shared/ui/outline";
 
 import { docsUrl, MOSOO_CLOUD_URL } from "../links";
@@ -63,8 +63,7 @@ function Hero(): ReactElement {
               <i className="r" />
             </div>
             <p className="d-obj-ev">
-              <span translate="no">{object.from}</span>
-              <b translate="no">{object.to}</b>
+              <b translate="no">{object.event}</b>
             </p>
           </div>
         </OutlineWindow>
@@ -86,9 +85,11 @@ function Hero(): ReactElement {
 // Ploy's braille tiles: eight frames per tile, each frame a row of three
 // cells read off the same cycle at offsets 0 / 3 / 6. Tile states follow the
 // console's pending / running / completed (thread-state-icon.tsx).
+// The middle (lime) tile spins: every frame lights 3 to 4 dots per cell, so
+// the tile never reads as a few dead pixels.
 const GLYPH_CYCLES = [
   ["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"],
-  ["⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"],
+  ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧"],
   ["⠀", "⠄", "⠤", "⠦", "⠶", "⠷", "⠿", "⠷"],
 ];
 const GLYPH_FRAMES = GLYPH_CYCLES.map((cycle) =>
@@ -160,6 +161,16 @@ function Stack(): ReactElement {
   );
 }
 
+// U03 card-name glyphs: console glyphs that name the card's idea, not a
+// third-party runtime mark (the console's KeyRound is not inlined here, so
+// Keys takes CircleDashed).
+const CARD_GLYPHS = { terminal: SquareTerminal, resume: RotateCcw, keys: CircleDashed } as const;
+
+function CardGlyph({ glyph }: { glyph: keyof typeof CARD_GLYPHS }): ReactElement {
+  const Glyph = CARD_GLYPHS[glyph];
+  return <Glyph className="d-mcard-glyph" />;
+}
+
 function Supply(): ReactElement {
   const { supply } = home;
   return (
@@ -175,7 +186,7 @@ function Supply(): ReactElement {
           {supply.cards.map((card) => (
             <div key={card.name} className="d-mcard">
               <p className="d-mcard-hd">
-                <RuntimeIcon runtimeId={card.runtime} size={18} className="d-glyph" />
+                <CardGlyph glyph={card.glyph} />
                 {card.name}
                 <span className="d-badge" translate="no">
                   {card.badge}
@@ -248,8 +259,15 @@ function Close(): ReactElement {
           <Corners className="d-ccard-c" />
           <div className="d-ccard-field" data-product-ui>
             <span className="d-ccard-p">{close.prompt}</span>
-            <button type="button" className="d-btn d-btn-sm" onClick={copy} aria-live="polite">
-              {copied ? close.done : close.button}
+            <button
+              type="button"
+              className="d-btn d-btn-sm d-ccard-btn"
+              onClick={copy}
+              aria-label={copied ? close.done : close.button}
+              aria-live="polite"
+            >
+              <span className="d-ccard-btn-t">{copied ? close.done : close.button}</span>
+              {copied ? <Check className="d-ccard-btn-i" /> : <Copy className="d-ccard-btn-i" />}
             </button>
           </div>
           <p className="d-ccard-fine">{close.fine}</p>

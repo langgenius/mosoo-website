@@ -7,12 +7,12 @@ import type { Locale } from "@/shared/locale";
 import { locale } from "@/shared/locale";
 
 export type Satellite = { key: string; value: string; runtime?: string };
-export type SupplyCard = { name: string; badge: string; value: string; label: string; status: string; live?: boolean; runtime: string };
+export type SupplyCard = { name: string; badge: string; value: string; label: string; status: string; live?: boolean; glyph: "terminal" | "resume" | "keys" };
 export type Faq = { q: string; a: string };
 
 type HomeCopy = {
   hero: { h1a: string; h1b: string; lead: string; primary: string; secondary: string };
-  object: { line: string; from: string; to: string; satellites: readonly Satellite[] };
+  object: { line: string; event: string; satellites: readonly Satellite[] };
   verbs: readonly { verb: string; desc: string }[];
   stack: { label: string; token: string; status: string; title: string; desc: string };
   supply: { a: string; b: string; cards: readonly SupplyCard[] };
@@ -30,8 +30,7 @@ const EN: HomeCopy = {
   },
   object: {
     line: "Same session.",
-    from: "run.completed",
-    to: "run.started",
+    event: "run.started",
     satellites: [
       { key: "Sandbox", value: "Fresh, isolated" },
       { key: "Harness", value: "OpenAI Codex", runtime: "openai-runtime" },
@@ -55,9 +54,9 @@ const EN: HomeCopy = {
     a: "Four harnesses.",
     b: "One Session API.",
     cards: [
-      { name: "Runtimes", badge: "pick", value: "4", label: "harnesses behind one API", status: "Chosen per Session", runtime: "acp-fallback" },
-      { name: "Resume", badge: "same", value: "7 days", label: "later, same Session", status: "Waiting for the next turn", live: true, runtime: "claude-agent-sdk" },
-      { name: "Keys", badge: "byok", value: "0", label: "keys inside the sandbox", status: "Proxied on every request", runtime: "openai-runtime" },
+      { name: "Runtimes", badge: "pick", value: "4", label: "harnesses behind one API", status: "Chosen per Session", glyph: "terminal" },
+      { name: "Resume", badge: "same", value: "7 days", label: "later, same Session", status: "Waiting for the next turn", live: true, glyph: "resume" },
+      { name: "Keys", badge: "byok", value: "0", label: "keys inside the sandbox", status: "Proxied on every request", glyph: "keys" },
     ],
   },
   faq: {

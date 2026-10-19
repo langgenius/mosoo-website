@@ -292,16 +292,21 @@ html:has(.d-shell) {
   height: 87.169%;
   -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
   mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
-  background: radial-gradient(120% 95% at 50% 100%, #d9d6cf 0%, #e8e6e0 48%, #f5f4f0 100%);
+  background: radial-gradient(120% 95% at 50% 100%, #cdc8be 0%, #e3e0d9 50%, #f6f5f1 100%);
 }
 
-/* S4: the one white card in the window, crossing its lower edge. */
+/* S4: the one white card in the window, from ~40% of the window height down
+   across its lower edge; the sentence sits at the top, the track and the
+   event at the bottom. */
 .d-obj {
   position: absolute;
   left: 40px;
   right: 40px;
+  top: 34%;
   bottom: 15px;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
   padding: 20px 22px 18px;
   border-radius: 8px;
   background: #fff;
@@ -317,7 +322,7 @@ html:has(.d-shell) {
 .d-obj-track {
   position: relative;
   height: 1px;
-  margin: 0 4px 12px;
+  margin: auto 4px 12px;
   background: var(--d-line-2);
 }
 
@@ -343,7 +348,7 @@ html:has(.d-shell) {
 .d-obj-ev {
   margin: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   color: var(--d-ink-3);
   font: 400 11.5px/1 var(--font-mono);
 }
@@ -569,23 +574,24 @@ html:has(.d-shell) {
   color: var(--d-ink);
 }
 
+/* A progress bar (issue #122's ~13px bars), not a switch: no knob, no shadow. */
 .d-stack-rail {
   position: relative;
   flex: 1;
-  height: 44px;
+  height: 11px;
+  overflow: hidden;
   border-radius: 999px;
   background: #ecebe8;
 }
 
 .d-stack-knob {
   position: absolute;
-  left: 6px;
-  top: 6px;
-  bottom: 6px;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 38%;
   border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 1px 3px rgb(21 23 20 / 0.16);
+  background: var(--d-ink-3);
 }
 
 .d-stack-status {
@@ -683,8 +689,16 @@ html:has(.d-shell) {
   font: 600 14px/1 var(--font-sans);
 }
 
+.d-mcard-glyph {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--d-ink);
+}
+
+/* Head on top, value and label sunk onto the status line (a metric tile). */
 .d-mcard-val {
-  margin-top: 44px !important;
+  margin-top: auto !important;
   font: 500 64px/1 var(--font-sans);
   letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
@@ -697,7 +711,7 @@ html:has(.d-shell) {
 }
 
 .d-mcard-stat {
-  margin-top: auto !important;
+  margin-top: 24px !important;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -750,7 +764,7 @@ html:has(.d-shell) {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  min-height: 96px;
+  min-height: 116px;
   padding: 26px 34px 26px 30px;
   cursor: pointer;
   list-style: none;
@@ -765,6 +779,10 @@ html:has(.d-shell) {
   width: 6px;
   height: 6px;
   border-radius: 50%;
+  background: rgb(22 24 21 / 0.45);
+}
+
+.d-pc[open] .d-pc-c {
   background: var(--d-ink);
 }
 
@@ -843,8 +861,7 @@ html:has(.d-shell) {
   top: -8px;
   left: 22px;
   padding: 0 8px;
-  border-radius: 2px;
-  background: #fafaf9;
+  background: linear-gradient(to bottom, transparent 50%, #fafaf9 50%);
   color: var(--d-ink-3);
   font: 400 11px/16px var(--font-mono);
   letter-spacing: 0.12em;
@@ -890,6 +907,16 @@ html:has(.d-shell) {
   font-size: 14px;
 }
 
+.d-ccard-btn {
+  flex: none;
+}
+
+.d-ccard-btn-i {
+  display: none;
+  width: 18px;
+  height: 18px;
+}
+
 .d-ccard-fine {
   margin: 14px 0 0;
   text-align: center;
@@ -926,9 +953,9 @@ html:has(.d-shell) {
   height: 59.145%;
   -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
   mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
-  background-color: #fff;
+  background-color: #efeee9;
   background-image:
-    radial-gradient(78% 100% at 50% 100%, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0) 30%, #fff 96%),
+    radial-gradient(60% 75% at 50% 100%, rgb(239 238 233 / 0) 0%, rgb(239 238 233 / 0) 35%, #efeee9 100%),
     radial-gradient(rgb(22 24 21 / 0.55) 1px, transparent 1.3px);
   background-size:
     100% 100%,
@@ -1237,6 +1264,7 @@ html:has(.d-shell) {
   }
 
   .d-pc summary {
+    min-height: 96px;
     padding: 22px 20px;
   }
 
@@ -1257,7 +1285,31 @@ html:has(.d-shell) {
   }
 
   .d-ccard-field {
-    padding-left: 16px;
+    height: auto;
+    min-height: 56px;
+    padding: 10px 6px 10px 16px;
+    border-radius: 22px;
+  }
+
+  .d-ccard-p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .d-ccard-btn {
+    width: 44px;
+    padding: 0;
+  }
+
+  .d-ccard-btn-t {
+    display: none;
+  }
+
+  .d-ccard-btn-i {
+    display: block;
   }
 
   .d-coda {
