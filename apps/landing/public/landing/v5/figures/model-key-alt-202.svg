@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="202" height="202" viewBox="0 0 202 202" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- model key · outside the box · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width=".75" d="M69.15 153.79L157.15 153.79M69.15 65.79L157.15 65.79M96.87 136.21L184.87 136.21M96.87 48.21L184.87 48.21M69.15 153.79L69.15 65.79M157.15 153.79L157.15 65.79M96.87 136.21L96.87 48.21M184.87 136.21L184.87 48.21M69.15 153.79L96.87 136.21M157.15 153.79L184.87 136.21M69.15 65.79L96.87 48.21M157.15 65.79L184.87 48.21"/>
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M27.01 101L127.01 101"/>
+<path stroke-width="1.25" stroke-dasharray=".01 3.939" stroke-linecap="round" d="M127.01 79A5.72 22 0 0 1 131.97 112A5.72 22 0 0 1 122.06 112A5.72 22 0 0 1 127.01 79"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M27.01 63A9.88 38 0 0 1 35.57 120A9.88 38 0 0 1 18.46 120A9.88 38 0 0 1 27.01 63"/>
+</svg>

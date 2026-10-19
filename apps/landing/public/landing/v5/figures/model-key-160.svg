@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- model key · touches, never enters · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M41.19 80L41.19 29.31M41.19 80L41.19 130.69M41.19 80L.79 80M41.19 80L159.21 80"/>
+<path stroke-width="1.25" stroke-dasharray=".01 3.937" stroke-linecap="round" d="M41.19 80A18.22 18.22 0 0 1 68.51 64.22A18.22 18.22 0 0 1 68.51 95.78A18.22 18.22 0 0 1 41.19 80"/>
+<path stroke-width=".75" d="M41.19 80A58.61 58.61 0 0 1 129.11 29.24A58.61 58.61 0 0 1 129.11 130.76A58.61 58.61 0 0 1 41.19 80M41.19 80A18.22 18.22 0 0 1 13.86 95.78A18.22 18.22 0 0 1 13.86 64.22A18.22 18.22 0 0 1 41.19 80"/>
+</svg>

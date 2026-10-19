@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- files · one sheet lifted from the tray · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width=".75" d="M12.18 121.97L49.6 98.23L147.82 98.23"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M55.54 126.26L128.41 126.26L128.41 67.65L55.54 67.65Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M47.31 131.49L120.18 131.49L120.18 72.87L47.31 72.87Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M39.07 136.71L111.95 136.71L111.95 78.1L39.07 78.1Z"/>
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M30.84 118.17L30.84 92.83M103.71 118.17L103.71 92.83"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M30.84 92.83L103.71 92.83L103.71 34.21L30.84 34.21Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M110.4 145.73L110.4 121.97L147.82 98.23L147.82 121.99Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M12.18 145.73L110.4 145.73L110.4 121.97L12.18 121.97Z"/>
+</svg>

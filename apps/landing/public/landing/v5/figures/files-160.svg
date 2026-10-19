@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- files · a page lifted off the stack · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width=".75" fill="#FFFFFF" d="M140.36 116.44L140.36 114.06L90.98 142.57L90.98 144.95Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M19.64 103.76L90.98 144.95L90.98 142.57L19.64 101.39Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M69.02 72.87L140.36 114.06L90.98 142.57L19.64 101.39Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M140.36 109.31L140.36 106.93L90.98 135.45L90.98 137.82Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M19.64 96.63L90.98 137.82L90.98 135.45L19.64 94.26Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M69.02 65.74L140.36 106.93L90.98 135.45L19.64 94.26Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M140.36 102.18L140.36 99.8L90.98 128.32L90.98 130.69Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M19.64 89.5L90.98 130.69L90.98 128.32L19.64 87.13Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M69.02 58.61L140.36 99.8L90.98 128.32L19.64 87.13Z"/>
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M69.02 58.61L69.02 17.43M19.64 87.13L19.64 45.94M90.98 128.32L90.98 87.13M140.36 99.8L140.36 58.61"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M140.36 58.61L140.36 56.24L90.98 84.75L90.98 87.13Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M19.64 45.94L90.98 87.13L90.98 84.75L19.64 43.56Z"/>
+<path stroke-width=".75" fill="#FFFFFF" d="M69.02 15.05L140.36 56.24L90.98 84.75L19.64 43.56Z"/>
+</svg>
