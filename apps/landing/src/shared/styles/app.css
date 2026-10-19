@@ -79,8 +79,8 @@
 }
 
 :root {
-  /* Brand green — the bright Moso-bamboo shoot (#6FD305). A disciplined accent
-     only: primary actions stay BLACK; green marks growth/action/life. */
+  /* Brand green (#6FD305). A disciplined accent only (ATLAS §2.3): live dots,
+     1–2px lines and focus rings; primary actions stay ink. */
   --green-50: #f4fce4;
   --green-100: #e7f8c4;
   --green-200: #d3f195;
@@ -94,7 +94,7 @@
   --green-950: #1a310b;
 
   /* Signal lime — reserved for the single hero announcement chip. Deliberately
-     outside the bamboo-green ramp and theme-invariant: it must read as "new"
+     outside the brand-green ramp and theme-invariant: it must read as "new"
      on the cool-gray root palette and on the warm landing palette alike, with
      near-black ink on top (#050a08 on #c8ff00 ≈ 17:1). */
   --lime: #c8ff00;
