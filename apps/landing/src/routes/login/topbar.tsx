@@ -222,8 +222,11 @@ function MobileMenu({
 
 export function LoginLandingTopbar({
   activeNav,
+  variant = "bar",
 }: {
   activeNav?: TopbarNav | undefined;
+  /** "capsule" floats the header as a low pill on tablets and up (home page, v2a). */
+  variant?: "bar" | "capsule";
 }): ReactElement {
   const loadDeferredMenus = useIdleReady();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -246,7 +249,10 @@ export function LoginLandingTopbar({
     <>
       <header
         onKeyDown={closeMenuOnEscape}
-        className="site-header border-border-soft bg-paper-100/85 sticky top-0 z-50 border-b backdrop-blur-md"
+        className={cn(
+          "site-header border-border-soft bg-paper-100/85 sticky top-0 z-50 border-b backdrop-blur-md",
+          variant === "capsule" ? "site-header-capsule" : null,
+        )}
       >
         <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between gap-4 px-4 md:px-6">
           <Brand />

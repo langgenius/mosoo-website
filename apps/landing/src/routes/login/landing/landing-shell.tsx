@@ -17,10 +17,13 @@ import { LandingFooter } from "./footer";
  */
 export function LandingShell({
   activeNav,
+  navVariant = "bar",
   theme = "landing",
   children,
 }: {
   activeNav?: TopbarNav;
+  /** The header's shape: the full-width bar, or the home page's floating capsule. */
+  navVariant?: "bar" | "capsule";
   // "landing" keeps the warm forest palette; "brand" drops it to inherit the
   // cool/bright :root palette the blog uses, so a page can match the blog.
   theme?: "landing" | "brand";
@@ -38,7 +41,7 @@ export function LandingShell({
         {t("Skip to content")}
       </a>
       <div className="landing-content-layer bg-paper-100 relative z-10">
-        <LoginLandingTopbar activeNav={activeNav} />
+        <LoginLandingTopbar activeNav={activeNav} variant={navVariant} />
         <main id="main" tabIndex={-1} className="outline-none">
           {children}
         </main>

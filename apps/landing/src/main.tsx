@@ -19,7 +19,7 @@ document.documentElement.lang = htmlLanguage[locale];
 
 createRoot(container).render(
   <StrictMode>
-    <LandingShell>
+    <LandingShell navVariant="capsule">
       <LoginLanding />
     </LandingShell>
   </StrictMode>,

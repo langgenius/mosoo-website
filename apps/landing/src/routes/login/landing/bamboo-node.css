@@ -547,11 +547,14 @@
 /* Home page navigation: a low floating capsule (#99), the one translucent
    surface besides the stage shell. Phones keep the full-width bar. */
 @media (min-width: 768px) {
-  html:has(.v2a) .site-header {
-    top: 10px;
+  /* Moved down with a transform, not a margin, so the page under it does
+     not shift when React replaces the static first paint. */
+  .site-header-capsule {
+    top: 0;
     width: calc(100% - 32px);
     max-width: 1312px;
-    margin: 10px auto 0;
+    margin: 0 auto;
+    transform: translateY(10px);
     border: 0;
     border-radius: 16px;
     background: rgba(250, 250, 247, 0.84);
@@ -560,18 +563,19 @@
       0 10px 28px -16px rgba(11, 26, 20, 0.22);
   }
 
-  html:has(.v2a) .site-header > div:first-child {
+  .site-header-capsule > div:first-child {
     height: 56px;
     padding-left: 16px;
     padding-right: 10px;
   }
 
-  html:has(.v2a) .site-header > nav {
+  .site-header-capsule > nav {
     border-radius: 0 0 16px 16px;
   }
 
+  /* The capsule takes 56px of flow (it is moved down by a transform). */
   .v2a-hero {
-    min-height: calc(100svh - 66px);
+    min-height: calc(100svh - 56px);
   }
 }
 
@@ -683,7 +687,7 @@
 
 /* On the home page "Try mosoo" looks the same wherever it appears: the lime
    button. The header's copy of it (bg-ink-900 elsewhere) follows suit. */
-html:has(.v2a) .site-header a.bg-ink-900[href="https://cloud.mosoo.ai"] {
+.site-header-capsule a.bg-ink-900[href="https://cloud.mosoo.ai"] {
   background: #6fd305;
   color: #0f1a02;
   box-shadow:
@@ -691,10 +695,10 @@ html:has(.v2a) .site-header a.bg-ink-900[href="https://cloud.mosoo.ai"] {
     inset 0 0 0 1px rgba(15, 26, 2, 0.16);
 }
 
-html:has(.v2a) .site-header a.bg-ink-900[href="https://cloud.mosoo.ai"]:hover {
+.site-header-capsule a.bg-ink-900[href="https://cloud.mosoo.ai"]:hover {
   background: #66c600;
 }
 
-html:has(.v2a) .site-header a.bg-ink-900[href="https://cloud.mosoo.ai"]:active {
+.site-header-capsule a.bg-ink-900[href="https://cloud.mosoo.ai"]:active {
   background: #5cb300;
 }

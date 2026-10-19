@@ -10,6 +10,10 @@ const LandingBelowFold = lazy(async () => {
   return { default: mod.LandingBelowFold };
 });
 
+// Holds the space of the sections below the hero until their chunk arrives,
+// so the footer never shows in the first screen and then jumps away.
+const BELOW_FOLD_PLACEHOLDER = <div aria-hidden="true" className="min-h-screen" />;
+
 export function LoginLanding(): ReactElement {
   const loadBelowFold = useIdleReady();
 
@@ -20,10 +24,12 @@ export function LoginLanding(): ReactElement {
       <div className="mx-auto w-full max-w-[1280px]">
         <Hero />
         {loadBelowFold ? (
-          <Suspense fallback={null}>
+          <Suspense fallback={BELOW_FOLD_PLACEHOLDER}>
             <LandingBelowFold />
           </Suspense>
-        ) : null}
+        ) : (
+          BELOW_FOLD_PLACEHOLDER
+        )}
       </div>
     </div>
   );
