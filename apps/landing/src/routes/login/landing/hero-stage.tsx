@@ -44,6 +44,18 @@ function internodePath(x: number, y: number, width: number, height: number): str
   ].join("");
 }
 
+/**
+ * A 12px mono caption in the gutter, read bottom to top along an internode
+ * (wide screens only; the island's own lines say the same in words).
+ */
+function CulmLabel({ y, text }: { y: number; text: string }): ReactElement {
+  return (
+    <text className="v2a-culm-label" transform={`translate(-7 ${y}) rotate(-90)`} textAnchor="middle">
+      {text}
+    </text>
+  );
+}
+
 function Culm({ layout, height }: { layout: CulmLayout; height: number }): ReactElement {
   const x = 0.5;
   const ring1 = layout.turn1Bottom - RING;
@@ -51,6 +63,7 @@ function Culm({ layout, height }: { layout: CulmLayout; height: number }): React
   const first = { y: layout.turn1Top, h: ring1 - GAP - layout.turn1Top };
   const idle = { y: layout.turn1Bottom + GAP, h: layout.turn2Top - GAP - (layout.turn1Bottom + GAP) };
   const second = { y: layout.turn2Top, h: ring2 - GAP - layout.turn2Top };
+  const middle = (part: { y: number; h: number }): number => part.y + part.h / 2;
 
   return (
     <svg
@@ -70,6 +83,11 @@ function Culm({ layout, height }: { layout: CulmLayout; height: number }): React
       ) : null}
       <path className="v2a-culm-internode v2a-culm-step-4" d={internodePath(x, second.y, CULM_WIDTH, second.h)} />
       <rect className="v2a-culm-ring v2a-culm-step-5" x={x} y={ring2} width={CULM_WIDTH} height={RING} rx={0.75} />
+      <g className="v2a-culm-labels">
+        <CulmLabel y={middle(first)} text={t("turn 1 · committed")} />
+        {idle.h > 40 ? <CulmLabel y={middle(idle)} text={t("7 days")} /> : null}
+        <CulmLabel y={middle(second)} text={t("turn 2 · restored")} />
+      </g>
     </svg>
   );
 }

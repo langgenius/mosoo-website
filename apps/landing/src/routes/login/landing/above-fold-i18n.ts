@@ -21,6 +21,9 @@ const ZH_MESSAGES = {
   "A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread.":
     "一次 CSV 分析，7 天后在同一个 Session 中继续；天数标记是网站对控制台 Thread 的标注。",
   "API Sessions have no inactivity deadline.": "API Session 不会因闲置而过期。",
+  "turn 1 · committed": "第 1 轮 · 已提交",
+  "7 days": "7 天",
+  "turn 2 · restored": "第 2 轮 · 已恢复",
 } as const;
 
 type Message = keyof typeof ZH_MESSAGES;
@@ -42,6 +45,9 @@ const JA_MESSAGES = {
   "A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread.":
     "CSV の分析を、7 日後に同じ Session で続けた例です。日数の表示は、コンソールの Thread に Web サイトが付けた注記です。",
   "API Sessions have no inactivity deadline.": "API の Session は放置しても期限切れになりません。",
+  "turn 1 · committed": "ターン 1 · コミット済み",
+  "7 days": "7 日",
+  "turn 2 · restored": "ターン 2 · 復元済み",
 } satisfies Record<Message, string>;
 
 const MESSAGES = { zh: ZH_MESSAGES, ja: JA_MESSAGES };
