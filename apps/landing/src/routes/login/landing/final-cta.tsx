@@ -7,7 +7,7 @@ import { MOSOO_CLOUD_URL, MOSOO_INSTALL_COMMAND, MOSOO_INSTALL_SCRIPT_URL } from
 import { CopyButton } from "./copy-button";
 import { t } from "./i18n";
 import { SETUP_PROMPT } from "./setup-prompt";
-import { Phrases } from "./ui";
+import { Phrases, SpecCite } from "./ui";
 
 /**
  * Copy deck §11: say what happens on click, then offer the two ways in the
@@ -49,6 +49,7 @@ export function FinalCta(): ReactElement {
           <Phrases text={t("Reply in a minute or in seven days.")} />
         </span>
       </h2>
+      <SpecCite section="s2" />
 
       {/* The console lane first and full width, its button beside what happens
           after the click (v2c); the coding-agent lane below it. */}

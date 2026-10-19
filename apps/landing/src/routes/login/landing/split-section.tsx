@@ -5,7 +5,7 @@ import { locale } from "@/shared/locale";
 
 import { t } from "./i18n";
 import { LimitsLedger } from "./limits-section";
-import { WithCode, Phrases } from "./ui";
+import { WithCode, Phrases, SpecCite } from "./ui";
 
 type Duty = { readonly term: string; readonly gloss: string };
 
@@ -89,6 +89,7 @@ export function SplitSection(): ReactElement {
       <h2 id="split-title" className="v2a-display v2a-h2">
         <Phrases text={t("Your app keeps its users. mosoo runs the Agent.")} />
       </h2>
+      <SpecCite section="s1" />
 
       <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-14">
         <DutyList heading={t("Your app keeps")} duties={appDuties()} tone="app" />

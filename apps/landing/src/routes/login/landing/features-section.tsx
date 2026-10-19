@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { MOSOO_SPEC_URL } from "../links";
 import { t } from "./i18n";
-import { ArrowLink, WithCode, Phrases } from "./ui";
+import { ArrowLink, WithCode, Phrases, SpecCite } from "./ui";
 
 // Copy deck §5 as editorial rows, each with one semantic line drawing (#126).
 // Two of the deck's six promises live elsewhere on this page, so they are not
@@ -125,6 +125,7 @@ export function FeaturesSection(): ReactElement {
       <h2 id="features-title" className="v2a-display v2a-h2">
         <Phrases text={t("mosoo handles execution, files, events, and usage.")} />
       </h2>
+      <SpecCite section="s5" />
 
       <ol className="mt-12">
         {features().map((feature) => {

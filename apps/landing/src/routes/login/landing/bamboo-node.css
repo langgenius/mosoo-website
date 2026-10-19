@@ -816,3 +816,28 @@
     break-inside: avoid;
   }
 }
+
+/* Source links under section headings (graft from v2b): one line, 15px,
+   the page's link green; they replace the "product spec" intros. */
+.v2a-cite {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.v2a-cite a {
+  color: #086030;
+  text-decoration: underline;
+  text-decoration-color: rgba(8, 96, 48, 0.35);
+  text-underline-offset: 3px;
+  border-radius: 2px;
+}
+
+.v2a-cite a:hover {
+  text-decoration-color: currentColor;
+}
+
+.v2a-cite a:focus-visible {
+  outline: 2px solid var(--v2a-ink);
+  outline-offset: 3px;
+}

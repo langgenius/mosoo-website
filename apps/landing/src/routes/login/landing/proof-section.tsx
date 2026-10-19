@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 import {
   MOSOO_GITHUB_URL,
@@ -9,7 +9,7 @@ import {
   statusPath,
 } from "../links";
 import { t } from "./i18n";
-import { ArrowLink, Phrases } from "./ui";
+import { ArrowLink, Phrases, SpecCite } from "./ui";
 
 // Copy deck §8: only what a visitor can check. No logos, star counts or
 // success rates. Release facts were checked against GitHub Releases on
@@ -111,13 +111,85 @@ function ReleaseList(): ReactElement {
   );
 }
 
+// The Codex Pet result, drawn from the demo's own contract
+// (Yevanchen/mosoo-codex-pet skill/hatch-pet-mosoo/references/animation-rows.md):
+// one atlas of 8 columns by 9 rows, one row per animation state, with the
+// frames each row uses. Cells after a row's last frame stay empty. Ported from
+// redesign/v1-truth 5042ee2; it replaces the empty upload screenshot.
+const ATLAS_ROWS = [
+  ["idle", 6],
+  ["running-right", 8],
+  ["running-left", 8],
+  ["waving", 4],
+  ["jumping", 5],
+  ["failed", 8],
+  ["waiting", 6],
+  ["running", 6],
+  ["review", 6],
+] as const;
+
+function CodexPetAtlas(): ReactElement {
+  return (
+    <div
+      role="img"
+      aria-label={t(
+        "What codex-pet.zip holds: a spritesheet of 8 columns and 9 rows, one row per animation state (idle, running-right, running-left, waving, jumping, failed, waiting, running, and review), plus a manifest and QA files.",
+      )}
+      className="border-border-strong bg-paper-100 flex aspect-[16/10] flex-col justify-center gap-2.5 border-b px-4 py-3"
+    >
+      <p aria-hidden="true" className="flex flex-wrap items-baseline justify-between gap-x-3">
+        <span translate="no" className="text-ink-900 font-mono text-[14px] font-semibold">
+          codex-pet.zip
+        </span>
+        <span className="text-ink-500 text-[13px]">{t("spritesheet, 8 columns × 9 rows")}</span>
+      </p>
+      <div aria-hidden="true" className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-[3px]">
+        {ATLAS_ROWS.map(([state, frames]) => (
+          <div key={state} className="contents">
+            <span translate="no" className="text-ink-500 font-mono text-[12px] leading-none">
+              {state}
+            </span>
+            <span className="grid grid-cols-8 gap-[3px]">
+              {Array.from({ length: 8 }, (_, cell) => (
+                <span
+                  // Cells of a fixed grid: the index is a stable key.
+                  key={cell}
+                  className={
+                    cell < frames
+                      ? "bg-ink-700 h-[9px] rounded-[2px]"
+                      : "border-border-strong h-[9px] rounded-[2px] border border-dashed"
+                  }
+                />
+              ))}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 type UseCaseCard = {
   readonly name: string;
   readonly byline: string;
   readonly body: string;
-  readonly image: { readonly src: string; readonly width: number; readonly height: number; readonly alt: string };
+  readonly visual: ReactNode;
   readonly links: readonly { readonly href: string; readonly label: string }[];
 };
+
+function CardImage({ alt, height, src, width }: { alt: string; height: number; src: string; width: number }): ReactElement {
+  return (
+    <img
+      src={src}
+      width={width}
+      height={height}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      className="border-border-strong aspect-[16/10] w-full border-b object-cover object-top"
+    />
+  );
+}
 
 function useCaseCards(): readonly UseCaseCard[] {
   return [
@@ -127,12 +199,7 @@ function useCaseCards(): readonly UseCaseCard[] {
       body: t(
         "An uploaded avatar comes back as a validated ZIP with all 9 Codex pet animation states. The backend calls mosoo through the Thread API, and the token never reaches the browser.",
       ),
-      image: {
-        src: "/landing/use-cases/codex-pet-app.png",
-        width: 2880,
-        height: 1800,
-        alt: t("The Codex Pet app turning one uploaded avatar into 9 animation states."),
-      },
+      visual: <CodexPetAtlas />,
       links: [{ href: pathToUseCases("codex-pet"), label: t("Read the Codex Pet use case") }],
     },
     {
@@ -141,12 +208,14 @@ function useCaseCards(): readonly UseCaseCard[] {
       body: t(
         "For each public GitHub repository, ghfind’s Go worker starts a Thread and turns the 3 artifacts the Agent saves (analysis JSON, evidence JSON, and a Markdown report) into its own result page.",
       ),
-      image: {
-        src: "/landing/use-cases/ghfind-app.png",
-        width: 1174,
-        height: 857,
-        alt: t("The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories."),
-      },
+      visual: (
+        <CardImage
+          src="/landing/use-cases/ghfind-app.png"
+          width={1174}
+          height={857}
+          alt={t("The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.")}
+        />
+      ),
       links: [
         { href: pathToUseCases("ghfind"), label: t("Read the ghfind use case") },
         { href: "https://ghfind.com", label: t("Open ghfind") },
@@ -162,6 +231,7 @@ export function ProofSection(): ReactElement {
       <h2 id="proof-title" className="v2a-display v2a-h2">
         <Phrases text={t("The code, the releases, and the incident postmortems are public.")} />
       </h2>
+      <SpecCite section="license" />
       <p className="v2a-intro">
         {t(
           "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.",
@@ -198,15 +268,7 @@ export function ProofSection(): ReactElement {
                 key={card.name}
                 className="border-border-strong bg-paper-50 flex flex-col overflow-hidden rounded-[14px] border"
               >
-                <img
-                  src={card.image.src}
-                  width={card.image.width}
-                  height={card.image.height}
-                  alt={card.image.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="border-border-strong aspect-[16/10] w-full border-b object-cover object-top"
-                />
+                {card.visual}
                 <div className="flex flex-1 flex-col p-5">
                   <h3 translate="no" className="text-ink-900 text-[19px] font-semibold">
                     {card.name}

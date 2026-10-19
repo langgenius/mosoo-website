@@ -5,7 +5,7 @@ import { locale } from "@/shared/locale";
 
 import { docsUrl } from "../links";
 import { t } from "./i18n";
-import { ArrowLink, WithCode, Phrases } from "./ui";
+import { ArrowLink, WithCode, Phrases, SpecCite } from "./ui";
 
 // Copy deck §6 with the one example story: the request is the product kit's
 // (upload input.csv, then start the Session with it attached), the same CSV
@@ -85,6 +85,7 @@ export function HowItWorks(): ReactElement {
               <Phrases text={t("One request starts a Session. A follow-up continues it.")} />
             )}
           </h2>
+          <SpecCite section="s4" />
           <p className="v2a-intro">
             <WithCode
               text={t(

@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Fragment } from "react";
 import type { ReactElement, ReactNode } from "react";
 
+import { MOSOO_GITHUB_URL, MOSOO_SPEC_URL } from "@/shared/config/external-links";
 import { cn } from "@/shared/lib/class-names";
 
 import { sectionHeadingStyle } from "./typography";
@@ -191,5 +192,33 @@ export function ArrowLink({
         className="size-4 shrink-0 transition-transform duration-150 ease-out group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
       />
     </a>
+  );
+}
+
+/**
+ * One small source link under a section heading (graft from v2b): the part of
+ * the product spec the section restates. Anchors are the GitHub heading slugs
+ * of docs/SPEC.md on langgenius/mosoo main (checked 2026-10-19). Titles stay
+ * in English, as the spec does.
+ */
+export const SPEC_SECTIONS = {
+  all: { label: "SPEC", title: "The product contract", href: MOSOO_SPEC_URL },
+  s1: { label: "SPEC §1", title: "Product", href: `${MOSOO_SPEC_URL}#1-product` },
+  s2: { label: "SPEC §2", title: "Projects, keys and credentials", href: `${MOSOO_SPEC_URL}#2-projects-keys-and-credentials` },
+  s3: { label: "SPEC §3", title: "Configuration and presets", href: `${MOSOO_SPEC_URL}#3-configuration-and-presets` },
+  s4: { label: "SPEC §4", title: "Sessions and durability", href: `${MOSOO_SPEC_URL}#4-sessions-and-durability` },
+  s5: { label: "SPEC §5", title: "Execution and usage", href: `${MOSOO_SPEC_URL}#5-execution-and-usage` },
+  s8: { label: "SPEC §8", title: "Scope", href: `${MOSOO_SPEC_URL}#8-scope` },
+  license: { label: "README", title: "License", href: `${MOSOO_GITHUB_URL}blob/main/README.md#license` },
+} as const;
+
+export function SpecCite({ section }: { section: keyof typeof SPEC_SECTIONS }): ReactElement {
+  const { label, title, href } = SPEC_SECTIONS[section];
+  return (
+    <p className="v2a-cite">
+      <a href={href} lang="en" translate="no">
+        {label} · {title}
+      </a>
+    </p>
   );
 }

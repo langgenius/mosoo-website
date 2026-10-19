@@ -232,8 +232,9 @@ const ZH_MESSAGES = {
     "打开 ghfind",
   "See all use cases":
     "查看全部用例",
-  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
-    "Codex Pet 应用把一张上传的头像变成 9 种动画状态。",
+  "What codex-pet.zip holds: a spritesheet of 8 columns and 9 rows, one row per animation state (idle, running-right, running-left, waving, jumping, failed, waiting, running, and review), plus a manifest and QA files.":
+    "codex-pet.zip 的内容：一张 8 列 9 行的精灵图，每行一种动画状态（idle、running-right、running-left、waving、jumping、failed、waiting、running 和 review），另有 manifest 和 QA 文件。",
+  "spritesheet, 8 columns × 9 rows": "精灵图，8 列 × 9 行",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
   "What mosoo doesn’t do":
@@ -610,8 +611,9 @@ const JA_MESSAGES = {
     "ghfind を開く",
   "See all use cases":
     "すべてのユースケースを見る",
-  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
-    "アップロードしたアバター 1 枚を 9 つのアニメーション状態に変える Codex Pet アプリ。",
+  "What codex-pet.zip holds: a spritesheet of 8 columns and 9 rows, one row per animation state (idle, running-right, running-left, waving, jumping, failed, waiting, running, and review), plus a manifest and QA files.":
+    "codex-pet.zip の中身：8 列 9 行のスプライトシート（1 行に 1 つのアニメーション状態：idle、running-right、running-left、waving、jumping、failed、waiting、running、review）と、マニフェストと QA ファイル。",
+  "spritesheet, 8 columns × 9 rows": "スプライトシート、8 列 × 9 行",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
   "What mosoo doesn’t do":

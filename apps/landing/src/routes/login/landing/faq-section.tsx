@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 
 import { FAQ_MESSAGES, t } from "./i18n";
-import { WithCodeTokens, Phrases } from "./ui";
+import { WithCodeTokens, Phrases, SpecCite } from "./ui";
 
 // API names styled as code inside the answers. Only presentation changes: the
 // text stays identical to the FAQPage JSON-LD and llms.txt answers.
@@ -25,6 +25,7 @@ export function FaqSection(): ReactElement {
       <h2 id="faq-title" className="v2a-display v2a-h2">
         <Phrases text={t("Questions to ask before you build on mosoo")} />
       </h2>
+      <SpecCite section="all" />
 
       {/* Two columns from 1024px (v2b's appendix layout): all ten answers stay
           open, in reading order down the first column, then the second. */}

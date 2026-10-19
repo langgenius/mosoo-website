@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 
 import { t } from "./i18n";
-import { Phrases } from "./ui";
+import { Phrases, SpecCite } from "./ui";
 
 // Copy deck §9: what docs/SPEC.md §8 rules out, each paired with something
 // mosoo really offers instead.
@@ -49,6 +49,7 @@ export function LimitsLedger(): ReactElement {
       <h3 id="limits-title" className="v2a-h3 v2a-soil">
         <Phrases text={t("mosoo leaves these out on purpose.")} />
       </h3>
+      <SpecCite section="s8" />
       <p className="text-ink-500 mt-2 text-[16px] leading-[1.6]">{t("Plan around them before you build.")}</p>
       {/* Soil, the console's boundary colour, marks what is not included;
           phones stack each row: the gap, then what to do instead. */}

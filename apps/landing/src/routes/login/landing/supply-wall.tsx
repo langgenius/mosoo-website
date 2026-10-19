@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import { hasRuntimeIcon, RuntimeIcon, VendorIcon } from "@/shared/ui/brand-icons";
 
 import { t } from "./i18n";
-import { Phrases } from "./ui";
+import { Phrases, SpecCite } from "./ui";
 
 // Copy deck §4, drawn as a readable matrix (#123): which model protocols each
 // runtime accepts. Runtime ids, providers and protocols mirror the main repo's
@@ -181,6 +181,7 @@ export function SupplyWall(): ReactElement {
       <h2 id="supply-title" className="v2a-display v2a-h2">
         <Phrases text={t("Pick a runtime. Use your own model key.")} />
       </h2>
+      <SpecCite section="s3" />
       <p className="v2a-intro">
         {t(
           "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.",
