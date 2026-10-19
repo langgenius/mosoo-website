@@ -290,8 +290,8 @@ const COPY = {
       protocolsByRuntime: {
         "openai-runtime": "Responses",
         "claude-agent-sdk": "Anthropic Messages (Anthropic models)",
-        "acp-fallback": "All 4",
-        pi: "All 4 (text input)",
+        "acp-fallback": "Chat Completions, Responses, Anthropic Messages, Google Gemini",
+        pi: "Chat Completions, Responses, Anthropic Messages, Google Gemini (text input only)",
       },
       providers: "Model providers (your keys)",
       customProvider: "Custom OpenAI-compatible endpoint",
@@ -547,8 +547,8 @@ const COPY = {
       protocolsByRuntime: {
         "openai-runtime": "Responses",
         "claude-agent-sdk": "Anthropic Messages（Anthropic 模型）",
-        "acp-fallback": "全部 4 种",
-        pi: "全部 4 种（仅文本输入）",
+        "acp-fallback": "Chat Completions、Responses、Anthropic Messages、Google Gemini",
+        pi: "Chat Completions、Responses、Anthropic Messages、Google Gemini（仅文本输入）",
       },
       providers: "模型供应商（使用你的密钥）",
       customProvider: "自定义 OpenAI 兼容端点",
@@ -788,8 +788,8 @@ const COPY = {
       protocolsByRuntime: {
         "openai-runtime": "Responses",
         "claude-agent-sdk": "Anthropic Messages（Anthropic のモデル）",
-        "acp-fallback": "4 種類すべて",
-        pi: "4 種類すべて（テキスト入力のみ）",
+        "acp-fallback": "Chat Completions、Responses、Anthropic Messages、Google Gemini",
+        pi: "Chat Completions、Responses、Anthropic Messages、Google Gemini（テキスト入力のみ）",
       },
       providers: "モデルプロバイダー（ご自身のキー）",
       customProvider: "OpenAI 互換のカスタムエンドポイント",

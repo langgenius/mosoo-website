@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { hasRuntimeIcon, RuntimeIcon, VendorIcon } from "@/shared/ui/brand-icons";
 
 import { t } from "./i18n";
+import { Phrases } from "./ui";
 
 // Copy deck §4, drawn as a readable matrix (#123): which model protocols each
 // runtime accepts. Runtime ids, providers and protocols mirror the main repo's
@@ -17,30 +18,33 @@ type Protocol = (typeof PROTOCOLS)[number];
 type Runtime = {
   readonly id: string;
   readonly name: string;
-  readonly protocols: string;
   readonly accepts: readonly Protocol[];
+  /** A limit on the accepted protocol (one protocol) or on the runtime (all). */
   readonly note?: string;
 };
 
+// Cell convention from v2b: a check for a supported protocol, with sr-only
+// Supported / Not supported; notes 'Anthropic models' and 'Text input only'.
 function runtimes(): readonly Runtime[] {
   return [
-    { id: "openai-runtime", name: "OpenAI Codex", protocols: "Responses", accepts: ["Responses"] },
+    { id: "openai-runtime", name: "OpenAI Codex", accepts: ["Responses"] },
     {
       id: "claude-agent-sdk",
       name: "Claude Agent SDK",
-      protocols: t("Anthropic Messages (Anthropic models)"),
       accepts: ["Anthropic Messages"],
       note: t("Anthropic models"),
     },
-    { id: "acp-fallback", name: "OpenCode", protocols: t("All 4"), accepts: PROTOCOLS },
-    {
-      id: "pi",
-      name: "Pi",
-      protocols: t("All 4 (text input)"),
-      accepts: PROTOCOLS,
-      note: t("text input"),
-    },
+    { id: "acp-fallback", name: "OpenCode", accepts: PROTOCOLS },
+    { id: "pi", name: "Pi", accepts: PROTOCOLS, note: t("Text input only") },
   ];
+}
+
+function Check(): ReactElement {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" className="text-ink-900 size-[18px]" fill="none">
+      <path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
 const PROVIDERS = [
@@ -81,6 +85,9 @@ function RuntimeName({ runtime }: { runtime: Runtime }): ReactElement {
         <code translate="no" className="text-ink-500 block font-mono text-[14px]">
           {runtime.id}
         </code>
+        {runtime.note !== undefined && runtime.accepts.length > 1 ? (
+          <span className="text-ink-500 block text-[14px]">{runtime.note}</span>
+        ) : null}
       </span>
     </span>
   );
@@ -120,8 +127,8 @@ function Matrix(): ReactElement {
                 <td key={protocol} className="px-3 py-4 text-center align-middle">
                   {accepted ? (
                     <span className="inline-flex flex-col items-center gap-1">
-                      <span aria-hidden="true" className="bg-ink-900 block h-[5px] w-[22px] rounded-[1px]" />
-                      <span className="sr-only">{t("Accepted")}</span>
+                      <Check />
+                      <span className="sr-only">{t("Supported")}</span>
                       {runtime.note !== undefined && runtime.accepts.length === 1 ? (
                         <span className="text-ink-500 text-[14px]">{runtime.note}</span>
                       ) : null}
@@ -129,7 +136,7 @@ function Matrix(): ReactElement {
                   ) : (
                     <span className="text-ink-400 text-[15px]">
                       <span aria-hidden="true">·</span>
-                      <span className="sr-only">{t("Not accepted")}</span>
+                      <span className="sr-only">{t("Not supported")}</span>
                     </span>
                   )}
                 </td>
@@ -142,17 +149,25 @@ function Matrix(): ReactElement {
   );
 }
 
-/** Phones: one row per runtime, its protocols in words. */
+/** Phones: one definition list per runtime that names each supported protocol. */
 function RuntimeList(): ReactElement {
   return (
     <ul className="md:hidden">
       {runtimes().map((runtime) => (
         <li key={runtime.id} className="border-t border-[rgba(109,120,106,0.35)] py-4">
           <RuntimeName runtime={runtime} />
-          <p className="text-ink-700 mt-2 ml-[34px] text-[16px] leading-[1.5]">
-            <span className="sr-only">{t("Model protocols")}: </span>
-            {runtime.protocols}
-          </p>
+          <dl className="mt-2 ml-[34px] text-[16px] leading-[1.5]">
+            <dt className="sr-only">{t("Model protocols")}</dt>
+            {runtime.accepts.map((protocol) => (
+              <dd key={protocol} translate="no" className="text-ink-700 m-0 flex items-center gap-2 font-mono text-[15px]">
+                <Check />
+                {protocol}
+                {runtime.note !== undefined && runtime.accepts.length === 1 ? (
+                  <span className="text-ink-500 font-sans text-[14px]">({runtime.note})</span>
+                ) : null}
+              </dd>
+            ))}
+          </dl>
         </li>
       ))}
     </ul>
@@ -164,7 +179,7 @@ export function SupplyWall(): ReactElement {
     <section id="runtimes" aria-labelledby="supply-title" className="v2a-section v2a-section-first">
       <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
       <h2 id="supply-title" className="v2a-display v2a-h2">
-        {t("Pick a runtime. Use your own model key.")}
+        <Phrases text={t("Pick a runtime. Use your own model key.")} />
       </h2>
       <p className="v2a-intro">
         {t(

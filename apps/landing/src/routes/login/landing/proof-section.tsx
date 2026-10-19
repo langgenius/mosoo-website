@@ -9,7 +9,7 @@ import {
   statusPath,
 } from "../links";
 import { t } from "./i18n";
-import { ArrowLink } from "./ui";
+import { ArrowLink, Phrases } from "./ui";
 
 // Copy deck §8: only what a visitor can check. No logos, star counts or
 // success rates. Release facts were checked against GitHub Releases on
@@ -88,7 +88,8 @@ function releases(): readonly { version: string; date: string; change: string }[
 function ReleaseList(): ReactElement {
   return (
     <ol aria-label={t("Releases")} className="v2a-releases mt-4 border-l border-[rgba(109,120,106,0.6)] pl-4">
-      {releases().map((release, index) => (
+      {/* The two newest; "View all releases" links to the full list (v3 length cut). */}
+      {releases().slice(0, 2).map((release, index) => (
         <li key={release.version} className="relative py-1.5">
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span translate="no" className="text-ink-900 font-mono text-[14px] font-semibold">
@@ -159,7 +160,7 @@ export function ProofSection(): ReactElement {
     <section id="proof" aria-labelledby="proof-title" className="v2a-section v2a-tight">
       <span aria-hidden="true" className="v2a-node" style={{ top: 94 }} />
       <h2 id="proof-title" className="v2a-display v2a-h2">
-        {t("The code, the releases, and the incident postmortems are public.")}
+        <Phrases text={t("The code, the releases, and the incident postmortems are public.")} />
       </h2>
       <p className="v2a-intro">
         {t(

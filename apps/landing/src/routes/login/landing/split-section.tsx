@@ -4,7 +4,8 @@ import { KeyBoundary } from "@/product-kit/components/key-boundary";
 import { locale } from "@/shared/locale";
 
 import { t } from "./i18n";
-import { WithCode } from "./ui";
+import { LimitsLedger } from "./limits-section";
+import { WithCode, Phrases } from "./ui";
 
 type Duty = { readonly term: string; readonly gloss: string };
 
@@ -86,13 +87,15 @@ export function SplitSection(): ReactElement {
     <section id="your-app-and-mosoo" aria-labelledby="split-title" className="v2a-section">
       <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
       <h2 id="split-title" className="v2a-display v2a-h2">
-        {t("Your app keeps its users. mosoo runs the Agent.")}
+        <Phrases text={t("Your app keeps its users. mosoo runs the Agent.")} />
       </h2>
 
       <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-14">
         <DutyList heading={t("Your app keeps")} duties={appDuties()} tone="app" />
         <DutyList heading={t("mosoo runs")} duties={mosooDuties()} tone="mosoo" />
       </div>
+
+      <LimitsLedger />
 
       <div className="mt-16">
         <SystemPath />

@@ -7,7 +7,7 @@ import { locale } from "@/shared/locale";
 // use, so humans and crawlers read identical answers; change them together.
 const ZH_MESSAGES = {
   "Pick a runtime. Use your own model key.":
-    "选一个 runtime，用你自己的模型密钥。",
+    "选一个 runtime，|用你自己的模型密钥。",
   "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
     "4 个 runtime、下列模型供应商，或任何兼容 OpenAI 的 HTTPS 端点。mosoo 会在执行前检查 runtime、模型和协议是否匹配。",
   "Runtimes":
@@ -20,12 +20,6 @@ const ZH_MESSAGES = {
     "名称",
   "API id":
     "API id",
-  "All 4":
-    "全部 4 种",
-  "All 4 (text input)":
-    "全部 4 种（仅文本输入）",
-  "Anthropic Messages (Anthropic models)":
-    "Anthropic Messages（Anthropic 模型）",
   "Custom OpenAI-compatible endpoint":
     "自定义 OpenAI 兼容端点",
   "Provider keys belong to your Project, and the provider bills your account directly.":
@@ -125,7 +119,7 @@ const ZH_MESSAGES = {
   "Copy failed.":
     "复制失败。",
   "Your app keeps its users. mosoo runs the Agent.":
-    "你的应用管用户，mosoo 运行 Agent。",
+    "你的应用管用户，|mosoo 运行 Agent。",
   "Your app keeps":
     "你的应用负责",
   "mosoo runs":
@@ -278,7 +272,7 @@ const ZH_MESSAGES = {
   "That’s Mosoo Computer, a separate product.":
     "这属于另一款产品 Mosoo Computer。",
   "Questions to ask before you build on mosoo":
-    "开始构建前值得问的问题",
+    "开始构建前|值得问的问题",
   "Start your first Session":
     "启动你的第一个 Session",
   "In the console":
@@ -293,6 +287,8 @@ const ZH_MESSAGES = {
     "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你在控制台添加模型供应商密钥，这是它唯一无法替你完成的一步。",
   "Copy setup prompt":
     "复制设置提示",
+  "Show full prompt": "显示完整提示",
+  "Show less": "收起",
   "Setup prompt copied":
     "设置提示已复制",
   "Copy failed. Select and copy the prompt above.":
@@ -347,16 +343,16 @@ const ZH_MESSAGES = {
     "mosoo 以 Apache 2.0 许可证开源，源码在 GitHub 上。它目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。/api/v1 保持线上兼容，无法兼容的改动会作为新的 API 版本发布。最快的试用方式是托管控制台 cloud.mosoo.ai。README 也说明了如何在本地运行，方便开发。",
   "Anthropic models":
     "Anthropic 模型",
-  "text input":
-    "文本输入",
-  "Accepted":
+  "Text input only":
+    "仅文本输入",
+  "Supported":
     "支持",
-  "Not accepted":
+  "Not supported":
     "不支持",
   "mosoo handles execution, files, events, and usage.":
-    "执行、文件、事件和用量由 mosoo 负责。",
+    "执行、文件、事件和用量|由 mosoo 负责。",
   "One request starts a Session. A follow-up continues it.":
-    "一个请求启动 Session，后续消息让它接着做。",
+    "一个请求启动 Session，|后续消息|让它接着做。",
   "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.":
     "假设你的后端需要一份 CSV 数据报告。它用 Project API 密钥通过 HTTPS 调用 mosoo，报告以 `outputs/` 下的文件返回。",
   "Change":
@@ -370,13 +366,13 @@ const ZH_MESSAGES = {
   "mosoo restores the working directory and the conversation from the last checkpoint.":
     "mosoo 从最近一次检查点恢复工作目录和对话。",
   "The code, the releases, and the incident postmortems are public.":
-    "代码、版本发布和事故复盘都是公开的。",
+    "代码、版本发布|和事故复盘|都是公开的。",
   "mosoo leaves these out on purpose.":
-    "这些是 mosoo 有意不做的事。",
+    "这些是 mosoo|有意不做的事。",
   "Start your first Session.":
-    "启动你的第一个 Session。",
+    "启动你的|第一个 Session。",
   "Reply in a minute or in seven days.":
-    "1 分钟后或 7 天后回复都可以。",
+    "1 分钟后|或 7 天后|回复都可以。",
   "From your backend to a Session sandbox":
     "从你的后端到 Session sandbox",
   "Your backend":
@@ -389,7 +385,7 @@ type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
   "Pick a runtime. Use your own model key.":
-    "runtime を選び、自分のモデルキーを使う",
+    "runtime を選び、|自分のモデルキーを使う",
   "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
     "4 つの runtime、以下のプロバイダー、そして OpenAI 互換の任意の HTTPS エンドポイントに対応します。mosoo は実行前に runtime、モデル、プロトコルの組み合わせを確認します。",
   "Runtimes":
@@ -402,12 +398,6 @@ const JA_MESSAGES = {
     "名前",
   "API id":
     "API id",
-  "All 4":
-    "4 種類すべて",
-  "All 4 (text input)":
-    "4 種類すべて（テキスト入力のみ）",
-  "Anthropic Messages (Anthropic models)":
-    "Anthropic Messages（Anthropic のモデル）",
   "Custom OpenAI-compatible endpoint":
     "OpenAI 互換のカスタムエンドポイント",
   "Provider keys belong to your Project, and the provider bills your account directly.":
@@ -507,7 +497,7 @@ const JA_MESSAGES = {
   "Copy failed.":
     "コピーに失敗しました。",
   "Your app keeps its users. mosoo runs the Agent.":
-    "ユーザーはアプリが持ち、Agent は mosoo が動かす",
+    "ユーザーはアプリが持ち、|Agent は mosoo が動かす",
   "Your app keeps":
     "アプリが担うこと",
   "mosoo runs":
@@ -660,7 +650,7 @@ const JA_MESSAGES = {
   "That’s Mosoo Computer, a separate product.":
     "それは別のプロダクト、Mosoo Computer の領域です。",
   "Questions to ask before you build on mosoo":
-    "使い始める前に確認したいこと",
+    "使い始める前に|確認したいこと",
   "Start your first Session":
     "最初の Session を始める",
   "In the console":
@@ -675,6 +665,8 @@ const JA_MESSAGES = {
     "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、コンソールでプロバイダーキーを追加するよう求めます。エージェントが代わりにできない唯一の手順です。",
   "Copy setup prompt":
     "セットアッププロンプトをコピー",
+  "Show full prompt": "プロンプト全体を表示",
+  "Show less": "折りたたむ",
   "Setup prompt copied":
     "セットアッププロンプトをコピーしました",
   "Copy failed. Select and copy the prompt above.":
@@ -729,16 +721,16 @@ const JA_MESSAGES = {
     "mosoo は Apache 2.0 ライセンスのオープンソースで、ソースコードは GitHub にあります。現在は Alpha 版のため、公開 API や製品の動作は変わる可能性があります。/api/v1 は互換性を維持し、互換性を保てない変更は新しい API バージョンとして公開されます。すぐに試すなら、ホスト版のコンソール cloud.mosoo.ai が最も手軽です。開発用にローカルで動かす手順は README にあります。",
   "Anthropic models":
     "Anthropic のモデル",
-  "text input":
-    "テキスト入力",
-  "Accepted":
+  "Text input only":
+    "テキスト入力のみ",
+  "Supported":
     "対応",
-  "Not accepted":
+  "Not supported":
     "非対応",
   "mosoo handles execution, files, events, and usage.":
-    "実行、ファイル、イベント、使用量は mosoo が担います。",
+    "実行、ファイル、イベント、|使用量は mosoo が担います。",
   "One request starts a Session. A follow-up continues it.":
-    "1 つのリクエストで Session が始まり、フォローアップで続きを実行します。",
+    "1 つのリクエストで|Session が始まり、|フォローアップで|続きを実行します。",
   "Say your backend needs a report on a CSV file. It calls mosoo over HTTPS with a Project API key, and the report comes back as files under `outputs/`.":
     "たとえば、バックエンドで CSV ファイルのレポートが必要だとします。バックエンドは Project API キーを使って HTTPS で mosoo を呼び出し、レポートは `outputs/` 配下のファイルとして返ってきます。",
   "Change":
@@ -752,13 +744,13 @@ const JA_MESSAGES = {
   "mosoo restores the working directory and the conversation from the last checkpoint.":
     "mosoo が最後のチェックポイントから作業ディレクトリと会話を復元します。",
   "The code, the releases, and the incident postmortems are public.":
-    "コード、リリース、インシデントの事後分析は公開されています。",
+    "コード、リリース、|インシデントの事後分析は|公開されています。",
   "mosoo leaves these out on purpose.":
-    "mosoo はこれらを意図的に提供していません。",
+    "mosoo はこれらを|意図的に提供していません。",
   "Start your first Session.":
-    "最初の Session を始めましょう。",
+    "最初の Session を|始めましょう。",
   "Reply in a minute or in seven days.":
-    "返信は 1 分後でも 7 日後でもかまいません。",
+    "返信は 1 分後でも|7 日後でもかまいません。",
   "From your backend to a Session sandbox":
     "バックエンドから Session の sandbox まで",
   "Your backend":

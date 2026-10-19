@@ -5,7 +5,6 @@ import { FaqSection } from "./faq-section";
 import { FeaturesSection } from "./features-section";
 import { FinalCta } from "./final-cta";
 import { HowItWorks } from "./how-it-works";
-import { LimitsSection } from "./limits-section";
 import { ProofSection } from "./proof-section";
 import { SplitSection } from "./split-section";
 import { SupplyWall } from "./supply-wall";
@@ -17,9 +16,9 @@ export function LandingBelowFold(): ReactElement {
   // These sections mount after the first paint, so a link to one of them
   // (for example /en#faq, the FAQPage @id) found no target on load. Scroll to
   // it once it exists. The section ids (runtimes, features, how-it-works,
-  // your-app-and-mosoo, proof, limits, faq, start) are the same ones the
-  // static fallback in scripts/landing-home.mjs uses, so an anchor works with
-  // and without JavaScript.
+  // your-app-and-mosoo, proof, faq, start, and #limits, now the split's third
+  // ledger) are the same ones the static fallback in scripts/landing-home.mjs
+  // uses, so an anchor works with and without JavaScript.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
     if (id !== "") {
@@ -34,7 +33,6 @@ export function LandingBelowFold(): ReactElement {
       <HowItWorks />
       <SplitSection />
       <ProofSection />
-      <LimitsSection />
       <FaqSection />
       <FinalCta />
     </>

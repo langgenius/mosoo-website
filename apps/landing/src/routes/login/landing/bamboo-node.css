@@ -482,7 +482,7 @@
 
 .v2a-section {
   position: relative;
-  padding: 88px 0;
+  padding: 72px 0;
 }
 
 .v2a-node {
@@ -524,26 +524,26 @@
 /* Section rhythm: each section takes the room its content needs, so the
    page does not beat at one interval. */
 .v2a-tight {
-  padding-top: 72px;
-  padding-bottom: 64px;
+  padding-top: 56px;
+  padding-bottom: 48px;
 }
 
 .v2a-roomy {
-  padding-top: 112px;
-  padding-bottom: 104px;
+  padding-top: 88px;
+  padding-bottom: 80px;
 }
 
 @media (max-width: 767px) {
   .v2a-section {
-    padding: 64px 0;
+    padding: 48px 0;
   }
 
   .v2a-roomy {
-    padding: 80px 0 72px;
+    padding: 64px 0 56px;
   }
 
   .v2a-tight {
-    padding: 56px 0 48px;
+    padding: 44px 0 40px;
   }
 }
 

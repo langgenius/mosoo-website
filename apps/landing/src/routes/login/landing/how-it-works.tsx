@@ -5,7 +5,7 @@ import { locale } from "@/shared/locale";
 
 import { docsUrl } from "../links";
 import { t } from "./i18n";
-import { ArrowLink, WithCode } from "./ui";
+import { ArrowLink, WithCode, Phrases } from "./ui";
 
 // Copy deck §6 with the one example story: the request is the product kit's
 // (upload input.csv, then start the Session with it attached), the same CSV
@@ -79,7 +79,11 @@ export function HowItWorks(): ReactElement {
       <div className="grid grid-cols-1 gap-12 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:gap-14">
         <div>
           <h2 id="how-title" className="v2a-display v2a-h2">
-            <KeepHyphenated text={t("One request starts a Session. A follow-up continues it.")} />
+            {locale === "en" ? (
+              <KeepHyphenated text={t("One request starts a Session. A follow-up continues it.")} />
+            ) : (
+              <Phrases text={t("One request starts a Session. A follow-up continues it.")} />
+            )}
           </h2>
           <p className="v2a-intro">
             <WithCode

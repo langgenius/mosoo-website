@@ -131,13 +131,31 @@ function revealPinnedFooter(event: FocusEvent<HTMLElement>): void {
  * (#127; scripts/brand-assets/MANIFEST.md, use (b)). The landscape is
  * decorative and ends the page after the links, never under them.
  */
+/** Keeps 竹の海 / 竹海 whole in the tagline (it broke as 竹の / 海). */
+function KeepTagline({ text }: { text: string }): ReactElement {
+  const parts = text.split(/(竹の海|竹海)/);
+  return (
+    <>
+      {parts.map((part, index) =>
+        index % 2 === 1 ? (
+          <span key={index} className="whitespace-nowrap">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
 export function LandingFooter(): ReactElement {
   return (
     <footer onFocus={revealPinnedFooter} className="landing-footer bg-paper-100 text-ink-900">
       <div className="px-4 pt-16 md:px-6 md:pt-20">
         <div className="mx-auto w-full max-w-[1280px]">
           <p className="landing-footer-signoff max-w-[760px] [text-wrap:balance]" style={SIGN_OFF_STYLE}>
-            {t("Take root, and grow a bamboo sea.")}
+            <KeepTagline text={t("Take root, and grow a bamboo sea.")} />
           </p>
 
           <div className="mt-12 border-t border-[rgba(109,120,106,0.35)] pt-12">
