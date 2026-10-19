@@ -58,7 +58,8 @@ export function initStage(): void {
   const ruler = stage?.querySelector<HTMLElement>("[data-ruler]");
   const now = stage?.querySelector<HTMLElement>("[data-now]");
   const frame = stage?.querySelector<SVGSVGElement>("[data-portal-frame]");
-  if (!stage || !pin || !acts || !act1 || !act2 || !act3 || !feed || !ruler || !now || !frame) return;
+  const veil = stage?.querySelector<HTMLElement>("[data-portal-veil]");
+  if (!stage || !pin || !acts || !act1 || !act2 || !act3 || !feed || !ruler || !now || !frame || !veil) return;
   const nav = document.querySelector<HTMLElement>("[data-nav]");
   const faces = [...stage.querySelectorAll<HTMLElement>("[data-face]")];
   const cards = [...feed.querySelectorAll<HTMLElement>("[data-card]")];
@@ -112,6 +113,7 @@ export function initStage(): void {
     setStyle(acts!, "clipPath", open >= 1 ? "none" : `path("${blockPath(w / 2, h / 2 - 4, blockW)}")`);
     setStyle(frame!, "transform", `scale(${(blockW / WINDOW_W).toFixed(4)})`);
     setStyle(frame!, "opacity", (1 - span(open, 0, 0.35)).toFixed(3));
+    setStyle(veil!, "opacity", (1 - span(span(p, 0, 0.14), 0.05, 0.55)).toFixed(3));
 
     // Act 1 -> act 2: crossfade with a short lift.
     const x12 = easeOut(span(p, 0.38, 0.46));
@@ -161,7 +163,7 @@ export function initStage(): void {
   }
 
   function reset(): void {
-    for (const el of [acts!, act1!, act2!, act3!, feed!, now!, frame!]) {
+    for (const el of [acts!, act1!, act2!, act3!, feed!, now!, frame!, veil!]) {
       el.style.removeProperty("clip-path");
       el.style.removeProperty("opacity");
       el.style.removeProperty("transform");

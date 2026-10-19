@@ -205,8 +205,21 @@ body:has(.v4) {
 .stage-pin {
   position: relative;
 }
-.portal-frame {
+.portal-frame,
+.portal-veil {
   display: none;
+}
+/* While the portal is small, the window holds the hero window's material (S2 bands), not a crop of
+   the act behind it; the veil fades as the window grows. */
+.stage[data-mode="pinned"] .portal-veil {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background:
+    repeating-radial-gradient(circle at 50% calc(50% + 47px), #f3f1ec 0 20px, #e4e1da 20px 40px);
+  pointer-events: none;
+  will-change: opacity;
 }
 .act {
   position: relative;
@@ -221,7 +234,7 @@ body:has(.v4) {
   font: 400 40px/1.08 var(--font-display);
   letter-spacing: -0.022em;
   word-spacing: 0.05em;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 .act-title .soft {
   color: var(--ink-3);
@@ -351,7 +364,7 @@ body:has(.v4) {
 }
 .feed-list {
   margin: 0;
-  padding: 110px 0 0; /* end state: the newest card (the only live dot) sits in the clear band */
+  padding: 80px 0 0; /* end state: the newest card (the only live dot) sits in the clear band */
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -574,6 +587,9 @@ body:has(.v4) {
   letter-spacing: -0.022em;
   word-spacing: 0.04em;
   text-wrap: balance;
+}
+.statement .nw {
+  white-space: nowrap;
 }
 .statement .g {
   display: inline-flex;
@@ -804,13 +820,13 @@ body:has(.v4) {
     top: 46px;
   }
   .tile-3 {
-    left: 14%;
-    top: 118px;
+    left: 9%;
+    top: 104px;
   }
   .tile-4 {
     left: auto;
-    right: 15%;
-    top: 128px;
+    right: 11%;
+    top: 112px;
   }
   .act {
     padding: 88px 0;

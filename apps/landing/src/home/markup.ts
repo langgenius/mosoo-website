@@ -140,6 +140,7 @@ function renderStage(copy: HomeCopy): string {
   return `<section class="stage" data-stage aria-label="${esc(copy.act1.rows[0])}">
   <div class="stage-pin" data-pin>
     <div class="stage-acts" data-portal>
+      <div class="portal-veil" data-portal-veil aria-hidden="true"></div>
 ${renderAct1(copy)}
 ${renderAct2(copy)}
 ${renderAct3(copy)}
@@ -153,7 +154,7 @@ function renderStatement(copy: HomeCopy): string {
   const [p0, p1, p2, p3, tail] = copy.statement.parts;
   const g = (id: string) => `<span class="g">${runtimeGlyph(id, "g-glyph")}</span>`;
   return `<section class="statement" aria-label="${esc(copy.act1.rows[0])}">
-  <p class="statement-text">${esc(p0)} ${g("openai-runtime")} ${esc(p1).replace(/,$/, "")} ${g("claude-agent-sdk")}, ${esc(p2)} ${g("acp-fallback")} ${esc(p3)} ${g("pi")} ${esc(tail)}</p>
+  <p class="statement-text"><span class="nw">${esc(p0)} ${g("openai-runtime")}</span> <span class="nw">${esc(p1).replace(/,$/, "")} ${g("claude-agent-sdk")},</span> <span class="nw">${esc(p2)} ${g("acp-fallback")}</span> <span class="nw">${esc(p3)} ${g("pi")}</span> ${esc(tail)}</p>
 </section>`;
 }
 
