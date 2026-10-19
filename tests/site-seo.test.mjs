@@ -457,7 +457,7 @@ test("the static home page carries the whole page for readers without JavaScript
     assert.doesNotMatch(textOf(body), /\b[0-9A-HJKMNP-TV-Z]{26}\b/, "no ULIDs");
     assert.doesNotMatch(textOf(body), /\b[0-9a-f]{12,}\b/, "no hashes");
     assert.doesNotMatch(textOf(body), /\b\d{1,2}:\d{2}:\d{2}\b|\+\d+\s?s\b/, "no second-precision times");
-    assert.doesNotMatch(body, /Example values|Replay|data-surface="console"/);
+    assert.doesNotMatch(body, /Example values|Replay|data-surface=["']console/);
   }
 });
 
