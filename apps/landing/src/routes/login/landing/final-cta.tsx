@@ -23,15 +23,19 @@ export function FinalCta(): ReactElement {
         {t("The fastest way to try mosoo is the hosted console")}
       </h2>
 
-      <div className="border-border-strong mt-10 grid grid-cols-1 overflow-hidden rounded-[14px] border md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-        <div className="bg-paper-50 flex flex-col p-6 md:p-8">
-          <h3 className="text-ink-900 text-[20px] font-semibold">{t("In the console")}</h3>
-          <p className="text-ink-500 mt-3 max-w-[440px] text-[16px] leading-[1.6]">
-            {t(
-              "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.",
-            )}
-          </p>
-          <div className="pt-6">
+      {/* The console lane first, as one band (its button sits beside its
+          copy on wide screens), then the coding-agent lane under it. */}
+      <div className="border-border-strong mt-10 grid grid-cols-1 overflow-hidden rounded-[14px] border">
+        <div className="bg-paper-50 flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:gap-10 md:p-8">
+          <div className="min-w-0">
+            <h3 className="text-ink-900 text-[20px] font-semibold">{t("In the console")}</h3>
+            <p className="text-ink-500 mt-3 max-w-[560px] text-[16px] leading-[1.6]">
+              {t(
+                "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.",
+              )}
+            </p>
+          </div>
+          <div className="shrink-0">
             <a
               href={MOSOO_CLOUD_URL}
               className="focus-visible:ring-ring focus-visible:ring-offset-paper-50 inline-flex h-12 items-center rounded-[8px] bg-green-500 px-6 text-[16px] font-semibold text-[#0f1a02] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_0_0_1px_rgba(58,110,14,0.35)] transition-colors outline-none hover:bg-green-400 focus-visible:ring-2 focus-visible:ring-offset-2 active:bg-green-600"
@@ -41,11 +45,11 @@ export function FinalCta(): ReactElement {
           </div>
         </div>
 
-        <div className="border-border-strong bg-paper-50 min-w-0 border-t p-6 md:border-t-0 md:border-l md:p-8">
+        <div className="border-border-strong bg-paper-50 min-w-0 border-t p-6 md:p-8">
           <h3 id="agent-lane-title" className="text-ink-900 text-[20px] font-semibold">
             {t("In your coding agent")}
           </h3>
-          <p className="text-ink-500 mt-3 text-[16px] leading-[1.6]">
+          <p className="text-ink-500 mt-3 max-w-[48rem] text-[16px] leading-[1.6]">
             {t(
               "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.",
             )}
@@ -53,7 +57,7 @@ export function FinalCta(): ReactElement {
           <pre
             tabIndex={0}
             aria-labelledby="agent-lane-title"
-            className="border-border-strong bg-paper-100 text-ink-700 focus-visible:ring-ring mt-5 max-h-56 overflow-auto rounded-[10px] border p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap outline-none focus-visible:ring-2"
+            className="border-border-strong bg-paper-100 text-ink-700 focus-visible:ring-ring mt-5 max-h-56 max-w-[82ch] overflow-auto rounded-[10px] border p-4 font-mono text-[15px] leading-[1.6] whitespace-pre-wrap outline-none sm:text-[16px] focus-visible:ring-2"
           >
             {setupPrompt}
           </pre>
@@ -65,10 +69,10 @@ export function FinalCta(): ReactElement {
               failedLabel={t("Copy failed. Select and copy the prompt above.")}
             />
           </div>
-          <div className="border-border-strong bg-paper-100 mt-5 flex min-w-0 flex-wrap items-center gap-2 rounded-md border py-1.5 pr-1.5 pl-3">
+          <div className="border-border-strong bg-paper-100 mt-5 flex max-w-[48rem] min-w-0 flex-wrap items-center gap-2 rounded-md border py-1.5 pr-1.5 pl-3">
             <code
               translate="no"
-              className="text-ink-900 min-w-0 flex-[1_1_15rem] py-1 font-mono text-[12.5px] leading-[1.5] [overflow-wrap:break-word] sm:text-[13px]"
+              className="text-ink-900 min-w-0 flex-[1_1_15rem] py-1 font-mono text-[15px] leading-[1.5] [overflow-wrap:break-word] sm:text-[16px]"
             >
               <span aria-hidden="true" className="text-ink-400 select-none">
                 ${" "}
@@ -85,7 +89,7 @@ export function FinalCta(): ReactElement {
           </div>
           <a
             href={MOSOO_INSTALL_SCRIPT_URL}
-            className="text-ink-500 hover:text-ink-900 focus-visible:ring-ring mt-3 inline-block rounded-sm text-[14px] font-semibold underline decoration-current/30 underline-offset-4 transition-colors outline-none focus-visible:ring-2"
+            className="text-ink-500 hover:text-ink-900 focus-visible:ring-ring mt-3 inline-block rounded-sm text-[16px] font-semibold underline decoration-current/30 underline-offset-4 transition-colors outline-none focus-visible:ring-2"
           >
             {t("Read the install script")}
           </a>

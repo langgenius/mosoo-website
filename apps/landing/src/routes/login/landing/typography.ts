@@ -10,8 +10,12 @@ export const sectionHeadingStyle: CSSProperties = {
   lineHeight: 1.08,
 };
 
-/** v2c product stage: Geist only, set at 600 with slightly tight tracking. */
-export const STAGE_DISPLAY_FONT = '"Geist", ui-sans-serif, system-ui, sans-serif';
+/**
+ * v2c product stage: Geist only, set at 600 with slightly tight tracking.
+ * app.css defines --stage-font per language (Geist, then the platform CJK
+ * sans stack for zh and ja).
+ */
+export const STAGE_DISPLAY_FONT = 'var(--stage-font, "Geist", ui-sans-serif, system-ui, sans-serif)';
 
 export const stageHeadingStyle: CSSProperties = {
   fontFamily: STAGE_DISPLAY_FONT,

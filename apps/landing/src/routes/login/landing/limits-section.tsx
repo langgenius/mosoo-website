@@ -48,7 +48,7 @@ export function LimitsSection(): ReactElement {
       {/* Phones stack each row: the gap, then what to do instead. */}
       <table className="mt-10 w-full border-collapse text-left max-sm:block">
         <thead className="max-sm:sr-only">
-          <tr className="text-ink-500 text-[14px]">
+          <tr className="text-ink-500 text-[16px]">
             <th scope="col" className="w-[45%] pr-6 pb-3 font-semibold">
               {t("Not included")}
             </th>

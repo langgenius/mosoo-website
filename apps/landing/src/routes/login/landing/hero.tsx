@@ -155,7 +155,7 @@ export function Hero(): ReactElement {
             </a>
           </div>
 
-          <p className="text-ink-500 mt-5 text-[16px] leading-[1.5]">
+          <p className="text-ink-500 mt-5 text-[16px] leading-[1.5] [text-wrap:pretty]">
             {t("mosoo is in Alpha. Public APIs may still change.")}
           </p>
         </div>

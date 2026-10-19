@@ -348,8 +348,26 @@
   --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
   --shadow-inset: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
 
-  /* Geist only on this page, footer sign-off included. */
-  --footer-display-font: "Geist", ui-sans-serif, system-ui, sans-serif;
+  /* Geist only on this page, footer sign-off included. CJK falls to the
+     platform sans stacks below (no CJK web font, as in the console). */
+  --stage-font: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --footer-display-font: var(--stage-font);
+}
+
+.landing-shell[data-theme="console"] {
+  font-family: var(--stage-font);
+}
+
+.landing-shell[data-theme="console"]:lang(zh-CN) {
+  --stage-font:
+    "Geist", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
+    sans-serif;
+}
+
+.landing-shell[data-theme="console"]:lang(ja) {
+  --stage-font:
+    "Geist", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans CJK JP", "Source Han Sans JP",
+    Meiryo, sans-serif;
 }
 
 /* ----------------------------------------------------------------------------
