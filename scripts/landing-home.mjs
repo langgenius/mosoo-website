@@ -455,7 +455,6 @@ const COPY = {
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.",
     },
     footer: {
-      signoff: "Take root, and grow a bamboo sea.",
       descriptor: "An open-source, API-first managed Agent runtime for application backends.",
       groups: [
         ["Product", ["mosoo console", "Mosoo Computer", "Use cases", "Status"]],
@@ -695,7 +694,6 @@ const COPY = {
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你在控制台添加模型供应商密钥，这是它唯一无法替你完成的一步。",
     },
     footer: {
-      signoff: "扎下根，长成一片竹海。",
       descriptor: "开源、API 优先的托管 Agent runtime，面向应用后端。",
       groups: [
         ["产品", ["mosoo 控制台", "Mosoo Computer", "用例", "状态"]],
@@ -942,7 +940,6 @@ const COPY = {
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、コンソールでプロバイダーキーを追加するよう求めます。エージェントが代わりにできない唯一の手順です。",
     },
     footer: {
-      signoff: "根を張り、竹の海を育てよう。",
       descriptor: "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
       groups: [
         ["プロダクト", ["mosoo コンソール", "Mosoo Computer", "ユースケース", "稼働状況"]],
@@ -1338,7 +1335,6 @@ function renderFooter(locale, copy) {
     .join("\n");
 
   return `<footer class="mf-foot">
-<p class="mf-signoff">${inline(copy.footer.signoff)}</p>
 <p class="mf-muted">${inline(copy.footer.descriptor)}</p>
 <nav class="mf-groups" aria-label="Footer">
 ${groups}
@@ -1446,7 +1442,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback *{box-sizing:border-box}
 .mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
 .mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(15,26,2,.16)}
+.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#161815;color:#f4f4f2;font-weight:500;text-decoration:none;border-radius:999px}
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
 .mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
@@ -1502,7 +1498,6 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-releases dt{font-weight:500}
 .mosoo-fallback .mf-qa h3{margin-top:32px}
 .mosoo-fallback .mf-foot{padding-top:48px;padding-bottom:48px;border-top:1px solid var(--mf-line)}
-.mosoo-fallback .mf-signoff{margin:0;font-size:clamp(22px,3vw,28px);font-weight:650;line-height:1.25}
 .mosoo-fallback .mf-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:32px}
 .mosoo-fallback .mf-groups ul{margin:8px 0 0;padding:0;list-style:none}
 .mosoo-fallback .mf-groups li{margin-top:4px}

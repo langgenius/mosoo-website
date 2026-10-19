@@ -19,7 +19,8 @@ const ZH_MESSAGES = {
   "Try mosoo": "试用 mosoo",
   "Open menu": "打开菜单",
   "Close menu": "关闭菜单",
-  "Take root, and grow a bamboo sea.": "扎下根，长成一片竹海。",
+  Main: "主导航",
+  Footer: "页脚",
   "An open-source, API-first managed Agent runtime for application backends.":
     "开源、API 优先的托管 Agent runtime，面向应用后端。",
   Product: "产品",
@@ -57,7 +58,8 @@ const JA_MESSAGES = {
   "Try mosoo": "mosoo を試す",
   "Open menu": "メニューを開く",
   "Close menu": "メニューを閉じる",
-  "Take root, and grow a bamboo sea.": "根を張り、竹の海を育てよう。",
+  Main: "メインナビゲーション",
+  Footer: "フッター",
   "An open-source, API-first managed Agent runtime for application backends.":
     "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
   Product: "プロダクト",

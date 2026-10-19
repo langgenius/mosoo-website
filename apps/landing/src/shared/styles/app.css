@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./d-object.css";
 
 @font-face {
   font-family: "Geist";
@@ -29,10 +30,33 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src:
-    url("/fonts/InterVariable.woff2") format("woff2-variations"),
-    url("/fonts/InterVariable.woff2") format("woff2");
+  src: url("/fonts/Inter-Variable-latin.woff2") format("woff2");
   unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
+}
+/* Display: Hedvig Letters Serif 400 (OFL) stands in for ABC Arizona Mix
+   (Intent's display face, commercial). The metric overrides keep its line box
+   close to Arizona's; a licensed Arizona Mix is a one-line swap of
+   --font-display below. Latin only: CJK falls through to system serifs. */
+@font-face {
+  font-family: "Display Fallback";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/HedvigLettersSerif-Regular-latin.woff2") format("woff2");
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-2FFF;
+}
+/* The one mono token per object: Fragment Mono 400 (OFL), Latin only. */
+@font-face {
+  font-family: "Fragment Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF;
 }
 @font-face {
   font-family: "Inter";
@@ -154,11 +178,14 @@
   --warning: var(--amber);
   --danger: var(--ember);
 
+  /* Swap point for a licensed display face: "ABC Arizona Mix", "Display Fallback", ... */
   --font-display:
-    "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", sans-serif;
+    "Display Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Hiragino Mincho ProN",
+    "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
   --font-sans:
-    "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    "Inter", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans", "Microsoft YaHei UI", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --fs-12: 0.75rem;
   --fs-13: 0.8125rem;
@@ -612,78 +639,11 @@ html {
 }
 
 html:has(.landing-shell[data-theme="landing"]) {
-  background-color: #f7f6f1;
+  background-color: var(--d-frame);
 }
 
 .landing-shell {
   overflow-x: clip;
-}
-
-.landing-footer {
-  position: relative;
-  z-index: 0;
-}
-
-/* Pinned under the content layer only where the whole footer (links, the
-   wordmark and the bamboo landscape) fits the screen; a taller footer would
-   keep its top hidden behind the page. */
-@media (min-width: 1024px) and (min-height: 1180px) {
-  .landing-footer {
-    position: sticky;
-    bottom: 0;
-  }
-
-  .landing-content-layer {
-    box-shadow: 0 24px 48px -16px rgba(11, 26, 20, 0.45);
-  }
-}
-
-.landing-footer-signoff {
-  font-family: "Cabinet Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.025em;
-}
-
-/* Where a page loads Literata (the home page), the sign-off is set in it. */
-html:has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata);
-  font-weight: 400;
-  letter-spacing: -0.015em;
-}
-
-html:lang(zh):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-zh);
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-html:lang(ja):has(.v2a) .landing-footer-signoff {
-  font-family: var(--font-literata-ja);
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-/* The large lowercase wordmark, one ink colour, resting on the landscape's
-   bare upper third (scripts/brand-assets/MANIFEST.md, use (b)). */
-.landing-footer-wordmark {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: min(980px, calc(100% - 32px));
-  margin: 0 auto -4.5vw;
-  aspect-ratio: 162 / 35;
-  /* The landscape's own sage ink, so the wordmark reads as part of the print. */
-  background-color: #6d786a;
-  -webkit-mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
-  mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
-}
-
-.landing-footer-landscape {
-  display: block;
-  width: 100%;
-  height: clamp(200px, 28vw, 420px);
-  object-fit: cover;
-  object-position: 50% 100%;
 }
 
 @media (prefers-reduced-transparency: reduce) {
