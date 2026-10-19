@@ -790,8 +790,9 @@ body:has(.v4) {
 
 /* ---------------------------------------------------------------- phones */
 @media (max-width: 900px) {
+  /* One screen, one sentence: the first act starts below the fold on phones too. */
   .hero {
-    min-height: auto;
+    min-height: calc(100svh - var(--nav-h));
   }
   .hero-in {
     padding: 56px 0 72px;
