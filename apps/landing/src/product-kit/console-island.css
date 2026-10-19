@@ -1,0 +1,523 @@
+/*
+ * Console island: product moments render inside [data-surface="console"] with
+ * the mosoo console's own design tokens, whatever the surrounding page theme.
+ *
+ * Source: langgenius/mosoo apps/web/src/shared/styles/app.css at 7cb9866cfc
+ * (2026-10-18), sections "1. Primitives", "2. Semantic roles (light)", the
+ * Tailwind bridge, the type roles and the console keyframes. Rules for the
+ * port, so nothing leaks onto the website:
+ *
+ * - Tokens are declared on [data-surface="console"], never on :root.
+ * - The island compiles its own Tailwind utilities, nested under the island
+ *   selector (specificity 0,2,0) and scanned from this folder only, from the
+ *   console bridge below. Inside the island they beat the website's utilities
+ *   of the same name, including bridges the website defines with a different
+ *   meaning (`brand`, `primary`, `ring`) or as a literal (`primary-foreground`
+ *   is #ffffff on the website and dark ink #0f1a02 on the lime here).
+ * - Tailwind's default theme is imported as `theme(reference inline)`, so its
+ *   values are inlined into the island's utilities and never emitted.
+ * - Outside @theme this file never declares or reads a Tailwind theme name
+ *   (the font families, the ease-out curve, any colour or radius bridge):
+ *   Tailwind emits on :root, unlayered, every theme name a scanned file
+ *   mentions, which would replace the website's fonts and easing. The
+ *   console's fonts and easing live on `--console-*` names instead. The same
+ *   goes for every file in this folder: no literal theme variable names.
+ * - Keyframes are global by nature, so the console's are renamed `console-*`.
+ * - The only global output is a "Geist Fallback" face (a name the website
+ *   never uses) and Tailwind's own @property registrations, which match the
+ *   ones app.css already emits.
+ */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" theme(reference inline);
+
+@source "./";
+@source not "./preview";
+@source not "./README.md";
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg-1);
+  --color-card: var(--bg-elevated);
+  --color-popover: var(--bg-elevated);
+  --color-popover-foreground: var(--fg-1);
+  --color-sunken: var(--bg-sunken);
+
+  --color-hover: var(--hover);
+  --color-selected: var(--selected);
+  --color-pressed: var(--pressed);
+
+  --color-fg-heading: var(--fg-heading);
+  --color-fg-1: var(--fg-1);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-fg-muted: var(--fg-muted);
+
+  --color-border: var(--border-default);
+  --color-border-soft: var(--border-soft);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--border-strong);
+
+  --color-primary: var(--action-primary-bg);
+  --color-primary-foreground: var(--action-primary-fg);
+  --color-primary-hover: var(--action-primary-hover);
+  --color-primary-active: var(--action-primary-active);
+  --color-primary-border: var(--action-primary-border);
+  --color-emphasis: var(--emphasis);
+  --color-emphasis-foreground: var(--emphasis-fg);
+  --color-sidebar-cta: var(--sidebar-cta-bg);
+  --color-sidebar-cta-hover: var(--sidebar-cta-bg-hover);
+  --color-sidebar-cta-fg: var(--sidebar-cta-fg);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-ring: var(--focus-ring);
+  --color-control-checked: var(--control-checked);
+  --color-control-unchecked: var(--control-unchecked);
+
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-hover: var(--brand-soft-hover);
+  --color-brand-mark: var(--brand-mark);
+
+  --color-success: var(--success);
+  --color-success-fg: var(--success-fg);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-bg: var(--danger-bg);
+  --color-info: var(--info);
+  --color-info-fg: var(--info-fg);
+  --color-info-bg: var(--info-bg);
+  --color-pending-fg: var(--pending-fg);
+  --color-pending-bg: var(--pending-bg);
+  --color-soil: var(--soil);
+  --color-soil-fg: var(--soil-fg);
+  --color-soil-bg: var(--soil-bg);
+
+  --color-sidebar: var(--bg-sidebar);
+  --color-sidebar-row-hover: var(--sidebar-row-hover);
+  --color-sidebar-row-active: var(--sidebar-row-active);
+
+  --color-paper-50: var(--paper-50);
+  --color-paper-100: var(--paper-100);
+  --color-paper-200: var(--paper-200);
+  --color-paper-300: var(--paper-300);
+  --color-ink-50: var(--ink-50);
+  --color-ink-100: var(--ink-100);
+  --color-ink-200: var(--ink-200);
+  --color-ink-300: var(--ink-300);
+  --color-ink-400: var(--ink-400);
+  --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600);
+  --color-ink-700: var(--ink-700);
+  --color-ink-800: var(--ink-800);
+  --color-ink-900: var(--ink-900);
+  --color-green-50: var(--green-50);
+  --color-green-100: var(--green-100);
+  --color-green-200: var(--green-200);
+  --color-green-300: var(--green-300);
+  --color-green-400: var(--green-400);
+  --color-green-500: var(--green-500);
+  --color-green-600: var(--green-600);
+  --color-green-700: var(--green-700);
+  --color-green-800: var(--green-800);
+
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+
+  --shadow-xs: var(--elev-xs);
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
+  --shadow-xl: var(--elev-xl);
+
+  /* The console bridges these to its own font variables; see the header. */
+  --font-sans: var(--console-font-sans);
+  --font-heading: var(--console-font-heading);
+  --font-mono: var(--console-font-mono);
+
+  --tracking-title: var(--track-title);
+  --tracking-subtitle: var(--track-subtitle);
+
+  /* The console's own ease-out curve replaces Tailwind's; same here. */
+  --ease-out: var(--console-ease-out);
+  --animate-spin: console-spin 1s linear infinite;
+}
+
+@layer utilities {
+  [data-surface="console"] {
+    @tailwind utilities source(none);
+  }
+}
+
+/* Local stand-in with Geist's metrics, as in the console (next/font method). */
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial");
+  size-adjust: 106.28%;
+  ascent-override: 94.56%;
+  descent-override: 27.76%;
+  line-gap-override: 0%;
+}
+
+[data-surface="console"] {
+  /* 1. Primitives */
+  --green-50: #f4fce4;
+  --green-100: #e7f8c4;
+  --green-200: #d3f195;
+  --green-300: #b6e85f;
+  --green-400: #95dd2c;
+  --green-500: #6fd305;
+  --green-600: #5cb300;
+  --green-700: #498c07;
+  --green-800: #3a6e0e;
+  --green-900: #2c5113;
+
+  --ink-50: #f5f5f5;
+  --ink-100: #ebebeb;
+  --ink-200: #d6d6d6;
+  --ink-300: #b8b8b8;
+  --ink-400: #8a8a8a;
+  --ink-500: #707070;
+  --ink-600: #5c5c5c;
+  --ink-700: #454545;
+  --ink-800: #333333;
+  --ink-900: #1f1f1f;
+  --ink-950: #0d0d0d;
+
+  --paper-50: #ffffff;
+  --paper-100: #fafafa;
+  --paper-200: #f4f4f4;
+  --paper-300: #ebebeb;
+
+  --success-500: #15b042;
+  --success-700: #0e6b33;
+  --success-100: #caface;
+  --amber-500: #e0a106;
+  --amber-700: #8a5a00;
+  --amber-100: #fdf1cf;
+  --ember-500: #dc2a2a;
+  --ember-700: #b91c1c;
+  --ember-100: #fbeaea;
+  --sky-500: #2f6bd4;
+  --sky-700: #235fbe;
+  --sky-100: #e8f0fd;
+  --soil-500: #7a5230;
+  --soil-700: #5b3c22;
+  --soil-100: #f4ece2;
+
+  /* The console's font stacks and ease-out curve, on renamed variables (see
+     the header). */
+  --console-font-sans:
+    "Geist", "Geist Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable",
+    sans-serif;
+  --console-font-heading: var(--console-font-sans);
+  --console-font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-15: 0.9375rem;
+  --fs-24: 1.5rem;
+  --lh-normal: 1.4286;
+  --track-title: -0.02em;
+  --track-subtitle: -0.01em;
+
+  --r-xs: 2px;
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 6px;
+
+  --elev-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --elev-md: 0 4px 12px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.05);
+  --elev-lg: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --elev-xl: 0 30px 60px rgba(0, 0, 0, 0.16), 0 10px 20px rgba(0, 0, 0, 0.07);
+
+  --console-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --console-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-3: 260ms;
+
+  /* 2. Semantic roles (light; the console ships only light) */
+  --bg: var(--paper-100);
+  --bg-elevated: var(--paper-50);
+  --bg-sunken: var(--paper-200);
+  --bg-sidebar: var(--paper-200);
+  --hover: rgba(0, 0, 0, 0.04);
+  --selected: rgba(0, 0, 0, 0.065);
+  --pressed: rgba(0, 0, 0, 0.09);
+  --sidebar-row-hover: var(--hover);
+  --sidebar-row-active: var(--selected);
+
+  --fg-heading: var(--ink-900);
+  --fg-1: var(--ink-800);
+  --fg-2: rgba(51, 51, 51, 0.72);
+  --fg-3: rgba(51, 51, 51, 0.7);
+  --fg-muted: rgba(51, 51, 51, 0.56);
+
+  --border-soft: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.16);
+
+  --action-primary-bg: var(--green-500);
+  --action-primary-fg: #0f1a02;
+  --action-primary-hover: var(--green-600);
+  --action-primary-active: #55a600;
+  --action-primary-border: rgba(58, 110, 14, 0.35);
+  --emphasis: var(--ink-900);
+  --emphasis-hover: var(--ink-800);
+  --emphasis-fg: var(--paper-50);
+  --sidebar-cta-bg: var(--emphasis);
+  --sidebar-cta-bg-hover: var(--emphasis-hover);
+  --sidebar-cta-fg: var(--emphasis-fg);
+  --link: var(--green-800);
+  --link-hover: var(--green-900);
+  --focus-ring: var(--green-700);
+  --control-checked: var(--green-700);
+  --control-unchecked: var(--ink-300);
+  --brand: var(--green-800);
+  --brand-soft: var(--green-50);
+  --brand-soft-hover: var(--green-100);
+  --brand-mark: var(--green-500);
+
+  --success: var(--success-500);
+  --success-fg: var(--success-700);
+  --success-bg: var(--success-100);
+  --warning: var(--amber-500);
+  --warning-fg: var(--amber-700);
+  --warning-bg: var(--amber-100);
+  --danger: var(--ember-500);
+  --danger-fg: var(--ember-700);
+  --danger-bg: var(--ember-100);
+  --info: var(--sky-500);
+  --info-fg: var(--sky-700);
+  --info-bg: var(--sky-100);
+  --pending: var(--ink-400);
+  --pending-fg: var(--ink-600);
+  --pending-bg: var(--paper-200);
+  --soil: var(--soil-500);
+  --soil-fg: var(--soil-700);
+  --soil-bg: var(--soil-100);
+
+  /* 3. Names the website's own bridge reads, mapped to console values, so a
+     website utility that still matches inside the island cannot paint the
+     landing theme (forest green, warm paper, 10px corners) onto the product. */
+  --primary: var(--action-primary-bg);
+  --primary-hover: var(--action-primary-hover);
+  --fg-on-accent: var(--action-primary-fg);
+  --fg-inverse: var(--paper-50);
+  --accent: var(--action-primary-bg);
+  --accent-hover: var(--action-primary-hover);
+  --accent-press: var(--brand);
+  --accent-soft: var(--brand-soft);
+  --accent-soft-hover: var(--brand-soft-hover);
+  --accent-ring: var(--focus-ring);
+  --bg-canvas: var(--bg-elevated);
+  --amber: var(--warning);
+  --amber-fg: var(--warning-fg);
+  --amber-bg: var(--warning-bg);
+  --ember: var(--danger);
+  --ember-fg: var(--danger-fg);
+  --ember-bg: var(--danger-bg);
+  --sky: var(--info);
+  --sky-fg: var(--info-fg);
+  --sky-bg: var(--info-bg);
+}
+
+/* Base text, as the console sets it on body (the website body is 15px/500).
+   In the base layer, so a website utility on the island root itself, such as
+   <ConsoleIsland className="text-[15px]">, still applies; the tokens above
+   stay unlayered. */
+@layer base {
+  [data-surface="console"] {
+    container-type: inline-size;
+    color: var(--fg-1);
+    font-family: var(--console-font-sans);
+    font-size: var(--fs-14);
+    font-weight: 400;
+    line-height: var(--lh-normal);
+    letter-spacing: 0;
+    text-align: start;
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Chinese locale: Geist keeps the Latin glyphs and the platform CJK sans takes
+   the rest (console `:root:lang(zh)`); Japanese uses the default stack. */
+[data-surface="console"]:lang(zh) {
+  --console-font-sans:
+    "Geist", "Geist Fallback", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Noto Sans SC", system-ui, sans-serif;
+}
+
+[data-surface="console"] ::selection {
+  background: var(--green-100);
+  color: var(--ink-900);
+}
+
+@layer components {
+  [data-surface="console"] .t-page-title {
+    font-family: var(--console-font-heading);
+    font-size: var(--fs-24);
+    line-height: 1.75rem;
+    letter-spacing: var(--track-title);
+    font-weight: 500;
+    color: var(--fg-heading);
+    text-wrap: balance;
+  }
+
+  [data-surface="console"] .t-section-title {
+    font-size: var(--fs-15);
+    line-height: 1.25rem;
+    letter-spacing: var(--track-subtitle);
+    font-weight: 600;
+    color: var(--fg-heading);
+  }
+
+  [data-surface="console"] .t-group-label {
+    font-size: var(--fs-12);
+    line-height: 1rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--fg-3);
+  }
+}
+
+/* Console keyframes, renamed so they cannot replace the website's own. */
+@keyframes console-environment-row-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes console-success-check-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes console-success-check-enter-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes console-mosoo-thinking-sweep {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+@keyframes console-mosoo-thinking-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes console-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@layer utilities {
+  [data-surface="console"] .environment-row-enter {
+    animation: console-environment-row-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: top center;
+  }
+
+  /* Milestone-tier success check: small spring-scale entrance, delayed until
+     the surrounding entrance has landed. */
+  [data-surface="console"] .success-check-enter {
+    animation: console-success-check-enter var(--dur-3) var(--console-ease-spring) 120ms backwards;
+  }
+}
+
+/* Streaming "Thinking…" indicator: a soft highlight sweeping left to right. */
+[data-surface="console"] .mosoo-thinking {
+  background-image: linear-gradient(
+    90deg,
+    var(--fg-3) 0%,
+    var(--fg-3) 40%,
+    var(--fg-1) 50%,
+    var(--fg-3) 60%,
+    var(--fg-3) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: console-mosoo-thinking-sweep 1.8s linear infinite;
+}
+
+[data-surface="console"] .mosoo-thinking-dots > span {
+  animation: console-mosoo-thinking-dot 1.3s ease-in-out infinite;
+}
+
+[data-surface="console"] .mosoo-thinking-dots > span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+[data-surface="console"] .mosoo-thinking-dots > span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-surface="console"] .environment-row-enter {
+    animation: none;
+  }
+
+  [data-surface="console"] .success-check-enter {
+    animation: console-success-check-enter-fade var(--dur-3) var(--console-ease-out) 120ms backwards;
+  }
+
+  [data-surface="console"] .mosoo-thinking {
+    color: var(--fg-3);
+    animation: none;
+  }
+
+  [data-surface="console"] .mosoo-thinking-dots > span {
+    opacity: 0.6;
+    animation: none;
+  }
+
+  /* Shared controls: state changes still happen, they just do not animate. */
+  [data-surface="console"] [data-slot="button"],
+  [data-surface="console"] [data-slot="badge"],
+  [data-surface="console"] [data-slot="data-row"],
+  [data-surface="console"] [data-slot="connection-row"] {
+    transition-duration: 0ms;
+  }
+}

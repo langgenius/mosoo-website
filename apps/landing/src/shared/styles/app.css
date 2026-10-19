@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* The product kit compiles its own scoped utilities (product-kit/console-island.css,
+   loaded only with a kit import); scanning it here would add its classes to
+   every page. tests/product-kit.test.mjs checks this build equals one without the kit. */
+@source not "../../product-kit";
 
 @font-face {
   font-family: "Geist";
