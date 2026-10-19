@@ -53,13 +53,9 @@ export function PixelPlate({
   );
 }
 
-/** The outline "Example values" badge, in the page's type, for captions. */
+/** "Example values" at the head of a caption, in the caption's own size. */
 export function ExampleBadge(): ReactElement {
-  return (
-    <span className="border-border-strong text-ink-700 rounded-[4px] border px-1.5 text-[14px] font-semibold whitespace-nowrap">
-      {kitText(locale, "exampleValues")}
-    </span>
-  );
+  return <span className="text-ink-900 font-semibold whitespace-nowrap">{kitText(locale, "exampleValues")}</span>;
 }
 
 export function StageFigure({

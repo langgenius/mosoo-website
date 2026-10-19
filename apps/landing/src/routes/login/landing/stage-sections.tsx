@@ -4,6 +4,7 @@ import type { KeyboardEvent, ReactElement } from "react";
 import { KeyBoundary } from "@/product-kit/components/key-boundary";
 import { RuntimeMatrix } from "@/product-kit/components/runtime-matrix";
 import { SessionContinuation } from "@/product-kit/components/session-continuation";
+import { NONCE_SHA256 } from "@/product-kit/data/example-universe";
 import { TurnReceipt } from "@/product-kit/components/turn-receipt";
 import { consoleText, kitText } from "@/product-kit/i18n";
 import { locale } from "@/shared/locale";
@@ -17,6 +18,46 @@ import { WithCode } from "./ui";
 // All of them tell the hero's CSV story. Compositions alternate so no two
 // neighbours share a layout: sticky text beside a tall stage, stage before
 // text, a split header over a wide stage.
+
+const SHORT_HASH = `${NONCE_SHA256.slice(0, 8)}…${NONCE_SHA256.slice(-8)}`;
+
+/**
+ * The continuity check of the story, pulled out at reading size: both turns'
+ * outputs carry the same private_nonce_sha256, so turn 2 used the nonce file
+ * turn 1 left outside outputs/. Values from the kit's example universe.
+ */
+function NonceEvidence(): ReactElement {
+  const rows = [
+    { turn: 1, file: "outputs/initial.json", total: 230 },
+    { turn: 2, file: "outputs/followup.json", total: 250 },
+  ] as const;
+
+  return (
+    <div className="bg-paper-50 border-border-strong mt-6 max-w-[34em] rounded-[10px] border">
+      <div className="border-border-soft flex flex-wrap items-center justify-between gap-2 border-b px-4 py-2.5">
+        <p translate="no" className="text-ink-900 font-mono text-[14px] font-semibold">
+          {kitText(locale, "sameNonceHash")}
+        </p>
+        <span className="text-ink-500 text-[14px]">{kitText(locale, "exampleValues")}</span>
+      </div>
+      <dl className="divide-border-soft divide-y px-4">
+        {rows.map((row) => (
+          <div key={row.turn} className="grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-4 gap-y-0.5 py-2.5">
+            <dt className="text-ink-600 text-[14px] font-semibold">
+              {consoleText(locale, "sessionEvents.turn", { number: String(row.turn) })}
+            </dt>
+            <dd translate="no" className="text-ink-900 m-0 min-w-0 font-mono text-[14px] leading-[1.6]">
+              <span className="block truncate">
+                {row.file} <span className="text-ink-500">grand_total</span> {row.total}
+              </span>
+              <span className="mt-0.5 inline-block rounded-[4px] bg-[#edf9d8] px-1.5 text-[#2c5113]">{SHORT_HASH}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
 
 /** PM-02: the same Thread seven days later, on the sunken band. */
 export function ContinueSection(): ReactElement {
@@ -37,6 +78,7 @@ export function ContinueSection(): ReactElement {
               )}
             />
           </Lede>
+          <NonceEvidence />
           <Fact>
             {t(
               "If that checkpoint can’t be restored, the follow-up fails with an error. API Sessions have no inactivity deadline.",

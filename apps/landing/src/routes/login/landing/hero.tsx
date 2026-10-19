@@ -3,12 +3,12 @@ import type { CSSProperties, ReactElement } from "react";
 
 import { PreviewReplay } from "@/product-kit/components/preview-replay";
 import { OUTPUTS } from "@/product-kit/data/example-universe";
-import { consoleText, kitText } from "@/product-kit/i18n";
+import { consoleText } from "@/product-kit/i18n";
 import { locale } from "@/shared/locale";
 
 import { docsUrl, MOSOO_CLOUD_URL } from "../links";
 import { t } from "./above-fold-i18n";
-import { PixelPlate } from "./stage";
+import { ExampleBadge, PixelPlate } from "./stage";
 import { STAGE_DISPLAY_FONT } from "./typography";
 
 const HERO_HEADLINE_STYLE = {
@@ -112,9 +112,7 @@ function HeroStage(): ReactElement {
         <OutputsTray />
       </div>
       <figcaption className="text-ink-500 mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[16px] leading-[1.5]">
-        <span className="border-border-strong text-ink-700 rounded-[4px] border px-1.5 text-[14px] font-semibold">
-          {kitText(locale, "exampleValues")}
-        </span>
+        <ExampleBadge />
         <span>{t("Turn 1 in the console Preview: the Agent reads input.csv and saves a report and a chart.")}</span>
       </figcaption>
     </figure>
