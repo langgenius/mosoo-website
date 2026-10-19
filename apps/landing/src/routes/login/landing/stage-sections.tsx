@@ -269,6 +269,7 @@ export function KeysSection(): ReactElement {
           className="mt-12"
           accent
           example={false}
+          zoomClassName="stage-zoom-wide"
           padClassName="p-0 sm:p-8 lg:px-[8%] lg:py-14"
           sizes="(max-width: 1023px) calc(100vw - 32px), 90vw"
           caption={t("Drawn from the product spec and the architecture notes. The console has no such screen.")}

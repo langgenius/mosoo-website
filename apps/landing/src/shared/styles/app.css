@@ -565,6 +565,14 @@
     line-break: strict;
     word-break: auto-phrase;
   }
+  /* Inside a product kit island the rule above would land on every element
+     and beat what it inherits, so a hash in a break-all <pre> stopped
+     breaking in Japanese. There, descendants inherit instead; the island
+     root keeps the phrase rule and the kit's utilities still win. */
+  [data-surface="console"] :lang(ja) {
+    line-break: inherit;
+    word-break: inherit;
+  }
   html,
   body {
     font-family: var(--font-sans);
@@ -731,50 +739,23 @@ html:has(.landing-shell[data-theme="console"]) {
   border: 0;
 }
 
-/* From 768px the islands below the fold are zoomed so the console's smallest
-   chips (10.5px) read at 12px or more (product kit README, "Size": zoom, not
-   font sizes, so container queries see the unzoomed width). Phones keep the
-   console's own sizes, where the kit's narrow layouts are tested. */
+/* The islands below the fold are zoomed so the console's smallest chips
+   (10.5px, and the receipt's 10px event chips) render at 12px or more
+   (product kit README, "Size": zoom, not font sizes, so container queries see
+   the unzoomed width and pick the kit's narrow layouts on phones). The key
+   boundary is the exception on phones: its labels are drawn to stay at 12px
+   or more from a 354px island, and zoom would push it below that width. */
+.stage-zoom > [data-surface="console"] {
+  zoom: 1.15;
+}
+
+.stage-zoom-receipt > [data-surface="console"] {
+  zoom: 1.2;
+}
+
 @media (min-width: 768px) {
-  .stage-zoom > [data-surface="console"] {
+  .stage-zoom-wide > [data-surface="console"] {
     zoom: 1.15;
-  }
-
-  /* The turn receipt's event chips are the console's smallest type (10px). */
-  .stage-zoom-receipt > [data-surface="console"] {
-    zoom: 1.2;
-  }
-}
-
-/* Hero: the outputs card is the turn's result. It lands when the turn
-   commits, that is when the Preview's replay ends (the island drops its
-   data-replaying flag). Without JavaScript, with reduced motion, and in
-   every still the card is simply there. */
-.stage-outputs {
-  transition:
-    opacity 420ms var(--ease-out),
-    transform 420ms var(--ease-out);
-}
-
-.stage:has([data-replaying]) .stage-outputs {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: none;
-}
-
-.stage-accent {
-  transition: opacity 600ms var(--ease-out);
-}
-
-.stage:has([data-replaying]) .stage-accent {
-  opacity: 0;
-  transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stage-outputs,
-  .stage-accent {
-    transition: none;
   }
 }
 

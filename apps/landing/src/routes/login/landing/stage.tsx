@@ -71,6 +71,7 @@ export function StageFigure({
   // measured from a 354px island); the plate shows from 640px.
   padClassName = "p-0 sm:p-6 lg:p-8",
   windowClassName,
+  zoomClassName = "stage-zoom",
 }: {
   children: ReactNode;
   caption?: string;
@@ -80,12 +81,14 @@ export function StageFigure({
   className?: string;
   padClassName?: string;
   windowClassName?: string;
+  /** stage-zoom everywhere; stage-zoom-wide only from 768px (the key boundary). */
+  zoomClassName?: string;
 }): ReactElement {
   return (
     <figure className={cn("m-0 min-w-0", className)}>
       <div className={cn("stage", padClassName)}>
         <PixelPlate sizes={sizes} accent={accent} lazy />
-        <div className={cn("stage-window stage-zoom overflow-hidden", windowClassName)}>{children}</div>
+        <div className={cn("stage-window overflow-hidden", zoomClassName, windowClassName)}>{children}</div>
       </div>
       {caption === undefined ? null : (
         <figcaption className="text-ink-500 mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[16px] leading-[1.5]">
