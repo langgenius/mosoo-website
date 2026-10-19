@@ -211,7 +211,7 @@ function MobileMenu({
           >
             {t("Sign in")}
           </a>
-          <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "min-h-11 flex-1 text-[15px]")}>
+          <a href={MOSOO_CLOUD_URL} data-cta="primary" className={cn(PRIMARY_BUTTON_CLASS, "min-h-11 flex-1 text-[15px]")}>
             {t("Try mosoo")}
           </a>
         </div>
@@ -297,14 +297,14 @@ export function LoginLandingTopbar({
               <a href={MOSOO_LOGIN_URL} className={cn(NAV_LINK_CLASS, "text-fg-2")}>
                 {t("Sign in")}
               </a>
-              <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "ml-1 h-9 text-[14px]")}>
+              <a href={MOSOO_CLOUD_URL} data-cta="primary" className={cn(PRIMARY_BUTTON_CLASS, "ml-1 h-9 text-[14px]")}>
                 {t("Try mosoo")}
               </a>
             </div>
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <a href={MOSOO_CLOUD_URL} className={cn(PRIMARY_BUTTON_CLASS, "h-11 text-[15px]")}>
+            <a href={MOSOO_CLOUD_URL} data-cta="primary" className={cn(PRIMARY_BUTTON_CLASS, "h-11 text-[15px]")}>
               {t("Try mosoo")}
             </a>
             <button

@@ -71,6 +71,12 @@ const KIT_COPY = {
 
   // Kit copy (README "Copy deviations").
   daysLater: { en: "7 days later", zh: "7 天后", ja: "7 日後" },
+  // Alt text of turn 1's real chart.svg (the values the example code drew).
+  chartAlt: {
+    en: "Revenue by region: north 150, south 80, grand_total 230.",
+    zh: "按地区汇总的收入：north 150，south 80，grand_total 230。",
+    ja: "地域別の売上：north 150、south 80、grand_total 230。",
+  },
   thread: { en: "Thread", zh: "Thread", ja: "Thread" },
   response: { en: "Response", zh: "响应", ja: "レスポンス" },
   uploadInputCsv: { en: "Upload input.csv", zh: "上传 input.csv", ja: "input.csv をアップロード" },

@@ -548,5 +548,7 @@ test("the static home page shows the kit's upload and create calls verbatim", as
     );
     assert.ok(blocks.includes(u.API_CALLS.upload.request), `${locale}: the upload call`);
     assert.ok(blocks.includes(u.API_CALLS.create.request), `${locale}: the create call`);
+    const shortHash = `${u.NONCE_SHA256.slice(0, 8)}…${u.NONCE_SHA256.slice(-8)}`;
+    assert.equal(renderHomeFallback(locale).split(shortHash).length - 1, 2, `${locale}: both outputs show the kit's short hash`);
   }
 });

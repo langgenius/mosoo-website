@@ -476,11 +476,25 @@
     box-sizing: border-box;
   }
   /* Japanese line breaking: strict kinsoku (no line-initial ー or small
-     kana) plus phrase-based wrapping where supported (Chromium BudouX), so
-     words like メーター never split mid-katakana. */
+     kana) everywhere, and phrase-based wrapping (Chromium BudouX) only for
+     display text: headings, labels and captions, so words like メーター
+     never split mid-katakana there. Body text wraps normally (auto-phrase
+     left it ragged), and product islands, pre and code reset both, so
+     hashes and IDs can break. */
   :lang(ja) {
     line-break: strict;
+  }
+  :lang(ja) :is(h1, h2, h3, h4, label, figcaption, caption, th, dt, button) {
     word-break: auto-phrase;
+  }
+  :lang(ja) :is([data-surface="console"], pre, code),
+  :lang(ja) :is([data-surface="console"], pre, code) * {
+    line-break: auto;
+    word-break: normal;
+  }
+  :lang(zh) p,
+  :lang(ja) p {
+    text-wrap: pretty;
   }
   html,
   body {

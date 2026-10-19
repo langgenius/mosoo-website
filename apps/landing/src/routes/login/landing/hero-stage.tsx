@@ -21,10 +21,11 @@ type CulmLayout = {
 };
 
 // Culm width and the node proportions of the mosoo mark (internode, gap,
-// ring), with the ring thickened optically so a 14px culm still shows it.
-const CULM_WIDTH = 14;
+// ring), with the ring thickened optically. 20px wide, so the culm reads as
+// the mechanism and not as a rule (v3; v2a drew it at 14px).
+const CULM_WIDTH = 20;
 const GAP = 2;
-const RING = 3.5;
+const RING = 4.5;
 
 /** One internode of the mark: straight ends, sides pinched at mid-height. */
 function internodePath(x: number, y: number, width: number, height: number): string {
@@ -133,11 +134,13 @@ export function HeroStage(): ReactElement {
           {layout === null ? null : <Culm layout={layout.culm} height={layout.height} />}
         </div>
         <div ref={island} className="min-w-0">
-          <SessionContinuation locale={locale} />
+          <SessionContinuation locale={locale} stage />
         </div>
       </div>
-      <figcaption className="sr-only">
-        {t("The CSV story: turn 1 totals 230. Seven days later the sandbox is gone, and turn 2 continues from the checkpoint to 250 with the same private nonce hash.")}
+      <figcaption className="v2a-stage-caption">
+        <strong>{t("Example values.")}</strong>{" "}
+        {t("A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread.")}{" "}
+        <span className="v2a-stage-caption-fact">{t("API Sessions have no inactivity deadline.")}</span>
       </figcaption>
     </figure>
   );

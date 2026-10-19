@@ -40,6 +40,37 @@ const INLINE_CODE_CLASS =
   "bg-paper-200 text-ink-900 rounded-[4px] px-1 py-px font-mono text-[0.88em] [overflow-wrap:anywhere]";
 
 /** Offers a line break after each "/" so API paths wrap at segment edges. */
+/**
+ * Display text in zh and ja sets word-break: keep-all, so a line breaks only
+ * at a space or at a "|" in the dictionary string, which renders as <wbr>
+ * (from v2b). Terms such as "Agent runtime", "API ファースト" and "API 优先"
+ * never split. English strings carry no marks.
+ */
+const KEEP_TERMS = /(Agent runtime|API ファースト|API 优先)/;
+
+export function Phrases({ text }: { text: string }): ReactElement {
+  const parts = text.split("|");
+  return (
+    <>
+      {parts.map((part, index) => (
+        // Fragments of a static string: the index is a stable key.
+        <Fragment key={index}>
+          {index > 0 ? <wbr /> : null}
+          {part.split(KEEP_TERMS).map((piece, pieceIndex) =>
+            pieceIndex % 2 === 1 ? (
+              <span key={pieceIndex} translate="no" className="whitespace-nowrap">
+                {piece}
+              </span>
+            ) : (
+              piece
+            ),
+          )}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 export function BreakAfterSlashes({ text }: { text: string }): ReactElement {
   const segments = text.split("/");
   return (

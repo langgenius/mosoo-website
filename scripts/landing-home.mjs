@@ -269,13 +269,15 @@ const COPY = {
       title: "An open-source, API-first managed Agent runtime for application backends.",
       subhead:
         "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
+      hosted: "Hosted at cloud.mosoo.ai. Apache-2.0 source on GitHub. Bring your own model key.",
       agentLabel: "Set up with your coding agent",
       agentLine:
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
     },
     visual: {
-      caption: "The CSV story: turn 1 totals 230. Seven days later the sandbox is gone, and turn 2 continues from the checkpoint to 250 with the same private nonce hash.",
-      badge: "Example values. Event types and field names come from the mosoo console and the v2 API.",
+      caption:
+        "Example values. A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread. API Sessions have no inactivity deadline.",
+      turn: "Turn {n}",
       description:
         "Example Session record. Your backend uploads input.csv and starts a Session with it attached. In turn 1 the Agent runs Python in the sandbox, writes outputs/initial.json with grand_total 230, a report and a chart, and keeps a private nonce outside outputs/. Seven days later the sandbox has been reclaimed. The follow-up that appends south,20 goes to the same Thread: mosoo restores the working directory and the conversation from the last checkpoint, and outputs/followup.json has grand_total 250 and the same private_nonce_sha256.",
     },
@@ -526,13 +528,15 @@ const COPY = {
       title: "开源、API 优先的托管 Agent runtime，面向应用后端。",
       subhead:
         "mosoo 用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。",
+      hosted: "托管在 cloud.mosoo.ai。Apache-2.0 源码在 GitHub。模型使用你自己的密钥。",
       agentLabel: "使用编码智能体设置",
       agentLine:
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
     },
     visual: {
-      caption: "CSV 示例：第 1 轮的 grand_total 是 230。7 天后 sandbox 已被回收，第 2 轮从检查点继续，得到 250，private nonce 的哈希不变。",
-      badge: "示例数据。事件类型和字段名来自 mosoo 控制台和 v2 API。",
+      caption:
+        "示例数据。一次 CSV 分析，7 天后在同一个 Session 中继续；天数标记是网站对控制台 Thread 的标注。API Session 不会因闲置而过期。",
+      turn: "第 {n} 轮",
       description:
         "示例 Session 记录。你的后端上传 input.csv，并带着这个附件启动一个 Session。第 1 轮里，Agent 在 sandbox 中运行 Python，写出 grand_total 为 230 的 outputs/initial.json、一份报告和一张图表，并在 outputs/ 之外保存一个 private nonce。7 天后，sandbox 已被回收。追加 south,20 的后续消息仍发往同一个 Thread：mosoo 从最近一次检查点恢复工作目录和对话，outputs/followup.json 的 grand_total 为 250，private_nonce_sha256 不变。",
     },
@@ -767,13 +771,15 @@ const COPY = {
       title: "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
       subhead:
         "mosoo は OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行します。Session ごとに専用の sandbox が割り当てられます。",
+      hosted: "cloud.mosoo.ai でホスト。Apache-2.0 のソースは GitHub に。モデルのキーはご自身で。",
       agentLabel: "コーディングエージェントでセットアップ",
       agentLine:
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
     },
     visual: {
-      caption: "CSV の例：ターン 1 の grand_total は 230 です。7 日後には sandbox が回収されていますが、ターン 2 はチェックポイントから続きを実行して 250 になり、private nonce のハッシュも同じです。",
-      badge: "サンプル値です。イベントタイプとフィールド名は mosoo コンソールと v2 API に基づいています。",
+      caption:
+        "サンプル値。CSV の分析を、7 日後に同じ Session で続けた例です。日数の表示は、コンソールの Thread に Web サイトが付けた注記です。API の Session は放置しても期限切れになりません。",
+      turn: "{n} ターン",
       description:
         "Session 記録の例です。バックエンドが input.csv をアップロードし、それを添付して Session を開始します。ターン 1 では Agent が sandbox 内で Python を実行し、grand_total が 230 の outputs/initial.json、レポート、グラフを書き出し、outputs/ の外に private nonce を保存します。7 日後、sandbox は回収されています。south,20 を追加するフォローアップは同じ Thread に送られ、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元します。outputs/followup.json の grand_total は 250 で、private_nonce_sha256 は同じです。",
     },
@@ -1102,15 +1108,30 @@ function renderHero(copy) {
 <h1 id="mf-title">${title}</h1>
 <p class="mf-lead">${inline(copy.hero.subhead)}</p>
 <p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
+<p>${inline(copy.hero.hosted)}</p>
 <p class="mf-muted">${inline(copy.alpha)}</p>
 </section>`;
 }
 
+// The two outputs of the CSV story with the short private_nonce_sha256 they
+// share (the hero stage's evidence rows; values from the kit's example).
+const NONCE_ROWS = [
+  [1, "outputs/initial.json", 230],
+  [2, "outputs/followup.json", 250],
+];
+const SHORT_NONCE = "f4607af8…7680620f";
+
 function renderVisual(copy) {
+  const rows = NONCE_ROWS.map(
+    ([turn, file, total]) =>
+      `<li>${inline(copy.visual.turn.replace("{n}", String(turn)))}: <code translate="no">${file}</code> grand_total ${total}, private_nonce_sha256 <code translate="no">${SHORT_NONCE}</code></li>`,
+  ).join("\n");
   return `<figure class="mf-figure">
 <figcaption>${inline(copy.visual.caption)}</figcaption>
-<p class="mf-muted">${inline(copy.visual.badge)}</p>
 <p>${inline(copy.visual.description)}</p>
+<ul>
+${rows}
+</ul>
 </figure>`;
 }
 
