@@ -35,6 +35,8 @@
 
 .v4,
 .v4-chrome {
+  /* The display face ships one weight; never fake a bold. */
+  font-synthesis-weight: none;
   font-family: var(--font-sans);
   color: var(--ink);
   background: var(--paper);
@@ -179,7 +181,7 @@
 .v4-foot {
   background: var(--paper);
   color: var(--ink);
-  padding: 0 0 40px;
+  padding: 96px 0 40px;
 }
 .v4-foot-in {
   width: var(--w);
@@ -285,6 +287,9 @@
 }
 
 @media (max-width: 900px) {
+  .v4-foot {
+    padding-top: 64px;
+  }
   .v4-nav-links {
     gap: 18px;
   }

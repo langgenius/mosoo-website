@@ -766,7 +766,6 @@ body:has(.v4) {
   position: relative;
   height: 26px;
   margin-top: 120px;
-  margin-bottom: 96px;
 }
 .sl-rule {
   position: absolute;
@@ -928,7 +927,6 @@ body:has(.v4) {
   }
   .session-line {
     margin-top: 72px;
-    margin-bottom: 64px;
   }
 }
 

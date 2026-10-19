@@ -154,11 +154,10 @@
   --warning: var(--amber);
   --danger: var(--ember);
 
-  --font-display:
-    "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", sans-serif;
-  --font-sans:
-    "Geist", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable", sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* v4 type stack (fonts-v4.css, loaded with the shared shell): subpages inherit the home's faces. */
+  --font-display: "Display Fallback", "Display Local", var(--font-cjk-display), ui-serif, Georgia, serif;
+  --font-sans: "Inter", "Inter Local", var(--font-cjk-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fragment Mono", "Mono Local", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --fs-12: 0.75rem;
   --fs-13: 0.8125rem;
