@@ -159,11 +159,13 @@ function RuntimeList(): ReactElement {
           <dl className="mt-2 ml-[34px] text-[16px] leading-[1.5]">
             <dt className="sr-only">{t("Model protocols")}</dt>
             {runtime.accepts.map((protocol) => (
-              <dd key={protocol} translate="no" className="text-ink-700 m-0 flex items-center gap-2 font-mono text-[15px]">
+              <dd key={protocol} className="text-ink-700 m-0 flex flex-wrap items-center gap-x-2 font-mono text-[15px]">
                 <Check />
-                {protocol}
+                <span translate="no" className="whitespace-nowrap">
+                  {protocol}
+                </span>
                 {runtime.note !== undefined && runtime.accepts.length === 1 ? (
-                  <span className="text-ink-500 font-sans text-[14px]">({runtime.note})</span>
+                  <span className="text-ink-500 basis-full pl-[26px] font-sans text-[14px]">{runtime.note}</span>
                 ) : null}
               </dd>
             ))}
