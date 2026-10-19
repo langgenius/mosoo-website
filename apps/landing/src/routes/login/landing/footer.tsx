@@ -23,7 +23,6 @@ import {
   statusPath,
 } from "../links";
 import { XMark } from "../x-mark";
-import { DISPLAY_FONT } from "./typography";
 
 type FooterLink = {
   label: string;
@@ -84,15 +83,12 @@ function footerGroups(): readonly FooterGroup[] {
 }
 
 const SIGN_OFF_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  fontSize: "clamp(32px, 4.6vw, 56px)",
-  fontWeight: 500,
-  letterSpacing: "-0.025em",
-  lineHeight: 1.06,
+  fontSize: "clamp(28px, 3.4vw, 44px)",
+  lineHeight: 1.1,
 } satisfies CSSProperties;
 
 const FOOTER_LINK_CLASS =
-  "text-paper-100/85 hover:text-paper-100 focus-visible:ring-paper-100 rounded-sm text-[15px] leading-[1.5] transition-colors outline-none focus-visible:ring-2";
+  "text-ink-700 hover:text-ink-900 focus-visible:ring-ring rounded-sm text-[15px] leading-[1.5] underline decoration-transparent underline-offset-4 transition-colors outline-none hover:decoration-current/40 focus-visible:ring-2";
 
 function SocialLink({
   href,
@@ -108,7 +104,7 @@ function SocialLink({
       href={href}
       aria-label={label}
       title={label}
-      className="border-paper-100/20 text-paper-100/85 hover:bg-paper-100/10 hover:text-paper-100 focus-visible:ring-paper-100 inline-flex size-10 items-center justify-center rounded-md border transition-colors outline-none focus-visible:ring-2"
+      className="border-ink-900/15 text-ink-700 hover:bg-ink-900/[0.05] hover:text-ink-900 focus-visible:ring-ring inline-flex size-10 items-center justify-center rounded-md border transition-colors outline-none focus-visible:ring-2"
     >
       {children}
     </a>
@@ -129,65 +125,84 @@ function revealPinnedFooter(event: FocusEvent<HTMLElement>): void {
   }
 }
 
+/**
+ * The footer every landing page shares: the link groups on plain paper, then
+ * the large lowercase wordmark resting on the static halftone bamboo landscape
+ * (#127; scripts/brand-assets/MANIFEST.md, use (b)). The landscape is
+ * decorative and ends the page after the links, never under them.
+ */
 export function LandingFooter(): ReactElement {
   return (
-    <footer
-      onFocus={revealPinnedFooter}
-      className="landing-footer text-paper-100 bg-[#050805] px-4 pt-16 pb-10 md:px-6 md:pt-20"
-    >
-      <div className="mx-auto w-full max-w-[1280px]">
-        <p className="max-w-[760px] [text-wrap:balance]" style={SIGN_OFF_STYLE}>
-          {t("Take root, and grow a bamboo sea.")}
-        </p>
+    <footer onFocus={revealPinnedFooter} className="landing-footer bg-paper-100 text-ink-900">
+      <div className="px-4 pt-16 md:px-6 md:pt-20">
+        <div className="mx-auto w-full max-w-[1280px]">
+          <p className="landing-footer-signoff max-w-[760px] [text-wrap:balance]" style={SIGN_OFF_STYLE}>
+            {t("Take root, and grow a bamboo sea.")}
+          </p>
 
-        <div className="border-paper-100/15 mt-12 border-t pt-12">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
-            <div className="col-span-2 md:col-span-3 lg:col-span-1">
-              <img
-                src="/brand/logo-wordmark-ondark.svg"
-                alt="mosoo"
-                width={102}
-                height={22}
-                className="block h-[22px] w-auto"
-              />
-              <p className="text-paper-100/70 mt-4 max-w-[280px] text-[16px] leading-[1.6]">
-                {t("An open-source, API-first managed Agent runtime for application backends.")}
-              </p>
-              <div className="mt-5 flex items-center gap-2.5">
-                <SocialLink href={MOSOO_GITHUB_URL} label={t("mosoo on GitHub")}>
-                  <GithubMark className="size-[18px]" />
-                </SocialLink>
-                <SocialLink href={MOSOO_X_URL} label={t("mosoo on X")}>
-                  <XMark className="size-4" />
-                </SocialLink>
+          <div className="mt-12 border-t border-[rgba(109,120,106,0.35)] pt-12">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-3 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
+              <div className="col-span-2 md:col-span-3 lg:col-span-1">
+                <p className="text-ink-700 max-w-[280px] text-[16px] leading-[1.6]">
+                  {t("An open-source, API-first managed Agent runtime for application backends.")}
+                </p>
+                <div className="mt-5 flex items-center gap-2.5">
+                  <SocialLink href={MOSOO_GITHUB_URL} label={t("mosoo on GitHub")}>
+                    <GithubMark className="size-[18px]" />
+                  </SocialLink>
+                  <SocialLink href={MOSOO_X_URL} label={t("mosoo on X")}>
+                    <XMark className="size-4" />
+                  </SocialLink>
+                </div>
               </div>
+
+              {footerGroups().map((group) => (
+                <div key={group.heading}>
+                  <h2 className="text-ink-900 text-[15px] font-semibold">{group.heading}</h2>
+                  <ul className="mt-4 flex flex-col gap-2.5">
+                    {group.links.map((link) => (
+                      <li key={link.href}>
+                        <a
+                          href={link.href}
+                          translate={link.noTranslate === true ? "no" : undefined}
+                          hrefLang={link.hrefLang}
+                          className={FOOTER_LINK_CLASS}
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
-            {footerGroups().map((group) => (
-              <div key={group.heading}>
-                <h2 className="text-paper-100 text-[15px] font-semibold">{group.heading}</h2>
-                <ul className="mt-4 flex flex-col gap-2.5">
-                  {group.links.map((link) => (
-                    <li key={link.href}>
-                      <a
-                        href={link.href}
-                        translate={link.noTranslate === true ? "no" : undefined}
-                        hrefLang={link.hrefLang}
-                        className={FOOTER_LINK_CLASS}
-                      >
-                        {link.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-paper-100/15 mt-14 border-t pt-6">
-            <p className="text-paper-100/70 text-[14px] leading-[1.6]">© 2026 LangGenius, Inc.</p>
+            <p className="text-ink-500 mt-14 text-[14px] leading-[1.6]">© 2026 LangGenius, Inc.</p>
           </div>
         </div>
+      </div>
+
+      <div className="relative mt-10 overflow-hidden">
+        <span role="img" aria-label="mosoo" className="landing-footer-wordmark" />
+        <picture>
+          <source
+            media="(max-width: 640px)"
+            srcSet="/landing/bamboo/bamboo-landscape-1200.png"
+            width={1200}
+            height={600}
+          />
+          <img
+            src="/landing/bamboo/bamboo-landscape-2880.png"
+            srcSet="/landing/bamboo/bamboo-landscape-1440.png 1440w, /landing/bamboo/bamboo-landscape-2880.png 2880w"
+            sizes="100vw"
+            width={2880}
+            height={800}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="landing-footer-landscape"
+          />
+        </picture>
       </div>
     </footer>
   );
