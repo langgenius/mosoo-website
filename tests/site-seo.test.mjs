@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
-import { homeFaq, homeHeadline } from "../scripts/landing-home.mjs";
+import { homeDescription, homeFaq, homeHeadline } from "../scripts/landing-home.mjs";
 import {
   renderLandingLocale,
   renderPricingLocale,
@@ -34,7 +34,9 @@ const headingsOf = (html, level) =>
   [...html.matchAll(new RegExp(`<h${level}\\b[^>]*>([\\s\\S]*?)</h${level}>`, "g"))].map((match) =>
     textOf(match[1]),
   );
-const sectionIdsOf = (html) => [...html.matchAll(/<section id="([^"]+)"/g)].map((match) => match[1]);
+// The home's sections in order, by their first class (the v4c home anchors only #main and #faq).
+const sectionClassesOf = (html) =>
+  [...html.matchAll(/<section class="([^" ]+)/g)].map((match) => match[1]);
 const jsonLdScriptsOf = (html) =>
   [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((match) => match[1]);
 const graphOf = (html) => {
@@ -43,14 +45,17 @@ const graphOf = (html) => {
   return JSON.parse(scripts[0]);
 };
 const nodesByType = (graph) => Object.fromEntries(graph["@graph"].map((node) => [node["@type"], node]));
-// Question and answer text as a reader sees it in the static FAQ section.
-const visibleFaqOf = (html) => {
-  const section = /<section id="faq"[\s\S]*?<\/section>/.exec(html)?.[0] ?? "";
-  return [...section.matchAll(/<h3>([\s\S]*?)<\/h3>\s*<p>([\s\S]*?)<\/p>/g)].map((match) => [
-    textOf(match[1]),
-    textOf(match[2]),
-  ]);
+// Question and answer text as a reader sees it in the static FAQ section: native <details name="faq">,
+// the answer in the DOM whether the row is open or not.
+const faqRowsOf = (html) => {
+  const section = /<section class="faq" id="faq"[\s\S]*?<\/section>/.exec(html)?.[0] ?? "";
+  return [
+    ...section.matchAll(
+      /<details class="faq-row" name="faq"( open)?><summary>[\s\S]*?<span class="faq-q">([\s\S]*?)<\/span><\/summary><p class="faq-a">([\s\S]*?)<\/p><\/details>/g,
+    ),
+  ].map((match) => ({ open: Boolean(match[1]), q: textOf(match[2]), a: textOf(match[3]) }));
 };
+const visibleFaqOf = (html) => faqRowsOf(html).map(({ q, a }) => [q, a]);
 
 // Narrative the main repo retired or never supported (SPEC section 8, README).
 const RETIRED_NARRATIVE =
@@ -59,55 +64,41 @@ const RETIRED_NARRATIVE =
 const HOME_LINKS = {
   en: {
     docs: "https://mosoo.ai/docs/",
-    quickstart: "https://mosoo.ai/docs/quickstart/",
     apiReference: "https://mosoo.ai/docs/api-reference-v2/",
     blog: "https://mosoo.ai/blog",
-    health: "/health",
   },
   zh: {
     docs: "https://mosoo.ai/docs/zh-Hans/",
-    quickstart: "https://mosoo.ai/docs/zh-Hans/quickstart/",
     apiReference: "https://mosoo.ai/docs/zh-Hans/api-reference-v2/",
     blog: "https://mosoo.ai/blog/zh",
-    health: "/zh/health",
   },
   ja: {
     docs: "https://mosoo.ai/docs/ja/",
-    quickstart: "https://mosoo.ai/docs/ja/quickstart/",
     apiReference: "https://mosoo.ai/docs/ja/api-reference-v2/",
     blog: "https://mosoo.ai/blog/ja",
-    health: "/ja/health",
   },
 };
 
-// Crawlable links in the static home page: navigation, every language, the v2
-// docs, both OpenAPI contracts, llms.txt, the source and the console.
+// Crawlable links in the static home page: the primary nav (localized docs, the source, the console),
+// the footer's link row (localized docs and blog, the use-case gallery, pricing, status) and every
+// language. The v4c UI has these slots and no others (UI-LOCK §4: N1-N3, S6-L x7, S6-G).
 const assertHomeSiteLinks = (html, locale) => {
   const links = HOME_LINKS[locale];
   const hrefs = hrefsOf(html);
 
-  assert.match(html, /<nav aria-label="Primary site links">/);
+  assert.match(html, /<nav class="v4-nav-links" aria-label="Primary site links">/);
   for (const href of [
     "/en",
     "/zh",
     "/ja",
     `/${locale}/use-cases`,
-    `/${locale}/use-cases/codex-pet`,
-    `/${locale}/use-cases/ghfind`,
-    links.health,
+    `/${locale}/pricing`,
+    `/${locale}/status`,
     links.docs,
-    links.quickstart,
     links.apiReference,
     links.blog,
     "https://cloud.mosoo.ai",
-    "https://cloud.mosoo.ai/login",
-    "https://computer.mosoo.ai",
     "https://github.com/langgenius/mosoo",
-    "https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md",
-    "https://cloud.mosoo.ai/api/v2/openapi.json",
-    "https://cloud.mosoo.ai/api/v1/openapi.json",
-    "https://mosoo.ai/llms.txt",
-    "https://install.mosoo.ai/install.sh",
   ]) {
     assert.ok(hrefs.includes(href), `${locale} home page links ${href}`);
   }
@@ -300,14 +291,14 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, /<meta property="og:url" content="https:\/\/mosoo\.ai\/zh" \/>/);
   assert.match(zh, /<title>面向应用后端的开源 Agent runtime \| mosoo<\/title>/);
   assert.match(zh, /content="开源、API 优先的托管 Agent runtime，面向应用后端"/);
-  assert.match(zh, /<h2 id="mf-faq">开始构建前值得问的问题<\/h2>/);
-  assert.match(zh, /需要先创建或发布 Agent 吗？/);
+  assert.match(zh, /<h2 id="faq-title" class="faq-title">常见问题<\/h2>/);
+  assert.match(zh, /需要先创建 Agent 吗？/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
   assert.match(ja, /<meta property="og:url" content="https:\/\/mosoo\.ai\/ja" \/>/);
   assert.match(ja, /<title>アプリのバックエンド向けオープンソース Agent runtime \| mosoo<\/title>/);
-  assert.match(ja, /<h2 id="mf-faq">使い始める前に確認したいこと<\/h2>/);
-  assert.match(ja, /先に Agent を作成または公開する必要はありますか？/);
+  assert.match(ja, /<h2 id="faq-title" class="faq-title">よくある質問<\/h2>/);
+  assert.match(ja, /先に Agent を作成する必要はありますか？/);
   for (const html of [en, zh, ja]) {
     assert.match(html, /<link rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en" \/>/);
     assert.match(html, /<link rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh" \/>/);
@@ -323,10 +314,10 @@ test("landing locale pages receive localized canonical metadata", () => {
   }
   assertHomeSiteLinks(zh, "zh");
   assert.match(zh, />文档<\/a>/);
-  assert.match(zh, />快速开始<\/a>/);
+  assert.match(zh, />API 参考<\/a>/);
   assertHomeSiteLinks(ja, "ja");
   assert.match(ja, />ドキュメント<\/a>/);
-  assert.match(ja, />クイックスタート<\/a>/);
+  assert.match(ja, />API リファレンス<\/a>/);
 });
 
 test("the home JSON-LD graph is valid and states only what the main repo states", () => {
@@ -359,7 +350,16 @@ test("the home JSON-LD graph is valid and states only what the main repo states"
     assert.equal(app.name, "mosoo");
     assert.equal(app.url, url);
     assert.equal(app.inLanguage, HTML_LANG[locale]);
-    assert.ok(app.description.startsWith(homeHeadline(locale)), "description leads with the positioning");
+    // Decision 7: the README L8-L9 positioning is the meta description and the JSON-LD description.
+    assert.equal(app.description, homeDescription(locale));
+    const meta = /<meta\s+name="description"\s+content="([^"]+)"/.exec(html)?.[1];
+    assert.equal(decodeEntities(meta ?? ""), app.description, "meta description == JSON-LD description");
+    if (locale === "en") {
+      assert.ok(
+        app.description.startsWith("An open-source, API-first managed Agent runtime for application backends."),
+        "the en description is the README L8 sentence",
+      );
+    }
     for (const runtime of ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"]) {
       assert.ok(app.description.includes(runtime), `description names ${runtime}`);
     }
@@ -379,7 +379,7 @@ test("the home JSON-LD graph is valid and states only what the main repo states"
     assert.equal(faq.inLanguage, HTML_LANG[locale]);
     assert.deepEqual(faq.isPartOf, { "@id": "https://mosoo.ai/#website" });
     assert.deepEqual(faq.about, { "@id": "https://mosoo.ai/#software" });
-    assert.equal(faq.mainEntity.length, 10);
+    assert.equal(faq.mainEntity.length, 6);
     for (const question of faq.mainEntity) {
       assert.equal(question["@type"], "Question");
       assert.equal(question.acceptedAnswer["@type"], "Answer");
@@ -398,12 +398,22 @@ test("the FAQPage JSON-LD matches the FAQ a reader sees on the page", () => {
     const faq = nodesByType(graphOf(html)).FAQPage;
     const visible = visibleFaqOf(html);
 
-    assert.equal(visible.length, 10, `${locale} shows all 10 answers without a click`);
+    const rows = faqRowsOf(html);
+
+    assert.equal(visible.length, 6, `${locale} keeps all 6 answers in the DOM`);
     assert.deepEqual(
       faq.mainEntity.map((question) => [question.name, question.acceptedAnswer.text]),
       visible,
     );
-    assert.match(html, /<section id="faq" /, "the FAQPage @id fragment resolves on the page");
+    assert.deepEqual(
+      rows.map((row) => row.open),
+      [true, false, false, false, false, false],
+      "native details, the first one open",
+    );
+    for (const { q, a } of rows) {
+      assert.ok(a.split(/\s+/).length <= 40, `${locale} answer within 40 words: ${q}`);
+    }
+    assert.match(html, /<section class="faq" id="faq" /, "the FAQPage @id fragment resolves on the page");
   }
 });
 
@@ -411,89 +421,73 @@ test("the static home page carries the whole page for readers without JavaScript
   const en = home("en");
 
   assert.deepEqual(headingsOf(en, 2), [
-    "Pick a runtime. Use your own model key.",
-    "mosoo handles execution, files, events, and usage.",
-    "One request starts a Session. A follow-up continues it.",
-    "Your app keeps its users. mosoo runs the Agent.",
-    "The code, the releases, and the incident postmortems are public.",
-    "mosoo leaves these out on purpose.",
-    "Questions to ask before you build on mosoo",
-    "Start your first Session. Reply in a minute or in seven days.",
+    "One Session, five parts. Pick one of four harnesses.",
+    "Same Session, a week later.",
+    "Reply a minute or seven days later. Same Session.",
+    "FAQs",
+    "Start a Session from your agent.",
+    "Want the short version?",
   ]);
-  assert.match(
-    textOf(en),
-    /mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox\./,
-  );
-  assert.match(en, /It starts with <code translate="no">msp_<\/code> and is shown once\./);
-  assert.match(en, /curl https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\$MOSOO_PROJECT_ID\/threads/);
-  assert.match(en, /"type": "inline",\n\s+"harness": "openai-runtime"/);
-  assert.match(en, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
-  assert.match(en, /There are no Webhooks\./);
-  assert.match(en, /mosoo is in Alpha\. Public APIs may still change\./);
-  assert.match(en, /<details>\s*<summary>Set up with your coding agent<\/summary>/);
-  assert.match(en, /# Set up mosoo/);
-  assert.match(en, /<a href="https:\/\/cloud\.mosoo\.ai" class="mf-btn">Try mosoo<\/a>/);
+  // The statement's glyph circles sit between each name and its comma.
+  assert.match(textOf(en), /Run Codex ?, Claude Agent SDK ?, OpenCode or Pi behind one API, one sandbox each\./);
+  assert.match(en, /<span class="prompt-text" data-prompt>Read https:\/\/mosoo\.ai\/llms\.txt and set up mosoo here\.<\/span>/);
+  assert.match(en, /<a class="v4-btn v4-btn-ink v4-btn-lg hero-cta" data-hero-part href="https:\/\/cloud\.mosoo\.ai">Try mosoo<\/a>/);
+  // The pinned stage's end state is the static page: every act is in the HTML.
+  for (const act of ["1", "2", "3"]) assert.match(en, new RegExp(`data-act="${act}"`));
+  assert.equal([...en.matchAll(/<li class="fc" data-card=/g)].length, 5, "the feed has five cards");
+  assert.equal([...en.matchAll(/<i class="dot live">/g)].length, 1, "one live dot");
 
   for (const locale of LOCALES) {
     const html = home(locale);
     const headlines = headingsOf(html, 1);
 
-    assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1, the positioning`);
-    assert.deepEqual(sectionIdsOf(html), [
-      "runtimes",
-      "features",
-      "how-it-works",
-      "your-app-and-mosoo",
-      "proof",
-      "limits",
-      "faq",
-      "start",
-    ]);
-    assert.equal(headingsOf(html, 2).length, 8);
-    assert.match(html, /<main id="main">/);
-    assert.match(html, /<footer class="mf-foot">/);
-    assert.match(html, /<div id="root"><div class="mosoo-fallback">/);
-    assert.match(html, /<style>\n\.mosoo-fallback\{/);
+    assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1`);
+    assert.deepEqual(sectionClassesOf(html), ["hero", "statement", "faq", "closing"]);
+    assert.equal(headingsOf(html, 2).length, 6);
+    assert.match(html, /<main id="main" tabindex="-1">/);
+    assert.match(html, /<footer class="v4-foot">/);
+    assert.match(html, /<div id="root"><div class="v4" data-v4-home>/);
     assert.doesNotMatch(html, /mosoo:home-/, "no build marker is left");
     assert.doesNotMatch(html, RETIRED_NARRATIVE);
     assert.doesNotMatch(html, /[—–]/, "no em or en dashes");
     assert.doesNotMatch(html, /\bMosoo\b(?! Computer)/, "the brand is lowercase mosoo");
+    // Product objects are designed objects with few words (owner notes 15:04): no ULIDs, hashes,
+    // second-precision times, example-value badges or replay controls.
+    const body = /<div id="root">[\s\S]*<\/footer>/.exec(html)?.[0] ?? "";
+    assert.doesNotMatch(textOf(body), /\b[0-9A-HJKMNP-TV-Z]{26}\b/, "no ULIDs");
+    assert.doesNotMatch(textOf(body), /\b[0-9a-f]{12,}\b/, "no hashes");
+    assert.doesNotMatch(textOf(body), /\b\d{1,2}:\d{2}:\d{2}\b|\+\d+\s?s\b/, "no second-precision times");
+    assert.doesNotMatch(body, /Example values|Replay|data-surface="console"/);
   }
 });
 
-// The static fallback and the React page are written separately, so these
-// checks keep them from drifting: the same anchors, the same FAQ strings (the
-// ones the FAQPage JSON-LD carries) and the same primary navigation.
-test("the React home page and the static fallback share anchors, FAQ text and navigation", () => {
-  const landing = "apps/landing/src/routes/login/landing";
-  const sections = [
-    "supply-wall.tsx",
-    "features-section.tsx",
-    "how-it-works.tsx",
-    "split-section.tsx",
-    "proof-section.tsx",
-    "limits-section.tsx",
-    "faq-section.tsx",
-    "final-cta.tsx",
-  ]
-    .map((file) => read(`${landing}/${file}`))
-    .join("\n");
-  for (const id of sectionIdsOf(home("en"))) {
-    assert.match(sections, new RegExp(`<section id="${id}" `), `the React page has #${id} too`);
-  }
+// The home's chrome is the site's chrome (renderNav / renderFooter, also mounted by LandingShell on the
+// subpages): one primary nav without pricing (copy deck D12), and a footer whose bottom row is only the
+// language switcher and the credit (decision 6).
+test("the home nav and footer are the shared chrome: languages and the credit in the bottom row", () => {
+  const shell = read("apps/landing/src/routes/login/landing/landing-shell.tsx");
+  assert.match(shell, /renderNav/);
+  assert.match(shell, /renderFooter/);
 
-  const dictionary = read(`${landing}/i18n.ts`);
   for (const locale of LOCALES) {
-    for (const { q, a } of homeFaq(locale)) {
-      assert.ok(dictionary.includes(JSON.stringify(q)), `the React FAQ asks (${locale}): ${q}`);
-      assert.ok(dictionary.includes(JSON.stringify(a)), `the React FAQ answers (${locale}): ${q}`);
-    }
+    const html = home(locale);
+    const nav = /<nav class="v4-nav-links" aria-label="Primary site links">[\s\S]*?<\/nav>/.exec(html)?.[0] ?? "";
+    assert.match(nav, /href="https:\/\/cloud\.mosoo\.ai"/);
+    assert.match(nav, /href="https:\/\/github\.com\/langgenius\/mosoo"/);
+    assert.match(nav, new RegExp(`href="${HOME_LINKS[locale].docs.replaceAll(".", "\\.")}"`));
+    assert.doesNotMatch(nav, /\/pricing/, "the home nav does not link pricing (copy deck D12)");
 
-    const nav = /<nav aria-label="Primary site links">[\s\S]*?<\/nav>/.exec(home(locale))?.[0] ?? "";
-    assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai" translate="no">mosoo<\/a>/);
-    assert.match(nav, /<a href="https:\/\/computer\.mosoo\.ai" translate="no">Mosoo Computer<\/a>/);
-    assert.match(nav, /<a href="https:\/\/cloud\.mosoo\.ai\/login">/);
-    assert.doesNotMatch(nav, /\/pricing/, "the home page does not link pricing (copy deck D12)");
+    const bottom = /<div class="foot-bottom">[\s\S]*?<\/div>/.exec(html)?.[0] ?? "";
+    assert.deepEqual(
+      [...bottom.matchAll(/<a href="([^"]+)" hreflang="([^"]+)"/g)].map((match) => [match[1], match[2]]),
+      [
+        ["/en", "en"],
+        ["/zh", "zh-CN"],
+        ["/ja", "ja"],
+      ],
+    );
+    assert.match(bottom, new RegExp(`<a href="/${locale}" [^>]*aria-current="true"`));
+    assert.equal(textOf(/<p class="foot-credit">[\s\S]*?<\/p>/.exec(bottom)?.[0] ?? ""), "© 2026 LangGenius, Inc.");
   }
 });
 

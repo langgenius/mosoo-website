@@ -367,10 +367,14 @@ test("llms.txt direct answers repeat the FAQ on the English home page", async ()
   const section = markdown.split("\n## Direct answers\n\n")[1]?.split("\n\n## ")[0] ?? "";
 
   // llms.txt keeps ASCII apostrophes for plain-text readers; the page uses curly ones.
-  assert.deepEqual(
-    section.split("\n"),
-    homeFaq("en").map(({ q, a }) => `- ${q} ${a}`.replaceAll("’", "'")),
-  );
+  // The page's six answers come first, word for word and in order; llms.txt may add longer answers
+  // after them for agents (decision 5: page FAQ ⊆ llms.txt), but never a second answer to a page question.
+  const lines = section.split("\n");
+  const page = homeFaq("en").map(({ q, a }) => `- ${q} ${a}`.replaceAll("’", "'"));
+  assert.deepEqual(lines.slice(0, page.length), page);
+  for (const { q } of homeFaq("en")) {
+    assert.equal(lines.filter((line) => line.startsWith(`- ${q} `)).length, 1, `one answer to: ${q}`);
+  }
 });
 
 test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {

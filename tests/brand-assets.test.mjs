@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -83,19 +83,31 @@ function pngPalette(file) {
   return [];
 }
 
-test("the stage plates carry no lime; the pixel plate's accent is a separate overlay", () => {
-  for (const name of readdirSync(bamboo).filter((file) => /^bamboo-plate-(paper|pixel)-\d+\.png$/.test(file))) {
-    assert.ok(!pngPalette(join(bamboo, name)).includes("#6fd305"), `${name} has no lime`);
+// v4: the bamboo kit left the site (owner notes 2026-10-19; decision 10). Its generator stays in
+// scripts/brand-assets, but nothing it made may ship or be referenced again.
+test("the site ships no bamboo: the kit folder is gone and no landing source loads it", () => {
+  assert.equal(existsSync(bamboo), false, "apps/landing/public/landing/bamboo is deleted");
+  const sources = [];
+  const walk = (dir) => {
+    for (const name of readdirSync(dir)) {
+      const path = join(dir, name);
+      if (statSync(path).isDirectory()) walk(path);
+      else if (/\.(tsx?|css|html|mjs)$/.test(name)) sources.push(path);
+    }
+  };
+  walk(join(root, "apps/landing/src"));
+  for (const page of readdirSync(join(root, "apps/landing")).filter((name) => name.endsWith(".html"))) {
+    sources.push(join(root, "apps/landing", page));
   }
-  for (const width of [1200, 2400]) {
-    assert.deepEqual(pngPalette(join(bamboo, `bamboo-plate-pixel-accent-${width}.png`)), ["#000000", "#6fd305"]);
+  for (const path of sources) {
+    assert.doesNotMatch(readFileSync(path, "utf8"), /landing\/bamboo|bamboo-(plate|node|sea|sky|grove)/i, path);
   }
 });
 
 test("MANIFEST.md lists every brand kit file with its current size", () => {
   const manifest = readFileSync(join(root, "scripts/brand-assets/MANIFEST.md"), "utf8");
+  // The bamboo rows describe the generator's output, which the site no longer ships (see above).
   const files = [
-    ...readdirSync(bamboo).map((name) => `apps/landing/public/landing/bamboo/${name}`),
     ...readdirSync(fonts).filter((name) => name.startsWith("Literata")).map((name) => `apps/landing/public/fonts/${name}`),
     "apps/landing/src/shared/styles/literata.css",
   ];
