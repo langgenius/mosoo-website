@@ -170,15 +170,17 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   line-height: 1.32;
 }
 
-/* zh: break only at spaces and at the dictionary's <wbr> phrase marks. */
-:lang(zh) .ct-page :is(.ct-h1, .ct-h2, .ct-h3) {
+/* Titles in zh and ja break only at spaces and at the dictionary's <wbr>
+   phrase marks. */
+:lang(zh) .ct-page :is(.ct-h1, .ct-h2, .ct-h3),
+:lang(ja) .ct-page :is(.ct-h1, .ct-h2) {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
 
-/* ja: phrase-aware breaking where supported (Chrome 119+), else normal
-   kinsoku line breaking. */
-:lang(ja) .ct-page :is(.ct-h1, .ct-h2, .ct-h3) {
+/* ja questions and labels carry no marks: phrase-aware breaking where
+   supported (Chrome 119+), else normal kinsoku line breaking. */
+:lang(ja) .ct-page .ct-h3 {
   word-break: auto-phrase;
 }
 

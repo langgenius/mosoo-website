@@ -6,7 +6,7 @@ import { locale } from "@/shared/locale";
 
 import { docsUrl, MOSOO_CLOUD_URL, MOSOO_GITHUB_URL } from "../links";
 import { t } from "./above-fold-i18n";
-import { Exhibit, Seal, useCommitSeal } from "./contract-ui";
+import { Exhibit, Phrases, Seal, useCommitSeal } from "./contract-ui";
 
 // Terms that must not break across lines inside the translated title.
 const KEEP_TOGETHER = /(Agent runtime|API ファースト|API 优先)/;
@@ -23,7 +23,9 @@ function KeepTerms({ text }: { text: string }): ReactElement {
             {part}
           </span>
         ) : (
-          <Fragment key={index}>{part}</Fragment>
+          <Fragment key={index}>
+            <Phrases text={part} />
+          </Fragment>
         ),
       )}
     </>

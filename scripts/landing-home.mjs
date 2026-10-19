@@ -812,19 +812,19 @@ const COPY = {
       exhibit3Caption: "図 1 の裏にある 2 つのリクエスト。input.csv をアップロードし、そのファイルを添付して Session を開始します。",
       example: "サンプル値",
       committed: "コミット済み",
-      durabilityTitle: "7 日後の返信も、同じ Session で続きます。",
+      durabilityTitle: "7 日後の返信も、|同じ Session で続きます。",
       specQuote: "モデルやツールの実行が終わっただけでは成功ではない。",
       keysTitle: "プロバイダーキーは sandbox に入りません。",
-      runtimesTitle: "各 Session は runtime、モデル、プロトコルを固定します。",
+      runtimesTitle: "各 Session は runtime、|モデル、|プロトコルを|固定します。",
       anthropicModels: "Anthropic のモデル",
       textInput: "テキスト入力のみ",
       supported: "対応",
       notSupported: "非対応",
-      limitsTitle: "製品仕様には、mosoo が約束することとやらないことが書かれています。",
+      limitsTitle: "製品仕様には、|mosoo が約束することと|やらないことが|書かれています。",
       promised: "約束していること",
       notProvided: "提供しないもの",
-      proofTitle: "ソースコード、リリース、事後分析は公開されています。",
-      startTitle: "初回ログイン時にデフォルトプロジェクトが作成されます。",
+      proofTitle: "ソースコード、|リリース、|事後分析は|公開されています。",
+      startTitle: "初回ログイン時に|デフォルトプロジェクトが|作成されます。",
       consoleBody: "メールアドレスまたは Google でログインします。プロバイダーキーを追加したら、Session を開始できます。",
     },
     docs: `${SITE}/docs/ja/`,
@@ -1646,7 +1646,8 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback h3{margin-top:24px;font-size:1.08em;line-height:1.4;font-weight:600}
 .mosoo-fallback:lang(zh) :is(h1,h2),.mosoo-fallback:lang(ja) :is(h1,h2){letter-spacing:0;line-height:1.32;font-weight:600}
 .mosoo-fallback:lang(zh) :is(h1,h2,h3){word-break:keep-all;overflow-wrap:anywhere}
-.mosoo-fallback:lang(ja) :is(h1,h2,h3){word-break:auto-phrase}
+.mosoo-fallback:lang(ja) h2{word-break:keep-all;overflow-wrap:anywhere}
+.mosoo-fallback:lang(ja) :is(h1,h3){word-break:auto-phrase}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{font-size:clamp(28px,3vw,44px)}
 .mosoo-fallback:lang(ja) h1{font-size:clamp(27px,2.7vw,39px)}
 .mosoo-fallback:lang(zh) h2,.mosoo-fallback:lang(ja) h2{font-size:clamp(24px,2.2vw,31px)}

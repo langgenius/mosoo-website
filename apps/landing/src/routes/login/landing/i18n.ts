@@ -513,7 +513,7 @@ const JA_MESSAGES = {
   "Copy failed.":
     "コピーに失敗しました。",
   "Your app keeps its users. mosoo runs the Agent.":
-    "ユーザーはアプリが持ち、Agent は mosoo が動かす",
+    "ユーザーはアプリが持ち、|Agent は mosoo が動かす",
   "This split comes straight from the product spec.":
     "この役割分担は、製品仕様そのままです。",
   "Your app keeps":
@@ -669,7 +669,7 @@ const JA_MESSAGES = {
   "That’s Mosoo Computer, a separate product.":
     "それは別のプロダクト、Mosoo Computer の領域です。",
   "Questions to ask before you build on mosoo":
-    "使い始める前に確認したいこと",
+    "使い始める前に|確認したいこと",
   "Start your first Session":
     "最初の Session を始める",
   "In the console":
@@ -740,7 +740,7 @@ const JA_MESSAGES = {
   "Model or tool execution ending is not success.":
     "モデルやツールの実行が終わっただけでは成功ではない。",
   "A reply seven days later continues the same Session.":
-    "7 日後の返信も、同じ Session で続きます。",
+    "7 日後の返信も、|同じ Session で続きます。",
   "Exhibit 2.":
     "図 2",
   "The same Session seven days later. The sandbox was reclaimed while idle, turn 2 restored the last checkpoint, and both outputs carry the same private_nonce_sha256. Turn 3 was cancelled, so turn 2 stays the last committed checkpoint.":
@@ -752,7 +752,7 @@ const JA_MESSAGES = {
   "The two requests behind Exhibit 1: upload input.csv, then start a Session with the file attached.":
     "図 1 の裏にある 2 つのリクエスト。input.csv をアップロードし、そのファイルを添付して Session を開始します。",
   "Each Session freezes its runtime, model, and protocol.":
-    "各 Session は runtime、モデル、プロトコルを固定します。",
+    "各 Session は runtime、|モデル、|プロトコルを|固定します。",
   "Anthropic models":
     "Anthropic のモデル",
   "Text input":
@@ -762,15 +762,15 @@ const JA_MESSAGES = {
   "Not supported":
     "非対応",
   "The spec lists what mosoo promises and what it doesn’t do.":
-    "製品仕様には、mosoo が約束することとやらないことが書かれています。",
+    "製品仕様には、|mosoo が約束することと|やらないことが|書かれています。",
   "Promised":
     "約束していること",
   "Not provided":
     "提供しないもの",
   "The source, the releases, and the postmortems are public.":
-    "ソースコード、リリース、事後分析は公開されています。",
+    "ソースコード、|リリース、|事後分析は|公開されています。",
   "Your first sign-in creates a Default Project.":
-    "初回ログイン時にデフォルトプロジェクトが作成されます。",
+    "初回ログイン時に|デフォルトプロジェクトが|作成されます。",
   "Sign in with email or Google. Add a provider key, then start a Session.":
     "メールアドレスまたは Google でログインします。プロバイダーキーを追加したら、Session を開始できます。",
 } satisfies Record<Message, string>;

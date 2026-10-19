@@ -24,7 +24,7 @@ type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
   "An open-source, API-first managed Agent runtime for application backends.":
-    "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
+    "アプリケーションの|バックエンドのための、|オープンソースで API ファーストな|マネージド Agent runtime",
   "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.":
     "mosoo は OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行します。Session ごとに専用の sandbox が割り当てられます。",
   "Try mosoo": "mosoo を試す",
