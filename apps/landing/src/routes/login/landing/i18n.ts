@@ -6,6 +6,32 @@ import { locale } from "@/shared/locale";
 // questions and answers are the same strings the FAQPage JSON-LD and llms.txt
 // use, so humans and crawlers read identical answers; change them together.
 const ZH_MESSAGES = {
+  "A follow-up 7 days later continues the same Session":
+    "7 天后的后续消息，仍在同一个 Session 里继续",
+  "Turn 2 finds `input.csv` and `.private/nonce` where turn 1 left them. The backend sends only the new message.":
+    "第 2 轮在第 1 轮留下的位置找到 `input.csv` 和 `.private/nonce`。后端只需发送新的消息。",
+  "One Thread in the console: turn 1, 7 idle days, turn 2 from the checkpoint, and a cancelled turn 3.":
+    "控制台里的同一个 Thread：第 1 轮，闲置 7 天，第 2 轮从检查点恢复，第 3 轮被取消。",
+  "Runtime and model are separate choices, checked before anything runs":
+    "runtime 和模型分开选择，执行前先校验",
+  "Click a runtime: the model list keeps only the models its protocols can serve.":
+    "点选一个 runtime：模型列表只保留它支持的协议能调用的模型。",
+  "Turn 1’s events in the console, in the order mosoo saved them.":
+    "控制台里第 1 轮的事件，按 mosoo 保存的顺序排列。",
+  "Provider keys never enter the sandbox":
+    "模型供应商密钥从不进入 sandbox",
+  "Drawn from the product spec and the architecture notes. The console has no such screen.":
+    "根据产品规格和架构文档绘制，控制台里没有这个界面。",
+  "One request starts a Session and its first turn":
+    "一个请求启动 Session 和它的第一个 turn",
+  "Your backend uploads `input.csv`, then starts a Session with the file attached.":
+    "你的后端先上传 `input.csv`，再启动一个附带该文件的 Session。",
+  "The code, releases, status, and postmortems are public":
+    "代码、版本、状态和事故复盘都是公开的",
+  "Some things are out of scope on purpose":
+    "有些事，mosoo 刻意不做",
+  "The fastest way to try mosoo is the hosted console":
+    "试用 mosoo 最快的方式是托管控制台",
   "Pick a runtime. Use your own model key.":
     "选一个 runtime，用你自己的模型密钥。",
   "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
@@ -355,6 +381,32 @@ const ZH_MESSAGES = {
 type Message = keyof typeof ZH_MESSAGES;
 
 const JA_MESSAGES = {
+  "A follow-up 7 days later continues the same Session":
+    "7 日後のフォローアップも、同じ Session で続きます",
+  "Turn 2 finds `input.csv` and `.private/nonce` where turn 1 left them. The backend sends only the new message.":
+    "2 ターン目は、1 ターン目が残した場所で `input.csv` と `.private/nonce` を見つけます。バックエンドが送るのは新しいメッセージだけです。",
+  "One Thread in the console: turn 1, 7 idle days, turn 2 from the checkpoint, and a cancelled turn 3.":
+    "コンソールで見た 1 つの Thread：1 ターン目、7 日間のアイドル、チェックポイントから再開した 2 ターン目、キャンセルされた 3 ターン目。",
+  "Runtime and model are separate choices, checked before anything runs":
+    "runtime とモデルは別々に選び、実行前に検証されます",
+  "Click a runtime: the model list keeps only the models its protocols can serve.":
+    "runtime をクリックすると、そのプロトコルで使えるモデルだけが一覧に残ります。",
+  "Turn 1’s events in the console, in the order mosoo saved them.":
+    "コンソールに表示される 1 ターン目のイベント。mosoo が保存した順に並んでいます。",
+  "Provider keys never enter the sandbox":
+    "プロバイダーキーは sandbox に入りません",
+  "Drawn from the product spec and the architecture notes. The console has no such screen.":
+    "製品仕様とアーキテクチャ文書をもとに描いた図です。コンソールにこの画面はありません。",
+  "One request starts a Session and its first turn":
+    "1 つのリクエストで Session と最初の turn が始まります",
+  "Your backend uploads `input.csv`, then starts a Session with the file attached.":
+    "バックエンドは `input.csv` をアップロードし、そのファイルを添付して Session を開始します。",
+  "The code, releases, status, and postmortems are public":
+    "コード、リリース、ステータス、事故の振り返りはすべて公開されています",
+  "Some things are out of scope on purpose":
+    "mosoo が意図して扱わないこと",
+  "The fastest way to try mosoo is the hosted console":
+    "mosoo を試す一番の近道はホスト型コンソールです",
   "Pick a runtime. Use your own model key.":
     "runtime を選び、自分のモデルキーを使う",
   "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":

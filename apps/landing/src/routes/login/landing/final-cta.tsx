@@ -6,7 +6,7 @@ import { MOSOO_CLOUD_URL, MOSOO_INSTALL_COMMAND, MOSOO_INSTALL_SCRIPT_URL } from
 import { CopyButton } from "./copy-button";
 import { t } from "./i18n";
 import { SETUP_PROMPT } from "./setup-prompt";
-import { sectionHeadingStyle } from "./typography";
+import { stageHeadingStyle } from "./typography";
 
 /**
  * Copy deck §11: say what happens on click, then offer the two ways in the
@@ -19,8 +19,8 @@ export function FinalCta(): ReactElement {
 
   return (
     <section id="start" aria-labelledby="start-title" className="px-4 py-20 md:px-6 md:py-24">
-      <h2 id="start-title" className="text-ink-900 [text-wrap:balance]" style={sectionHeadingStyle}>
-        {t("Start your first Session")}
+      <h2 id="start-title" className="stage-heading text-ink-900 max-w-[18em] [text-wrap:balance]" style={stageHeadingStyle}>
+        {t("The fastest way to try mosoo is the hosted console")}
       </h2>
 
       <div className="border-border-strong mt-10 grid grid-cols-1 overflow-hidden rounded-[14px] border md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">

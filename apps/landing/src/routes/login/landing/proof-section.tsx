@@ -159,7 +159,7 @@ export function ProofSection(): ReactElement {
     <section id="proof" aria-labelledby="proof-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="proof-title"
-        title={t("What you can check for yourself")}
+        title={t("The code, releases, status, and postmortems are public")}
         intro={t(
           "mosoo is in Alpha. What you can check today is the code, the releases, production status, and two projects built on it.",
         )}

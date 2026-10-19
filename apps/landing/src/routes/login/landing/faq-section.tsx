@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 
 import { FAQ_MESSAGES, t } from "./i18n";
-import { sectionHeadingStyle } from "./typography";
+import { stageHeadingStyle } from "./typography";
 import { WithCodeTokens } from "./ui";
 
 // API names styled as code inside the answers. Only presentation changes: the
@@ -27,7 +27,7 @@ export function FaqSection(): ReactElement {
           <h2
             id="faq-title"
             className="text-ink-900 [text-wrap:balance] md:sticky md:top-24"
-            style={sectionHeadingStyle}
+            style={stageHeadingStyle}
           >
             {t("Questions to ask before you build on mosoo")}
           </h2>

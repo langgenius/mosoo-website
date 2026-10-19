@@ -35,26 +35,40 @@ const LINKS = {
 
 const INSTALL_COMMAND = "curl -fsSL https://install.mosoo.ai/install.sh | bash";
 
-// The v2 inline request from the copy deck (How it works). Code stays ASCII.
+// The two calls of the one example story (product kit API_CALLS, from the
+// mosoo repo's scripts/public-api-session-workflow.ts): upload input.csv, then
+// start a Session with it attached. Code stays ASCII.
+const UPLOAD_REQUEST = [
+  "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\",
+  '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
+  '  -F "file=@input.csv"',
+].join("\n");
+
 const START_SESSION_REQUEST = [
   "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/threads \\",
   '  -H "Authorization: Bearer $MOSOO_API_TOKEN" \\',
   '  -H "Content-Type: application/json" \\',
-  '  -H "Idempotency-Key: report-001" \\',
+  '  -H "Idempotency-Key: csv-report-create" \\',
   "  -d '{",
   '    "configuration": {',
   '      "type": "inline",',
   '      "harness": "openai-runtime",',
   '      "provider": "openai",',
   '      "model": "gpt-5.5",',
-  '      "instructions": "Analyze the supplied material and save the results."',
+  '      "instructions": "Use tools to analyze files, verify results and retain private working state for follow-up."',
   "    },",
   '    "input": {',
   '      "type": "user.message",',
-  '      "content": [{ "type": "text", "text": "Create an analysis report." }]',
-  "    }",
+  '      "content": [{ "type": "text", "text": "Use real Python tools to read the attached input.csv and copy it into the working directory for analysis. Generate a random private nonce in .private/nonce outside outputs. Write outputs/initial.json with grand_total and private_nonce_sha256 (hash the raw file bytes). Save outputs/report.md and outputs/chart.svg. Keep input.csv and the nonce for our next turn. Do not return success if any tool fails." }]',
+  "    },",
+  '    "resources": [',
+  '      { "type": "file", "file_id": "01M4QP7S669BBSX12Z2564J5F7" }',
+  "    ]",
   "  }'",
 ].join("\n");
+
+// Turn 1's artifacts, as the hero's outputs tray lists them.
+const TURN_1_FILES = ["outputs/chart.svg", "outputs/report.md", "outputs/initial.json"];
 
 const RUNTIMES = [
   { name: "OpenAI Codex", id: "openai-runtime" },
@@ -259,14 +273,6 @@ const COPY = {
       subhead:
         "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
       agentLabel: "Set up with your coding agent",
-      agentLine:
-        "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
-    },
-    visual: {
-      caption: "A CSV analysis, started on day 1 and continued 2 days later in the same Session.",
-      badge: "Example values. Field names and event types come from the v2 OpenAPI document.",
-      description:
-        "Example Session record. Your backend sends one request with a CSV attachment. mosoo streams events while the Agent runs Python in the sandbox and saves a report, a chart, and a data file under outputs/. Two days later the backend sends a follow-up to the same Thread. The sandbox had been reclaimed in between, so mosoo restores the working directory and the conversation from the last checkpoint, and the Agent updates the report.",
     },
     wall: {
       title: "Pick a runtime. Use your own model key.",
@@ -359,31 +365,6 @@ const COPY = {
       apiReference: "Open the v2 API reference",
       note: "Model IDs change often. Check the models available in your Project before you copy this.",
     },
-    split: {
-      title: "Your app keeps its users. mosoo runs the Agent.",
-      intro: "This split comes straight from the product spec.",
-      app: "Your app keeps",
-      mosoo: "mosoo runs",
-      appRows: [
-        ["Business logic", "What the task is for and what happens to the result"],
-        ["End-user authentication", "mosoo never signs your users in"],
-        ["Business queues", "When work starts and in what order"],
-        ["Result validation", "You decide whether the report is right"],
-        ["Business storage", "Keep the `thread.id` and whatever you extract"],
-        ["UI", "Your product, your screens"],
-      ],
-      mosooRows: [
-        ["Agent execution", "The harness runs each turn: model calls, code, tools"],
-        ["Sandboxing", "One sandbox per Session, never shared"],
-        ["Durable continuation", "Follow-ups restore the last checkpoint"],
-        ["Input files and artifacts", "Attachments in, `outputs/` out"],
-        ["Events", "Saved first, then streamed over SSE"],
-        ["Usage measurement", "One record per model call"],
-        ["Runtime cleanup", "Idle sandboxes are reclaimed; the Session’s state stays"],
-      ],
-      footnote:
-        "mosoo doesn’t authenticate your end users. If your MCP servers need to know who asked, label the Thread with your own `userId`.",
-    },
     proof: {
       title: "What you can check for yourself",
       intro:
@@ -449,6 +430,24 @@ const COPY = {
         ["An online file editor or file manager", "Upload inputs and download artifacts through the API."],
         ["Chat channels or a personal cloud computer", "That’s Mosoo Computer, a separate product."],
       ],
+    },
+    stage: {
+      example: "Example values",
+      heroCaption: "Turn 1 in the console Preview: the Agent reads input.csv and saves a report and a chart.",
+      heroFiles: "Saved files",
+      continueTitle: "A follow-up 7 days later continues the same Session",
+      continueNote: "Turn 2 finds `input.csv` and `.private/nonce` where turn 1 left them. The backend sends only the new message.",
+      continueCaption: "One Thread in the console: turn 1, 7 idle days, turn 2 from the checkpoint, and a cancelled turn 3.",
+      beats: ["Turn 1: `outputs/initial.json`, grand_total 230", "7 days later · Sandbox reclaimed while idle", "Restored from the last checkpoint · Same thread.id", "Turn 2: `outputs/followup.json`, grand_total 250", "Same private_nonce_sha256", "Turn 2 stays the last committed checkpoint."],
+      runtimesTitle: "Runtime and model are separate choices, checked before anything runs",
+      turnsCaption: "Turn 1’s events in the console, in the order mosoo saved them.",
+      keysTitle: "Provider keys never enter the sandbox",
+      stepsTitle: "One request starts a Session and its first turn",
+      stepsIntro: "Your backend uploads `input.csv`, then starts a Session with the file attached.",
+      uploadLabel: "Upload input.csv",
+      proofTitle: "The code, releases, status, and postmortems are public",
+      limitsTitle: "Some things are out of scope on purpose",
+      startTitle: "The fastest way to try mosoo is the hosted console",
     },
     faqTitle: "Questions to ask before you build on mosoo",
     final: {
@@ -526,14 +525,6 @@ const COPY = {
       subhead:
         "mosoo 用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。",
       agentLabel: "使用编码智能体设置",
-      agentLine:
-        "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
-    },
-    visual: {
-      caption: "示例：第 1 天开始一项 CSV 分析，2 天后在同一个 Session 里继续。",
-      badge: "示例数据。字段名和事件类型来自 v2 OpenAPI 文档。",
-      description:
-        "示例 Session 记录。你的后端发送一个带 CSV 附件的请求。Agent 在 sandbox 中运行 Python，mosoo 实时推送事件，并把报告、图表和数据文件保存到 outputs/ 下。2 天后，后端向同一个 Thread 发送后续消息。这期间 sandbox 已被回收，mosoo 从最近一次检查点恢复工作目录和对话，Agent 随后更新了报告。",
     },
     wall: {
       title: "选一个 runtime，用你自己的模型密钥。",
@@ -624,31 +615,6 @@ const COPY = {
       apiReference: "查看 v2 API 参考",
       note: "模型 ID 经常变化，复制前请先确认你的项目里有哪些可用模型。",
     },
-    split: {
-      title: "你的应用管用户，mosoo 运行 Agent。",
-      intro: "这个分工直接来自产品规格。",
-      app: "你的应用负责",
-      mosoo: "mosoo 负责",
-      appRows: [
-        ["业务逻辑", "任务为什么做，结果怎么用"],
-        ["终端用户认证", "mosoo 不替你的用户登录"],
-        ["业务队列", "什么时候开始、按什么顺序"],
-        ["结果校验", "报告对不对，由你判断"],
-        ["业务存储", "保存 `thread.id` 和你提取的结果"],
-        ["界面", "你的产品，你的页面"],
-      ],
-      mosooRows: [
-        ["Agent 执行", "harness 运行每个 turn：模型调用、代码、工具"],
-        ["sandbox 隔离", "每个 Session 一个 sandbox，从不共享"],
-        ["持久续接", "后续消息从最近一次检查点恢复"],
-        ["输入文件与产出物", "附件进，`outputs/` 出"],
-        ["事件", "先保存，再通过 SSE 推送"],
-        ["用量计量", "每次模型调用一条记录"],
-        ["运行时清理", "闲置的 sandbox 会被回收，Session 的状态保留"],
-      ],
-      footnote:
-        "mosoo 不认证你的终端用户。如果你的 MCP 服务器需要知道是谁发起的请求，可以给 Thread 标上你自己的 `userId`。",
-    },
     proof: {
       title: "你可以亲自核实的内容",
       intro:
@@ -705,6 +671,24 @@ const COPY = {
         ["在线文件编辑器或文件管理器", "通过 API 上传输入文件、下载产出物。"],
         ["聊天渠道或个人云端计算机", "这属于另一款产品 Mosoo Computer。"],
       ],
+    },
+    stage: {
+      example: "示例数据",
+      heroCaption: "控制台预览里的第 1 轮：Agent 读取 input.csv，保存一份报告和一张图表。",
+      heroFiles: "已保存的文件",
+      continueTitle: "7 天后的后续消息，仍在同一个 Session 里继续",
+      continueNote: "第 2 轮在第 1 轮留下的位置找到 `input.csv` 和 `.private/nonce`。后端只需发送新的消息。",
+      continueCaption: "控制台里的同一个 Thread：第 1 轮，闲置 7 天，第 2 轮从检查点恢复，第 3 轮被取消。",
+      beats: ["第 1 轮：`outputs/initial.json`，grand_total 230", "7 天后 · sandbox 闲置后已回收", "从最近一次检查点恢复 · 同一个 thread.id", "第 2 轮：`outputs/followup.json`，grand_total 250", "private_nonce_sha256 相同", "第 2 轮仍是最近一次提交的检查点。"],
+      runtimesTitle: "runtime 和模型分开选择，执行前先校验",
+      turnsCaption: "控制台里第 1 轮的事件，按 mosoo 保存的顺序排列。",
+      keysTitle: "模型供应商密钥从不进入 sandbox",
+      stepsTitle: "一个请求启动 Session 和它的第一个 turn",
+      stepsIntro: "你的后端先上传 `input.csv`，再启动一个附带该文件的 Session。",
+      uploadLabel: "上传 input.csv",
+      proofTitle: "代码、版本、状态和事故复盘都是公开的",
+      limitsTitle: "有些事，mosoo 刻意不做",
+      startTitle: "试用 mosoo 最快的方式是托管控制台",
     },
     faqTitle: "开始构建前值得问的问题",
     final: {
@@ -775,14 +759,6 @@ const COPY = {
       subhead:
         "mosoo は OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行します。Session ごとに専用の sandbox が割り当てられます。",
       agentLabel: "コーディングエージェントでセットアップ",
-      agentLine:
-        "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
-    },
-    visual: {
-      caption: "例：1 日目に始めた CSV 分析を、2 日後に同じ Session で続ける。",
-      badge: "サンプル値です。フィールド名とイベントタイプは v2 OpenAPI ドキュメントに基づいています。",
-      description:
-        "Session 記録の例です。バックエンドが CSV を添付したリクエストを 1 つ送ります。Agent が sandbox 内で Python を実行するあいだ、mosoo はイベントを配信し、レポート、グラフ、データファイルを outputs/ に保存します。2 日後、バックエンドは同じ Thread にフォローアップを送ります。その間に sandbox は回収されていたため、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元し、Agent がレポートを更新します。",
     },
     wall: {
       title: "runtime を選び、自分のモデルキーを使う",
@@ -875,31 +851,6 @@ const COPY = {
       apiReference: "v2 API リファレンスを開く",
       note: "モデル ID はよく変わります。コピーする前に、プロジェクトで使えるモデルを確認してください。",
     },
-    split: {
-      title: "ユーザーはアプリが持ち、Agent は mosoo が動かす",
-      intro: "この役割分担は、製品仕様そのままです。",
-      app: "アプリが担うこと",
-      mosoo: "mosoo が担うこと",
-      appRows: [
-        ["ビジネスロジック", "タスクの目的と、結果の使い道"],
-        ["エンドユーザー認証", "mosoo がユーザーをログインさせることはありません"],
-        ["業務キュー", "いつ、どの順で始めるか"],
-        ["結果の検証", "レポートが正しいかを判断する"],
-        ["業務データの保存", "`thread.id` と抽出した結果を保存する"],
-        ["UI", "あなたのプロダクトの画面"],
-      ],
-      mosooRows: [
-        ["Agent の実行", "harness が turn ごとにモデル呼び出し、コード、ツールを実行"],
-        ["sandbox による分離", "Session ごとに 1 つ、共有しない"],
-        ["永続的な継続", "フォローアップは最後のチェックポイントから復元"],
-        ["入力ファイルと成果物", "添付ファイルを受け取り、`outputs/` を返す"],
-        ["イベント", "保存してから SSE で配信"],
-        ["使用量の計測", "モデル呼び出しごとに 1 件"],
-        ["runtime の後片付け", "アイドルの sandbox は回収し、Session の状態は残す"],
-      ],
-      footnote:
-        "mosoo はエンドユーザーを認証しません。MCP サーバーが依頼者を知る必要がある場合は、Thread に独自の `userId` を付けてください。",
-    },
     proof: {
       title: "自分で確かめられること",
       intro:
@@ -968,6 +919,24 @@ const COPY = {
         ],
         ["チャットチャネルや個人用のクラウドコンピューター", "それは別のプロダクト、Mosoo Computer の領域です。"],
       ],
+    },
+    stage: {
+      example: "サンプル値",
+      heroCaption: "コンソールのプレビューで見る 1 ターン目：Agent が input.csv を読み、レポートとグラフを保存します。",
+      heroFiles: "保存されたファイル",
+      continueTitle: "7 日後のフォローアップも、同じ Session で続きます",
+      continueNote: "2 ターン目は、1 ターン目が残した場所で `input.csv` と `.private/nonce` を見つけます。バックエンドが送るのは新しいメッセージだけです。",
+      continueCaption: "コンソールで見た 1 つの Thread：1 ターン目、7 日間のアイドル、チェックポイントから再開した 2 ターン目、キャンセルされた 3 ターン目。",
+      beats: ["1 ターン目：`outputs/initial.json`、grand_total 230", "7 日後 · アイドル中に sandbox を回収", "最後のチェックポイントから復元 · 同じ thread.id", "2 ターン目：`outputs/followup.json`、grand_total 250", "同じ private_nonce_sha256", "最後にコミットされたチェックポイントは 2 ターンのままです。"],
+      runtimesTitle: "runtime とモデルは別々に選び、実行前に検証されます",
+      turnsCaption: "コンソールに表示される 1 ターン目のイベント。mosoo が保存した順に並んでいます。",
+      keysTitle: "プロバイダーキーは sandbox に入りません",
+      stepsTitle: "1 つのリクエストで Session と最初の turn が始まります",
+      stepsIntro: "バックエンドは `input.csv` をアップロードし、そのファイルを添付して Session を開始します。",
+      uploadLabel: "input.csv をアップロード",
+      proofTitle: "コード、リリース、ステータス、事故の振り返りはすべて公開されています",
+      limitsTitle: "mosoo が意図して扱わないこと",
+      startTitle: "mosoo を試す一番の近道はホスト型コンソールです",
     },
     faqTitle: "使い始める前に確認したいこと",
     final: {
@@ -1118,37 +1087,54 @@ function renderHero(copy) {
   return `<section class="mf-hero" aria-labelledby="mf-title">
 <h1 id="mf-title">${title}</h1>
 <p class="mf-lead">${inline(copy.hero.subhead)}</p>
-<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)} ${link(LINKS.github, copy.cta.source)}</p>
+<p class="mf-row mf-actions">${link(LINKS.console, copy.cta.primary, ' class="mf-btn"')} ${link(copy.quickstart, copy.cta.quickstart)}</p>
 <p class="mf-muted">${inline(copy.alpha)}</p>
-<div class="mf-agent">
-<p><strong>${inline(copy.hero.agentLabel)}</strong></p>
-<p>${inline(copy.hero.agentLine)}</p>
-${codeBlock(INSTALL_COMMAND)}
-<p>${link(LINKS.installScript, copy.cta.readScript)}</p>
-</div>
 </section>`;
 }
 
+// The hero's product stage in its final state: turn 1's saved files.
 function renderVisual(copy) {
+  const files = TURN_1_FILES.map((path) => `<li><code translate="no">${path}</code></li>`).join("");
   return `<figure class="mf-figure">
-<figcaption>${inline(copy.visual.caption)}</figcaption>
-<p class="mf-muted">${inline(copy.visual.badge)}</p>
-<p>${inline(copy.visual.description)}</p>
+<p class="mf-muted">${inline(copy.stage.example)}</p>
+<p>grand_total 230</p>
+<ul class="mf-row mf-chips" aria-label="${escapeAttribute(copy.stage.heroFiles)}">${files}</ul>
+<figcaption>${inline(copy.stage.heroCaption)}</figcaption>
 </figure>`;
+}
+
+function renderContinue(copy) {
+  const followUp = copy.features.items[2];
+  const beats = copy.stage.beats.map((beat) => `<li>${inline(beat)}</li>`).join("\n");
+  return `<section id="continue" aria-labelledby="mf-continue">
+<h2 id="mf-continue">${inline(copy.stage.continueTitle)}</h2>
+<p class="mf-intro">${inline(followUp.body)}</p>
+<p>${inline(copy.stage.continueNote)}</p>
+<p class="mf-muted">${inline(followUp.proof)}</p>
+<figure class="mf-figure">
+<p class="mf-muted">${inline(copy.stage.example)}</p>
+<ol class="mf-steps">
+${beats}
+</ol>
+<figcaption>${inline(copy.stage.continueCaption)}</figcaption>
+</figure>
+</section>`;
 }
 
 function renderWall(copy) {
   const wall = copy.wall;
+  const runtime = copy.features.items[1];
   const rows = RUNTIMES.map(
-    (runtime) =>
-      `<tr><td>${inline(runtime.name)}</td><td><code translate="no">${runtime.id}</code></td><td>${inline(wall.protocolsByRuntime[runtime.id])}</td></tr>`,
+    (item) =>
+      `<tr><td>${inline(item.name)}</td><td><code translate="no">${item.id}</code></td><td>${inline(wall.protocolsByRuntime[item.id])}</td></tr>`,
   ).join("\n");
   const providers = [...PROVIDERS, wall.customProvider].map((name) => `<li>${inline(name)}</li>`).join("");
   const protocols = PROTOCOLS.map((name) => `<li>${inline(name)}</li>`).join("");
 
   return `<section id="runtimes" aria-labelledby="mf-runtimes">
-<h2 id="mf-runtimes">${inline(wall.title)}</h2>
-<p class="mf-intro">${inline(wall.intro)}</p>
+<h2 id="mf-runtimes">${inline(copy.stage.runtimesTitle)}</h2>
+<p class="mf-intro">${inline(runtime.body)}</p>
+<p class="mf-muted">${inline(runtime.proof)}</p>
 <h3>${inline(wall.runtimes)}</h3>
 <div class="mf-table"><table>
 <thead><tr>${wall.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
@@ -1164,30 +1150,27 @@ ${wall.notes.map((note) => `<p class="mf-muted">${inline(note)}</p>`).join("\n")
 </section>`;
 }
 
-function renderFeatures(copy) {
-  const features = copy.features;
-  const items = features.items
-    .map(
-      (item) => `<li>
-<h3>${inline(item.title)}</h3>
-<p>${inline(item.body)}</p>
-<p class="mf-muted">${inline(item.proof)}</p>
-</li>`,
-    )
-    .join("\n");
+function renderTurns(copy) {
+  const turn = copy.features.items[3];
+  return `<section id="turns" aria-labelledby="mf-turns">
+<h2 id="mf-turns">${inline(turn.title)}</h2>
+<p class="mf-intro">${inline(turn.body)}</p>
+<p class="mf-muted">${inline(turn.proof)}</p>
+</section>`;
+}
 
-  return `<section id="features" aria-labelledby="mf-features">
-<h2 id="mf-features">${inline(features.title)}</h2>
-<p class="mf-intro">${inline(features.intro)}</p>
-<ul class="mf-grid">
-${items}
-</ul>
-<p>${link(LINKS.spec, features.spec)}</p>
+function renderKeys(copy) {
+  const keys = copy.features.items[4];
+  return `<section id="keys" aria-labelledby="mf-keys">
+<h2 id="mf-keys">${inline(copy.stage.keysTitle)}</h2>
+<p class="mf-intro">${inline(keys.body)}</p>
+<p class="mf-muted">${inline(keys.proof)}</p>
 </section>`;
 }
 
 function renderSteps(copy) {
   const steps = copy.steps;
+  const files = copy.features.items[5];
   const items = steps.items
     .map(
       (item) => `<li>
@@ -1199,43 +1182,22 @@ function renderSteps(copy) {
     .join("\n");
 
   return `<section id="how-it-works" aria-labelledby="mf-steps">
-<h2 id="mf-steps">${inline(steps.title)}</h2>
-<p class="mf-intro">${inline(steps.intro)}</p>
+<h2 id="mf-steps">${inline(copy.stage.stepsTitle)}</h2>
+<p class="mf-intro">${inline(copy.stage.stepsIntro)}</p>
 <ol class="mf-steps">
 ${items}
 </ol>
+<p>${inline(files.body)} ${inline(files.proof)}</p>
+<figure class="mf-code">
+<figcaption>${inline(copy.stage.uploadLabel)}</figcaption>
+${codeBlock(UPLOAD_REQUEST)}
+</figure>
 <figure class="mf-code">
 <figcaption>${inline(steps.codeLabel)}</figcaption>
 ${codeBlock(START_SESSION_REQUEST)}
 </figure>
 <p class="mf-muted">${inline(steps.note)}</p>
 <p>${link(copy.apiReferenceV2, steps.apiReference)}</p>
-</section>`;
-}
-
-function renderSplit(copy) {
-  const split = copy.split;
-  const list = (rows) =>
-    rows.map(([term, detail]) => `<dt>${inline(term)}</dt><dd>${inline(detail)}</dd>`).join("\n");
-
-  return `<section id="your-app-and-mosoo" aria-labelledby="mf-split">
-<h2 id="mf-split">${inline(split.title)}</h2>
-<p class="mf-intro">${inline(split.intro)}</p>
-<div class="mf-cols">
-<div>
-<h3>${inline(split.app)}</h3>
-<dl>
-${list(split.appRows)}
-</dl>
-</div>
-<div>
-<h3>${inline(split.mosoo)}</h3>
-<dl>
-${list(split.mosooRows)}
-</dl>
-</div>
-</div>
-<p class="mf-muted">${inline(split.footnote)}</p>
 </section>`;
 }
 
@@ -1249,7 +1211,7 @@ function renderProof(locale, copy) {
     .join("\n");
 
   return `<section id="proof" aria-labelledby="mf-proof">
-<h2 id="mf-proof">${inline(proof.title)}</h2>
+<h2 id="mf-proof">${inline(copy.stage.proofTitle)}</h2>
 <p class="mf-intro">${inline(proof.intro)}</p>
 <div class="mf-cols">
 <div>
@@ -1297,7 +1259,7 @@ function renderLimits(copy) {
     .join("\n");
 
   return `<section id="limits" aria-labelledby="mf-limits">
-<h2 id="mf-limits">${inline(limits.title)}</h2>
+<h2 id="mf-limits">${inline(copy.stage.limitsTitle)}</h2>
 <p class="mf-intro">${inline(limits.intro)}</p>
 <div class="mf-table"><table>
 <thead><tr>${limits.columns.map((column) => `<th scope="col">${inline(column)}</th>`).join("")}</tr></thead>
@@ -1325,7 +1287,7 @@ ${items}
 function renderFinal(locale, copy) {
   const final = copy.final;
   return `<section id="start" aria-labelledby="mf-start">
-<h2 id="mf-start">${inline(final.title)}</h2>
+<h2 id="mf-start">${inline(copy.stage.startTitle)}</h2>
 <div class="mf-cols">
 <div>
 <h3>${inline(final.consoleTitle)}</h3>
@@ -1403,10 +1365,11 @@ ${renderHeader(locale, copy)}
 <main id="main">
 ${renderHero(copy)}
 ${renderVisual(copy)}
+${renderContinue(copy)}
 ${renderWall(copy)}
-${renderFeatures(copy)}
+${renderTurns(copy)}
+${renderKeys(copy)}
 ${renderSteps(copy)}
-${renderSplit(copy)}
 ${renderProof(locale, copy)}
 ${renderLimits(copy)}
 ${renderFaq(locale, copy)}
@@ -1489,13 +1452,13 @@ export function renderHomeJsonLd(locale) {
 // and forest ink match the landing palette; no web font beyond Geist, and CJK
 // text uses the platform fonts.
 export const HOME_FALLBACK_STYLE = `<style>
-.mosoo-fallback{--mf-paper:#f7f6f1;--mf-ink:#0b1a14;--mf-muted:#434c46;--mf-line:rgba(11,26,20,.14);--mf-link:#086030;--mf-panel:#fdfdfb;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
+.mosoo-fallback{--mf-paper:#fafafa;--mf-ink:#1f1f1f;--mf-muted:#5c5c5c;--mf-line:rgba(0,0,0,.14);--mf-link:#3a6e0e;--mf-panel:#ffffff;min-height:100vh;background:var(--mf-paper);color:var(--mf-ink);font:400 16px/1.6 Geist,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-wrap:break-word}
 .mosoo-fallback:lang(zh){font-family:Geist,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
 .mosoo-fallback:lang(ja){font-family:Geist,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;line-break:strict;word-break:auto-phrase}
 .mosoo-fallback *{box-sizing:border-box}
 .mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
 .mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:var(--mf-ink);color:var(--mf-paper);font-weight:600;text-decoration:none}
+.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:0 0 0 1px rgba(58,110,14,.35)}
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
 .mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
@@ -1510,7 +1473,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
 .mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.02em}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
-.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
+.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all;overflow-wrap:anywhere}
 .mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;font-weight:650;letter-spacing:-.01em}
 .mosoo-fallback h3{margin-top:28px;font-size:18px;line-height:1.35;font-weight:650}
 .mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:70ch}
@@ -1521,7 +1484,6 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-lead{margin-top:20px;font-size:19px;color:var(--mf-muted)}
 .mosoo-fallback .mf-actions{margin-top:28px}
 .mosoo-fallback .mf-muted,.mosoo-fallback .mf-intro,.mosoo-fallback dd{color:var(--mf-muted)}
-.mosoo-fallback .mf-agent{margin-top:32px;padding-top:20px;border-top:1px solid var(--mf-line)}
 .mosoo-fallback main>section,.mosoo-fallback .mf-figure{margin:0;padding:56px 0;border-top:1px solid var(--mf-line)}
 .mosoo-fallback figcaption{font-weight:600}
 .mosoo-fallback .mf-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 40px;margin:0;padding:0;list-style:none}

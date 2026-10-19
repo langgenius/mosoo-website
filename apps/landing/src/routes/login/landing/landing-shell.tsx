@@ -22,13 +22,14 @@ export function LandingShell({
 }: {
   activeNav?: TopbarNav;
   // "landing" keeps the warm forest palette; "brand" drops it to inherit the
-  // cool/bright :root palette the blog uses, so a page can match the blog.
-  theme?: "landing" | "brand";
+  // cool/bright :root palette the blog uses, so a page can match the blog;
+  // "console" wears the console's neutrals (the home page's product stage).
+  theme?: "landing" | "brand" | "console";
   children: ReactNode;
 }): ReactElement {
   return (
     <div
-      data-theme={theme === "landing" ? "landing" : undefined}
+      data-theme={theme === "brand" ? undefined : theme}
       className="landing-shell bg-paper-100 text-fg-1"
     >
       <a

@@ -288,6 +288,71 @@
 }
 
 /* ----------------------------------------------------------------------------
+   Console scope (v2c "Product Stage", home page only). The page wears the
+   console's own neutrals (apps/web app.css primitives, mirrored in
+   product-kit/console-island.css) so the product islands and the page read as
+   one surface: paper #fafafa / #f4f4f4, ink #1f1f1f, the brand lime ramp.
+   green-700 and -800 sit one step darker than the console's ramp so green
+   text (links) clears 4.5:1 on #fafafa (#3a6e0e is 5.9:1).
+   --------------------------------------------------------------------------- */
+[data-theme="console"] {
+  --green-50: #f4fce4;
+  --green-100: #e7f8c4;
+  --green-200: #d3f195;
+  --green-300: #b6e85f;
+  --green-400: #95dd2c;
+  --green-500: #6fd305;
+  --green-600: #5cb300;
+  --green-700: #3a6e0e;
+  --green-800: #2c5113;
+  --green-900: #1a310b;
+  --green-950: #0f1a02;
+
+  --ink-50: #f5f5f5;
+  --ink-100: #ebebeb;
+  --ink-200: #d6d6d6;
+  --ink-300: #b8b8b8;
+  --ink-400: #8a8a8a;
+  --ink-500: #6b6b6b;
+  --ink-600: #5c5c5c;
+  --ink-700: #454545;
+  --ink-800: #333333;
+  --ink-900: #1f1f1f;
+  --ink-950: #0d0d0d;
+
+  --paper-50: #ffffff;
+  --paper-100: #fafafa;
+  --paper-200: #f4f4f4;
+  --paper-300: #ebebeb;
+  --paper-400: #e0e0e0;
+
+  --bg-sidebar: #fafafa;
+
+  --border-soft: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.14);
+
+  --primary: var(--ink-900);
+  --primary-hover: var(--ink-800);
+  --accent: var(--green-500);
+  --accent-hover: var(--green-600);
+  --accent-press: var(--green-700);
+  --accent-soft: var(--green-50);
+  --accent-soft-hover: var(--green-100);
+  --accent-ring: rgba(111, 211, 5, 0.45);
+  --focus-ring: var(--green-700);
+
+  --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.05), 0 8px 20px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-inset: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+
+  /* Geist only on this page, footer sign-off included. */
+  --footer-display-font: "Geist", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ----------------------------------------------------------------------------
    Status page — its status glyphs, uptime bars, percentages and the one focal
    button read on the product brand ramp (the logo's bright shoot green) rather
    than the landing's warm forest ramp, so they match the mark in the page
@@ -603,6 +668,121 @@ html {
 
 html:has(.landing-shell[data-theme="landing"]) {
   background-color: #f7f6f1;
+}
+
+html:has(.landing-shell[data-theme="console"]) {
+  background-color: #fafafa;
+}
+
+/* ----------------------------------------------------------------------------
+   v2c product stage. One stage system for every product moment on the home
+   page: the pixel bamboo plate (scripts/brand-assets, no lime) behind a
+   console island, a 1px hairline, one radius, and a caption under it.
+   --------------------------------------------------------------------------- */
+.stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--paper-100);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+}
+
+.stage-plate {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The console island sits on the plate as one framed window. */
+.stage-window {
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 18px 40px -18px rgba(0, 0, 0, 0.22),
+    0 4px 12px -6px rgba(0, 0, 0, 0.08);
+}
+
+.stage-window > [data-surface="console"] > div:first-child {
+  border: 0;
+}
+
+/* Hero: the outputs card is the turn's result. It lands when the turn
+   commits, that is when the Preview's replay ends (the island drops its
+   data-replaying flag). Without JavaScript, with reduced motion, and in
+   every still the card is simply there. */
+.stage-outputs {
+  transition:
+    opacity 420ms var(--ease-out),
+    transform 420ms var(--ease-out);
+}
+
+.stage:has([data-replaying]) .stage-outputs {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+}
+
+.stage-accent {
+  transition: opacity 600ms var(--ease-out);
+}
+
+.stage:has([data-replaying]) .stage-accent {
+  opacity: 0;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-outputs,
+  .stage-accent {
+    transition: none;
+  }
+}
+
+/* Hero: on large screens the stage keeps one height that fits a 1280x800
+   first screen, and the Preview runs off its bottom edge (a bleed crop: the
+   drawn composer is what the edge cuts). The replay plays once and ends
+   static, so the hero hides the kit's Replay control. */
+.hero-window [data-surface="console"] > div:nth-child(2) {
+  display: none;
+}
+
+/* The Preview's chat column fills the window here (the console centres it at
+   two thirds), so the long prompt takes fewer lines and the reply stays above
+   the cut. */
+.hero-window [data-surface="console"] .\@xl\:w-2\/3 {
+  width: 100%;
+}
+
+.hero-stage {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .hero-stage {
+    height: clamp(500px, calc(100svh - 190px), 650px);
+  }
+
+  .hero-window {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+/* Headings in Chinese break only at spaces and punctuation; Japanese already
+   wraps by phrase (:lang(ja) above). overflow-wrap is the safety net for a
+   phrase wider than the line. */
+.stage-heading:lang(zh-CN) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .landing-shell {

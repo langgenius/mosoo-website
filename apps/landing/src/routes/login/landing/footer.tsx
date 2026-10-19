@@ -84,7 +84,7 @@ function footerGroups(): readonly FooterGroup[] {
 }
 
 const SIGN_OFF_STYLE = {
-  fontFamily: DISPLAY_FONT,
+  fontFamily: `var(--footer-display-font, ${DISPLAY_FONT})`,
   fontSize: "clamp(32px, 4.6vw, 56px)",
   fontWeight: 500,
   letterSpacing: "-0.025em",

@@ -405,14 +405,15 @@ test("the static home page carries the whole page for readers without JavaScript
   const en = home("en");
 
   assert.deepEqual(headingsOf(en, 2), [
-    "Pick a runtime. Use your own model key.",
-    "What mosoo runs for your backend",
-    "From one request to a finished report",
-    "Your app keeps its users. mosoo runs the Agent.",
-    "What you can check for yourself",
-    "What mosoo doesn’t do",
+    "A follow-up 7 days later continues the same Session",
+    "Runtime and model are separate choices, checked before anything runs",
+    "A turn succeeds only when its results are saved",
+    "Provider keys never enter the sandbox",
+    "One request starts a Session and its first turn",
+    "The code, releases, status, and postmortems are public",
+    "Some things are out of scope on purpose",
     "Questions to ask before you build on mosoo",
-    "Start your first Session",
+    "The fastest way to try mosoo is the hosted console",
   ]);
   assert.match(
     textOf(en),
@@ -434,16 +435,17 @@ test("the static home page carries the whole page for readers without JavaScript
 
     assert.deepEqual(headlines, [homeHeadline(locale)], `${locale} has one h1, the positioning`);
     assert.deepEqual(sectionIdsOf(html), [
+      "continue",
       "runtimes",
-      "features",
+      "turns",
+      "keys",
       "how-it-works",
-      "your-app-and-mosoo",
       "proof",
       "limits",
       "faq",
       "start",
     ]);
-    assert.equal(headingsOf(html, 2).length, 8);
+    assert.equal(headingsOf(html, 2).length, 9);
     assert.match(html, /<main id="main">/);
     assert.match(html, /<footer class="mf-foot">/);
     assert.match(html, /<div id="root"><div class="mosoo-fallback">/);
@@ -461,10 +463,8 @@ test("the static home page carries the whole page for readers without JavaScript
 test("the React home page and the static fallback share anchors, FAQ text and navigation", () => {
   const landing = "apps/landing/src/routes/login/landing";
   const sections = [
-    "supply-wall.tsx",
-    "features-section.tsx",
+    "stage-sections.tsx",
     "how-it-works.tsx",
-    "split-section.tsx",
     "proof-section.tsx",
     "limits-section.tsx",
     "faq-section.tsx",

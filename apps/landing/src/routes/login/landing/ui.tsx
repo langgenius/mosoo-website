@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 
 import { cn } from "@/shared/lib/class-names";
 
-import { sectionHeadingStyle } from "./typography";
+import { stageHeadingStyle } from "./typography";
 
 /** Uppercase overline with the single green accent dot. Used by the use-case
     pages; the home page uses no overlines (house copy rules). */
@@ -124,11 +124,11 @@ export function SectionHeading({
 }): ReactElement {
   return (
     <div className={className}>
-      <h2 id={id} className="text-ink-900 max-w-[860px] [text-wrap:balance]" style={sectionHeadingStyle}>
+      <h2 id={id} className="stage-heading text-ink-900 max-w-[860px] [text-wrap:balance]" style={stageHeadingStyle}>
         {title}
       </h2>
       {intro === undefined ? null : (
-        <p className="text-ink-500 mt-4 max-w-[640px] text-[17px] leading-[1.6] [text-wrap:pretty]">
+        <p className="text-ink-600 mt-4 max-w-[640px] text-[18px] leading-[1.6] [text-wrap:pretty]">
           {intro}
         </p>
       )}

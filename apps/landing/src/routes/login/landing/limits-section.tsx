@@ -42,7 +42,7 @@ export function LimitsSection(): ReactElement {
     <section id="limits" aria-labelledby="limits-title" className="px-4 py-20 md:px-6 md:py-24">
       <SectionHeading
         id="limits-title"
-        title={t("What mosoo doesn’t do")}
+        title={t("Some things are out of scope on purpose")}
         intro={t("The product spec lists these on purpose. Plan around them before you build.")}
       />
       {/* Phones stack each row: the gap, then what to do instead. */}

@@ -17,7 +17,7 @@ document.documentElement.lang = htmlLanguage[locale];
 
 createRoot(container).render(
   <StrictMode>
-    <LandingShell>
+    <LandingShell theme="console">
       <LoginLanding />
     </LandingShell>
   </StrictMode>,

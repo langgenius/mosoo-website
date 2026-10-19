@@ -1,28 +1,23 @@
 import { ArrowRight } from "lucide-react";
 import type { CSSProperties, ReactElement } from "react";
 
+import { PreviewReplay } from "@/product-kit/components/preview-replay";
+import { OUTPUTS } from "@/product-kit/data/example-universe";
+import { consoleText, kitText } from "@/product-kit/i18n";
 import { locale } from "@/shared/locale";
 
-import { GithubMark } from "../github-mark";
-import {
-  docsUrl,
-  MOSOO_CLOUD_URL,
-  MOSOO_GITHUB_URL,
-  MOSOO_INSTALL_COMMAND,
-  MOSOO_INSTALL_SCRIPT_URL,
-} from "../links";
+import { docsUrl, MOSOO_CLOUD_URL } from "../links";
 import { t } from "./above-fold-i18n";
-import { CopyButton } from "./copy-button";
-import { DISPLAY_FONT } from "./typography";
+import { PixelPlate } from "./stage";
+import { STAGE_DISPLAY_FONT } from "./typography";
 
 const HERO_HEADLINE_STYLE = {
-  fontFamily: DISPLAY_FONT,
-  // Japanese runs about twice as long as the English line and its glyphs set
-  // denser, so it gets a smaller display size to keep the H1 compact.
-  fontSize: locale === "ja" ? "clamp(26px, 3.3vw, 48px)" : "clamp(36px, 4.4vw, 62px)",
-  fontWeight: 500,
-  letterSpacing: "-0.03em",
-  lineHeight: locale === "en" ? 1.04 : 1.18,
+  fontFamily: STAGE_DISPLAY_FONT,
+  // Japanese runs longer than the English line, so it sets a size smaller.
+  fontSize: locale === "ja" ? "clamp(28px, 2.6vw, 38px)" : "clamp(34px, 3.05vw, 44px)",
+  fontWeight: 600,
+  letterSpacing: locale === "en" ? "-0.032em" : "-0.01em",
+  lineHeight: locale === "en" ? 1.06 : 1.22,
 } satisfies CSSProperties;
 
 const PRODUCT_TERM = "Agent runtime";
@@ -44,37 +39,13 @@ function KeepProductTerm({ text }: { text: string }): ReactElement {
   );
 }
 
-// The setup prompt is a few KB per locale, so it is not in the first bundle. The
-// below-the-fold chunk (final CTA) imports it statically once the page is
-// idle, and hovering or focusing the copy button starts the load early.
-function loadSetupPrompt(): Promise<string> {
-  return import("./setup-prompt").then((module) => module.SETUP_PROMPT[locale]);
-}
-
-function prepareSetupPrompt(): void {
-  void loadSetupPrompt();
-}
-
-/**
- * H1 in two tones: the product in full ink, the audience softer. The spans are
- * inline so the sentence balances over two lines on desktop. Japanese puts
- * the audience first, so the order follows the locale; English joins the two
- * spans with a space so the heading text reads as one sentence.
- */
+/** One sentence in one ink. Japanese puts the audience first. */
 function Headline(): ReactElement {
-  const product = (
-    <span>
-      <KeepProductTerm text={t("An open-source, API-first managed Agent runtime")} />
-    </span>
-  );
-  const audience = <span className="text-ink-500">{t("for application backends.")}</span>;
+  const product = <KeepProductTerm text={t("An open-source, API-first managed Agent runtime")} />;
+  const audience = t("for application backends.");
 
   return (
-    <h1
-      id="hero-title"
-      className="landing-hero-reveal text-ink-900 max-w-[1080px] [text-wrap:balance]"
-      style={HERO_HEADLINE_STYLE}
-    >
+    <h1 id="hero-title" className="stage-heading text-ink-900 [text-wrap:balance]" style={HERO_HEADLINE_STYLE}>
       {locale === "ja" ? (
         <>
           {audience}
@@ -91,95 +62,102 @@ function Headline(): ReactElement {
   );
 }
 
-/** Copy deck §2: the agent-native way in, the console's coding-agent setup. */
-function AgentStrip(): ReactElement {
+const CHART_SRC = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(OUTPUTS.chartTurn1.text)}`;
+
+/**
+ * The turn's result, a tray layered over the Preview's cut edge (the way a
+ * second window overlaps the first on a desktop). The chart is the real
+ * chart.svg the example's agent code wrote; the paths are turn 1's three
+ * artifacts. app.css hides the tray while the Preview replays and lands it
+ * when the turn commits; without JavaScript or motion it is simply there.
+ */
+function OutputsTray(): ReactElement {
+  const artifact = consoleText(locale, "files.artifact");
+
   return (
-    <div className="landing-hero-reveal landing-hero-reveal-delay-4 border-border-strong bg-paper-50 mt-10 w-full max-w-[880px] rounded-[14px] border p-4 text-left sm:p-5 md:p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-        <div className="max-w-[560px]">
-          <h2 className="text-ink-900 text-[17px] font-semibold">{t("Set up with your coding agent")}</h2>
-          <p className="text-ink-500 mt-2 text-[16px] leading-[1.6]">
-            {t(
-              "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
-            )}
-          </p>
-        </div>
-        <CopyButton
-          getText={loadSetupPrompt}
-          onPrepare={prepareSetupPrompt}
-          label={t("Copy setup prompt")}
-          copiedLabel={t("Setup prompt copied")}
-          failedLabel={t("Copy failed.")}
-          className="shrink-0 self-start"
-        />
-      </div>
-      <div className="border-border-strong bg-paper-100 mt-5 flex min-w-0 flex-wrap items-center gap-2 rounded-md border py-1.5 pr-1.5 pl-3">
-        <code
-          translate="no"
-          className="text-ink-900 min-w-0 flex-[1_1_15rem] py-1 font-mono text-[12.5px] leading-[1.5] [overflow-wrap:break-word] sm:text-[13px]"
-        >
-          <span aria-hidden="true" className="text-ink-400 select-none">
-            ${" "}
-          </span>
-          {MOSOO_INSTALL_COMMAND}
-        </code>
-        <CopyButton
-          getText={() => MOSOO_INSTALL_COMMAND}
-          label={t("Copy command")}
-          copiedLabel={t("Command copied")}
-          failedLabel={t("Copy failed.")}
-          variant="compact"
-        />
-      </div>
-      <a
-        href={MOSOO_INSTALL_SCRIPT_URL}
-        className="text-ink-500 hover:text-ink-900 focus-visible:ring-ring mt-3 inline-block rounded-sm text-[14px] font-semibold underline decoration-current/30 underline-offset-4 transition-colors outline-none focus-visible:ring-2"
-      >
-        {t("Read the install script")}
-      </a>
+    <div className="stage-outputs bg-paper-50 border-border-strong relative z-10 mx-2 -mt-4 flex min-w-0 items-stretch overflow-hidden rounded-[10px] border shadow-[0_14px_32px_-16px_rgba(0,0,0,0.25)] sm:mx-6">
+      <img
+        src={CHART_SRC}
+        alt={t("Revenue by region: north 150, south 80, grand_total 230.")}
+        width={360}
+        height={132}
+        className="border-border-soft hidden h-[92px] w-auto shrink-0 border-r bg-white px-1 sm:block"
+      />
+      <ul className="flex min-w-0 flex-1 flex-col justify-center gap-0.5 px-3 py-2.5 sm:px-4" aria-label={t("Saved files")}>
+        {[OUTPUTS.chartTurn1.path, OUTPUTS.reportTurn1.path, OUTPUTS.initialJson.path].map((path, index) => (
+          <li key={path} className="flex min-w-0 items-center gap-2">
+            <span translate="no" className="text-ink-900 truncate font-mono text-[14px] leading-[1.6]">
+              {path}
+            </span>
+            {index === 0 ? (
+              <span className="bg-soil-bg text-soil-fg shrink-0 rounded-[4px] px-1.5 text-[12px] leading-[1.6] font-semibold">
+                {artifact}
+              </span>
+            ) : null}
+          </li>
+        ))}
+      </ul>
     </div>
+  );
+}
+
+function HeroStage(): ReactElement {
+  return (
+    <figure className="m-0 min-w-0">
+      <div className="stage hero-stage px-3 pt-3 pb-3 sm:px-8 sm:pt-8 sm:pb-6">
+        <PixelPlate sizes="(max-width: 1023px) calc(100vw - 32px), 58vw" />
+        <div className="stage-window hero-window">
+          <PreviewReplay locale={locale} animate />
+        </div>
+        <OutputsTray />
+      </div>
+      <figcaption className="text-ink-500 mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[16px] leading-[1.5]">
+        <span className="border-border-strong text-ink-700 rounded-[4px] border px-1.5 text-[14px] font-semibold">
+          {kitText(locale, "exampleValues")}
+        </span>
+        <span>{t("Turn 1 in the console Preview: the Agent reads input.csv and saves a report and a chart.")}</span>
+      </figcaption>
+    </figure>
   );
 }
 
 export function Hero(): ReactElement {
   return (
-    <section aria-labelledby="hero-title" className="px-4 pt-14 pb-12 md:px-6 md:pt-20 md:pb-14">
-      <div className="mx-auto flex max-w-[1160px] flex-col items-center text-center">
-        <Headline />
-        <p className="landing-hero-reveal landing-hero-reveal-delay-1 text-ink-700 mt-6 max-w-[640px] text-[18px] leading-[1.6] [text-wrap:pretty] md:text-[19px]">
-          {t(
-            "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
-          )}
-        </p>
+    <section aria-labelledby="hero-title" className="px-4 pt-8 pb-16 md:px-6 lg:pt-10 lg:pb-20">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-14">
+        <div className="min-w-0 lg:pb-10">
+          <Headline />
+          <p className="text-ink-600 mt-5 max-w-[30em] text-[18px] leading-[1.55] [text-wrap:pretty]">
+            {t(
+              "mosoo runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
+            )}
+          </p>
 
-        <div className="landing-hero-reveal landing-hero-reveal-delay-2 mt-9 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={MOSOO_CLOUD_URL}
-            className="bg-ink-900 text-paper-100 hover:bg-ink-800 focus-visible:ring-ring focus-visible:ring-offset-paper-100 inline-flex h-12 items-center rounded-md px-7 text-[16px] font-semibold shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-          >
-            {t("Try mosoo")}
-          </a>
-          <a
-            href={docsUrl("quickstart/")}
-            className="text-ink-900 ring-ink-900/20 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-12 items-center gap-2 rounded-md px-5 text-[16px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
-          >
-            <span>{t("Read the quickstart")}</span>
-            <ArrowRight aria-hidden="true" className="size-4" />
-          </a>
-          <a
-            href={MOSOO_GITHUB_URL}
-            className="text-ink-900 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-12 items-center gap-2 rounded-md px-3 text-[16px] font-semibold transition-colors outline-none focus-visible:ring-2"
-          >
-            <GithubMark className="size-[18px]" />
-            <span>{t("View source")}</span>
-          </a>
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a
+              href={MOSOO_CLOUD_URL}
+              className="focus-visible:ring-ring focus-visible:ring-offset-paper-100 inline-flex h-12 items-center rounded-[8px] bg-green-500 px-6 text-[16px] font-semibold text-[#0f1a02] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_0_0_1px_rgba(58,110,14,0.35)] transition-colors outline-none hover:bg-green-400 focus-visible:ring-2 focus-visible:ring-offset-2 active:bg-green-600"
+            >
+              {t("Try mosoo")}
+            </a>
+            <a
+              href={docsUrl("quickstart/")}
+              className="group text-ink-900 focus-visible:ring-ring inline-flex h-12 items-center gap-1.5 rounded-sm text-[16px] font-semibold underline decoration-current/25 underline-offset-[6px] transition-colors outline-none hover:decoration-current focus-visible:ring-2"
+            >
+              <span>{t("Read the quickstart")}</span>
+              <ArrowRight
+                aria-hidden="true"
+                className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+              />
+            </a>
+          </div>
+
+          <p className="text-ink-500 mt-5 text-[16px] leading-[1.5]">
+            {t("mosoo is in Alpha. Public APIs may still change.")}
+          </p>
         </div>
 
-        <p className="landing-hero-reveal landing-hero-reveal-delay-3 text-ink-500 mt-5 text-[16px]">
-          {t("mosoo is in Alpha. Public APIs may still change.")}
-        </p>
-
-        <AgentStrip />
+        <HeroStage />
       </div>
     </section>
   );
