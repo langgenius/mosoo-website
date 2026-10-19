@@ -127,7 +127,7 @@ function Matrix(): ReactElement {
                       ) : null}
                     </span>
                   ) : (
-                    <span className="text-ink-300 text-[15px]">
+                    <span className="text-ink-400 text-[15px]">
                       <span aria-hidden="true">·</span>
                       <span className="sr-only">{t("Not accepted")}</span>
                     </span>
