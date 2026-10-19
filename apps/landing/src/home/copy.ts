@@ -6,6 +6,7 @@
 // the feed is the SPEC's own acceptance story (docs/SPEC.md L82, CSV analysis, multi-turn) and its event
 // names are the contract's (pkgs/contracts/src/session/session.contract.ts L138-L152). zh and ja use the
 // same slots, as short as they allow; names (runtimes, events, files, assistants) are not translated.
+// In ja, a numeral and its counter are joined by a no-break space (1\u00a0つ), so a line never splits them.
 
 export type HomeLocale = "en" | "zh" | "ja";
 
@@ -330,24 +331,24 @@ const JA: HomeCopy = {
   },
   nav: { docs: "ドキュメント", docsHref: JA_DOCS, github: "GitHub", cta: "mosoo を試す", skip: "本文へスキップ" },
   hero: {
-    lineA: "Agent Session を、",
+    lineA: "Agent Session を",
     lineB: "バックエンドへ。",
     lead: "1 リクエストで、専用 sandbox の Session が始動。イベントとファイルが返る。",
     cta: "mosoo を試す",
   },
   act1: {
-    titleA: "1 つの Session、5 つの要素。",
-    titleB: "harness は 4 種から選べます。",
+    titleA: "1\u00a0つの Session、5\u00a0つの要素。",
+    titleB: "harness は 4\u00a0種から選べます。",
     rows: ["Harness", "モデル", "Sandbox", "ファイル", "再開"],
     harnesses: ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     model: "選んだモデルを自分のプロバイダーキーで",
     sandbox: "専用。プロバイダーキーは外に置く",
     files: "outputs/report.md",
-    resume: "1 分後でも 7 日後でも",
+    resume: "1\u00a0分後でも 7\u00a0日後でも",
   },
   act2: {
     halfA: "同じ Session、",
-    halfB: "1 週間後に。",
+    halfB: "1\u00a0週間後に。",
     cards: [
       { time: "+7 日", event: "run.started", title: "追加の依頼：Q3 を足して", result: "ファイルと会話を復元。", live: true },
       { time: "+3 分", event: "run.completed", title: "ターン 1 完了", result: "チェックポイントを保存。sandbox は回収可。" },
@@ -357,14 +358,14 @@ const JA: HomeCopy = {
     ],
   },
   act3: {
-    titleA: "1 分後でも 7 日後でも返信できます。",
+    titleA: "1\u00a0分後でも 7\u00a0日後でも返信できます。",
     titleB: "同じ Session のまま。",
     ticks: ["+0", "+1 分", "+1 時間", "+1 日", "+7 日"],
     noteStrong: "sandbox は回収、Session は継続。",
     note: "ファイルも会話も戻ります。",
   },
   statement: {
-    parts: ["1 つの API で Codex、", "Claude Agent SDK、", "OpenCode、", "Pi", "を、それぞれ専用の sandbox で。"],
+    parts: ["1\u00a0つの API で Codex、", "Claude Agent SDK、", "OpenCode、", "Pi", "を、それぞれ専用の sandbox で。"],
   },
   faq: {
     title: "よくある質問",
