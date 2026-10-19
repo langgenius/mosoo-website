@@ -9,7 +9,8 @@
 //   stage without data-dock, so a reader without JavaScript sees the end
 //   state. The undocked offsets come from CSS custom properties
 //   (--dock-x / --dock-y per satellite and breakpoint).
-// - Reduced motion: shouldUndock() is false, the stage renders docked.
+// - Reduced motion, or a first paint before React mounts: shouldUndock() is
+//   false, the stage renders docked.
 
 const EASE = "cubic-bezier(.16,1,.3,1)";
 const DURATION = 600;
@@ -20,8 +21,15 @@ const TRIGGER_SCROLL = 24;
 const DWELL_RATIO = 0.6;
 const DWELL_MS = 700;
 
+// Undock only while nothing has been painted yet. On a slow load the static
+// page has already shown the docked stage; pushing the satellites out again
+// would play the dock backwards (docked, undocked, docked).
 export function shouldUndock(): boolean {
-  return typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return (
+    typeof window !== "undefined" &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+    performance.getEntriesByType("paint").length === 0
+  );
 }
 
 function offsetOf(el: HTMLElement): [number, number] {

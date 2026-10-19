@@ -31,11 +31,11 @@ const SLOTS = [
   ["supply.a", 22, 4, 10],
   ["supply.b", 22, 4, 10],
   ["supply.cards.*.name", 16, 2, 7],
-  ["supply.cards.*.badge", 6, 1, 3],
   ["supply.cards.*.value", 6, 2, 3],
   ["supply.cards.*.label", 24, 5, 11],
-  ["supply.cards.*.status", 28, 4, 12],
-  ["faq.label", 6, 1, 4],
+  // 14 = en's 1x28 at half width: the Runtimes status is the same four Latin
+  // names in every locale, so it renders exactly as wide as en's.
+  ["supply.cards.*.status", 28, 4, 14],
   ["faq.a", 24, 4, 10],
   ["faq.b", 24, 5, 10],
   ["faq.items.*.q", 88, 10, 44],
@@ -94,12 +94,9 @@ test("zh and ja fill the same slots as en, no more and no fewer", () => {
   const shape = (node) =>
     Array.isArray(node) ? node.map(shape) : typeof node === "object" ? Object.fromEntries(Object.entries(node).map(([k, v]) => [k, shape(v)])) : typeof node;
   for (const locale of ["zh", "ja"]) assert.deepEqual(shape(COPY[locale]), shape(COPY.en), `${locale} has en's slots`);
-  // Machine tokens stay as the main repo spells them.
+  // Machine tokens and product names stay as the main repo spells them.
   for (const locale of ["zh", "ja"]) {
     assert.equal(COPY[locale].object.event, COPY.en.object.event);
-    assert.deepEqual(
-      COPY[locale].supply.cards.map((card) => card.badge),
-      COPY.en.supply.cards.map((card) => card.badge),
-    );
+    assert.equal(COPY[locale].supply.cards[0].status.replaceAll("、", ", "), COPY.en.supply.cards[0].status);
   }
 });

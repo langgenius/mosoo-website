@@ -4,11 +4,11 @@ import type { CSSProperties, ReactElement } from "react";
 import { dockOnScroll, shouldUndock } from "@/effects/dock";
 import { revealOnce } from "@/effects/reveal";
 import { RuntimeIcon } from "@/shared/ui/brand-icons";
-import { Check, CircleDashed, Copy, FileText, Loader2, RotateCcw, SquareTerminal } from "@/shared/ui/console-glyphs";
+import { Check, Copy, FileText } from "@/shared/ui/console-glyphs";
 import { FaqIndicator, OutlineNested, OutlineWindow } from "@/shared/ui/outline";
 
 import { docsUrl, MOSOO_CLOUD_URL } from "../links";
-import { CARD_GLYPH_KEYS, HARNESS_SATELLITE, home, LIVE_CARD } from "./home-copy";
+import { home, LIVE_CARD } from "./home-copy";
 
 // d-object home (staging v4d/UI-LOCK.md). Six sections, each one form from
 // UI-FORMS §f: U09 hero object, U02 verbs, F19 stacked turn, U03 overflow
@@ -67,16 +67,12 @@ function Hero(): ReactElement {
             </p>
           </div>
         </OutlineWindow>
+        {/* Text only, like the static page, so nothing shifts when React mounts. */}
         {object.satellites.map((sat, index) => (
           <div key={sat.key} className={`d-sat s${index + 1}`} data-sat>
             <Corners className="d-sat-c" />
             <p className="d-sat-k">{sat.key}</p>
-            <p className="d-sat-v">
-              {index === HARNESS_SATELLITE ? (
-                <RuntimeIcon runtimeId="openai-runtime" size={16} className="d-glyph" />
-              ) : null}
-              {sat.value}
-            </p>
+            <p className="d-sat-v">{sat.value}</p>
           </div>
         ))}
       </div>
@@ -101,7 +97,7 @@ const GLYPH_FRAMES = GLYPH_CYCLES.map((cycle) =>
 function Verbs(): ReactElement {
   return (
     <section id="how-it-works" aria-label={home.verbs.map((v) => v.verb).join(" ")} className="d-sec d-verbs-sec">
-      <div className="d-verbs">
+      <div className="d-verbs" ref={(el) => (el ? revealOnce(el) : undefined)}>
         {home.verbs.map((item, index) => (
           <div key={item.verb} className="d-verb">
             <span aria-hidden="true" className={index === 1 ? "d-tile live" : "d-tile"}>
@@ -137,19 +133,20 @@ function Stack(): ReactElement {
                 {stack.token}
               </span>
             </div>
+            {/* Restore runs from the saved files back into the harness. */}
             <div aria-hidden="true" className="d-stack-track">
               <span className="d-stack-end">
-                <RuntimeIcon runtimeId="openai-runtime" size={18} className="d-glyph" />
+                <FileText className="d-stack-file" />
               </span>
               <span className="d-stack-rail">
                 <span className="d-stack-knob" />
               </span>
               <span className="d-stack-end">
-                <FileText className="d-stack-file" />
+                <RuntimeIcon runtimeId="openai-runtime" size={18} className="d-glyph" />
               </span>
             </div>
             <p className="d-stack-status">
-              <Loader2 className="d-stack-spin" />
+              <Check className="d-stack-done" />
               {stack.status}
             </p>
           </div>
@@ -161,16 +158,6 @@ function Stack(): ReactElement {
       </div>
     </section>
   );
-}
-
-// U03 card-name glyphs: console glyphs that name the card's idea, not a
-// third-party runtime mark (the console's KeyRound is not inlined here, so
-// Keys takes CircleDashed).
-const CARD_GLYPHS = { terminal: SquareTerminal, resume: RotateCcw, keys: CircleDashed } as const;
-
-function CardGlyph({ glyph }: { glyph: keyof typeof CARD_GLYPHS }): ReactElement {
-  const Glyph = CARD_GLYPHS[glyph];
-  return <Glyph className="d-mcard-glyph" />;
 }
 
 function Supply(): ReactElement {
@@ -187,13 +174,7 @@ function Supply(): ReactElement {
         <div className="d-supply-cards" data-product-ui>
           {supply.cards.map((card, index) => (
             <div key={card.name} className="d-mcard">
-              <p className="d-mcard-hd">
-                <CardGlyph glyph={CARD_GLYPH_KEYS[index] ?? "terminal"} />
-                {card.name}
-                <span className="d-badge" translate="no">
-                  {card.badge}
-                </span>
-              </p>
+              <p className="d-mcard-hd">{card.name}</p>
               <p className="d-mcard-val">{card.value}</p>
               <p className="d-mcard-lab">{card.label}</p>
               <p className="d-mcard-stat">
@@ -213,7 +194,6 @@ function FaqSection(): ReactElement {
   return (
     <section id="faq" aria-labelledby="faq-title" className="d-sec d-faq">
       <div className="d-faq-side">
-        <p className="d-badge d-badge-lg">{faq.label}</p>
         <h2 id="faq-title" className="d-h2">
           {faq.a}
           <br />
@@ -228,7 +208,6 @@ function FaqSection(): ReactElement {
               <span className="d-pc-q">{item.q}</span>
               <span aria-hidden="true" className="d-pc-n">
                 <FaqIndicator />
-                {String(index + 1).padStart(2, "0")}
               </span>
             </summary>
             <p className="d-pc-a">{item.a}</p>
@@ -242,11 +221,27 @@ function FaqSection(): ReactElement {
 function Close(): ReactElement {
   const { close } = home;
   const [copied, setCopied] = useState(false);
-  const copy = () => {
-    void navigator.clipboard?.writeText(close.prompt).then(() => {
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
-    });
+  // When the clipboard is refused, select the sentence so ⌘C / Ctrl+C works.
+  const selectPrompt = (button: HTMLButtonElement) => {
+    const prompt = button.parentElement?.querySelector(".d-ccard-p");
+    const selection = window.getSelection();
+    if (prompt && selection) {
+      selection.selectAllChildren(prompt);
+    }
+  };
+  const copy = (event: { currentTarget: HTMLButtonElement }) => {
+    const button = event.currentTarget;
+    if (!navigator.clipboard) {
+      selectPrompt(button);
+      return;
+    }
+    navigator.clipboard.writeText(close.prompt).then(
+      () => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1600);
+      },
+      () => selectPrompt(button),
+    );
   };
   return (
     <section id="start" aria-labelledby="close-title" className="d-sec">
@@ -257,7 +252,9 @@ function Close(): ReactElement {
           {close.b}
         </h2>
         <div className="d-ccard">
-          <span className="d-ccard-legend">{close.legend}</span>
+          <span className="d-ccard-legend" data-product-ui>
+            {close.legend}
+          </span>
           <Corners className="d-ccard-c" />
           <div className="d-ccard-field" data-product-ui>
             <span className="d-ccard-p">{close.prompt}</span>

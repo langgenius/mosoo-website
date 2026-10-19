@@ -11,7 +11,7 @@ import { locale } from "@/shared/locale";
 import COPY from "./home-copy.json";
 
 export type Satellite = { key: string; value: string };
-export type SupplyCard = { name: string; badge: string; value: string; label: string; status: string };
+export type SupplyCard = { name: string; value: string; label: string; status: string };
 export type Faq = { q: string; a: string };
 
 export type HomeCopy = {
@@ -20,7 +20,7 @@ export type HomeCopy = {
   verbs: readonly { verb: string; desc: string }[];
   stack: { label: string; token: string; status: string; title: string; desc: string };
   supply: { a: string; b: string; cards: readonly SupplyCard[] };
-  faq: { label: string; a: string; b: string; items: readonly Faq[] };
+  faq: { a: string; b: string; items: readonly Faq[] };
   close: { a: string; b: string; legend: string; prompt: string; button: string; done: string; fine: string };
 };
 
@@ -28,8 +28,5 @@ const HOME: Record<Locale, HomeCopy> = COPY;
 
 export const home = HOME[locale];
 
-// Fixed by the UI lock, not by the copy: the Harness satellite carries the
-// OpenAI Codex mark, the cards' glyphs and the one green dot (Resume).
-export const HARNESS_SATELLITE = 1;
-export const CARD_GLYPH_KEYS = ["terminal", "resume", "keys"] as const;
+// Fixed by the UI lock, not by the copy: the one green dot (Resume).
 export const LIVE_CARD = 1;

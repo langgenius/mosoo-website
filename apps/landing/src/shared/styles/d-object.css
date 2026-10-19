@@ -24,7 +24,6 @@
   --d-mist-a: oklch(0.945 0.012 250);
   --d-mist-b: oklch(0.865 0.022 250);
   --d-clay: oklch(0.915 0.028 60);
-  --d-lilac: oklch(0.905 0.026 300);
 }
 
 html:has(.d-shell) {
@@ -67,8 +66,9 @@ html:has(.d-shell) {
   padding-bottom: 96px;
 }
 
+/* Ink, not lime: #6fd305 is 1.91:1 on the paper and fails WCAG 1.4.11. */
 :where(.d-shell) :focus-visible {
-  outline: 2px solid var(--d-accent);
+  outline: 2px solid var(--d-ink);
   outline-offset: 2px;
 }
 
@@ -99,7 +99,9 @@ html:has(.d-shell) {
   gap: 28px;
 }
 
+/* padding-block makes a 44px tap target without changing the look. */
 .d-nav-links a {
+  padding-block: 15px;
   color: var(--d-ink-2);
   font: 500 14.5px/1 var(--font-sans);
   text-decoration: none;
@@ -126,7 +128,7 @@ html:has(.d-shell) {
 }
 
 .d-soft-42 {
-  color: rgb(22 24 21 / 0.42);
+  color: rgb(22 24 21 / 0.55);
 }
 
 .d-glyph {
@@ -164,11 +166,17 @@ html:has(.d-shell) {
   font: 500 15px/1 var(--font-sans);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.16s;
+  transition:
+    background-color 0.16s,
+    transform 0.16s var(--d-ease);
 }
 
 .d-btn:hover {
   background: #2a2c28;
+}
+
+.d-btn:active {
+  transform: scale(0.97);
 }
 
 .d-btn-text {
@@ -188,24 +196,6 @@ html:has(.d-shell) {
 
 .d-btn-text:hover span {
   transform: translateX(3px);
-}
-
-.d-badge {
-  display: inline-block;
-  border-radius: 999px;
-  background: var(--d-ink);
-  color: #ecebe6;
-  font: 400 10px/18px var(--font-mono);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0 8px;
-  margin: 0;
-}
-
-.d-badge-lg {
-  font-size: 11px;
-  line-height: 22px;
-  padding: 0 10px;
 }
 
 .d-dot {
@@ -244,12 +234,26 @@ html:has(.d-shell) {
   display: block;
 }
 
+.d-h1 > span,
+.d-h2,
+.d-close-h,
+.d-supply-h {
+  text-wrap: balance;
+}
+
 .d-lead {
   margin: 22px auto 0;
   max-width: 600px;
   color: var(--d-ink-2);
   font: 400 18px/1.5 var(--font-sans);
   letter-spacing: -0.005em;
+}
+
+.d-lead,
+.d-verb-p,
+.d-pc-a,
+.d-plate-cap p {
+  text-wrap: pretty;
 }
 
 .d-actions {
@@ -313,10 +317,13 @@ html:has(.d-shell) {
   box-shadow: var(--d-shadow-paper);
 }
 
+/* 44px so the sentence breaks into two lines and fills the card (review
+   P1-3: at 30px the card read as an empty form). */
 .d-obj-line {
   margin: 0 0 18px;
-  font: 400 30px/1.05 var(--font-display);
+  font: 400 44px/1 var(--font-display);
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .d-obj-track {
@@ -349,7 +356,7 @@ html:has(.d-shell) {
   margin: 0;
   display: flex;
   justify-content: flex-end;
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 11.5px/1 var(--font-mono);
 }
 
@@ -371,10 +378,12 @@ html:has(.d-shell) {
   will-change: transform;
 }
 
-.d-sat.s1 { left: 236px; top: 64px; --dock-x: -92px; --dock-y: -26px; }
-.d-sat.s2 { left: 700px; top: 104px; --dock-x: 100px; --dock-y: -38px; }
-.d-sat.s3 { left: 238px; top: 220px; --dock-x: -86px; --dock-y: 42px; }
-.d-sat.s4 { left: 698px; top: 252px; --dock-x: 92px; --dock-y: 34px; }
+/* Placed from the stage centre line, so the window and the satellites keep
+   their overlap at every width (identical to the old px values at 1120). */
+.d-sat.s1 { left: calc(50% - 324px); top: 64px; --dock-x: -92px; --dock-y: -26px; }
+.d-sat.s2 { left: calc(50% + 140px); top: 104px; --dock-x: 100px; --dock-y: -38px; }
+.d-sat.s3 { left: calc(50% - 322px); top: 220px; --dock-x: -86px; --dock-y: 42px; }
+.d-sat.s4 { left: calc(50% + 138px); top: 252px; --dock-x: 92px; --dock-y: 34px; }
 
 .d-stage[data-dock="out"] .d-sat {
   transform: translate(var(--dock-x), var(--dock-y));
@@ -394,7 +403,7 @@ html:has(.d-shell) {
 
 .d-sat-k {
   margin: 0;
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 10px/1 var(--font-mono);
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -426,7 +435,7 @@ html:has(.d-shell) {
 .d-verb {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 84px;
   padding: 24px 26px 26px;
 }
@@ -453,10 +462,16 @@ html:has(.d-shell) {
   color: var(--d-accent);
 }
 
+/* Rests on frame 4 (the reduced-motion frame); plays four cycles once the
+   section is in view (reveal.ts sets data-in), then stops. */
 .d-tile-strip {
   display: flex;
   flex-direction: column;
-  animation: d-glyph 0.96s steps(8) infinite;
+  transform: translateY(-108px);
+}
+
+.d-verbs[data-in="true"] .d-tile-strip {
+  animation: d-glyph 0.96s steps(8) 4;
 }
 
 .d-tile-strip > span {
@@ -465,6 +480,9 @@ html:has(.d-shell) {
 }
 
 @keyframes d-glyph {
+  from {
+    transform: translateY(0);
+  }
   to {
     transform: translateY(-288px);
   }
@@ -499,18 +517,20 @@ html:has(.d-shell) {
 
 .d-stack {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   top: 96px;
-  width: 680px;
-  margin-left: -340px;
+  width: min(680px, calc(100% - 48px));
+  margin-inline: auto;
 }
 
+/* Opaque: at 94% white the back card's top edge showed through. */
 .d-stack-card {
   position: relative;
   z-index: 2;
   padding: 28px 32px 28px;
   border-radius: 18px;
-  background: rgb(255 255 255 / 0.94);
+  background: #fff;
   box-shadow: var(--d-shadow-paper);
 }
 
@@ -546,7 +566,7 @@ html:has(.d-shell) {
 }
 
 .d-stack-token {
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 12px/1 var(--font-mono);
 }
 
@@ -574,7 +594,8 @@ html:has(.d-shell) {
   color: var(--d-ink);
 }
 
-/* A progress bar (issue #122's ~13px bars), not a switch: no knob, no shadow. */
+/* A progress bar (issue #122's ~13px bars), not a switch: no knob, no shadow.
+   Full, because the status line says the restore is done. */
 .d-stack-rail {
   position: relative;
   flex: 1;
@@ -589,7 +610,7 @@ html:has(.d-shell) {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 38%;
+  width: 100%;
   border-radius: 999px;
   background: var(--d-ink-3);
 }
@@ -604,17 +625,11 @@ html:has(.d-shell) {
   font: 400 15px/1.3 var(--font-sans);
 }
 
-.d-stack-spin {
+/* The finished state: a still check, no spinner. */
+.d-stack-done {
   width: 15px;
   height: 15px;
-  color: var(--d-ink-3);
-  animation: d-spin 1.6s linear infinite;
-}
-
-@keyframes d-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  color: var(--d-ink-2);
 }
 
 .d-plate-cap {
@@ -642,9 +657,11 @@ html:has(.d-shell) {
   height: 600px;
 }
 
+/* The cards overhang the field by 50px, so its edge meets the cards' status
+   rule instead of grazing the label baseline. */
 .d-supply-field {
   position: absolute;
-  inset: 0 0 76px;
+  inset: 0 0 50px;
   border-radius: 20px;
   background: linear-gradient(165deg, var(--d-stone-a) 0%, var(--d-stone-b) 100%);
 }
@@ -735,7 +752,7 @@ html:has(.d-shell) {
 }
 
 .d-faq-side .d-h2 {
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .d-faq-list {
@@ -786,6 +803,13 @@ html:has(.d-shell) {
   background: var(--d-ink);
 }
 
+/* Hover previews the open card: the corner dots go solid. */
+@media (hover: hover) {
+  .d-pc:not([open]) summary:hover .d-pc-c {
+    background: var(--d-ink);
+  }
+}
+
 .d-pc-c.c1 { left: 9px; top: 9px; }
 .d-pc-c.c2 { right: 9px; top: 9px; }
 .d-pc-c.c3 { left: 9px; bottom: 9px; }
@@ -802,8 +826,6 @@ html:has(.d-shell) {
   gap: 10px;
   flex: none;
   height: 26px;
-  color: var(--d-ink-3);
-  font: 400 11px/1 var(--font-mono);
 }
 
 .d-faq-ind {
@@ -835,7 +857,6 @@ html:has(.d-shell) {
   background:
     radial-gradient(60% 80% at 12% 18%, var(--d-mist-b) 0%, transparent 70%),
     radial-gradient(55% 75% at 88% 82%, var(--d-clay) 0%, transparent 70%),
-    radial-gradient(45% 60% at 70% 8%, var(--d-lilac) 0%, transparent 70%),
     #eeece8;
 }
 
@@ -862,7 +883,7 @@ html:has(.d-shell) {
   left: 22px;
   padding: 0 8px;
   background: linear-gradient(to bottom, transparent 50%, #fafaf9 50%);
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 11px/16px var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -920,7 +941,7 @@ html:has(.d-shell) {
 .d-ccard-fine {
   margin: 14px 0 0;
   text-align: center;
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 12px/1.4 var(--font-sans);
 }
 
@@ -996,7 +1017,7 @@ html:has(.d-shell) {
 
 .d-footer-h {
   margin: 0 0 14px;
-  color: var(--d-ink-3);
+  color: var(--d-ink-2);
   font: 400 11px/1.3 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1074,10 +1095,75 @@ html:has(.d-shell) {
   word-break: auto-phrase;
 }
 
+/* Japanese display lines: proportional kana and punctuation. */
+:lang(ja) :is(.d-h1, .d-h2, .d-close-h, .d-supply-h, .d-obj-line) {
+  font-feature-settings: "palt";
+}
+
 /* zh has no phrase segmentation in CSS; keep-all breaks at the spaces and
    punctuation the copy already carries, so "一个" never splits. */
 :lang(zh) :is(.d-pc-q, .d-verb-p) {
   word-break: keep-all;
+}
+
+/* ----------------------------------------------------- tablets (721–1100) */
+@media (max-width: 1100px) {
+  .d-faq {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .d-faq-side {
+    position: static;
+  }
+}
+
+/* Between 721 and 1000 the U03 row takes the phone's scroll-snap layout and
+   the undocked offsets shrink, so nothing is clipped by the paper. */
+@media (max-width: 1000px) {
+  .d-h1 {
+    font-size: 56px;
+  }
+
+  .d-sat {
+    --dock-x: 0px !important;
+  }
+
+  .d-supply {
+    height: auto;
+    padding: 32px 0 0;
+  }
+
+  .d-supply-field {
+    bottom: 48px;
+  }
+
+  .d-supply-h {
+    position: relative;
+    left: auto;
+    top: auto;
+    padding: 0 20px;
+  }
+
+  .d-supply-cards {
+    position: relative;
+    left: auto;
+    right: auto;
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .d-mcard {
+    flex: none;
+    width: 300px;
+    height: 300px;
+    scroll-snap-align: start;
+  }
 }
 
 /* ------------------------------------------------------------ phones (390) */
@@ -1145,24 +1231,26 @@ html:has(.d-shell) {
   }
 
   .d-obj-line {
-    font-size: 26px;
+    font-size: 34px;
     margin-bottom: 14px;
   }
 
+  /* Phones keep Harness and Next turn (the "days later" half of the H1). */
   .d-sat.s1,
-  .d-sat.s4 {
+  .d-sat.s3 {
     display: none;
   }
 
+  /* Pressed 20px into the window, not grazing its top line. */
   .d-sat.s2 {
     left: auto;
     right: 4px;
-    top: 14px;
+    top: 34px;
     --dock-x: 0px;
     --dock-y: -14px;
   }
 
-  .d-sat.s3 {
+  .d-sat.s4 {
     left: 4px;
     top: auto;
     bottom: 22px;
@@ -1182,7 +1270,7 @@ html:has(.d-shell) {
     flex-direction: row;
     justify-content: flex-start;
     gap: 18px;
-    min-height: 160px;
+    min-height: 0;
     padding: 24px 20px;
   }
 
@@ -1217,50 +1305,14 @@ html:has(.d-shell) {
     font-size: 20px;
   }
 
-  .d-supply {
-    height: auto;
-    padding: 32px 0 0;
-  }
-
-  .d-supply-field {
-    bottom: 48px;
-  }
-
   .d-supply-h {
-    position: relative;
-    left: auto;
-    top: auto;
-    padding: 0 20px;
     font-size: 32px;
   }
 
-  .d-supply-cards {
-    position: relative;
-    left: auto;
-    right: auto;
-    margin-top: 32px;
-    display: flex;
-    gap: 12px;
-    padding: 0 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
+  /* Card height follows its content on phones (no empty band). */
   .d-mcard {
-    flex: none;
-    width: 300px;
-    height: 300px;
-    scroll-snap-align: start;
-  }
-
-  .d-faq {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .d-faq-side {
-    position: static;
+    height: auto;
+    min-height: 232px;
   }
 
   .d-h2,
@@ -1336,12 +1388,7 @@ html:has(.d-shell) {
 
 /* ------------------------------------------------------- reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .d-tile-strip {
-    animation: none;
-    transform: translateY(-108px);
-  }
-
-  .d-stack-spin {
+  .d-verbs[data-in="true"] .d-tile-strip {
     animation: none;
   }
 

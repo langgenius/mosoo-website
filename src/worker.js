@@ -109,7 +109,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 ## Direct answers
 
 - Is it hosted, or do I run it? Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change.
-- Do I need to create an Agent first? No. One request carries the harness, provider, model and instructions, and mosoo starts a Session without creating an Agent. A saved Agent preset is optional.
+- What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models.
 - Why not call a model API directly? A model API returns a reply. mosoo runs the Agent around it: an isolated sandbox, files in and out, streamed events, recorded usage, and a working directory kept between turns.
 - Which harnesses and models can I use? Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key.
 - What happens when I reply days later? The reply continues the same Session, even after the sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer.

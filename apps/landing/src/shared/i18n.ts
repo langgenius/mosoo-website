@@ -61,7 +61,7 @@ const JA_MESSAGES = {
   Main: "メインナビゲーション",
   Footer: "フッター",
   "An open-source, API-first managed Agent runtime for application backends.":
-    "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
+    "バックエンド向け、OSS で API ファーストなマネージド Agent runtime。",
   Product: "プロダクト",
   Developers: "開発者向け",
   "Open source": "オープンソース",

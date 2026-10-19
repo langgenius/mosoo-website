@@ -1,7 +1,7 @@
 {
   "en": {
     "hero": {
-      "h1a": "Run Agents from your backend.",
+      "h1a": "Run agents from your backend.",
       "h1b": "Continue them days later.",
       "lead": "Open source and hosted. One sandbox per Session, your model key.",
       "primary": "Try mosoo",
@@ -33,13 +33,12 @@
       "a": "Four harnesses.",
       "b": "One Session API.",
       "cards": [
-        { "name": "Runtimes", "badge": "inline", "value": "4", "label": "harnesses behind one API", "status": "Chosen per Session" },
-        { "name": "Resume", "badge": "idle", "value": "7 days", "label": "later, same Session", "status": "Ready for a follow-up" },
-        { "name": "Keys", "badge": "byok", "value": "0", "label": "keys inside the sandbox", "status": "Expiring grants only" }
+        { "name": "Runtimes", "value": "4", "label": "harnesses behind one API", "status": "Codex, Claude, OpenCode, Pi" },
+        { "name": "Resume", "value": "No", "label": "inactivity deadline", "status": "Ready for a follow-up" },
+        { "name": "Keys", "value": "0", "label": "provider keys in sandbox", "status": "Expiring grants only" }
       ]
     },
     "faq": {
-      "label": "FAQ",
       "a": "Questions",
       "b": "before you wire it in.",
       "items": [
@@ -48,8 +47,8 @@
           "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
         },
         {
-          "q": "Do I need to create an Agent first?",
-          "a": "No. One request carries the harness, provider, model and instructions, and mosoo starts a Session without creating an Agent. A saved Agent preset is optional."
+          "q": "What does it cost to start?",
+          "a": "Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
         },
         {
           "q": "Why not call a model API directly?",
@@ -70,13 +69,13 @@
       ]
     },
     "close": {
-      "a": "Start a Session",
-      "b": "from your agent.",
+      "a": "Start your first",
+      "b": "Session.",
       "legend": "Setup prompt",
       "prompt": "Read mosoo.ai/llms.txt and start my first Session.",
       "button": "Copy",
       "done": "Copied",
-      "fine": "Codex, Claude Code, Cursor and more."
+      "fine": "Paste into Codex, Claude Code, Cursor."
     }
   },
   "zh": {
@@ -113,13 +112,12 @@
       "a": "四种 harness。",
       "b": "一个 Session API。",
       "cards": [
-        { "name": "Runtime", "badge": "inline", "value": "4", "label": "个 harness，同一个 API", "status": "每个 Session 自选" },
-        { "name": "续接", "badge": "idle", "value": "7 天", "label": "后仍是同一 Session", "status": "可以接着回复" },
-        { "name": "密钥", "badge": "byok", "value": "0", "label": "个密钥进入 sandbox", "status": "只拿到会过期的授权" }
+        { "name": "Runtime", "value": "4", "label": "个 harness，同一个 API", "status": "Codex、Claude、OpenCode、Pi" },
+        { "name": "续接", "value": "无期限", "label": "闲置后仍是同一 Session", "status": "可以接着回复" },
+        { "name": "密钥", "value": "0", "label": "个模型密钥进 sandbox", "status": "只拿到会过期的授权" }
       ]
     },
     "faq": {
-      "label": "常见问题",
       "a": "接入之前，",
       "b": "值得先问的问题。",
       "items": [
@@ -128,8 +126,8 @@
           "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache 2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
         },
         {
-          "q": "需要先创建 Agent 吗？",
-          "a": "不需要。一个请求就能带上 harness、模型供应商、模型和指令，mosoo 直接启动 Session，不会创建 Agent。保存的 Agent 预设是可选的。"
+          "q": "开始使用要付费吗？",
+          "a": "免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不提供模型。"
         },
         {
           "q": "为什么不直接调用模型 API？",
@@ -150,13 +148,13 @@
       ]
     },
     "close": {
-      "a": "在编程 agent 里",
-      "b": "启动 Session。",
+      "a": "启动你的",
+      "b": "第一个 Session。",
       "legend": "设置提示词",
       "prompt": "读 mosoo.ai/llms.txt，启动我的第一个 Session。",
       "button": "复制",
       "done": "已复制",
-      "fine": "适用于 Codex、Claude Code、Cursor 等。"
+      "fine": "粘贴到 Codex、Claude Code、Cursor。"
     }
   },
   "ja": {
@@ -193,13 +191,12 @@
       "a": "4 つの harness。",
       "b": "1 つの Session API。",
       "cards": [
-        { "name": "Runtime", "badge": "inline", "value": "4", "label": "harness、API は 1 つ", "status": "Session ごとに選択" },
-        { "name": "再開", "badge": "idle", "value": "7 日", "label": "後も同じ Session", "status": "フォローアップ待ち" },
-        { "name": "キー", "badge": "byok", "value": "0", "label": "個のキーが sandbox に", "status": "期限付きの許可のみ" }
+        { "name": "Runtime", "value": "4", "label": "harness、API は 1 つ", "status": "Codex、Claude、OpenCode、Pi" },
+        { "name": "再開", "value": "無期限", "label": "放置しても同じ Session", "status": "フォローアップ待ち" },
+        { "name": "キー", "value": "0", "label": "sandbox 内のモデル鍵", "status": "期限付きの許可のみ" }
       ]
     },
     "faq": {
-      "label": "FAQ",
       "a": "組み込む前に",
       "b": "確かめたいこと。",
       "items": [
@@ -208,8 +205,8 @@
           "a": "ホスト版 cloud.mosoo.ai をすぐ使えます。ソースは Apache 2.0 で GitHub にあり、ローカルでの動かし方は README にあります。mosoo は Alpha 版で、公開 API は変わることがあります。"
         },
         {
-          "q": "先に Agent を作る必要はありますか？",
-          "a": "いいえ。harness、プロバイダー、モデル、指示を 1 つのリクエストに含めれば、mosoo は Agent を作らずに Session を開始します。保存済みの Agent プリセットは任意です。"
+          "q": "始めるのに費用はかかりますか？",
+          "a": "無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーが請求します。mosoo はモデルを提供しません。"
         },
         {
           "q": "モデル API を直接呼ぶのと何が違いますか？",
@@ -230,13 +227,13 @@
       ]
     },
     "close": {
-      "a": "手元の agent で",
+      "a": "最初の",
       "b": "Session を開始。",
       "legend": "設定用プロンプト",
       "prompt": "mosoo.ai/llms.txt を読み、最初の Session を開始。",
       "button": "コピー",
       "done": "コピー済",
-      "fine": "Codex、Claude Code、Cursor など。"
+      "fine": "Codex、Claude Code、Cursor に貼り付け。"
     }
   }
 }

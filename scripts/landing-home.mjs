@@ -225,7 +225,7 @@ const SHELL = {
       "language": "言語を切り替える"
     },
     "footer": {
-      "descriptor": "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。",
+      "descriptor": "バックエンド向け、OSS で API ファーストなマネージド Agent runtime。",
       "groups": [
         [
           "プロダクト",
@@ -273,7 +273,7 @@ const SHELL = {
       "copyright": "© 2026 LangGenius, Inc."
     },
     "jsonLd": {
-      "description": "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
+      "description": "バックエンド向け、OSS で API ファーストなマネージド Agent runtime。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
       "help": "https://mosoo.ai/docs/ja/",
       "features": [
         "Agent を作成せずに Session を開始",
@@ -415,7 +415,7 @@ function renderSupply(page) {
   const { supply } = page;
   const cards = supply.cards
     .map(
-      (card, index) => `<div class="d-mcard"><p class="d-mcard-hd">${escapeText(card.name)}<span class="d-badge" translate="no">${escapeText(card.badge)}</span></p><p class="d-mcard-val">${escapeText(card.value)}</p><p class="d-mcard-lab">${escapeText(card.label)}</p><p class="d-mcard-stat"><span aria-hidden="true" class="${index === LIVE_CARD ? "d-dot live" : "d-dot"}"></span>${escapeText(card.status)}</p></div>`,
+      (card, index) => `<div class="d-mcard"><p class="d-mcard-hd">${escapeText(card.name)}</p><p class="d-mcard-val">${escapeText(card.value)}</p><p class="d-mcard-lab">${escapeText(card.label)}</p><p class="d-mcard-stat"><span aria-hidden="true" class="${index === LIVE_CARD ? "d-dot live" : "d-dot"}"></span>${escapeText(card.status)}</p></div>`,
     )
     .join("\n");
   return `<section id="runtimes" aria-labelledby="supply-title" class="d-sec">
@@ -435,11 +435,11 @@ function renderFaq(page) {
   const indicator = `<svg aria-hidden="true" class="d-faq-ind" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><path d="${OUTLINE.OUTLINE_FAQ.block}" stroke="currentColor" stroke-width="1" /></svg>`;
   const items = faq.items
     .map(
-      (item, index) => `<details name="faq" class="d-pc"${index === 0 ? " open" : ""}><summary>${corners("d-pc-c")}<span class="d-pc-q">${escapeText(item.q)}</span><span aria-hidden="true" class="d-pc-n">${indicator}${String(index + 1).padStart(2, "0")}</span></summary><p class="d-pc-a">${escapeText(item.a)}</p></details>`,
+      (item, index) => `<details name="faq" class="d-pc"${index === 0 ? " open" : ""}><summary>${corners("d-pc-c")}<span class="d-pc-q">${escapeText(item.q)}</span><span aria-hidden="true" class="d-pc-n">${indicator}</span></summary><p class="d-pc-a">${escapeText(item.a)}</p></details>`,
     )
     .join("\n");
   return `<section id="faq" aria-labelledby="faq-title" class="d-sec d-faq">
-<div class="d-faq-side"><p class="d-badge d-badge-lg">${escapeText(faq.label)}</p><h2 id="faq-title" class="d-h2">${escapeText(faq.a)}<br /><span class="d-soft">${escapeText(faq.b)}</span></h2></div>
+<div class="d-faq-side"><h2 id="faq-title" class="d-h2">${escapeText(faq.a)}<br /><span class="d-soft">${escapeText(faq.b)}</span></h2></div>
 <div class="d-faq-list">
 ${items}
 </div>
@@ -453,7 +453,7 @@ function renderClose(page) {
   return `<section id="start" aria-labelledby="close-title" class="d-sec">
 <div class="d-plate d-plate-field d-grain d-close">
 <h2 id="close-title" class="d-close-h">${escapeText(close.a)}<br />${escapeText(close.b)}</h2>
-<div class="d-ccard"><span class="d-ccard-legend">${escapeText(close.legend)}</span>${corners("d-ccard-c")}<div class="d-ccard-field" data-product-ui><span class="d-ccard-p">${escapeText(close.prompt)}</span></div><p class="d-ccard-fine">${escapeText(close.fine)}</p></div>
+<div class="d-ccard"><span class="d-ccard-legend" data-product-ui>${escapeText(close.legend)}</span>${corners("d-ccard-c")}<div class="d-ccard-field" data-product-ui><span class="d-ccard-p">${escapeText(close.prompt)}</span></div><p class="d-ccard-fine">${escapeText(close.fine)}</p></div>
 </div>
 </section>`;
 }

@@ -304,13 +304,13 @@ test("landing locale pages receive localized canonical metadata", () => {
   assert.match(zh, /<title>面向应用后端的开源 Agent runtime \| mosoo<\/title>/);
   assert.match(zh, /content="开源、API 优先的托管 Agent runtime，面向应用后端"/);
   assert.match(zh, /<h2 id="faq-title" class="d-h2">接入之前，<br \/><span class="d-soft">值得先问的问题。<\/span><\/h2>/);
-  assert.match(zh, /需要先创建 Agent 吗？/);
+  assert.match(zh, /开始使用要付费吗？/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja"/);
   assert.match(ja, /<meta property="og:url" content="https:\/\/mosoo\.ai\/ja" \/>/);
   assert.match(ja, /<title>アプリのバックエンド向けオープンソース Agent runtime \| mosoo<\/title>/);
   assert.match(ja, /<h2 id="faq-title" class="d-h2">組み込む前に<br \/><span class="d-soft">確かめたいこと。<\/span><\/h2>/);
-  assert.match(ja, /先に Agent を作る必要はありますか？/);
+  assert.match(ja, /始めるのに費用はかかりますか？/);
   for (const html of [en, zh, ja]) {
     assert.match(html, /<link rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en" \/>/);
     assert.match(html, /<link rel="alternate" hreflang="zh-CN" href="https:\/\/mosoo\.ai\/zh" \/>/);
@@ -431,7 +431,7 @@ test("the static home page carries the whole page for readers without JavaScript
     "Same Session, a week later.",
     "Four harnesses. One Session API.",
     "Questions before you wire it in.",
-    "Start a Session from your agent.",
+    "Start your first Session.",
   ]);
   assert.match(textOf(enMain), /Open source and hosted\. One sandbox per Session, your model key\./);
   assert.match(en, /<a href="https:\/\/cloud\.mosoo\.ai" class="d-btn">Try mosoo<\/a>/);
@@ -443,8 +443,9 @@ test("the static home page carries the whole page for readers without JavaScript
   assert.doesNotMatch(en, /data-dock=/);
   assert.equal(en.match(/class="d-sat s\d" data-sat>/g)?.length, 4);
   assert.match(en, /<span class="d-ccard-p">Read mosoo\.ai\/llms\.txt and start my first Session\.<\/span>/);
-  // Product objects carry data-product-ui, as on the React page.
-  assert.equal(en.match(/data-product-ui/g)?.length, 4);
+  // Product objects carry data-product-ui, as on the React page (the U06
+  // legend belongs to the prompt object, UI-FORMS §g.2).
+  assert.equal(en.match(/data-product-ui/g)?.length, 5);
   // No content-led furniture: no tables, no code blocks, no screenshots.
   assert.doesNotMatch(en, /<table|<pre|<img/);
 

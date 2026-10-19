@@ -241,6 +241,18 @@
   --dur-4: 420ms;
 }
 
+/* Japanese needs Japanese system faces ahead of the Simplified Chinese ones:
+   otherwise kanji come from PingFang SC / Songti SC and kana from Hiragino
+   Sans GB, and one word mixes two weights. */
+:root:lang(ja) {
+  --font-display:
+    "Display Fallback", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Noto Serif CJK JP", ui-serif, Georgia,
+    serif;
+  --font-sans:
+    "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
+    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ----------------------------------------------------------------------------
    Landing scope — the pre-auth experience (marketing landing + auth card) was
    redesigned on the warm paper/forest palette and is deliberately preserved.
