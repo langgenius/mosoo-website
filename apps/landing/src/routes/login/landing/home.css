@@ -600,7 +600,9 @@
   top: 29px;
   overflow: visible;
   fill: transparent;
-  stroke: var(--ink-2);
+  /* Closed rows are quieter than the filled open one, so the 10x8 window
+     does not read as a ticked checkbox (UI review P2-6). */
+  stroke: var(--ink-3);
   stroke-width: 1;
   transition:
     transform 0.65s var(--ease-door),

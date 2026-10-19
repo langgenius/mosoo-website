@@ -59,12 +59,14 @@ function heroLines(words: TranscriptWords): TranscriptLine[] {
 function stageLines(words: TranscriptWords): TranscriptLine[] {
   return [
     { kind: "prompt", text: words.prompt, at: 0, rulerAt: 0 },
+    // The first two steps are printed before the stage starts, so its
+    // opening frame is a working terminal, not an empty card (UI review P2-4).
     {
       kind: "step",
       verb: "Read",
       arg: "input.csv",
       result: words.rows,
-      at: 0.07,
+      at: 0,
       rulerAt: 0.04,
     },
     {
@@ -72,7 +74,7 @@ function stageLines(words: TranscriptWords): TranscriptLine[] {
       verb: "Bash",
       arg: "python report.py",
       result: "grand_total 230",
-      at: 0.15,
+      at: 0,
       rulerAt: 0.12,
     },
     {
