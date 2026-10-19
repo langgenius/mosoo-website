@@ -71,6 +71,9 @@ const KIT_COPY = {
 
   // Kit copy (README "Copy deviations").
   daysLater: { en: "7 days later", zh: "7 天后", ja: "7 日後" },
+  // The fold control of a long request (v3): the prose lines show one line each.
+  expandRequest: { en: "Expand", zh: "展开", ja: "展開" },
+  collapseRequest: { en: "Collapse", zh: "收起", ja: "折りたたむ" },
   // Alt text of turn 1's real chart.svg (the values the example code drew).
   chartAlt: {
     en: "Revenue by region: north 150, south 80, grand_total 230.",

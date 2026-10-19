@@ -22,23 +22,21 @@ export function FaqSection(): ReactElement {
   return (
     <section id="faq" aria-labelledby="faq-title" className="v2a-section">
       <span aria-hidden="true" className="v2a-node" style={{ top: 110 }} />
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(220px,0.8fr)_1.9fr] md:gap-16">
-        <div>
-          <h2 id="faq-title" className="v2a-display v2a-h2 md:sticky md:top-24">
-            {t("Questions to ask before you build on mosoo")}
-          </h2>
-        </div>
+      <h2 id="faq-title" className="v2a-display v2a-h2">
+        {t("Questions to ask before you build on mosoo")}
+      </h2>
 
-        <div className="border-t border-[rgba(109,120,106,0.35)]">
-          {FAQ_MESSAGES.map((faq) => (
-            <div key={faq.q} className="border-b border-[rgba(109,120,106,0.35)] py-6">
-              <h3 className="text-ink-900 text-[18px] leading-[1.4] font-semibold">{t(faq.q)}</h3>
-              <p className="text-ink-700 mt-2.5 max-w-[720px] text-[16px] leading-[1.65]">
-                <WithCodeTokens text={t(faq.a)} tokens={FAQ_CODE_TOKENS} />
-              </p>
-            </div>
-          ))}
-        </div>
+      {/* Two columns from 1024px (v2b's appendix layout): all ten answers stay
+          open, in reading order down the first column, then the second. */}
+      <div className="v2a-faq mt-10">
+        {FAQ_MESSAGES.map((faq) => (
+          <div key={faq.q} className="v2a-qa">
+            <h3 className="text-ink-900 text-[18px] leading-[1.4] font-semibold">{t(faq.q)}</h3>
+            <p className="text-ink-700 mt-2.5 max-w-[720px] text-[16px] leading-[1.65]">
+              <WithCodeTokens text={t(faq.a)} tokens={FAQ_CODE_TOKENS} />
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );

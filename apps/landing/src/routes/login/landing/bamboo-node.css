@@ -795,3 +795,24 @@
   outline: 2px solid #0b1a14;
   outline-offset: 3px;
 }
+
+/* FAQ: one list on phones, two columns from 1024px (graft from v2b). */
+.v2a-faq {
+  border-top: 1px solid rgba(109, 120, 106, 0.35);
+}
+
+.v2a-qa {
+  padding: 22px 0 24px;
+  border-bottom: 1px solid rgba(109, 120, 106, 0.35);
+}
+
+@media (min-width: 1024px) {
+  .v2a-faq {
+    columns: 2;
+    column-gap: 56px;
+  }
+
+  .v2a-qa {
+    break-inside: avoid;
+  }
+}

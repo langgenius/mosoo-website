@@ -303,7 +303,6 @@ const COPY = {
     },
     features: {
       title: "mosoo handles execution, files, events, and usage.",
-      intro: "Each of these is a promise in the product spec. The spec is linked below.",
       spec: "Read the product spec",
       items: [
         {
@@ -364,7 +363,6 @@ const COPY = {
     split: {
       path: "Your backend calls the mosoo API over HTTPS with a Project API key, and every Session runs in its own sandbox. Provider keys and MCP credentials stay outside it: mosoo’s proxies add them to each request.",
       title: "Your app keeps its users. mosoo runs the Agent.",
-      intro: "This split comes straight from the product spec.",
       app: "Your app keeps",
       mosoo: "mosoo runs",
       appRows: [
@@ -432,7 +430,7 @@ const COPY = {
     },
     limits: {
       title: "mosoo leaves these out on purpose.",
-      intro: "The product spec lists these on purpose. Plan around them before you build.",
+      intro: "Plan around them before you build.",
       columns: ["Not included", "Do this instead"],
       rows: [
         ["Webhooks", "Stream events over SSE, or read the saved history."],
@@ -562,7 +560,6 @@ const COPY = {
     },
     features: {
       title: "执行、文件、事件和用量由 mosoo 负责。",
-      intro: "下面每一项都是产品规格里的承诺，规格链接在下方。",
       spec: "阅读产品规格",
       items: [
         {
@@ -623,7 +620,6 @@ const COPY = {
     split: {
       path: "你的后端用 Project API 密钥通过 HTTPS 调用 mosoo API，每个 Session 都在自己的 sandbox 中运行。模型供应商密钥和 MCP 凭据留在 sandbox 之外，由 mosoo 的代理在每次请求时加上。",
       title: "你的应用管用户，mosoo 运行 Agent。",
-      intro: "这个分工直接来自产品规格。",
       app: "你的应用负责",
       mosoo: "mosoo 负责",
       appRows: [
@@ -688,7 +684,7 @@ const COPY = {
     },
     limits: {
       title: "这些是 mosoo 有意不做的事。",
-      intro: "这些是产品规格里明确写下的取舍。开始构建前，先把它们考虑进去。",
+      intro: "开始构建前，先把它们考虑进去。",
       columns: ["不包含", "可以这样做"],
       rows: [
         ["Webhook", "通过 SSE 接收事件，或读取已保存的历史。"],
@@ -805,7 +801,6 @@ const COPY = {
     },
     features: {
       title: "実行、ファイル、イベント、使用量は mosoo が担います。",
-      intro: "どれも製品仕様に書かれた約束です。仕様へのリンクは下にあります。",
       spec: "製品仕様を読む",
       items: [
         {
@@ -866,7 +861,6 @@ const COPY = {
     split: {
       path: "バックエンドは Project API キーを使って HTTPS で mosoo API を呼び出し、Session はそれぞれ専用の sandbox で実行されます。プロバイダーキーと MCP 認証情報は sandbox の外に置かれ、mosoo のプロキシがリクエストごとに付与します。",
       title: "ユーザーはアプリが持ち、Agent は mosoo が動かす",
-      intro: "この役割分担は、製品仕様そのままです。",
       app: "アプリが担うこと",
       mosoo: "mosoo が担うこと",
       appRows: [
@@ -934,7 +928,7 @@ const COPY = {
     },
     limits: {
       title: "mosoo はこれらを意図的に提供していません。",
-      intro: "以下は製品仕様に明記された判断です。作り始める前に、前提として織り込んでください。",
+      intro: "作り始める前に、前提として織り込んでください。",
       columns: ["含まれないもの", "代わりの方法"],
       rows: [
         ["Webhook", "SSE でイベントを受け取るか、保存済みの履歴を読み取ってください。"],
@@ -1176,7 +1170,6 @@ function renderFeatures(copy) {
 
   return `<section id="features" aria-labelledby="mf-features">
 <h2 id="mf-features">${inline(features.title)}</h2>
-<p class="mf-intro">${inline(features.intro)}</p>
 <ul class="mf-grid">
 ${items}
 </ul>
@@ -1222,7 +1215,6 @@ function renderSplit(copy) {
 
   return `<section id="your-app-and-mosoo" aria-labelledby="mf-split">
 <h2 id="mf-split">${inline(split.title)}</h2>
-<p class="mf-intro">${inline(split.intro)}</p>
 <div class="mf-cols">
 <div>
 <h3>${inline(split.app)}</h3>

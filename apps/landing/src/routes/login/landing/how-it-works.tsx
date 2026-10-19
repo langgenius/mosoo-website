@@ -141,7 +141,7 @@ export function HowItWorks(): ReactElement {
             className="rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-4"
             style={CODE_SIZE}
           >
-            <ApiCall locale={locale} />
+            <ApiCall fold locale={locale} />
           </div>
           <div className="mt-5 flex flex-col gap-2">
             <ArrowLink href={docsUrl("api-reference-v2/")} className="self-start">

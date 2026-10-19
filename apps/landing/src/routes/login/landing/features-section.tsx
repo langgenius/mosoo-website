@@ -125,7 +125,6 @@ export function FeaturesSection(): ReactElement {
       <h2 id="features-title" className="v2a-display v2a-h2">
         {t("mosoo handles execution, files, events, and usage.")}
       </h2>
-      <p className="v2a-intro">{t("Each of these is a promise in the product spec. The spec is linked below.")}</p>
 
       <ol className="mt-12">
         {features().map((feature) => {

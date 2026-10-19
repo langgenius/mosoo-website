@@ -88,7 +88,6 @@ export function SplitSection(): ReactElement {
       <h2 id="split-title" className="v2a-display v2a-h2">
         {t("Your app keeps its users. mosoo runs the Agent.")}
       </h2>
-      <p className="v2a-intro">{t("This split comes straight from the product spec.")}</p>
 
       <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-14">
         <DutyList heading={t("Your app keeps")} duties={appDuties()} tone="app" />

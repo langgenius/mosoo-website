@@ -45,7 +45,7 @@ export function LimitsSection(): ReactElement {
           <h2 id="limits-title" className="v2a-display v2a-h2">
             {t("mosoo leaves these out on purpose.")}
           </h2>
-          <p className="v2a-intro">{t("The product spec lists these on purpose. Plan around them before you build.")}</p>
+          <p className="v2a-intro">{t("Plan around them before you build.")}</p>
         </div>
         {/* Soil, the console's boundary colour, marks what is not included;
             phones stack each row: the gap, then what to do instead. */}

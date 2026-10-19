@@ -35,7 +35,15 @@ import { Badge, Button, CopyCheckIcon } from "./primitives";
 export interface ApiCallProps extends MomentProps {
   /** Show the input.csv upload before the create call (default true). */
   upload?: boolean | undefined;
+  /**
+   * Show each long prose line (the instructions and the prompt) as one line
+   * with an Expand control. Copy still copies the verbatim request.
+   */
+  fold?: boolean | undefined;
 }
+
+// The lines that hold one prose string each (the 80-column test's exception).
+const PROSE_LINE = /^ *"(?:instructions": "[^"]+"|content": \[\{ "type": "text", "text": "[^"]+" \}\])$/;
 
 const REPLAY_MS = 3600;
 // Milliseconds into the replay: the upload's answer, the create call going
@@ -132,15 +140,29 @@ function hangingIndent(line: string): CSSProperties {
   return { paddingLeft: `${indent}ch`, textIndent: `-${indent}ch` };
 }
 
-function Code({ codeRef, text }: { codeRef?: (node: HTMLElement | null) => void; text: string }): ReactElement {
+function Code({
+  codeRef,
+  folded = false,
+  text,
+}: {
+  codeRef?: (node: HTMLElement | null) => void;
+  folded?: boolean;
+  text: string;
+}): ReactElement {
   return (
     <pre className="text-fg-1 overflow-x-auto px-3 py-3 font-mono text-[length:var(--kit-code-size,1rem)] leading-[1.6] @sm:px-4">
       <code ref={codeRef}>
-        {text.split("\n").map((line, index) => (
-          <span key={index} className="block min-h-[1.6em] whitespace-pre-wrap" style={hangingIndent(line)}>
-            <Line line={line} />
-          </span>
-        ))}
+        {text.split("\n").map((line, index) =>
+          folded && PROSE_LINE.test(line) ? (
+            <span key={index} className="block min-h-[1.6em] truncate whitespace-pre" title={line.trim()}>
+              <Line line={line} />
+            </span>
+          ) : (
+            <span key={index} className="block min-h-[1.6em] whitespace-pre-wrap" style={hangingIndent(line)}>
+              <Line line={line} />
+            </span>
+          ),
+        )}
       </code>
     </pre>
   );
@@ -149,17 +171,21 @@ function Code({ codeRef, text }: { codeRef?: (node: HTMLElement | null) => void;
 function CallPanel({
   arriving,
   call,
+  fold = false,
   label,
   locale,
   responded,
 }: {
   arriving: boolean;
   call: ExampleApiCall;
+  fold?: boolean;
   label: string;
   locale: KitLocale;
   responded: boolean;
 }): ReactElement {
   const [copied, setCopied] = useState(false);
+  const foldable = fold && call.request.split("\n").some((line) => PROSE_LINE.test(line));
+  const [expanded, setExpanded] = useState(false);
   const announce = useAnnounce();
   const code = useRef<HTMLElement | null>(null);
 
@@ -183,6 +209,20 @@ function CallPanel({
     <div className="border-border bg-sunken overflow-hidden rounded-lg border">
       <div className="border-border-soft flex min-h-11 items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-3 @sm:pl-4">
         <span className="text-fg-2 text-[12.5px] font-medium">{label}</span>
+        <span className="flex items-center gap-1.5">
+        {foldable ? (
+          <Button
+            aria-expanded={expanded}
+            aria-label={withSubject(locale, kitText(locale, expanded ? "collapseRequest" : "expandRequest"), label)}
+            onClick={() => {
+              setExpanded((value) => !value);
+            }}
+            size="sm"
+            variant="ghost"
+          >
+            {kitText(locale, expanded ? "collapseRequest" : "expandRequest")}
+          </Button>
+        ) : null}
         <Button
           aria-label={withSubject(locale, kitText(locale, "copyRequest"), label)}
           onClick={() => {
@@ -194,11 +234,13 @@ function CallPanel({
           <CopyCheckIcon copied={copied} />
           {kitText(locale, "copyRequest")}
         </Button>
+        </span>
       </div>
       <Code
         codeRef={(node) => {
           code.current = node;
         }}
+        folded={foldable && !expanded}
         text={call.request}
       />
       <div className="border-border-soft flex min-h-10 flex-wrap items-center gap-2 border-t px-3 py-1.5 @sm:px-4">
@@ -221,10 +263,12 @@ function CallPanel({
 
 export function ApiCallView({
   elapsed,
+  fold = false,
   locale,
   upload,
 }: {
   elapsed: number | null;
+  fold?: boolean;
   locale: KitLocale;
   upload: boolean;
 }): ReactElement {
@@ -248,6 +292,7 @@ export function ApiCallView({
         <CallPanel
           arriving={arriving(createResponse)}
           call={API_CALLS.create}
+          fold={fold}
           label={kitText(locale, "startSession")}
           locale={locale}
           responded={reached(elapsed, createResponse)}
@@ -262,6 +307,7 @@ export function ApiCall({
   exclusive,
   locale,
   replayAt,
+  fold = false,
   scale,
   upload = true,
 }: ApiCallProps): ReactElement {
@@ -270,7 +316,7 @@ export function ApiCall({
 
   return (
     <ConsoleIsland label={momentLabel(locale, name)} locale={locale} replaying={replay.elapsed !== null} rootRef={replay.ref} scale={scale}>
-      <ApiCallView elapsed={replay.elapsed} locale={locale} upload={upload} />
+      <ApiCallView elapsed={replay.elapsed} fold={fold} locale={locale} upload={upload} />
       <ReplayControl canReplay={replay.canReplay} locale={locale} moment={name} onReplay={replay.replay} />
     </ConsoleIsland>
   );

@@ -34,8 +34,6 @@ const ZH_MESSAGES = {
     "名称和标志仅用于标明兼容的服务，不代表合作或背书。",
   "What mosoo runs for your backend":
     "mosoo 为你的后端承担的工作",
-  "Each of these is a promise in the product spec. The spec is linked below.":
-    "下面每一项都是产品规格里的承诺，规格链接在下方。",
   "Read the product spec":
     "阅读产品规格",
   "Start a Session without creating an Agent":
@@ -128,8 +126,6 @@ const ZH_MESSAGES = {
     "复制失败。",
   "Your app keeps its users. mosoo runs the Agent.":
     "你的应用管用户，mosoo 运行 Agent。",
-  "This split comes straight from the product spec.":
-    "这个分工直接来自产品规格。",
   "Your app keeps":
     "你的应用负责",
   "mosoo runs":
@@ -248,8 +244,7 @@ const ZH_MESSAGES = {
     "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
   "What mosoo doesn’t do":
     "mosoo 不做的事",
-  "The product spec lists these on purpose. Plan around them before you build.":
-    "这些是产品规格里明确写下的取舍。开始构建前，先把它们考虑进去。",
+  "Plan around them before you build.": "开始构建前，先把它们考虑进去。",
   "Not included":
     "不包含",
   "Do this instead":
@@ -421,8 +416,6 @@ const JA_MESSAGES = {
     "名称とロゴは互換性のあるサービスを示すもので、提携や推奨を意味するものではありません。",
   "What mosoo runs for your backend":
     "mosoo がバックエンドの代わりに担うこと",
-  "Each of these is a promise in the product spec. The spec is linked below.":
-    "どれも製品仕様に書かれた約束です。仕様へのリンクは下にあります。",
   "Read the product spec":
     "製品仕様を読む",
   "Start a Session without creating an Agent":
@@ -515,8 +508,6 @@ const JA_MESSAGES = {
     "コピーに失敗しました。",
   "Your app keeps its users. mosoo runs the Agent.":
     "ユーザーはアプリが持ち、Agent は mosoo が動かす",
-  "This split comes straight from the product spec.":
-    "この役割分担は、製品仕様そのままです。",
   "Your app keeps":
     "アプリが担うこと",
   "mosoo runs":
@@ -635,8 +626,7 @@ const JA_MESSAGES = {
     "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
   "What mosoo doesn’t do":
     "mosoo がやらないこと",
-  "The product spec lists these on purpose. Plan around them before you build.":
-    "以下は製品仕様に明記された判断です。作り始める前に、前提として織り込んでください。",
+  "Plan around them before you build.": "作り始める前に、前提として織り込んでください。",
   "Not included":
     "含まれないもの",
   "Do this instead":
