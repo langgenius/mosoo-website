@@ -317,19 +317,24 @@ function replaceRequired(html, search, replacement) {
   }
   return html.replaceAll(search, replacement);
 }
+// A third element { optional: true } localizes the string where it is and skips it where it is not.
 function applyReplacements(source, replacements) {
   return replacements.reduce(
-    (html, [search, replacement]) =>
-      search === replacement ? html : replaceRequired(html, search, replacement),
+    (html, [search, replacement, { optional = false } = {}]) =>
+      search === replacement || (optional && !html.includes(search))
+        ? html
+        : replaceRequired(html, search, replacement),
     source,
   );
 }
 
 // The static nav that the subpages (pricing, status, use cases) still carry.
+// Pricing is optional: v5 takes it out of the navs (staging production/v5/TOOLS-REVIEW.md T5, #138), and the
+// subpages drop it one by one; where it is still linked, it is localized as before.
 function navReplacements(locale) {
   const labels = FALLBACK_LABELS[locale];
   return [
-    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`, { optional: true }],
     ['href="/en/use-cases">Use cases</a>', `href="/${locale}/use-cases">${labels.useCases}</a>`],
     ['href="/health">Status</a>', `href="${locale === "en" ? "/health" : `/${locale}/health`}">${labels.status}</a>`],
     [">Docs</a>", `>${labels.docs}</a>`],
