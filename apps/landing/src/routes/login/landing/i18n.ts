@@ -294,8 +294,8 @@ const ZH_MESSAGES = {
     "试用 mosoo",
   "In your coding agent":
     "在编码智能体中",
-  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.":
-    "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你提供模型供应商密钥，因为这是它唯一无法替你创建的值。",
+  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.":
+    "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你在控制台添加模型供应商密钥，这是它唯一无法替你完成的一步。",
   "Copy setup prompt":
     "复制设置提示",
   "Setup prompt copied":
@@ -316,8 +316,8 @@ const ZH_MESSAGES = {
     "mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。它用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在自己的 sandbox 中执行。你的后端发起任务、读取结果，执行、文件、事件和用量由 mosoo 负责。mosoo 目前处于 Alpha 阶段。",
   "Do I need to create or publish an Agent first?":
     "需要先创建或发布 Agent 吗？",
-  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers.":
-    "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，只有挂载技能或 MCP 服务器时才需要。",
+  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one to attach Skills, MCP servers, or a non-default Environment.":
+    "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，挂载技能、MCP 服务器或使用非默认环境时才需要它。",
   "Which runtimes and models can I use?":
     "可以用哪些 runtime 和模型？",
   "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs.":
@@ -340,8 +340,8 @@ const ZH_MESSAGES = {
     "读取 Thread 的状态和已保存的事件历史，或者打开 SSE 流，它会先发送最新的已保存事件。稳定的事件 ID 让重连的客户端可以跳过已经收到的事件。Agent 写到 outputs/ 下的文件会成为可下载的产出物。mosoo 不提供 Webhook。",
   "How long can a turn run?":
     "一个 turn 最长能运行多久？",
-  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error.":
-    "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果没有空闲的 sandbox 容量，请求会立即以可重试的 runtime.capacity_exhausted 错误失败。",
+  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If a turn needs a new sandbox and no capacity is free, it fails at once: its Run ends with the retryable runtime.capacity_exhausted error, and mosoo does not queue it.":
+    "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果某个 turn 需要新的 sandbox 而没有空闲容量，它会立即失败：对应的 Run 以可重试的 runtime.capacity_exhausted 错误结束，mosoo 不会把它排队。",
   "Can I retry a request without running the work twice?":
     "重试请求会不会让任务执行两次？",
   "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.":
@@ -681,8 +681,8 @@ const JA_MESSAGES = {
     "mosoo を試す",
   "In your coding agent":
     "コーディングエージェントで",
-  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.":
-    "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、プロバイダーキーの入力を求めます。エージェントが代わりに作れない唯一の値だからです。",
+  "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.":
+    "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、コンソールでプロバイダーキーを追加するよう求めます。エージェントが代わりにできない唯一の手順です。",
   "Copy setup prompt":
     "セットアッププロンプトをコピー",
   "Setup prompt copied":
@@ -703,8 +703,8 @@ const JA_MESSAGES = {
     "mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。バックエンドはタスクを開始して結果を受け取り、実行、ファイル、イベント、使用量は mosoo が担います。mosoo は現在 Alpha 版です。",
   "Do I need to create or publish an Agent first?":
     "先に Agent を作成または公開する必要はありますか？",
-  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers.":
-    "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合にだけ必要です。",
+  "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one to attach Skills, MCP servers, or a non-default Environment.":
+    "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合、またはデフォルト以外の Environment を使う場合に必要です。",
   "Which runtimes and models can I use?":
     "どの runtime とモデルを使えますか？",
   "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs.":
@@ -727,8 +727,8 @@ const JA_MESSAGES = {
     "Thread のステータスと保存済みのイベント履歴を読み取るか、SSE ストリームを開きます。SSE は最新の保存済みイベントから送信され、安定したイベント ID によって、再接続したクライアントは受信済みのイベントをスキップできます。Agent が outputs/ に書き込んだファイルは、ダウンロードできる成果物になります。Webhook はありません。",
   "How long can a turn run?":
     "1 つの turn はどのくらい実行できますか？",
-  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error.":
-    "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。空いている sandbox の容量がない場合、リクエストは再試行可能な runtime.capacity_exhausted エラーですぐに失敗します。",
+  "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If a turn needs a new sandbox and no capacity is free, it fails at once: its Run ends with the retryable runtime.capacity_exhausted error, and mosoo does not queue it.":
+    "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。turn に新しい sandbox が必要で空き容量がない場合、その turn はすぐに失敗し、Run は再試行可能な runtime.capacity_exhausted エラーで終わります。mosoo はその turn をキューに入れません。",
   "Can I retry a request without running the work twice?":
     "リクエストを再試行すると、処理が二重に実行されませんか？",
   "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.":
@@ -786,13 +786,13 @@ export function t(message: Message): string {
 /** FAQ entries in page order (copy deck §10). */
 export const FAQ_MESSAGES = [
   { q: "What is mosoo?", a: "mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, and each Session runs in its own sandbox. Your backend starts the work and reads the results. mosoo handles execution, files, events, and usage. mosoo is in Alpha." },
-  { q: "Do I need to create or publish an Agent first?", a: "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers." },
+  { q: "Do I need to create or publish an Agent first?", a: "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one to attach Skills, MCP servers, or a non-default Environment." },
   { q: "Which runtimes and models can I use?", a: "There are 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi. Models run on your own keys for Anthropic, OpenAI, DeepSeek, Gemini, Qwen, Kimi, Zhipu, MiniMax, or OpenCode Zen, or on a custom OpenAI-compatible HTTPS endpoint. Each runtime accepts specific model protocols, and mosoo rejects a mismatched pair before anything runs." },
   { q: "Who pays for model usage?", a: "You do, directly. Model keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. The usage API and the Usage page show measured tokens and cost estimates. They are not invoices." },
   { q: "What happens when I reply hours or days later?", a: "The reply continues the same Session. A follow-up 1 minute or 7 days after a completed turn has the same semantics, even after the sandbox was reclaimed, though a cold start can take longer. mosoo restores the working directory, the harness’s native conversation, the frozen configuration, and recorded artifacts from the last committed checkpoint. Live processes are not carried over. If the checkpoint can’t be restored, the follow-up fails with an error instead of starting empty." },
   { q: "Do my API keys enter the sandbox?", a: "No. Provider keys and MCP credentials stay outside the sandbox. The runtime reaches models and MCP servers through mosoo’s proxies, which add the credential on each request. Environment variables are different. Code in the sandbox can read them, so keep model keys in Providers and tool tokens in MCP connections." },
   { q: "How do I follow progress and get results?", a: "Read the Thread’s status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks." },
-  { q: "How long can a turn run?", a: "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error." },
+  { q: "How long can a turn run?", a: "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If a turn needs a new sandbox and no capacity is free, it fails at once: its Run ends with the retryable runtime.capacity_exhausted error, and mosoo does not queue it." },
   { q: "Can I retry a request without running the work twice?", a: "Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once." },
   { q: "Is mosoo open source, and is it ready for production?", a: "mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can’t stay compatible ships as a new API version. The quickest way to try mosoo is the hosted console at cloud.mosoo.ai. The README explains how to run it locally for development." },
 ] as const satisfies readonly { q: Message; a: Message }[];

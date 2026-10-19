@@ -48,7 +48,7 @@ export function FinalCta(): ReactElement {
           </h3>
           <p className="text-ink-500 mt-3 text-[16px] leading-[1.6]">
             {t(
-              "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.",
+              "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.",
             )}
           </p>
           <pre

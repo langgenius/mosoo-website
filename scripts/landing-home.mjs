@@ -109,7 +109,7 @@ const FAQ = {
     },
     {
       "q": "Do I need to create or publish an Agent first?",
-      "a": "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one only to attach Skills or MCP servers."
+      "a": "No. On /api/v2, one request carries the harness, provider, model, instructions, and input, and mosoo starts a durable Session without creating an Agent. Saved Agent presets are optional. You need one to attach Skills, MCP servers, or a non-default Environment."
     },
     {
       "q": "Which runtimes and models can I use?",
@@ -133,7 +133,7 @@ const FAQ = {
     },
     {
       "q": "How long can a turn run?",
-      "a": "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If no sandbox capacity is free, the request fails at once with a retryable runtime.capacity_exhausted error."
+      "a": "Up to 2 hours. A Session runs one turn at a time. Input sent to a busy Session is rejected, and there is no input queue. If a turn needs a new sandbox and no capacity is free, it fails at once: its Run ends with the retryable runtime.capacity_exhausted error, and mosoo does not queue it."
     },
     {
       "q": "Can I retry a request without running the work twice?",
@@ -151,7 +151,7 @@ const FAQ = {
     },
     {
       "q": "需要先创建或发布 Agent 吗？",
-      "a": "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，只有挂载技能或 MCP 服务器时才需要。"
+      "a": "不需要。在 /api/v2 上，一个请求就能带上 harness、模型供应商、模型、指令和输入，mosoo 会直接启动持久 Session，不会创建 Agent。保存的 Agent 预设是可选的，挂载技能、MCP 服务器或使用非默认环境时才需要它。"
     },
     {
       "q": "可以用哪些 runtime 和模型？",
@@ -175,7 +175,7 @@ const FAQ = {
     },
     {
       "q": "一个 turn 最长能运行多久？",
-      "a": "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果没有空闲的 sandbox 容量，请求会立即以可重试的 runtime.capacity_exhausted 错误失败。"
+      "a": "最长 2 小时。一个 Session 同一时间只运行一个 turn。Session 忙碌时发来的输入会被拒绝，也没有输入队列。如果某个 turn 需要新的 sandbox 而没有空闲容量，它会立即失败：对应的 Run 以可重试的 runtime.capacity_exhausted 错误结束，mosoo 不会把它排队。"
     },
     {
       "q": "重试请求会不会让任务执行两次？",
@@ -193,7 +193,7 @@ const FAQ = {
     },
     {
       "q": "先に Agent を作成または公開する必要はありますか？",
-      "a": "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合にだけ必要です。"
+      "a": "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、mosoo は Agent を作成せずに永続的な Session を開始します。保存済みの Agent プリセットは任意で、スキルや MCP サーバーを使う場合、またはデフォルト以外の Environment を使う場合に必要です。"
     },
     {
       "q": "どの runtime とモデルを使えますか？",
@@ -217,7 +217,7 @@ const FAQ = {
     },
     {
       "q": "1 つの turn はどのくらい実行できますか？",
-      "a": "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。空いている sandbox の容量がない場合、リクエストは再試行可能な runtime.capacity_exhausted エラーですぐに失敗します。"
+      "a": "最長 2 時間です。1 つの Session で同時に実行できる turn は 1 つだけです。実行中の Session に送った入力は拒否され、入力キューはありません。turn に新しい sandbox が必要で空き容量がない場合、その turn はすぐに失敗し、Run は再試行可能な runtime.capacity_exhausted エラーで終わります。mosoo はその turn をキューに入れません。"
     },
     {
       "q": "リクエストを再試行すると、処理が二重に実行されませんか？",
@@ -459,7 +459,7 @@ const COPY = {
         "Sign in with email or Google. Your first sign-in creates a Default Project. Add a provider key, then start a Session.",
       agentTitle: "In your coding agent",
       agentBody:
-        "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI and asks you for your provider key, the one value it can’t create for you.",
+        "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the CLI, then asks you to add a provider key in the console, the one step it can’t do for you.",
     },
     footer: {
       signoff: "Take root, and grow a bamboo sea.",
@@ -706,7 +706,7 @@ const COPY = {
       consoleBody: "用邮箱或 Google 登录。首次登录会自动创建默认项目。添加模型供应商密钥后，就可以启动 Session。",
       agentTitle: "在编码智能体中",
       agentBody:
-        "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你提供模型供应商密钥，因为这是它唯一无法替你创建的值。",
+        "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 CLI，然后请你在控制台添加模型供应商密钥，这是它唯一无法替你完成的一步。",
     },
     footer: {
       signoff: "扎下根，长成一片竹海。",
@@ -960,7 +960,7 @@ const COPY = {
         "メールアドレスまたは Google でログインします。初回ログイン時にデフォルトプロジェクトが作成されます。プロバイダーキーを追加したら、Session を開始できます。",
       agentTitle: "コーディングエージェントで",
       agentBody:
-        "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、プロバイダーキーの入力を求めます。エージェントが代わりに作れない唯一の値だからです。",
+        "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けます。CLI をインストールしたあと、コンソールでプロバイダーキーを追加するよう求めます。エージェントが代わりにできない唯一の手順です。",
     },
     footer: {
       signoff: "根を張り、竹の海を育てよう。",
