@@ -24,7 +24,7 @@ const FAMILIES = [
 
 // Every non-ASCII character the en copy, the FAQ and the product strings use, plus the ones the brief names.
 // U+2192 (→) is outside every Google Fonts latin subset (it ships U+2191 and U+2193 only), so it is reported, not
-// required: draw arrows as SVG icons (product-kit/components/icons.tsx) or let them fall to the system font.
+// required: draw arrows as SVG icons (shared/ui/console-glyphs.tsx) or let them fall to the system font.
 const REQUIRED = "‘’“”–—×·…©";
 const REPORT_ONLY = "→";
 const OFL_BODY = readFileSync(new URL("./OFL-1.1.txt", import.meta.url), "utf8");

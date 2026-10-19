@@ -72,7 +72,7 @@
 }
 
 :root {
-  /* Raw stacks under their own names, so the console island can point at them without a var() cycle. */
+  /* Raw stacks under their own names, so locale rules can swap them without a var() cycle. */
   --paper-display: "Display Fallback", "Display Local", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
     "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
   --paper-sans: "Inter", "Inter Local", "PingFang SC", "Hiragino Sans", "Hiragino Sans GB", "Microsoft YaHei UI",
@@ -92,16 +92,4 @@
     "Songti SC", ui-serif, Georgia, serif;
   --paper-sans: "Inter", "Inter Local", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo",
     "Noto Sans CJK JP", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
-}
-
-/*
- * Product moments keep the console's layout, sizes and tokens but borrow the page's Inter and Fragment Mono
- * instead of loading Geist and Geist Mono (another ~90 KB that the 125 KB font budget has no room for).
- */
-html [data-surface="console"],
-html [data-surface="console"]:lang(zh) {
-  /* `html` lifts this over the island's own [data-surface="console"](:lang(zh)) rules, whatever the load order. */
-  --console-font-sans: var(--paper-sans);
-  --console-font-heading: var(--paper-sans);
-  --console-font-mono: var(--paper-mono);
 }

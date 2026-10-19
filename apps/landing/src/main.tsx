@@ -1,26 +1,6 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-
-import { LandingShell } from "./routes/login/landing/landing-shell";
-import { LoginLanding } from "./routes/login/landing/landing";
-import { htmlLanguage, locale } from "./shared/locale";
-
+// The home page is static HTML (scripts/landing-home.mjs renders it into
+// /en, /zh and /ja at build time). This entry only brings its styles and the
+// effect engines that animate it; without JavaScript the page shows each
+// effect's end state.
 import "./shared/styles/app.css";
 import "./shared/styles/paper-fonts.css";
-import "./routes/login/landing/bamboo-node.css";
-
-const container = document.querySelector("#root");
-
-if (!container) {
-  throw new Error("The root element is missing.");
-}
-
-document.documentElement.lang = htmlLanguage[locale];
-
-createRoot(container).render(
-  <StrictMode>
-    <LandingShell navVariant="capsule">
-      <LoginLanding />
-    </LandingShell>
-  </StrictMode>,
-);

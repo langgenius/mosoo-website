@@ -35,8 +35,9 @@ const LINKS = {
 
 const INSTALL_COMMAND = "curl -fsSL https://install.mosoo.ai/install.sh | bash";
 
-// The two calls that start the one example story (product kit
-// data/example-universe.ts API_CALLS): upload input.csv, then start the
+// The two calls that start a Session with a file attached (MAIN
+// apps/api/openapi/public-api-v2.generated.json, /projects/{projectId}/files
+// and /projects/{projectId}/threads): upload input.csv, then start the
 // Session with it attached. Code stays ASCII.
 const UPLOAD_REQUEST = [
   "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\",
@@ -273,13 +274,6 @@ const COPY = {
       agentLabel: "Set up with your coding agent",
       agentLine:
         "Paste the setup prompt into Codex, Claude Code, OpenCode, Cursor, or Cline. It installs the mosoo CLI and the @mosoo skill, then asks you for a provider key.",
-    },
-    visual: {
-      caption:
-        "Example values. A CSV analysis, continued seven days later in the same Session; the day markers annotate a console Thread. API Sessions have no inactivity deadline.",
-      turn: "Turn {n}",
-      description:
-        "Example Session record. Your backend uploads input.csv and starts a Session with it attached. In turn 1 the Agent runs Python in the sandbox, writes outputs/initial.json with grand_total 230, a report and a chart, and keeps a private nonce outside outputs/. Seven days later the sandbox has been reclaimed. The follow-up that appends south,20 goes to the same Thread: mosoo restores the working directory and the conversation from the last checkpoint, and outputs/followup.json has grand_total 250 and the same private_nonce_sha256.",
     },
     wall: {
       title: "Pick a runtime. Use your own model key.",
@@ -531,13 +525,6 @@ const COPY = {
       agentLine:
         "把设置提示粘贴到 Codex、Claude Code、OpenCode、Cursor 或 Cline。它会安装 mosoo CLI 和 @mosoo 技能，然后请你提供模型供应商密钥。",
     },
-    visual: {
-      caption:
-        "示例数据。一次 CSV 分析，7 天后在同一个 Session 中继续；天数标记是网站对控制台 Thread 的标注。API Session 不会因闲置而过期。",
-      turn: "第 {n} 轮",
-      description:
-        "示例 Session 记录。你的后端上传 input.csv，并带着这个附件启动一个 Session。第 1 轮里，Agent 在 sandbox 中运行 Python，写出 grand_total 为 230 的 outputs/initial.json、一份报告和一张图表，并在 outputs/ 之外保存一个 private nonce。7 天后，sandbox 已被回收。追加 south,20 的后续消息仍发往同一个 Thread：mosoo 从最近一次检查点恢复工作目录和对话，outputs/followup.json 的 grand_total 为 250，private_nonce_sha256 不变。",
-    },
     wall: {
       title: "选一个 runtime，用你自己的模型密钥。",
       intro:
@@ -771,13 +758,6 @@ const COPY = {
       agentLabel: "コーディングエージェントでセットアップ",
       agentLine:
         "セットアッププロンプトを Codex、Claude Code、OpenCode、Cursor、Cline のいずれかに貼り付けてください。mosoo CLI と @mosoo スキルをインストールしたあと、プロバイダーキーの入力を求めます。",
-    },
-    visual: {
-      caption:
-        "サンプル値。CSV の分析を、7 日後に同じ Session で続けた例です。日数の表示は、コンソールの Thread に Web サイトが付けた注記です。API の Session は放置しても期限切れになりません。",
-      turn: "{n} ターン",
-      description:
-        "Session 記録の例です。バックエンドが input.csv をアップロードし、それを添付して Session を開始します。ターン 1 では Agent が sandbox 内で Python を実行し、grand_total が 230 の outputs/initial.json、レポート、グラフを書き出し、outputs/ の外に private nonce を保存します。7 日後、sandbox は回収されています。south,20 を追加するフォローアップは同じ Thread に送られ、mosoo は最後のチェックポイントから作業ディレクトリと会話を復元します。outputs/followup.json の grand_total は 250 で、private_nonce_sha256 は同じです。",
     },
     wall: {
       title: "runtime を選び、自分のモデルキーを使う",
@@ -1107,28 +1087,6 @@ function renderHero(copy) {
 </section>`;
 }
 
-// The two outputs of the CSV story with the short private_nonce_sha256 they
-// share (the hero stage's evidence rows; values from the kit's example).
-const NONCE_ROWS = [
-  [1, "outputs/initial.json", 230],
-  [2, "outputs/followup.json", 250],
-];
-const SHORT_NONCE = "f4607af8…7680620f";
-
-function renderVisual(copy) {
-  const rows = NONCE_ROWS.map(
-    ([turn, file, total]) =>
-      `<li>${inline(copy.visual.turn.replace("{n}", String(turn)))}${copy.lang === "en" ? ": " : "："}<code translate="no">${file}</code> grand_total ${total}${{ en: ", ", "zh-CN": "，", ja: "、" }[copy.lang]}private_nonce_sha256 <code translate="no">${SHORT_NONCE}</code></li>`,
-  ).join("\n");
-  return `<figure class="mf-figure">
-<figcaption>${inline(copy.visual.caption)}</figcaption>
-<p>${inline(copy.visual.description)}</p>
-<ul>
-${rows}
-</ul>
-</figure>`;
-}
-
 function renderWall(copy) {
   const wall = copy.wall;
   const rows = RUNTIMES.map(
@@ -1397,7 +1355,6 @@ export function renderHomeFallback(locale) {
 ${renderHeader(locale, copy)}
 <main id="main">
 ${renderHero(copy)}
-${renderVisual(copy)}
 ${renderWall(copy)}
 ${renderFeatures(copy)}
 ${renderSteps(copy)}

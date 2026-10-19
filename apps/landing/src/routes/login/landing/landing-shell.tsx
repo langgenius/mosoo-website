@@ -4,7 +4,6 @@ import { t } from "@/shared/i18n";
 
 import { LoginLandingTopbar } from "../topbar";
 import type { TopbarNav } from "../topbar";
-import { LandingFooter } from "./footer";
 
 /**
  * The chrome every landing page shares: skip link, sticky header, the page in
@@ -46,7 +45,6 @@ export function LandingShell({
           {children}
         </main>
       </div>
-      <LandingFooter />
     </div>
   );
 }
