@@ -275,7 +275,7 @@ const ZH: HomeCopy = {
       {
         question: "需要先创建 Agent 吗？",
         answer:
-          "不需要。在 /api/v2 上，一个请求就带上 harness、模型供应商、模型、指令和输入，直接启动持久 Session。保存的 Agent 预设是可选的，它还能带上技能、MCP 服务器和环境。",
+          "不需要。在 /api/v2 上，一个请求带上 harness、模型供应商、模型、指令和输入，就启动持久 Session。Agent 预设可选，可再带上技能、MCP 服务器和环境。",
       },
       {
         question: "隔几天再回复，会怎样？",
@@ -358,7 +358,7 @@ const JA_WORDS: TranscriptWords = {
 const JA: HomeCopy = {
   hero: {
     title: ["バックエンド用の", "Agent runtime。"],
-    lead: "API 1 回で、sandbox 付きの Session を開始。ユーザーと UI はアプリ側に残ります。",
+    lead: "API 1 回で、sandbox 付きの Session が始まる。ユーザーと UI はアプリ側。",
     primary: "mosoo を試す",
     windowName: WINDOW_NAME,
     lines: heroLines(JA_WORDS),
@@ -400,7 +400,7 @@ const JA: HomeCopy = {
       {
         question: "数日後に返信するとどうなりますか？",
         answer:
-          "同じ Session で続きます。sandbox が回収されていれば、mosoo は最後にコミットされたチェックポイントから作業ディレクトリと harness のネイティブな会話を復元します。実行中のプロセスは引き継がれません。",
+          "同じ Session で続きます。sandbox が回収されていれば、最後のチェックポイントから作業ディレクトリと harness の会話を復元します。実行中のプロセスは引き継がれません。",
       },
       {
         question: "プロバイダーキーは sandbox に入りますか？",
@@ -410,7 +410,7 @@ const JA: HomeCopy = {
       {
         question: "モデルの利用料金は誰が払いますか？",
         answer:
-          "お客様が直接支払います。キーはプロジェクトに属し、プロバイダーがお客様のアカウントに請求します。mosoo はモデルを提供せず、支出上限も設けません。使用量は計測値と推定コストで、請求書ではありません。",
+          "お客様が直接支払います。キーはプロジェクトに属し、プロバイダーが請求します。mosoo はモデルを提供せず、支出上限もありません。表示されるコストは推定で、請求書ではありません。",
       },
       {
         question: "mosoo はオープンソースですか？",
