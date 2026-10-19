@@ -23,21 +23,21 @@ const STEPS = [
   {
     body: () =>
       t(
-        "A shared cattle Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.",
+        "One Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.",
       ),
     title: () => t("Publish the Agent"),
   },
   {
     body: () =>
       t(
-        "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the Mosoo token off the browser.",
+        "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the mosoo token off the browser.",
       ),
     title: () => t("Drive generation from the Control Worker"),
   },
   {
     body: () =>
       t(
-        "The Worker validates the artifact, writes an immutable R2 version, and activates it on a stable *.trybp.page hostname. Mosoo never receives Cloudflare credentials.",
+        "The Worker validates the artifact, writes an immutable R2 version, and activates it on a stable *.trybp.page hostname. mosoo never receives Cloudflare credentials.",
       ),
     title: () => t("Publish outside mosoo"),
   },
@@ -47,7 +47,7 @@ const PIPELINE = [
   "Browser",
   "trybp Control Worker",
   "mosoo Thread API",
-  "Cattle sandbox (Blueprint)",
+  "Session sandbox (Blueprint)",
   "R2 / *.trybp.page",
 ] as const;
 
@@ -68,11 +68,11 @@ function CaseHeader(): ReactElement {
         </span>
       </div>
       <h1 className="text-fg-1 mt-5 max-w-[820px] [text-wrap:balance]" style={PAGE_HEADLINE_STYLE}>
-        {t("From a brief to a live site. Mosoo runs the Agent.")}
+        {t("From a brief to a live site. mosoo runs the Agent.")}
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
-          "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint inside a cattle sandbox, and publishes validated artifacts — without ever exposing the Mosoo token to the browser.",
+          "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint in that Thread's own sandbox, and publishes validated artifacts. The mosoo token never reaches the browser.",
         )}
       </p>
       <div className="mt-6 flex items-center gap-2.5">
@@ -198,7 +198,7 @@ function Facts(): ReactElement {
           <h3 className="text-fg-1 text-[16.5px] font-semibold">{t("What comes out")}</h3>
           <p className="text-fg-2 mt-2.5 text-[14px] leading-[1.6] [text-wrap:pretty]">
             {t(
-              "A self-contained site artifact — typically one index.html — versioned on R2 with three-version retention and a stable public hostname.",
+              "A self-contained site artifact, typically one index.html, versioned on R2 with three-version retention and a stable public hostname.",
             )}
           </p>
         </div>

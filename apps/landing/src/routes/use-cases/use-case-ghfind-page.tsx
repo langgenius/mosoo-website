@@ -23,7 +23,7 @@ const STEPS = [
   {
     body: () =>
       t(
-        "ghfind publishes one cattle Agent with its project-evaluation skill. mosoo runs that Agent in an isolated sandbox and manages the harness, environment, and execution lifecycle.",
+        "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle.",
       ),
     title: () => t("Publish one project analyst"),
   },
@@ -47,7 +47,7 @@ const PIPELINE = [
   "Browser",
   "ghfind backend",
   "mosoo Public Thread API",
-  "cattle Agent sandbox",
+  "Agent sandbox per Thread",
   "analysis + evidence + report",
   "native ghfind result",
 ] as const;
@@ -73,7 +73,7 @@ function CaseHeader(): ReactElement {
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
-          "ghfind has two distinct products: a deterministic 0–100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.",
+          "ghfind has two distinct products: a deterministic 0 to 100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.",
         )}
       </p>
       <div className="mt-6 flex items-center gap-2.5">

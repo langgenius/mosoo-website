@@ -39,14 +39,14 @@ const VALUE = [
   {
     body: () =>
       t(
-        "Mosoo carries the verified user context into the MCP call. The model cannot choose another user ID, while Go Gym and Supabase still enforce authorization at the data boundary.",
+        "mosoo carries the verified user context into the MCP call. The model cannot choose another user ID, while Go Gym and Supabase still enforce authorization at the data boundary.",
       ),
     title: () => t("Delegated tool identity"),
   },
   {
     body: () =>
       t(
-        "Each Thread runs in a Cattle sandbox. Production uses OpenCode, while the same business MCP path was verified with Codex and Claude without rewriting the app.",
+        "Each Thread runs in its own sandbox. Production uses OpenCode, while the same business MCP path was verified with Codex and Claude without rewriting the app.",
       ),
     title: () => t("Isolated, harness-neutral execution"),
   },
@@ -56,7 +56,7 @@ const REQUEST_PATH = [
   "Browser",
   "Go Gym backend",
   "mosoo Thread API",
-  "Cattle sandbox",
+  "Sandbox per Thread",
   "Delegated MCP",
   "Supabase",
 ] as const;
@@ -116,7 +116,7 @@ const RESOURCES = [
     description: () =>
       t("Inspect the open-source Agent runtime behind this case."),
     href: MOSOO_GITHUB_URL,
-    label: () => t("Mosoo source"),
+    label: () => t("mosoo source"),
   },
   {
     description: () =>
@@ -307,7 +307,7 @@ function Architecture(): ReactElement {
         </h2>
         <p className="text-fg-2 mt-4 max-w-[720px] text-[14.5px] leading-[1.65]">
           {t(
-            "The app and Agent runtime are deployed separately. The browser talks only to Go Gym; its backend holds the Mosoo token and supplies the trusted userId.",
+            "The app and Agent runtime are deployed separately. The browser talks only to Go Gym; its backend holds the mosoo token and supplies the trusted userId.",
           )}
         </p>
       </Reveal>
@@ -329,7 +329,7 @@ function Architecture(): ReactElement {
         </ol>
         <p className="text-fg-3 mt-3 text-[13px] leading-[1.6]">
           {t(
-            "Mosoo delegates identity; it does not replace application authorization. Go Gym validates the caller and Supabase RLS remains the final data boundary.",
+            "mosoo delegates identity; it does not replace application authorization. Go Gym validates the caller and Supabase RLS remains the final data boundary.",
           )}
         </p>
       </Reveal>
@@ -380,7 +380,7 @@ function AgentConsole(): ReactElement {
         <Screenshot
           src={MOSOO_SCREENSHOT}
           alt={t(
-            "Published Go Gym Agents for OpenCode, Codex, and Claude in the Mosoo console.",
+            "Published Go Gym Agents for OpenCode, Codex, and Claude in the mosoo console.",
           )}
         />
       </Reveal>
