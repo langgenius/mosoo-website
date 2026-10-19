@@ -78,11 +78,19 @@ test("blog sitemap emits canonical localized alternates with an English default"
 });
 
 test("localized blog chrome uses localized visible copy", () => {
-  assert.equal(indexCopyByLocale.zh.title, "竹林手记。");
+  assert.equal(indexCopyByLocale.zh.title, "mosoo 开发手记。");
   assert.equal(indexCopyByLocale.ja.allPosts, "すべての記事");
   assert.equal(categoryLabel("zh", "Engineering"), "工程");
   assert.equal(categoryLabel("ja", "Product"), "プロダクト");
   assert.equal(headerCopyByLocale.zh.learnMore, "了解更多");
   assert.equal(postCopyByLocale.ja.by, "著者");
-  assert.match(footerCopyByLocale.zh, /竹海/);
+  // The footer is the company credit in every language, as on the home.
+  assert.equal(footerCopyByLocale.zh, "© 2026 LangGenius, Inc.");
+});
+
+test("blog chrome carries no bamboo imagery", () => {
+  // The owner retired the bamboo motif (2026-10-19); the masthead and footer are plain lines now.
+  for (const copy of [indexCopyByLocale, footerCopyByLocale]) {
+    assert.doesNotMatch(JSON.stringify(copy), /bamboo|grove|竹/i);
+  }
 });

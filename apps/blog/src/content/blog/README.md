@@ -40,7 +40,11 @@ description in full, then category · date.
   and on phones; the 1200–1279 band fits about 22. Without it the full
   title wraps to two or three lines, and the cards in a row still start their
   descriptions on one line. A Chinese card title breaks only at spaces and
-  punctuation, so give it a comma or a space where the line may turn.
+  punctuation, so give it a comma or a space where the line may turn; without
+  one, a title wider than the slot runs past it instead of wrapping.
+- Write `cardTitle` as one short sentence-case line that names the post's
+  idea, in the post's own words where they fit, ending with a full stop or a
+  question mark: `State is not a process.`, `How much human time?`.
 - `descriptionEmphasis` is a phrase copied exactly from `description` (two to
   four words) that the card sets in bold; it darkens with the card on hover.
   The build fails if it is not found in `description`.
@@ -60,21 +64,21 @@ they survive base-path changes. Example:
 
 ```yaml
 heroImage: "/blog/blog/the-journey-begins-with-an-imagine-if/hero.jpg"
-heroAlt: "A young moso bamboo culm pushing through paper"
+heroAlt: "A grey scale named Agent Work, with a slit of lime light at the threshold"
 ```
 
 In the post body, use standard markdown:
 
 ```md
-![A young moso bamboo culm pushing through paper](/blog/blog/the-journey-begins-with-an-imagine-if/culm.jpg)
+![A grey scale named Agent Work, with a slit of lime light at the threshold](/blog/blog/the-journey-begins-with-an-imagine-if/figure.jpg)
 ```
 
 Add a caption by wrapping in a `<figure>`:
 
 ```mdx
 <figure>
-  ![Alt text](/blog/blog/the-journey-begins-with-an-imagine-if/culm.jpg)
-  <figcaption>A young moso bamboo culm pushing through paper.</figcaption>
+  ![Alt text](/blog/blog/the-journey-begins-with-an-imagine-if/figure.jpg)
+  <figcaption>Below the threshold, a one-off; above it, a lifecycle.</figcaption>
 </figure>
 ```
 

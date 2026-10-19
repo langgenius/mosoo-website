@@ -51,7 +51,7 @@ export const headerCopyByLocale = {
 
 export const indexCopyByLocale = {
   en: {
-    title: "Notes from the bamboo grove.",
+    title: "Notes from building mosoo.",
     description: "Letters for builders moving Agents from local experiments into production systems.",
     all: "All",
     allPosts: "All posts",
@@ -60,7 +60,7 @@ export const indexCopyByLocale = {
     empty: "No posts yet - check back soon.",
   },
   zh: {
-    title: "竹林手记。",
+    title: "mosoo 开发手记。",
     description: "写给正在把 Agent 从本地实验带进生产系统的人。",
     all: "全部",
     allPosts: "全部文章",
@@ -69,7 +69,7 @@ export const indexCopyByLocale = {
     empty: "暂无文章。",
   },
   ja: {
-    title: "竹林からのノート。",
+    title: "mosoo の開発ノート。",
     description: "Agent をローカルの実験からプロダクションシステムへ運ぼうとしている人に向けた手紙。",
     all: "すべて",
     allPosts: "すべての記事",
@@ -100,10 +100,12 @@ export const postCopyByLocale = {
   },
 };
 
+// The company credit, the same in every language, as on the home (apps/landing/src/home/copy/footer.json; the holder
+// named in the mosoo LICENSE).
 export const footerCopyByLocale = {
-  en: "© 2026 mosoo - take root, and grow a bamboo sea.",
-  zh: "© 2026 mosoo - 扎根，长成竹海。",
-  ja: "© 2026 mosoo - 根を張り、竹の海へ育つ。",
+  en: "© 2026 LangGenius, Inc.",
+  zh: "© 2026 LangGenius, Inc.",
+  ja: "© 2026 LangGenius, Inc.",
 };
 
 export function localeFromLang(lang) {
