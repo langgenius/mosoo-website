@@ -360,6 +360,7 @@ const COPY = {
       note: "Model IDs change often. Check the models available in your Project before you copy this.",
     },
     split: {
+      path: "Your backend calls the mosoo API over HTTPS with a Project API key, and every Session runs in its own sandbox. Provider keys and MCP credentials stay outside it: mosoo’s proxies add them to each request.",
       title: "Your app keeps its users. mosoo runs the Agent.",
       intro: "This split comes straight from the product spec.",
       app: "Your app keeps",
@@ -616,6 +617,7 @@ const COPY = {
       note: "模型 ID 经常变化，复制前请先确认你的项目里有哪些可用模型。",
     },
     split: {
+      path: "你的后端用 Project API 密钥通过 HTTPS 调用 mosoo API，每个 Session 都在自己的 sandbox 中运行。模型供应商密钥和 MCP 凭据留在 sandbox 之外，由 mosoo 的代理在每次请求时加上。",
       title: "你的应用管用户，mosoo 运行 Agent。",
       intro: "这个分工直接来自产品规格。",
       app: "你的应用负责",
@@ -856,6 +858,7 @@ const COPY = {
       note: "モデル ID はよく変わります。コピーする前に、プロジェクトで使えるモデルを確認してください。",
     },
     split: {
+      path: "バックエンドは Project API キーを使って HTTPS で mosoo API を呼び出し、Session はそれぞれ専用の sandbox で実行されます。プロバイダーキーと MCP 認証情報は sandbox の外に置かれ、mosoo のプロキシがリクエストごとに付与します。",
       title: "ユーザーはアプリが持ち、Agent は mosoo が動かす",
       intro: "この役割分担は、製品仕様そのままです。",
       app: "アプリが担うこと",
@@ -1213,6 +1216,7 @@ ${list(split.mosooRows)}
 </dl>
 </div>
 </div>
+<p>${inline(split.path)}</p>
 <p class="mf-muted">${inline(split.footnote)}</p>
 </section>`;
 }
