@@ -1,8 +1,5 @@
 import type { ReactElement } from "react";
 
-import { KeyBoundary } from "@/product-kit/components/key-boundary";
-import { locale } from "@/shared/locale";
-
 import { t } from "./i18n";
 import { LimitsLedger } from "./limits-section";
 import { WithCode, Phrases, SpecCite } from "./ui";
@@ -100,10 +97,6 @@ export function SplitSection(): ReactElement {
 
       <div className="mt-12">
         <SystemPath />
-        {/* One frame: the kit island's own (v2a wrapped it in a second shell). */}
-        <div className="mt-6">
-          <KeyBoundary locale={locale} />
-        </div>
       </div>
 
       <p className="text-ink-500 mt-6 max-w-[760px] text-[16px] leading-[1.6]">

@@ -35,8 +35,8 @@ const LINKS = {
 
 const INSTALL_COMMAND = "curl -fsSL https://install.mosoo.ai/install.sh | bash";
 
-// The two calls that start the one example story (product kit
-// data/example-universe.ts API_CALLS): upload input.csv, then start the
+// The two calls that start the one example story (MAIN
+// scripts/public-api-session-workflow.ts): upload input.csv, then start the
 // Session with it attached. Code stays ASCII.
 const UPLOAD_REQUEST = [
   "curl https://cloud.mosoo.ai/api/v2/projects/$MOSOO_PROJECT_ID/files \\",
@@ -1109,26 +1109,6 @@ function renderHero(copy) {
 
 // The two outputs of the CSV story with the short private_nonce_sha256 they
 // share (the hero stage's evidence rows; values from the kit's example).
-const NONCE_ROWS = [
-  [1, "outputs/initial.json", 230],
-  [2, "outputs/followup.json", 250],
-];
-const SHORT_NONCE = "f4607af8…7680620f";
-
-function renderVisual(copy) {
-  const rows = NONCE_ROWS.map(
-    ([turn, file, total]) =>
-      `<li>${inline(copy.visual.turn.replace("{n}", String(turn)))}${copy.lang === "en" ? ": " : "："}<code translate="no">${file}</code> grand_total ${total}${{ en: ", ", "zh-CN": "，", ja: "、" }[copy.lang]}private_nonce_sha256 <code translate="no">${SHORT_NONCE}</code></li>`,
-  ).join("\n");
-  return `<figure class="mf-figure">
-<figcaption>${inline(copy.visual.caption)}</figcaption>
-<p>${inline(copy.visual.description)}</p>
-<ul>
-${rows}
-</ul>
-</figure>`;
-}
-
 function renderWall(copy) {
   const wall = copy.wall;
   const rows = RUNTIMES.map(
@@ -1397,7 +1377,7 @@ export function renderHomeFallback(locale) {
 ${renderHeader(locale, copy)}
 <main id="main">
 ${renderHero(copy)}
-${renderVisual(copy)}
+
 ${renderWall(copy)}
 ${renderFeatures(copy)}
 ${renderSteps(copy)}
