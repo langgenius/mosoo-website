@@ -3,7 +3,8 @@ import { join } from "node:path";
 
 import { HOME_FALLBACK_STYLE, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
-// Home page head copy (copy deck section 14). The body, the FAQ and the JSON-LD
+// Home page head copy (copy deck section 14). The meta description leads with
+// the README positioning line (langgenius/mosoo README.md:8-9). The body, the FAQ and the JSON-LD
 // come from landing-home.mjs and are written into the markers in index.html.
 // imageAlt describes the social card that ships today
 // (public/brand/social-card-20261019.png: the README positioning line and the
@@ -14,7 +15,7 @@ const HOME_SEO = {
     lang: "en",
     title: "Open-source Agent runtime for application backends | mosoo",
     description:
-      "mosoo is an open-source Agent runtime for app backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, with a sandbox per Session.",
+      "An open-source, API-first managed Agent runtime for application backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
     socialTitle: "An open-source, API-first managed Agent runtime for application backends",
     socialDescription:
       "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
@@ -25,7 +26,7 @@ const HOME_SEO = {
     lang: "zh-CN",
     title: "面向应用后端的开源 Agent runtime | mosoo",
     description:
-      "mosoo 是面向应用后端的开源 Agent runtime。用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在独立的 sandbox 中执行。",
+      "开源、API 优先的托管 Agent runtime，面向应用后端。用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在独立的 sandbox 中执行。",
     socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
       "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
@@ -36,7 +37,7 @@ const HOME_SEO = {
     lang: "ja",
     title: "アプリのバックエンド向けオープンソース Agent runtime | mosoo",
     description:
-      "mosoo はアプリケーションのバックエンド向けのオープンソース Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
+      "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
     socialTitle:
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:

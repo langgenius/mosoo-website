@@ -8,7 +8,7 @@ import { Check, CircleDashed, Copy, FileText, Loader2, RotateCcw, SquareTerminal
 import { FaqIndicator, OutlineNested, OutlineWindow } from "@/shared/ui/outline";
 
 import { docsUrl, MOSOO_CLOUD_URL } from "../links";
-import { home } from "./home-copy";
+import { CARD_GLYPH_KEYS, HARNESS_SATELLITE, home, LIVE_CARD } from "./home-copy";
 
 // d-object home (staging v4d/UI-LOCK.md). Six sections, each one form from
 // UI-FORMS §f: U09 hero object, U02 verbs, F19 stacked turn, U03 overflow
@@ -31,7 +31,7 @@ function Corners({ className }: { className: string }): ReactElement {
 function Hero(): ReactElement {
   const { hero, object } = home;
   return (
-    <section aria-labelledby="hero-title" className="d-hero">
+    <section id="hero" aria-labelledby="hero-title" className="d-hero">
       <h1 id="hero-title" className="d-h1">
         <span>{hero.h1a}</span> <span className="d-soft">{hero.h1b}</span>
       </h1>
@@ -72,7 +72,9 @@ function Hero(): ReactElement {
             <Corners className="d-sat-c" />
             <p className="d-sat-k">{sat.key}</p>
             <p className="d-sat-v">
-              {sat.runtime ? <RuntimeIcon runtimeId={sat.runtime} size={16} className="d-glyph" /> : null}
+              {index === HARNESS_SATELLITE ? (
+                <RuntimeIcon runtimeId="openai-runtime" size={16} className="d-glyph" />
+              ) : null}
               {sat.value}
             </p>
           </div>
@@ -98,7 +100,7 @@ const GLYPH_FRAMES = GLYPH_CYCLES.map((cycle) =>
 
 function Verbs(): ReactElement {
   return (
-    <section aria-label={home.verbs.map((v) => v.verb).join(" ")} className="d-sec d-verbs-sec">
+    <section id="how-it-works" aria-label={home.verbs.map((v) => v.verb).join(" ")} className="d-sec d-verbs-sec">
       <div className="d-verbs">
         {home.verbs.map((item, index) => (
           <div key={item.verb} className="d-verb">
@@ -123,7 +125,7 @@ function Verbs(): ReactElement {
 function Stack(): ReactElement {
   const { stack } = home;
   return (
-    <section aria-labelledby="stack-title" className="d-sec">
+    <section id="continue" aria-labelledby="stack-title" className="d-sec">
       <div className="d-plate d-plate-mist d-grain">
         <div className="d-stack" data-product-ui>
           <i aria-hidden="true" className="d-stack-back b2" />
@@ -174,7 +176,7 @@ function CardGlyph({ glyph }: { glyph: keyof typeof CARD_GLYPHS }): ReactElement
 function Supply(): ReactElement {
   const { supply } = home;
   return (
-    <section aria-labelledby="supply-title" className="d-sec">
+    <section id="runtimes" aria-labelledby="supply-title" className="d-sec">
       <div className="d-supply">
         <div aria-hidden="true" className="d-supply-field d-grain" />
         <h2 id="supply-title" className="d-supply-h">
@@ -183,10 +185,10 @@ function Supply(): ReactElement {
           <span className="d-soft-42">{supply.b}</span>
         </h2>
         <div className="d-supply-cards" data-product-ui>
-          {supply.cards.map((card) => (
+          {supply.cards.map((card, index) => (
             <div key={card.name} className="d-mcard">
               <p className="d-mcard-hd">
-                <CardGlyph glyph={card.glyph} />
+                <CardGlyph glyph={CARD_GLYPH_KEYS[index] ?? "terminal"} />
                 {card.name}
                 <span className="d-badge" translate="no">
                   {card.badge}
@@ -195,7 +197,7 @@ function Supply(): ReactElement {
               <p className="d-mcard-val">{card.value}</p>
               <p className="d-mcard-lab">{card.label}</p>
               <p className="d-mcard-stat">
-                <span aria-hidden="true" className={card.live ? "d-dot live" : "d-dot"} />
+                <span aria-hidden="true" className={index === LIVE_CARD ? "d-dot live" : "d-dot"} />
                 {card.status}
               </p>
             </div>
@@ -209,7 +211,7 @@ function Supply(): ReactElement {
 function FaqSection(): ReactElement {
   const { faq } = home;
   return (
-    <section aria-labelledby="faq-title" className="d-sec d-faq" id="faq">
+    <section id="faq" aria-labelledby="faq-title" className="d-sec d-faq">
       <div className="d-faq-side">
         <p className="d-badge d-badge-lg">{faq.label}</p>
         <h2 id="faq-title" className="d-h2">
@@ -247,7 +249,7 @@ function Close(): ReactElement {
     });
   };
   return (
-    <section aria-labelledby="close-title" className="d-sec">
+    <section id="start" aria-labelledby="close-title" className="d-sec">
       <div className="d-plate d-plate-field d-grain d-close">
         <h2 id="close-title" className="d-close-h">
           {close.a}

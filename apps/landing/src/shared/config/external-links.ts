@@ -35,6 +35,8 @@ export const MOSOO_CLOUD_URL = "https://cloud.mosoo.ai";
 export const MOSOO_LOGIN_URL = `${MOSOO_CLOUD_URL}/login`;
 export const MOSOO_COMPUTER_URL = "https://computer.mosoo.ai";
 export const MOSOO_OPENAPI_V2_URL = `${MOSOO_CLOUD_URL}/api/v2/openapi.json`;
+export const MOSOO_OPENAPI_V1_URL = `${MOSOO_CLOUD_URL}/api/v1/openapi.json`;
+export const MOSOO_LLMS_URL = "https://mosoo.ai/llms.txt";
 
 // The console's onboarding installs the CLI and the @mosoo skill with this
 // script (mosoo apps/web onboarding-setup-prompt.ts).

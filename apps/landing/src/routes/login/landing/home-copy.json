@@ -1,0 +1,242 @@
+{
+  "en": {
+    "hero": {
+      "h1a": "Run Agents from your backend.",
+      "h1b": "Continue them days later.",
+      "lead": "Open source and hosted. One sandbox per Session, your model key.",
+      "primary": "Try mosoo",
+      "secondary": "Read the quickstart"
+    },
+    "object": {
+      "line": "Same Session.",
+      "event": "run.started",
+      "satellites": [
+        { "key": "Sandbox", "value": "Isolated" },
+        { "key": "Harness", "value": "OpenAI Codex" },
+        { "key": "File", "value": "report.md" },
+        { "key": "Next turn", "value": "Next week" }
+      ]
+    },
+    "verbs": [
+      { "verb": "Call.", "desc": "One request starts a Session in its own sandbox." },
+      { "verb": "Watch.", "desc": "Stream its events. Files come back as artifacts." },
+      { "verb": "Return.", "desc": "Send the next turn to the same Session, days later." }
+    ],
+    "stack": {
+      "label": "Turn 2",
+      "token": "+7 days",
+      "status": "Restored from the last turn",
+      "title": "Same Session, a week later.",
+      "desc": "The next turn starts with the last turn’s files and history."
+    },
+    "supply": {
+      "a": "Four harnesses.",
+      "b": "One Session API.",
+      "cards": [
+        { "name": "Runtimes", "badge": "inline", "value": "4", "label": "harnesses behind one API", "status": "Chosen per Session" },
+        { "name": "Resume", "badge": "idle", "value": "7 days", "label": "later, same Session", "status": "Ready for a follow-up" },
+        { "name": "Keys", "badge": "byok", "value": "0", "label": "keys inside the sandbox", "status": "Expiring grants only" }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "a": "Questions",
+      "b": "before you wire it in.",
+      "items": [
+        {
+          "q": "Is it hosted, or do I run it?",
+          "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache-2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
+        },
+        {
+          "q": "Do I need to create an Agent first?",
+          "a": "No. One request carries the harness, provider, model and instructions, and mosoo starts a Session without creating an Agent. A saved Agent preset is optional."
+        },
+        {
+          "q": "Why not call a model API directly?",
+          "a": "A model API returns a reply. mosoo runs the Agent around it: an isolated sandbox, files in and out, streamed events, recorded usage, and a working directory kept between turns."
+        },
+        {
+          "q": "Which harnesses and models can I use?",
+          "a": "Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key."
+        },
+        {
+          "q": "What happens when I reply days later?",
+          "a": "The reply continues the same Session, even after the sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer."
+        },
+        {
+          "q": "Do my keys enter the sandbox?",
+          "a": "No. Provider keys and MCP credentials stay outside; the sandbox only receives expiring grants for them. Environment variables are the exception: code in the sandbox can read them."
+        }
+      ]
+    },
+    "close": {
+      "a": "Start a Session",
+      "b": "from your agent.",
+      "legend": "Setup prompt",
+      "prompt": "Read mosoo.ai/llms.txt and start my first mosoo Session.",
+      "button": "Copy",
+      "done": "Copied",
+      "fine": "Codex, Claude Code, Cursor and more."
+    }
+  },
+  "zh": {
+    "hero": {
+      "h1a": "从你的后端运行 Agent。",
+      "h1b": "几天后，接着上一轮。",
+      "lead": "开源，也有托管版。每个 Session 独享 sandbox，用你的密钥。",
+      "primary": "试用 mosoo",
+      "secondary": "阅读快速开始"
+    },
+    "object": {
+      "line": "同一 Session。",
+      "event": "run.started",
+      "satellites": [
+        { "key": "Sandbox", "value": "相互隔离" },
+        { "key": "Harness", "value": "OpenAI Codex" },
+        { "key": "文件", "value": "report.md" },
+        { "key": "下一轮", "value": "下周" }
+      ]
+    },
+    "verbs": [
+      { "verb": "调用。", "desc": "一个请求，就在独立的 sandbox 里启动一个 Session。" },
+      { "verb": "跟踪。", "desc": "事件实时流回，文件作为产出物返回。" },
+      { "verb": "继续。", "desc": "几天后，把下一轮发给同一个 Session。" }
+    ],
+    "stack": {
+      "label": "第 2 轮",
+      "token": "+7 天",
+      "status": "从上一轮恢复",
+      "title": "同一个 Session，一周后。",
+      "desc": "下一轮会带着上一轮的文件和对话历史开始。"
+    },
+    "supply": {
+      "a": "四种 harness。",
+      "b": "一个 Session API。",
+      "cards": [
+        { "name": "Runtime", "badge": "inline", "value": "4", "label": "个 harness，同一个 API", "status": "每个 Session 自选" },
+        { "name": "续接", "badge": "idle", "value": "7 天", "label": "后仍是同一 Session", "status": "可以接着回复" },
+        { "name": "密钥", "badge": "byok", "value": "0", "label": "个密钥进入 sandbox", "status": "只拿到会过期的授权" }
+      ]
+    },
+    "faq": {
+      "label": "常见问题",
+      "a": "接入之前，",
+      "b": "值得先问的问题。",
+      "items": [
+        {
+          "q": "是托管服务，还是要自己运行？",
+          "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache-2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
+        },
+        {
+          "q": "需要先创建 Agent 吗？",
+          "a": "不需要。一个请求就能带上 harness、模型供应商、模型和指令，mosoo 直接启动 Session，不会创建 Agent。保存的 Agent 预设是可选的。"
+        },
+        {
+          "q": "为什么不直接调用模型 API？",
+          "a": "模型 API 只返回一条回复。mosoo 运行的是围绕它的 Agent：隔离的 sandbox、文件进出、流式事件、用量记录，以及在 turn 之间保留的工作目录。"
+        },
+        {
+          "q": "可以用哪些 harness 和模型？",
+          "a": "四种 harness：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。每个 Session 指定自己的 harness、模型供应商和模型，并使用你自己的供应商密钥。"
+        },
+        {
+          "q": "几天后再回复，会怎样？",
+          "a": "回复会在同一个 Session 里继续，即使 sandbox 已被回收。mosoo 会从最近一次提交的检查点恢复工作目录和原生对话。冷启动可能更慢。"
+        },
+        {
+          "q": "我的密钥会进入 sandbox 吗？",
+          "a": "不会。模型供应商密钥和 MCP 凭据留在 sandbox 之外，sandbox 只拿到会过期的授权。环境变量是例外：sandbox 里的代码可以读取它们。"
+        }
+      ]
+    },
+    "close": {
+      "a": "在编程 agent 里",
+      "b": "启动 Session。",
+      "legend": "设置提示词",
+      "prompt": "读 mosoo.ai/llms.txt，启动我的第一个 Session。",
+      "button": "复制",
+      "done": "已复制",
+      "fine": "适用于 Codex、Claude Code、Cursor 等。"
+    }
+  },
+  "ja": {
+    "hero": {
+      "h1a": "Agent をバックエンドから。",
+      "h1b": "数日後に、その続きを。",
+      "lead": "OSS とホスト版。Session ごとに sandbox、キーは自前。",
+      "primary": "mosoo を試す",
+      "secondary": "クイックスタート"
+    },
+    "object": {
+      "line": "同じ Session。",
+      "event": "run.started",
+      "satellites": [
+        { "key": "Sandbox", "value": "隔離済み" },
+        { "key": "Harness", "value": "OpenAI Codex" },
+        { "key": "ファイル", "value": "report.md" },
+        { "key": "次のターン", "value": "来週" }
+      ]
+    },
+    "verbs": [
+      { "verb": "呼ぶ。", "desc": "1 つのリクエストで、専用 sandbox の Session が始まります。" },
+      { "verb": "見る。", "desc": "イベントがストリームで届き、ファイルは成果物として返ります。" },
+      { "verb": "戻る。", "desc": "数日後でも、次の turn を同じ Session に送れます。" }
+    ],
+    "stack": {
+      "label": "ターン 2",
+      "token": "+7 日",
+      "status": "前の turn から復元",
+      "title": "1 週間後も、同じ Session。",
+      "desc": "次の turn は、前の turn のファイルと履歴から始まります。"
+    },
+    "supply": {
+      "a": "4 つの harness。",
+      "b": "1 つの Session API。",
+      "cards": [
+        { "name": "Runtime", "badge": "inline", "value": "4", "label": "harness、API は 1 つ", "status": "Session ごとに選択" },
+        { "name": "再開", "badge": "idle", "value": "7 日", "label": "後も同じ Session", "status": "フォローアップ待ち" },
+        { "name": "キー", "badge": "byok", "value": "0", "label": "個のキーが sandbox に", "status": "期限付きの許可のみ" }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "a": "組み込む前に",
+      "b": "確かめたいこと。",
+      "items": [
+        {
+          "q": "ホスト版？それとも自分で動かす？",
+          "a": "ホスト版のコンソール cloud.mosoo.ai をすぐに使えます。ソースは Apache-2.0 で GitHub にあり、ローカルで動かす手順は README にあります。mosoo は現在 Alpha 版で、公開 API は変わる可能性があります。"
+        },
+        {
+          "q": "先に Agent を作る必要はありますか？",
+          "a": "いいえ。harness、プロバイダー、モデル、指示を 1 つのリクエストに含めれば、mosoo は Agent を作らずに Session を開始します。保存済みの Agent プリセットは任意です。"
+        },
+        {
+          "q": "モデル API を直接呼ぶのと何が違いますか？",
+          "a": "モデル API が返すのは返答だけです。mosoo はその周りの Agent を実行します。隔離された sandbox、ファイルの受け渡し、イベントのストリーム、使用量の記録、turn をまたいで残る作業ディレクトリです。"
+        },
+        {
+          "q": "どの harness とモデルを使えますか？",
+          "a": "harness は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。Session ごとに harness、プロバイダー、モデルを指定し、ご自身のプロバイダーキーで動きます。"
+        },
+        {
+          "q": "数日後に返信するとどうなりますか？",
+          "a": "sandbox が回収された後でも、同じ Session で続きが実行されます。mosoo は最後にコミットされたチェックポイントから、作業ディレクトリとネイティブな会話を復元します。コールドスタートは時間がかかることがあります。"
+        },
+        {
+          "q": "キーは sandbox に入りますか？",
+          "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外に置かれ、sandbox には期限付きの許可だけが渡ります。環境変数は例外で、sandbox 内のコードから読み取れます。"
+        }
+      ]
+    },
+    "close": {
+      "a": "手元の agent で",
+      "b": "Session を開始。",
+      "legend": "設定用プロンプト",
+      "prompt": "mosoo.ai/llms.txt を読み、最初の Session を開始して。",
+      "button": "コピー",
+      "done": "コピー済",
+      "fine": "Codex、Claude Code、Cursor など。"
+    }
+  }
+}
