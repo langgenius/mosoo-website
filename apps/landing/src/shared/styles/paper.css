@@ -503,7 +503,7 @@
 }
 /* The cards are the sentence's evidence, so they sit under it, not a full section away (UI review P1-2). */
 .pp-voice + .pp-said {
-  margin-top: 16px;
+  margin-top: 26px; /* 66px from the sentence's last line to the cards */
 }
 .pp-said-card {
   position: relative;
@@ -912,7 +912,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .pp-voice + .pp-said {
-    margin-top: 28px;
+    margin-top: 40px;
   }
   .pp-said-card {
     padding: 22px 20px 24px;
