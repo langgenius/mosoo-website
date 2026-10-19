@@ -504,3 +504,20 @@ test("the static markup export carries the story's facts in every locale", async
     }
   }
 });
+
+// The no-JS home page (scripts/landing-home.mjs) prints the story's two calls
+// as plain text; they must stay the kit's calls, character for character.
+test("the static home page shows the kit's upload and create calls verbatim", async (t) => {
+  const u = await loadTs(t, "data/example-universe.ts");
+  if (u === null) return;
+  const { renderHomeFallback } = await import(pathToFileURL(join(root, "scripts", "landing-home.mjs")).href);
+  const unescape = (html) =>
+    html.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", '"').replaceAll("&#39;", "'").replaceAll("&amp;", "&");
+  for (const locale of ["en", "zh", "ja"]) {
+    const blocks = [...renderHomeFallback(locale).matchAll(/<pre translate="no"><code>([\s\S]*?)<\/code><\/pre>/g)].map(
+      (match) => unescape(match[1]),
+    );
+    assert.ok(blocks.includes(u.API_CALLS.upload.request), `${locale}: the upload call`);
+    assert.ok(blocks.includes(u.API_CALLS.create.request), `${locale}: the create call`);
+  }
+});

@@ -1473,7 +1473,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback *{box-sizing:border-box}
 .mosoo-fallback a{color:var(--mf-link);text-decoration:underline;text-underline-offset:2px}
 .mosoo-fallback a:focus-visible,.mosoo-fallback summary:focus-visible{outline:2px solid var(--mf-link);outline-offset:2px;border-radius:2px}
-.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:var(--mf-ink);color:var(--mf-paper);font-weight:600;text-decoration:none}
+.mosoo-fallback .mf-btn{display:inline-block;padding:9px 16px;border-radius:8px;background:#6fd305;color:#0f1a02;font-weight:600;text-decoration:none;box-shadow:inset 0 0 0 1px rgba(15,26,2,.16)}
 .mosoo-fallback .mf-skip{position:absolute;left:-9999px}
 .mosoo-fallback .mf-skip:focus{left:16px;top:16px;z-index:1;padding:8px 12px;background:var(--mf-paper)}
 .mosoo-fallback .mf-bar,.mosoo-fallback main,.mosoo-fallback .mf-foot{max-width:1040px;margin:0 auto;padding-left:16px;padding-right:16px}
@@ -1486,10 +1486,13 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-menu ul{margin:8px 0 0;padding:0;list-style:none}
 .mosoo-fallback .mf-menu li{margin-top:4px;max-width:36ch;font-size:15px}
 .mosoo-fallback h1,.mosoo-fallback h2,.mosoo-fallback h3{margin:0;color:var(--mf-ink);text-wrap:balance}
-.mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.02em}
+.mosoo-fallback h1,.mosoo-fallback h2{font-family:var(--font-literata,Georgia,serif);font-weight:400}
+.mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{font-family:var(--font-literata-zh,"Songti SC",serif);font-weight:600}
+.mosoo-fallback:lang(ja) h1,.mosoo-fallback:lang(ja) h2{font-family:var(--font-literata-ja,"Hiragino Mincho ProN",serif);font-weight:600}
+.mosoo-fallback h1{max-width:22ch;font-size:clamp(34px,6vw,56px);line-height:1.06;letter-spacing:-.02em}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{max-width:20em;font-size:clamp(28px,4.6vw,46px);line-height:1.25;letter-spacing:0}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(zh) h2{word-break:keep-all}
-.mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;font-weight:650;letter-spacing:-.01em}
+.mosoo-fallback h2{font-size:clamp(24px,3.4vw,34px);line-height:1.2;letter-spacing:-.01em}
 .mosoo-fallback h3{margin-top:28px;font-size:18px;line-height:1.35;font-weight:650}
 .mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:70ch}
 .mosoo-fallback p{margin:10px 0 0}

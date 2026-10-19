@@ -659,11 +659,11 @@ html:lang(ja):has(.v2a) .landing-footer-signoff {
   position: relative;
   z-index: 1;
   display: block;
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto -5.5vw;
+  width: min(980px, calc(100% - 32px));
+  margin: 0 auto -4.5vw;
   aspect-ratio: 162 / 35;
   /* The landscape's own sage ink, so the wordmark reads as part of the print. */
-  background-color: #5f6b5c;
+  background-color: #6d786a;
   -webkit-mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
   mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
 }
