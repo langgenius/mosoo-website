@@ -141,7 +141,7 @@ const FAQ = {
     },
     {
       q: "几天后再回复会怎样？",
-      a: "同一个 Session 会继续，即使它的 sandbox 已被回收。mosoo 从最近一次提交的检查点恢复工作目录、原生对话和已记录的产出物。恢复失败时，后续消息会明确报错。",
+      a: "同一个 Session 会继续，即使 sandbox 已被回收。mosoo 从最近提交的检查点恢复工作目录、原生对话和产出物；恢复失败会明确报错。",
     },
   ],
   ja: [
@@ -151,7 +151,7 @@ const FAQ = {
     },
     {
       q: "先に Agent を作成する必要はありますか？",
-      a: "ありません。/api/v2 では 1 つのリクエストに harness、プロバイダー、モデル、指示、入力を含めるだけで、mosoo は Agent を作らずに永続的な Session を開始します。保存済みの Agent プリセットは任意です。",
+      a: "ありません。/api/v2 では 1 つのリクエストに harness、プロバイダー、モデル、指示、入力を含めれば、Agent を作らずに永続的な Session が始まります。Agent プリセットは任意です。",
     },
     {
       q: "Session ではどの harness を使えますか？",
@@ -159,7 +159,7 @@ const FAQ = {
     },
     {
       q: "プロバイダーキーは sandbox に入りますか？",
-      a: "入りません。プロバイダーキーと MCP の認証情報は sandbox の外に置かれ、sandbox が受け取るのは期限付きの許可だけです。環境変数は別で、sandbox 内のコードから読めます。",
+      a: "入りません。プロバイダーキーと MCP の認証情報は sandbox の外にあり、sandbox には期限付きの許可だけが渡ります。環境変数は sandbox 内のコードから読めます。",
     },
     {
       q: "モデルの利用料金はだれが払いますか？",
@@ -167,7 +167,7 @@ const FAQ = {
     },
     {
       q: "数日後に返信するとどうなりますか？",
-      a: "同じ Session が続きます。sandbox が回収された後でも同じです。mosoo は最後にコミットされたチェックポイントから作業ディレクトリ、ネイティブの会話、記録済みの成果物を復元します。復元できない場合、フォローアップはエラーになります。",
+      a: "同じ Session が続きます。sandbox が回収された後も、最後にコミットされたチェックポイントから作業ディレクトリ、会話、成果物を復元します。復元できなければエラーになります。",
     },
   ],
 };
@@ -259,22 +259,22 @@ const PAPER_EN = {
 // per full-width character; Latin product words stay Latin, as in the docs).
 const PAPER_ZH = {
   hero: {
-    titleInk: "托管的 Agent runtime，",
-    titleSoft: "为你后端里的 Agent 而建。",
+    titleInk: "托管的 Agent runtime",
+    titleSoft: "为应用后端而建。",
     join: "",
-    lead: "一个请求启动 Session，几天后回复也行。",
+    lead: "一个请求启动 Session，几天后接着回复。",
     primary: "试用 mosoo",
     secondary: "源码",
   },
   stage: [
     {
-      tab: "调用。",
+      tab: "发起。",
       chip: "Codex",
       glyph: "openai-runtime",
-      ghost: "读取附件 input.csv，然后把 report.md 和 chart.svg 存进 outputs/",
+      ghost: "读取附件 input.csv，把 outputs/report.md 和 outputs/chart.svg 存好",
       controls: [{ label: "文件", count: "1" }, { label: "内联", caret: true }],
       title: "一个请求，一个 Session。",
-      body: "harness、模型、指令和文件放进一次调用，不用先建 Agent。",
+      body: "一次调用带上 harness、模型和文件。",
     },
     {
       tab: "观察。",
@@ -319,7 +319,7 @@ const PAPER_JA = {
     titleInk: "マネージド runtime、",
     titleSoft: "バックエンドの Agent のために。",
     join: "",
-    lead: "リクエスト一つで Session を開始。数日後に返信しても続きます。",
+    lead: "リクエスト一つで、数日後まで続く。",
     primary: "mosoo を試す",
     secondary: "ソース",
   },
@@ -331,7 +331,7 @@ const PAPER_JA = {
       ghost: "添付の input.csv を読み、report.md と chart.svg を outputs/ に保存して",
       controls: [{ label: "ファイル", count: "1" }, { label: "インライン", caret: true }],
       title: "1 リクエストで 1 Session。",
-      body: "harness、モデル、指示、ファイルを一度に送るだけ。Agent は不要です。",
+      body: "harness もモデルもファイルも一度に。",
     },
     {
       tab: "見る。",
@@ -356,7 +356,7 @@ const PAPER_JA = {
   said: {
     label: "Session の例",
     cards: [
-      { cat: "最初の turn", quote: "「input.csv を読んで、レポートを outputs/ に保存して」", result: "専用の sandbox。レポートは outputs/ に。" },
+      { cat: "最初の turn", quote: "「input.csv を読み、レポートを outputs/ に保存」", result: "専用の sandbox。レポートは outputs/ に。" },
       { cat: "7 日後", quote: "「CSV に south,20 を足して、グラフを作り直して」", result: "同じ Session、同じファイル、新しいグラフ。" },
     ],
   },

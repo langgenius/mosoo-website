@@ -190,6 +190,13 @@
 .pp-h1 .pp-soft {
   display: block;
 }
+/* The H1 slot keeps its three lines in every language, so the stage under it sits at the same height and its caption
+   stays below the first screen even when a zh or ja title needs only two. */
+@media (min-width: 721px) {
+  .pp-h1 {
+    min-height: calc(3em * 1.02);
+  }
+}
 .pp-hero-side {
   padding-bottom: 8px;
 }
