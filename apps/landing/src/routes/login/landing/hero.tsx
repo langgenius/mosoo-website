@@ -5,7 +5,6 @@ import { locale } from "@/shared/locale";
 
 import { docsUrl, MOSOO_CLOUD_URL } from "../links";
 import { t } from "./above-fold-i18n";
-import { HeroStage } from "./hero-stage";
 import { Phrases } from "./ui";
 
 /** Keeps one term (a licence name with a hyphen) from breaking inside a line. */
@@ -66,7 +65,6 @@ export function Hero(): ReactElement {
         </p>
         <p className="v2a-alpha">{t("mosoo is in Alpha. Public APIs may still change.")}</p>
       </div>
-      <HeroStage />
     </section>
   );
 }
