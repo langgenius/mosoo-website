@@ -37,7 +37,7 @@ export function LandingShell({
       >
         {t("Skip to content")}
       </a>
-      <div className="bg-paper-100 relative z-10 shadow-[0_24px_48px_-16px_rgba(11,26,20,0.45)]">
+      <div className="landing-content-layer bg-paper-100 relative z-10">
         <LoginLandingTopbar activeNav={activeNav} />
         <main id="main" tabIndex={-1} className="outline-none">
           {children}

@@ -622,6 +622,10 @@ html:has(.landing-shell[data-theme="landing"]) {
     position: sticky;
     bottom: 0;
   }
+
+  .landing-content-layer {
+    box-shadow: 0 24px 48px -16px rgba(11, 26, 20, 0.45);
+  }
 }
 
 .landing-footer-signoff {
@@ -658,7 +662,8 @@ html:lang(ja):has(.v2a) .landing-footer-signoff {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto -5.5vw;
   aspect-ratio: 162 / 35;
-  background-color: var(--ink-800);
+  /* The landscape's own sage ink, so the wordmark reads as part of the print. */
+  background-color: #5f6b5c;
   -webkit-mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
   mask: url("/brand/logo-wordmark-onlight.svg") center / contain no-repeat;
 }

@@ -535,3 +535,42 @@
   font-family: "Geist Mono", ui-monospace, monospace;
   font-size: 11px;
 }
+
+/* The kit's JSON panels break long hashes anywhere; the global :lang(ja)
+   auto-phrase rule (app.css, @layer base) would otherwise keep a hash whole
+   and clip it in Japanese. */
+.v2a-shell [data-surface="console"] pre,
+.v2a-shell [data-surface="console"] pre * {
+  word-break: break-all;
+}
+
+/* Home page navigation: a low floating capsule (#99), the one translucent
+   surface besides the stage shell. Phones keep the full-width bar. */
+@media (min-width: 768px) {
+  html:has(.v2a) .site-header {
+    top: 10px;
+    width: calc(100% - 32px);
+    max-width: 1312px;
+    margin: 10px auto 0;
+    border: 0;
+    border-radius: 16px;
+    background: rgba(250, 250, 247, 0.84);
+    box-shadow:
+      0 0 0 1px rgba(11, 26, 20, 0.08),
+      0 10px 28px -16px rgba(11, 26, 20, 0.22);
+  }
+
+  html:has(.v2a) .site-header > div:first-child {
+    height: 56px;
+    padding-left: 16px;
+    padding-right: 10px;
+  }
+
+  html:has(.v2a) .site-header > nav {
+    border-radius: 0 0 16px 16px;
+  }
+
+  .v2a-hero {
+    min-height: calc(100svh - 66px);
+  }
+}

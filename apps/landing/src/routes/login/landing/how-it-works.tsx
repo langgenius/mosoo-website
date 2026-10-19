@@ -50,6 +50,25 @@ function steps(): readonly { title: string; body: string; input: string; change:
   ];
 }
 
+/** Keeps hyphenated words such as "follow-up" whole when a heading wraps. */
+function KeepHyphenated({ text }: { text: string }): ReactElement {
+  const parts = text.split(/(\S+-\S+)/);
+  return (
+    <>
+      {parts.map((part, index) =>
+        /\S+-\S+/.test(part) ? (
+          // Pieces of a fixed string: the index is a stable key.
+          <span key={index} className="whitespace-nowrap">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
 // Code at the page's body size (the kit reads --kit-code-size).
 const CODE_SIZE = { "--kit-code-size": "16px" } as CSSProperties;
 
@@ -60,7 +79,7 @@ export function HowItWorks(): ReactElement {
       <div className="grid grid-cols-1 gap-12 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] xl:gap-14">
         <div>
           <h2 id="how-title" className="v2a-display v2a-h2">
-            {t("One request starts a Session. A follow-up continues it.")}
+            <KeepHyphenated text={t("One request starts a Session. A follow-up continues it.")} />
           </h2>
           <p className="v2a-intro">
             <WithCode
