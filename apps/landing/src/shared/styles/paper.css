@@ -453,6 +453,7 @@
 }
 .pp-cap p {
   margin-top: 6px;
+  text-wrap: pretty;
   color: var(--pp-ink-2);
   font: 400 15px/1.55 var(--font-sans);
 }
@@ -470,6 +471,7 @@
 .pp-fill-line {
   position: relative;
   display: block;
+  text-wrap: balance; /* a line that wraps on a phone splits evenly instead of leaving one word */
 }
 .pp-fill-ink {
   display: none;

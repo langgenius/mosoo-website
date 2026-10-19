@@ -425,7 +425,7 @@ test("the static home page carries the whole page for readers without JavaScript
   ]);
   const text = textOf(en);
   assert.match(text, /One request starts a Session\. Reply days later\./);
-  assert.match(text, /The sandbox goes away\. ?The Session stays\./);
+  assert.match(text, /The sandbox is gone\. ?The Session stays\./);
   for (const runtime of ["Claude Agent SDK", "OpenAI Codex", "OpenCode", "Pi"]) {
     assert.match(en, new RegExp(`<p class="pp-mx-name" translate="no">${runtime}</p>`), `the matrix names ${runtime}`);
   }

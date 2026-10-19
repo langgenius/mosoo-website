@@ -222,7 +222,7 @@ const PAPER_EN = {
     },
   ],
   // U01: A 1×22, B 1×22 (≤5 words each, a turn between them), C 1×50 (≤10 words, no numbers).
-  voice: { a: "The sandbox goes away.", b: "The Session stays.", sub: "Reply next week; it resumes where it stopped." },
+  voice: { a: "The sandbox is gone.", b: "The Session stays.", sub: "Reply next week; it resumes where it stopped." },
   // U11 ×2: A 1×18 (mono caps), B 2×30 (≤10 words), C 2×32 (≤8 words). The quotes are
   // the two inputs of the CSV acceptance workflow, shortened.
   said: {
@@ -497,7 +497,7 @@ function renderPaperSaid(copy) {
     .map(
       (card) => `<figure class="pp-said-card">
 <figcaption class="pp-said-cat">${escapeText(card.cat)}</figcaption>
-<blockquote>${escapeText(card.quote)}</blockquote>
+<blockquote class="pp-display">${escapeText(card.quote)}</blockquote>
 <p class="pp-said-res">${escapeText(card.result)}</p>
 </figure>`,
     )
