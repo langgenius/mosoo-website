@@ -1118,7 +1118,7 @@ const SHORT_NONCE = "f4607af8…7680620f";
 function renderVisual(copy) {
   const rows = NONCE_ROWS.map(
     ([turn, file, total]) =>
-      `<li>${inline(copy.visual.turn.replace("{n}", String(turn)))}: <code translate="no">${file}</code> grand_total ${total}, private_nonce_sha256 <code translate="no">${SHORT_NONCE}</code></li>`,
+      `<li>${inline(copy.visual.turn.replace("{n}", String(turn)))}${copy.lang === "en" ? ": " : "："}<code translate="no">${file}</code> grand_total ${total}${{ en: ", ", "zh-CN": "，", ja: "、" }[copy.lang]}private_nonce_sha256 <code translate="no">${SHORT_NONCE}</code></li>`,
   ).join("\n");
   return `<figure class="mf-figure">
 <figcaption>${inline(copy.visual.caption)}</figcaption>
