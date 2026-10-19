@@ -14,6 +14,7 @@ deterministic script in this folder or from a named upstream file. Re-running a 
 | `public/brand/runtime/{claude-agent-sdk,openai-runtime,acp-fallback}.svg` | copied from `node_modules/@lobehub/icons-static-svg@1.90` (`claudecode`, `openai`, `opencode`) | MIT; the runtime marks mosoo's console maps to these runtime ids (MAIN `pkgs/runtime-catalog/src/catalog.ts` L431–L465). Shown desaturated to ink | < 2 KB |
 | `public/brand/runtime/pi.svg` | `refs/devices/elements/svg/runtime-pi.src.svg` | Pi mark from MAIN's `@lobehub/icons-static-svg@1.94` (`pi.svg`), not in this site's 1.90 | 279 B |
 | `public/brand/runtime/key.svg` | `refs/devices/elements/svg/glyph-KeyRound.src.svg` | Hugeicons KeyRound as used by MAIN's console (elements.md §F) | 1,128 B |
+| `public/brand/social-card-paper-20261019.png` (og:image, twitter:image) | `social-card.mjs <chrome>` | The home H1 in Hedvig (ink + soft ink) over `plate-2400.webp`, 24px ink wordmark; Chrome headless at 1200×630, 256-colour PNG. Replaces the v3 card (bamboo photo, green mark) | 111,897 B |
 
 The grain on the plate and the said cards is an inline feTurbulence data URI in `paper.css` (`--pp-grain`, 220px tile,
 multiply 16%), so it has no file.

@@ -83,8 +83,10 @@ const HOME_LINKS = {
 };
 
 // Crawlable links in the static home page: the nav (docs, blog, source, sign
-// in, the console), the footer row (use cases, pricing, status, changelog,
-// license) and every language, as plain hrefs that need no JavaScript.
+// in, the console), the footer row (use cases, status, changelog, license)
+// and every language, as plain hrefs that need no JavaScript. The chrome does
+// not link the pricing page while it still describes the v3 plans (self-host,
+// channels), which the home FAQ contradicts (review YC P0-1).
 const assertHomeSiteLinks = (html, locale) => {
   const links = HOME_LINKS[locale];
   const hrefs = hrefsOf(html);
@@ -96,7 +98,6 @@ const assertHomeSiteLinks = (html, locale) => {
     "/ja",
     `/${locale}`,
     `/${locale}/use-cases`,
-    `/${locale}/pricing`,
     links.health,
     links.docs,
     links.blog,
@@ -108,6 +109,7 @@ const assertHomeSiteLinks = (html, locale) => {
   ]) {
     assert.ok(hrefs.includes(href), `${locale} home page links ${href}`);
   }
+  assert.ok(!hrefs.includes(`/${locale}/pricing`), `${locale} home page does not link the v3 pricing page`);
 };
 const locations = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 const alternates = (xml) =>
@@ -255,21 +257,21 @@ test("landing and blog metadata never point at a missing default image", () => {
   );
   assert.match(
     landing,
-    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
+    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-paper-20261019\.png" \/>/,
   );
   assert.match(
     landing,
-    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
+    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-paper-20261019\.png" \/>/,
   );
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
-  assert.match(blogLayout, /\/brand\/social-card-20261019\.png/);
+  assert.match(blogLayout, /\/brand\/social-card-paper-20261019\.png/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url)),
+    existsSync(new URL("../apps/landing/public/brand/social-card-paper-20261019.png", import.meta.url)),
     true,
   );
-  // The card states the README positioning and all four runtimes; its alt
-  // text says the same.
-  assert.match(landing, /<meta property="og:image:alt" content="mosoo: an open-source, API-first managed Agent runtime for application backends\. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi\." \/>/);
+  // The paper card shows the home's H1 over the plate; its alt text says the same.
+  assert.match(landing, /<meta property="og:image:alt" content="mosoo: A managed runtime for the agents in your backend\." \/>/);
+  assert.equal(existsSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url)), false, "the v3 bamboo card is gone");
   for (const page of ["apps/landing/pricing.html", "apps/landing/status.html", "apps/landing/use-cases.html"]) {
     assert.doesNotMatch(read(page), /social-card-geist-20260917/, `${page} uses the current card`);
   }
@@ -430,7 +432,8 @@ test("the static home page carries the whole page for readers without JavaScript
     assert.match(en, new RegExp(`<p class="pp-mx-name" translate="no">${runtime}</p>`), `the matrix names ${runtime}`);
   }
   assert.match(text, /Your provider key never enters the sandbox\./);
-  assert.match(text, /mosoo is in Alpha\. Public APIs may still change\./);
+  // The close says what Try mosoo costs, in the console login's words (MAIN apps/web en.json:51).
+  assert.match(text, /In Alpha\. Free to start, no credit card\./);
   assert.match(en, /<a class="pp-btn pp-btn-ink" href="https:\/\/cloud\.mosoo\.ai">Try mosoo<\/a>/);
   // Each U08 fragment is one product object: no IDs, hashes or clock times.
   const fragments = [...en.matchAll(/<div class="pp-frag"[\s\S]*?<\/div>\n<\/div>/g)].map((match) => textOf(match[0]));

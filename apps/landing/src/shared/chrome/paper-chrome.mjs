@@ -137,7 +137,8 @@ export function renderPaperFooter({ locale, languageHrefs }) {
     [href.docs, l.docs],
     [href.blog, l.blog],
     [href.useCases, l.useCases],
-    [href.pricing, l.pricing],
+    // No pricing link while /pricing still describes the v3 plans (self-host, channels) that the home FAQ
+    // contradicts (review YC P0-1); the close's fine print says what starting costs.
     [href.status, l.status],
     [href.github, l.github],
     [href.changelog, l.changelog],

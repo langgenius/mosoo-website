@@ -8,8 +8,9 @@ import { HOME_FALLBACK_STYLE, renderHomeFallback, renderHomeJsonLd } from "./lan
 // JSON-LD come from landing-home.mjs and are written into the markers in
 // index.html.
 // imageAlt describes the social card that ships today
-// (public/brand/social-card-20261019.png: the README positioning line and the
-// four runtimes); change it together with the og:image when the card is
+// (public/brand/social-card-paper-20261019.png, from
+// apps/landing/scripts/assets/social-card.mjs: the home's H1 in English over
+// the paper plate); change it together with the og:image when the card is
 // regenerated.
 const HOME_SEO = {
   en: {
@@ -20,8 +21,7 @@ const HOME_SEO = {
     socialTitle: "An open-source, API-first managed Agent runtime for application backends",
     socialDescription:
       "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
-    imageAlt:
-      "mosoo: an open-source, API-first managed Agent runtime for application backends. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi.",
+    imageAlt: "mosoo: A managed runtime for the agents in your backend.",
   },
   zh: {
     lang: "zh-CN",
@@ -31,8 +31,7 @@ const HOME_SEO = {
     socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
       "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
-    imageAlt:
-      "mosoo：开源、API 优先的托管 Agent runtime，面向应用后端。一个 API，4 个 runtime：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。",
+    imageAlt: "mosoo 分享卡：纸版上方的衬线标题 A managed runtime for the agents in your backend.",
   },
   ja: {
     lang: "ja",
@@ -43,8 +42,7 @@ const HOME_SEO = {
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:
       "バックエンドから 1 つのリクエストで Agent のタスクを始め、数日後も同じ Session で続けられます。OpenAI Codex、Claude Agent SDK、OpenCode、Pi をご自身のモデルキーで実行します。",
-    imageAlt:
-      "mosoo：アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。1 つの API で 4 つの runtime：OpenAI Codex、Claude Agent SDK、OpenCode、Pi。",
+    imageAlt: "mosoo のカード：紙の版の上に明朝体の見出し A managed runtime for the agents in your backend.",
   },
 };
 

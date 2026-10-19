@@ -184,30 +184,34 @@ const PAPER_EN = {
   // H1 slot A (ink) + B (soft); `join` sits between them in the text.
   hero: {
     titleInk: "A managed runtime", // A 1×18
-    titleSoft: "for the Agents in your backend.", // B 2×22; A+B ≤9 words
+    titleSoft: "for the agents in your backend.", // B 2×22; A+B ≤9 words; lower case: MAIN keeps "Agent" for the preset resource
     join: " ",
     lead: "One request starts a Session. Reply days later.", // C 2×30, ≤10 words, no numbers
     primary: "Try mosoo", // D
     secondary: "Source", // E
   },
-  // U08: tab (A), chip (B1-B3), ghost line cut by the plate (C1-C3), two
+  // U08: tab (A), chip (B1-B3), ghost line cut by the plate (C1-C3), up to two
   // controls (D1-D3: a word plus an optional count or caret), caption (E, F).
+  // The controls are the workflow's files, not API actions, so the fragment
+  // shows what goes in and what comes back (review YC P1-2: "Inline",
+  // "Events", "Cancel", "Follow-up" were jargon; scripts/public-api-session-workflow.ts
+  // L24, L33, L156 name input.csv, report.md and chart.svg).
   stage: [
     {
       tab: "Call.",
       chip: "Codex",
       glyph: "openai-runtime",
       ghost: "Read the attached input.csv, then save outputs/report.md and chart.svg",
-      controls: [{ label: "Files", count: "1" }, { label: "Inline", caret: true }],
+      controls: [{ label: "input.csv" }],
       title: "One request, one Session.",
-      body: "Harness, model, instructions and files in one call. No Agent needed.",
+      body: "Harness, model, instructions and files in one call.",
     },
     {
       tab: "Watch.",
       chip: "Running",
       glyph: "live",
-      ghost: "Writing outputs/chart.svg while the events stream back over SSE",
-      controls: [{ label: "Events" }, { label: "Cancel" }],
+      ghost: "Writing outputs/chart.svg while the events stream back to your backend",
+      controls: [{ label: "report.md" }],
       title: "Watch it work.",
       body: "Events are saved, then streamed. Files land in outputs/.",
     },
@@ -216,7 +220,7 @@ const PAPER_EN = {
       chip: "Same Session",
       glyph: "openai-runtime",
       ghost: "Append south,20 to the CSV, then regenerate report.md and chart.svg",
-      controls: [{ label: "Files", count: "3" }, { label: "Follow-up" }],
+      controls: [{ label: "report.md" }, { label: "chart.svg" }],
       title: "Come back days later.",
       body: "A reply seven days later continues the same Session, files intact.",
     },
@@ -252,7 +256,8 @@ const PAPER_EN = {
   // U16: A / A′ 2×18.
   faq: { titleInk: "Questions", titleSoft: "before you wire it in." },
   // Close: A 2×26 (≤6 words); buttons reuse D / E; F 1×52 (≤9 words, no price).
-  close: { title: "Start your first Session.", fine: "mosoo is in Alpha. Public APIs may still change." },
+  // F: the console login line (MAIN apps/web/src/shared/i18n/translations/en.json:51).
+  close: { title: "Start your first Session.", fine: "In Alpha. Free to start, no credit card." },
 };
 
 // zh and ja: the same slots, written as short as each slot allows (CJK counts
@@ -272,7 +277,7 @@ const PAPER_ZH = {
       chip: "Codex",
       glyph: "openai-runtime",
       ghost: "读取附件 input.csv，把 outputs/report.md 和 outputs/chart.svg 存好",
-      controls: [{ label: "文件", count: "1" }, { label: "内联", caret: true }],
+      controls: [{ label: "input.csv" }],
       title: "一个请求，一个 Session。",
       body: "一次调用带上 harness、模型和文件。",
     },
@@ -280,8 +285,8 @@ const PAPER_ZH = {
       tab: "观察。",
       chip: "运行中",
       glyph: "live",
-      ghost: "正在写入 outputs/chart.svg，事件通过 SSE 实时回传",
-      controls: [{ label: "事件" }, { label: "取消" }],
+      ghost: "正在写入 outputs/chart.svg，事件先保存，再实时回传到你的后端",
+      controls: [{ label: "report.md" }],
       title: "看它干活。",
       body: "事件先保存再推送，文件落在 outputs/ 里。",
     },
@@ -290,7 +295,7 @@ const PAPER_ZH = {
       chip: "同一 Session",
       glyph: "openai-runtime",
       ghost: "在 CSV 末尾追加 south,20，然后重新生成 report.md 和 chart.svg",
-      controls: [{ label: "文件", count: "3" }, { label: "追问" }],
+      controls: [{ label: "report.md" }, { label: "chart.svg" }],
       title: "几天后再回来。",
       body: "七天后回复，还是同一个 Session，文件都在。",
     },
@@ -311,7 +316,7 @@ const PAPER_ZH = {
     wide: "你的模型供应商密钥从不进入 sandbox。",
   },
   faq: { titleInk: "常见问题", titleSoft: "接入之前先看看。" },
-  close: { title: "启动你的第一个 Session。", fine: "mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。" },
+  close: { title: "启动你的第一个 Session。", fine: "Alpha 阶段，免费开始，无需信用卡。" },
 };
 
 const PAPER_JA = {
@@ -329,7 +334,7 @@ const PAPER_JA = {
       chip: "Codex",
       glyph: "openai-runtime",
       ghost: "添付の input.csv を読み、report.md と chart.svg を outputs/ に保存して",
-      controls: [{ label: "ファイル", count: "1" }, { label: "インライン", caret: true }],
+      controls: [{ label: "input.csv" }],
       title: "1 リクエストで 1 Session。",
       body: "harness もモデルもファイルも一度に。",
     },
@@ -337,8 +342,8 @@ const PAPER_JA = {
       tab: "見る。",
       chip: "実行中",
       glyph: "live",
-      ghost: "outputs/chart.svg を書き込み中。イベントは SSE で届きます",
-      controls: [{ label: "イベント" }, { label: "キャンセル" }],
+      ghost: "outputs/chart.svg を書き込み中。イベントは保存してから、バックエンドへ届きます",
+      controls: [{ label: "report.md" }],
       title: "動くところを見る。",
       body: "イベントは保存してから配信。ファイルは outputs/ に。",
     },
@@ -347,7 +352,7 @@ const PAPER_JA = {
       chip: "同じ Session",
       glyph: "openai-runtime",
       ghost: "CSV に south,20 を追加して、report.md と chart.svg を作り直して",
-      controls: [{ label: "ファイル", count: "3" }, { label: "返信" }],
+      controls: [{ label: "report.md" }, { label: "chart.svg" }],
       title: "数日後に戻る。",
       body: "7 日後の返信も同じ Session で。ファイルもそのままです。",
     },
@@ -368,7 +373,7 @@ const PAPER_JA = {
     wide: "プロバイダーキーは sandbox に入りません。",
   },
   faq: { titleInk: "よくある質問", titleSoft: "組み込む前に。" },
-  close: { title: "最初の Session を始めよう。", fine: "mosoo は現在 Alpha 版です。公開 API は変更される可能性があります。" },
+  close: { title: "最初の Session を始めよう。", fine: "Alpha 版です。無料で始められ、クレジットカードは不要です。" },
 };
 
 const PAPER = { en: PAPER_EN, zh: PAPER_ZH, ja: PAPER_JA };
