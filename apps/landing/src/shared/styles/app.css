@@ -745,8 +745,8 @@ html:has(.landing-shell[data-theme="console"]) {
   }
 }
 
-/* Hero: on large screens the stage keeps one height that fits a 1280x800
-   first screen, and the Preview runs off its bottom edge (a bleed crop: the
+/* Hero: from 1280px wide the stage sits beside the headline and keeps one
+   height that fits a 1280x800 first screen, and the Preview runs off its bottom edge (a bleed crop: the
    drawn composer is what the edge cuts). The replay plays once and ends
    static, so the hero hides the kit's Replay control. */
 .hero-window [data-surface="console"] > div:nth-child(2) {
@@ -765,7 +765,7 @@ html:has(.landing-shell[data-theme="console"]) {
   flex-direction: column;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .hero-stage {
     height: clamp(500px, calc(100svh - 190px), 650px);
   }

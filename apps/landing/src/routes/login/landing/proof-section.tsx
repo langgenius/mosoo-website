@@ -130,7 +130,7 @@ function useCaseCards(): readonly UseCaseCard[] {
         src: "/landing/use-cases/codex-pet-app.png",
         width: 2880,
         height: 1800,
-        alt: t("The Codex Pet app turning one uploaded avatar into 9 animation states."),
+        alt: t("The Codex Pet app’s upload screen, where a visitor drops one avatar."),
       },
       links: [{ href: pathToUseCases("codex-pet"), label: t("Read the Codex Pet use case") }],
     },

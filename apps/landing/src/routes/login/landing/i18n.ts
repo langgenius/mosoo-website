@@ -270,8 +270,8 @@ const ZH_MESSAGES = {
     "打开 ghfind",
   "See all use cases":
     "查看全部用例",
-  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
-    "Codex Pet 应用把一张上传的头像变成 9 种动画状态。",
+  "The Codex Pet app’s upload screen, where a visitor drops one avatar.":
+    "Codex Pet 应用的上传页面，访客在这里放入一张头像。",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "ghfind 的 Projects 页面，mosoo Agent 在这里评估公开的 GitHub 仓库。",
   "What mosoo doesn’t do":
@@ -647,8 +647,8 @@ const JA_MESSAGES = {
     "ghfind を開く",
   "See all use cases":
     "すべてのユースケースを見る",
-  "The Codex Pet app turning one uploaded avatar into 9 animation states.":
-    "アップロードしたアバター 1 枚を 9 つのアニメーション状態に変える Codex Pet アプリ。",
+  "The Codex Pet app’s upload screen, where a visitor drops one avatar.":
+    "Codex Pet アプリのアップロード画面。ここにアバターを 1 枚ドロップします。",
   "The ghfind Projects page, where a mosoo Agent evaluates public GitHub repositories.":
     "mosoo の Agent が公開 GitHub リポジトリを評価する、ghfind の Projects ページ。",
   "What mosoo doesn’t do":

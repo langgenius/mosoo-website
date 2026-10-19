@@ -105,7 +105,7 @@ function HeroStage(): ReactElement {
   return (
     <figure className="m-0 min-w-0">
       <div className="stage hero-stage px-3 pt-3 pb-3 sm:px-8 sm:pt-8 sm:pb-6">
-        <PixelPlate sizes="(max-width: 1023px) calc(100vw - 32px), 58vw" />
+        <PixelPlate sizes="(max-width: 1279px) calc(100vw - 32px), 58vw" />
         <div className="stage-window hero-window">
           <PreviewReplay locale={locale} animate />
         </div>
@@ -123,9 +123,9 @@ function HeroStage(): ReactElement {
 
 export function Hero(): ReactElement {
   return (
-    <section aria-labelledby="hero-title" className="px-4 pt-8 pb-16 md:px-6 lg:pt-10 lg:pb-20">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-14">
-        <div className="min-w-0 lg:pb-10">
+    <section aria-labelledby="hero-title" className="px-4 pt-8 pb-16 md:px-6 md:pt-12 xl:pt-10 xl:pb-20">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 items-center gap-10 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:gap-14">
+        <div className="min-w-0 xl:pb-10">
           <Headline />
           <p className="text-ink-600 mt-5 max-w-[30em] text-[18px] leading-[1.55] [text-wrap:pretty]">
             {t(
