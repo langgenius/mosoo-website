@@ -57,7 +57,7 @@ const EN: HomeCopy = {
     cards: [
       { name: "Runtimes", badge: "pick", value: "4", label: "harnesses behind one API", status: "Chosen per Session", runtime: "acp-fallback" },
       { name: "Resume", badge: "same", value: "7 days", label: "later, same Session", status: "Waiting for the next turn", live: true, runtime: "claude-agent-sdk" },
-      { name: "Keys", badge: "byok", value: "0", label: "provider keys in the sandbox", status: "Proxied on every request", runtime: "openai-runtime" },
+      { name: "Keys", badge: "byok", value: "0", label: "keys inside the sandbox", status: "Proxied on every request", runtime: "openai-runtime" },
     ],
   },
   faq: {
