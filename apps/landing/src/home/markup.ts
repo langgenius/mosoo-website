@@ -67,7 +67,7 @@ function renderHero(copy: HomeCopy): string {
   <div class="hero-in">
     <ul class="hero-tiles" aria-hidden="true">${tiles}</ul>
     <div class="hero-window" data-hero-window aria-hidden="true">
-      <div class="hero-ripple"><i></i><i></i><i></i><i></i></div>
+      <div class="hero-ripple"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <svg class="hero-outline" viewBox="${HERO_WINDOW.viewBox}" fill="none"><path d="${HERO_WINDOW.block}"/><path d="${HERO_WINDOW.line}"/></svg>
     </div>
     <h1 id="hero-title" class="hero-title"><span class="hero-a">${esc(copy.hero.lineA)}</span> <span class="hero-b">${esc(copy.hero.lineB)}</span></h1>

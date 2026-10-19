@@ -139,7 +139,8 @@ export function initStage(): void {
     const travel = easeOut(span(p, 0.78, 0.95));
     setStyle(now!, "transform", `translateX(${(travel * ruler!.clientWidth * 0.96).toFixed(1)}px)`);
     if (nav) {
-      const night = iris > 0.5 && p < 0.999;
+      // Night while the dark act still sits under the nav.
+      const night = iris > 0.5 && stage!.getBoundingClientRect().bottom > nav.offsetHeight;
       if ((nav.dataset["tone"] === "night") !== night) {
         if (night) nav.dataset["tone"] = "night";
         else delete nav.dataset["tone"];

@@ -54,11 +54,13 @@ body:has(.v4) {
   height: 89.05px;
   overflow: hidden;
   background: #f3f1ec;
+  animation: v4-fade 0.7s ease-out 0.45s both;
   -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
   mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
 }
-/* S2 ripple (brand/outline/studies/s2-rings-ripple.png), rebuilt with transform/opacity only: four
-   warm-grey bands rise from the line's midpoint, 7.2 s a cycle, staggered 1.8 s. Two cycles, then the
+/* S2 ripple (brand/outline/studies/s2-rings-ripple.png), rebuilt with transform/opacity only: six
+   warm-grey bands rise from the line's midpoint, 7.2 s a cycle, staggered 1.2 s. The material fades in
+   while the outline draws. Two cycles, then the
    rings stop at mid phase (iteration count 2.5, fill forwards). */
 .hero-ripple i {
   position: absolute;
@@ -75,20 +77,28 @@ body:has(.v4) {
   animation: v4-ripple 7.2s linear 2.5 forwards;
 }
 .hero-ripple i:nth-child(1) {
-  transform: scale(0.15);
-  animation-delay: -5.4s;
+  transform: scale(0.1);
+  animation-delay: -6.0s;
 }
 .hero-ripple i:nth-child(2) {
-  transform: scale(0.4);
-  animation-delay: -3.6s;
+  transform: scale(0.3);
+  animation-delay: -4.8s;
 }
 .hero-ripple i:nth-child(3) {
-  transform: scale(0.65);
-  animation-delay: -1.8s;
+  transform: scale(0.5);
+  animation-delay: -3.6s;
 }
 .hero-ripple i:nth-child(4) {
+  transform: scale(0.7);
+  animation-delay: -2.4s;
+}
+.hero-ripple i:nth-child(5) {
   transform: scale(0.9);
-  animation-delay: 0s;
+  animation-delay: -1.2s;
+}
+.hero-ripple i:nth-child(6) {
+  transform: scale(1.1);
+  animation-delay: -0.0s;
 }
 @keyframes v4-ripple {
   from {
@@ -119,6 +129,11 @@ body:has(.v4) {
 }
 .hero-outline path {
   vector-effect: non-scaling-stroke;
+}
+@keyframes v4-fade {
+  from {
+    opacity: 0;
+  }
 }
 @keyframes v4-draw {
   from {
@@ -917,6 +932,7 @@ body:has(.v4) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-ripple,
   .hero-ripple i,
   .hero-outline {
     animation: none;
