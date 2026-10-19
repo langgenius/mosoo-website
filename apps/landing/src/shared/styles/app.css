@@ -739,6 +739,11 @@ html:has(.landing-shell[data-theme="console"]) {
   .stage-zoom > [data-surface="console"] {
     zoom: 1.15;
   }
+
+  /* The turn receipt's event chips are the console's smallest type (10px). */
+  .stage-zoom-receipt > [data-surface="console"] {
+    zoom: 1.2;
+  }
 }
 
 /* Hero: the outputs card is the turn's result. It lands when the turn

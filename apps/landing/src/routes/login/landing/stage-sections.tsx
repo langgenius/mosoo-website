@@ -219,7 +219,7 @@ function TurnTabs(): ReactElement {
         className="stage rounded-tl-none p-0 sm:p-8 lg:px-[12%] lg:py-14"
       >
         <PixelPlate sizes="(max-width: 1023px) calc(100vw - 32px), 90vw" lazy />
-        <div className="stage-window stage-zoom overflow-hidden">
+        <div className="stage-window stage-zoom-receipt overflow-hidden">
           <TurnReceipt key={turn} locale={locale} turn={turn} animate />
         </div>
       </div>
