@@ -18,7 +18,7 @@ const WOFF2_TAGS = ["cmap", "head", "hhea", "hmtx", "maxp", "name", "OS/2", "pos
 const LETTERS = { a: 8.2, b: 1.5, c: 2.8, d: 4.3, e: 12.7, f: 2.2, g: 2.0, h: 6.1, i: 7.0, j: 0.15, k: 0.77, l: 4.0, m: 2.4, n: 6.7, o: 7.5, p: 1.9, q: 0.095, r: 6.0, s: 6.3, t: 9.1, u: 2.8, v: 0.98, w: 2.4, x: 0.15, y: 2.0, z: 0.074 };
 
 /** Return a map of table tag -> Buffer for a TTF/OTF or WOFF2 file. */
-function readTables(buf) {
+export function readTables(buf) {
   const tables = {};
   if (buf.toString("latin1", 0, 4) === "wOF2") {
     const count = buf.readUInt16BE(12);
@@ -63,7 +63,7 @@ function readTables(buf) {
 }
 
 /** Unicode -> glyph id from a format 4 or 12 cmap subtable (Windows Unicode). */
-function cmapLookup(cmap) {
+export function cmapLookup(cmap) {
   const n = cmap.readUInt16BE(2);
   let best = null;
   for (let i = 0; i < n; i++) {

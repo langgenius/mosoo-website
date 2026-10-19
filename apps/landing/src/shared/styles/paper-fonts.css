@@ -1,0 +1,107 @@
+/*
+ * Type stack of the v4b "Paper" home (main-thread decision 1; ATLAS §7; proposal b-paper §2.2).
+ *
+ * Files: apps/landing/public/fonts/{HedvigLettersSerif-Regular-latin,Inter-Variable-latin,FragmentMono-Regular-latin}.woff2
+ * with one <Family>-OFL.txt each, copied and checked by `node apps/landing/scripts/assets/fonts.mjs <candidates>`
+ * (34,796 + 73,016 + 15,176 = 123,008 B, budget 125 KB). Latin subsets only; CJK falls through to system fonts.
+ *
+ * Each web face has a local twin ("… Fallback") whose size-adjust / ascent-override / descent-override make the
+ * system font occupy the same box, so the font-display: swap does not move the layout. The numbers are printed by
+ * fonts.mjs (advance widths weighted by English letter frequency, the Capsize method of
+ * scripts/brand-assets/font-metrics.mjs).
+ *
+ * Licensed ABC Arizona Mix later: add its @font-face and put "ABC Arizona Mix" first in --font-display. "Display
+ * Fallback" is Hedvig already fitted to Arizona's metrics (refs/fonts/notes.md L115), so the swap barely reflows.
+ */
+
+@font-face {
+  font-family: "Display Fallback";
+  src: url("/fonts/HedvigLettersSerif-Regular-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+}
+
+/* Georgia sized to the fitted Hedvig above. */
+@font-face {
+  font-family: "Display Local";
+  src: local("Georgia");
+  size-adjust: 100.56%;
+  ascent-override: 95.46%;
+  descent-override: 26.85%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Variable-latin.woff2") format("woff2-variations"),
+    url("/fonts/Inter-Variable-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Local";
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 107.37%;
+  ascent-override: 90.22%;
+  descent-override: 22.47%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fragment Mono Local";
+  src: local("Courier New"), local("CourierNewPSMT");
+  size-adjust: 102.98%;
+  ascent-override: 92.25%;
+  descent-override: 24.28%;
+  line-gap-override: 0%;
+}
+
+:root {
+  /* Raw stacks under their own names, so the console island can point at them without a var() cycle. */
+  --paper-display: "Display Fallback", "Display Local", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
+  --paper-sans: "Inter", "Inter Local", "PingFang SC", "Hiragino Sans", "Hiragino Sans GB", "Microsoft YaHei UI",
+    "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans CJK JP", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
+  --paper-mono: "Fragment Mono", "Fragment Mono Local", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  --font-display: var(--paper-display);
+  --font-sans: var(--paper-sans);
+  --font-mono: var(--paper-mono);
+}
+
+/* Japanese pages: the display face falls to Mincho before the Chinese serif. */
+:root:lang(ja) {
+  --paper-display: "Display Fallback", "Display Local", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP",
+    "Songti SC", ui-serif, Georgia, serif;
+  --paper-sans: "Inter", "Inter Local", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo",
+    "Noto Sans CJK JP", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Product moments keep the console's layout, sizes and tokens but borrow the page's Inter and Fragment Mono
+ * instead of loading Geist and Geist Mono (another ~90 KB that the 125 KB font budget has no room for).
+ */
+html [data-surface="console"],
+html [data-surface="console"]:lang(zh) {
+  /* `html` lifts this over the island's own [data-surface="console"](:lang(zh)) rules, whatever the load order. */
+  --console-font-sans: var(--paper-sans);
+  --console-font-heading: var(--paper-sans);
+  --console-font-mono: var(--paper-mono);
+}

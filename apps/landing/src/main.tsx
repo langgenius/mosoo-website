@@ -6,7 +6,7 @@ import { LoginLanding } from "./routes/login/landing/landing";
 import { htmlLanguage, locale } from "./shared/locale";
 
 import "./shared/styles/app.css";
-import "./shared/styles/literata.css";
+import "./shared/styles/paper-fonts.css";
 import "./routes/login/landing/bamboo-node.css";
 
 const container = document.querySelector("#root");
