@@ -178,9 +178,16 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   overflow-wrap: anywhere;
 }
 
+/* zh labels (ledger terms, list terms): keep words whole, break at spaces
+   and punctuation ("PR 工作流" stays together). */
+:lang(zh) .ct-page :is(.ct-ledger-term, .ct-ledger-row dt, .ct-proof dt, .ct-matrix-list dt) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 /* ja questions and labels carry no marks: phrase-aware breaking where
    supported (Chrome 119+), else normal kinsoku line breaking. */
-:lang(ja) .ct-page .ct-h3 {
+:lang(ja) .ct-page :is(.ct-h3, .ct-ledger-term, .ct-ledger-row dt) {
   word-break: auto-phrase;
 }
 
