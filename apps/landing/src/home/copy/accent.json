@@ -1,8 +1,8 @@
 {
-  "$comment": "Slots of sections/accent.ts. Before the edge, on white: tab (a tab label) and gap (a short H2). On the full lime screen: h2a + h2b (two-tone H2), sub, and five cards (label + one line; BRIEF order Harness, Model key, Sandbox, Files, Resume). X placeholders of realistic length. Budgets: tests/home-copy-slots.test.mjs.",
+  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md, slot table with lines at 1440 and 390). Before the edge, on white: tab (a tab label, Inter 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (Inter 20 / 17, two lines at 1440, three at 390), and five cards in this order: Harness, Model key, Sandbox, Files, Resume (label Inter 16 w500, one line; line Inter 15, one line in the wide cards, at most two in the narrow ones and at 390). X placeholders of realistic length. Budgets: tests/home-copy-slots.test.mjs.",
   "en": {
     "tab": "Xxx xxxxxxx xxxxx",
-    "gap": "Xxxx xxxxx xxx.",
+    "gap": "Xxxx xxxxxxx.",
     "h2a": "Xxx xxxxxxx xx xxxx.",
     "h2b": "Xxx Xxxxxxx xxxxx.",
     "sub": "Xxx xxxxxx xx xxxxxxx xx xxx Xxxxxxx; xxx xxxxxxx xxxx xxxx xxx xxxxx xxxx xxx xxxx.",

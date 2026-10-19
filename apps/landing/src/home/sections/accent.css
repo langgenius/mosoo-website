@@ -1,2 +1,277 @@
-/* 3 Full lime screen (sections/accent.ts): owned by the accent agent. Scope every rule under .v5-accent; tokens, type, buttons, the
-   line language and the engine contracts come from ../system.css (see ./README.md). Empty until the section lands. */
+/* 3 Full lime screen (sections/accent.ts), owned by the accent agent. Every rule is scoped to .v5-accent; tokens, type,
+   the tab label and the on-lime colours come from ../system.css. Sources: staging production/v5/BRIEF.md §3.4, §4 row
+   3; TOOLS-REVIEW.md T3; refs/frame/v5/motion/STUDY.md §4 and layout/STUDY.md §3 (the edge, the solid stretch, the
+   fade, the white cards); refs/mintlify/v5/STUDY.md §1, §2.6 (the grid, the bottom-left label, the hover);
+   v5/tools/linefig/NOTES.md (figures at 1:1). Measured: staging v5/sections/accent/NOTES.md. */
+
+/* ------------------------------------------------------------------------------ the white gap before the edge */
+/* Frame keeps ~400 px of near-empty paper before its edge: a tab label, a two-word line at 72px, then 130 px to the
+   edge (layout §3: "Be focused." ends at 7285.9, the panel starts at 7415.9). The section's margin-top is the rest. */
+.v5-accent .v5-acc-gap {
+  padding-bottom: 130px;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------------------------------- the lime panel */
+/* Frame's .next-gen as CSS (motion §4): the paper's width, radius 12 like the paper, a hard top edge (no shadow, no
+   gradient), solid for at least one screen + 40 px, then one linear fade. The fade ends transparent, not white, so
+   the paper's dot grid comes back as the lime goes (premultiplied interpolation: the same colours as a fade to
+   white). min-height keeps the fade at least 60 % of a screen when the content is short (tall viewports). */
+.v5-accent .v5-acc-lime {
+  position: relative;
+  min-height: calc(160vh + 40px);
+  min-height: calc(160svh + 40px);
+  padding: 104px 0 200px;
+  border-radius: 12px;
+  background: linear-gradient(var(--accent) 0 calc(100vh + 40px), rgb(255 255 255 / 0) 100%);
+  background: linear-gradient(var(--accent) 0 calc(100svh + 40px), rgb(255 255 255 / 0) 100%);
+}
+
+/* The nav's theme zone: the solid stretch and the first half of the fade. Past it the bar is white glass over the
+   pale end instead of lime glass over near-white. */
+.v5-accent .v5-acc-zone {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(50% + (100vh + 40px) / 2);
+  height: calc(50% + (100svh + 40px) / 2);
+  pointer-events: none;
+}
+
+.v5-accent .v5-acc-head {
+  text-align: center;
+}
+
+/* Frame's sub on lime (22/1.48, 590 wide, two lines) in the page's lead type; ink 70 % (6.0:1 on lime). */
+.v5-accent .v5-acc-sub {
+  max-width: 600px;
+  margin: 24px auto 0;
+  color: var(--on-lime-2);
+  font: 400 20px/1.5 var(--font-sans);
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+:lang(ja) .v5-accent .v5-acc-sub {
+  word-break: auto-phrase;
+}
+
+/* ---------------------------------------------------------------------------------------- the five cards */
+/* 2 + 3 (TOOLS-REVIEW T3): two wide cards (Harness, Model key), three narrow (Sandbox, Files, Resume). Gap 16 and
+   radius 12 (Mintlify), Frame's white-card shadow on lime. One row height (Mintlify: 412) whatever the width. */
+.v5-accent .v5-acc-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 64px;
+}
+
+.v5-accent .v5-acc-card {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 412px;
+  padding: 28px;
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 3px 3px rgb(0 0 0 / 0.08);
+  color: var(--ink);
+}
+
+.v5-accent .v5-acc-card:nth-child(-n + 2) {
+  grid-column: span 3;
+}
+
+/* The figure at its own size, centred in the space above the text (Mintlify: the object near the optical centre,
+   the bottom-left corner kept for the label). */
+.v5-accent .v5-acc-fig {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 202px;
+}
+
+.v5-accent .v5-acc-svg {
+  position: relative; /* above the hover glow */
+  display: block;
+}
+
+.v5-accent .v5-acc-svg--160 {
+  display: none;
+}
+
+/* Label + line at the bottom-left (v4a spec row: label Inter 16/24 w500, value Inter 15/22 ink-2). The block keeps
+   room for a two-line value, so the labels of a row share one baseline whether a value wraps or not. */
+.v5-accent .v5-acc-text {
+  min-height: 72px;
+  margin-top: 24px;
+}
+
+.v5-accent .v5-acc-label {
+  color: var(--ink);
+  font: 500 16px/24px var(--font-sans);
+  text-wrap: balance;
+}
+
+.v5-accent .v5-acc-line {
+  margin-top: 4px;
+  color: var(--ink-2);
+  font: 400 15px/22px var(--font-sans);
+  text-wrap: pretty;
+}
+
+/* The Resume comet (T3's only motion): linefig.mjs's keyframes and timing (10.5 s, linear; each trail segment keeps
+   its own negative animation-delay in its style attribute). render() drops the figure's own <style>, which carried
+   them, so the page keeps one stylesheet. */
+@keyframes v5-acc-comet {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* It runs only while its figure is in view: a view() timeline holds --comet at "running" across the figure's cover
+   range and lets it fall back to "paused" outside it. No script, so it also works without JS. Browsers without
+   scroll-driven animations skip the block and the comet simply runs. Reduced motion: animation none (below), the
+   comet parks at its fixed spot, which no play state overrides. */
+@keyframes v5-acc-in-view {
+  from,
+  to {
+    --comet: running;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .v5-accent .v5-acc-card[data-part="resume"] .v5-acc-fig {
+    --comet: paused;
+    animation-name: v5-acc-in-view;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: none;
+    animation-timeline: view();
+  }
+}
+
+.v5-accent :is(.lfc202, .lfc160) {
+  animation: v5-acc-comet 10.5s linear infinite;
+  animation-play-state: var(--comet, running);
+}
+
+/* Hover (BRIEF §3.4, Mintlify §2.6): the figure grows to 1.02 over a soft tint glow; in 900 ms on Mintlify's
+   curve, out in 400 ms. Fine pointers only: a tap on a phone must not leave a card stuck in its hover state. */
+@media (hover: hover) and (pointer: fine) {
+  .v5-accent .v5-acc-fig::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 264px;
+    height: 264px;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, var(--accent-tint), transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.42, 0, 0.15, 1);
+  }
+
+  .v5-accent .v5-acc-svg {
+    transition: scale 0.4s cubic-bezier(0.42, 0, 0.15, 1);
+  }
+
+  .v5-accent .v5-acc-card:hover .v5-acc-fig::before {
+    opacity: 1;
+    transition: opacity 0.9s var(--ease-hover-in);
+  }
+
+  .v5-accent .v5-acc-card:hover .v5-acc-svg {
+    scale: 1.02;
+    transition: scale 0.9s var(--ease-hover-in);
+  }
+}
+
+/* --------------------------------------------------------------------------------------------- tablets */
+/* Three 202 figures no longer fit a row: two columns, Resume closes the grid across both. */
+@media (min-width: 721px) and (max-width: 1023px) {
+  .v5-accent .v5-acc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .v5-accent .v5-acc-card,
+  .v5-accent .v5-acc-card:nth-child(-n + 2) {
+    grid-column: auto;
+  }
+
+  .v5-accent .v5-acc-card:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------- phones */
+/* Frame at 390: the lime runs edge to edge (no frame gutters), one column, the 160 figures. The panel cancels the
+   paper's inset; its fade ends transparent, so the gutters come back grey and the paper white, with no seam. */
+@media (max-width: 720px) {
+  .v5-accent .v5-acc-gap {
+    padding-bottom: 100px;
+  }
+
+  /* Top 96: the H2 clears the floating bar (12 + 56) by 28 px at the full-lime moment. */
+  .v5-accent .v5-acc-lime {
+    margin-inline: calc(-1 * var(--inset, 8px));
+    padding: 96px 0 120px;
+    border-radius: 0;
+  }
+
+  .v5-accent .v5-acc-sub {
+    margin-top: 20px;
+    font-size: 17px;
+  }
+
+  .v5-accent .v5-acc-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .v5-accent .v5-acc-card,
+  .v5-accent .v5-acc-card:nth-child(-n + 2) {
+    grid-column: auto;
+    min-height: 0;
+    padding: 28px 20px 20px;
+  }
+
+  .v5-accent .v5-acc-fig {
+    min-height: 160px;
+  }
+
+  .v5-accent .v5-acc-svg--202 {
+    display: none;
+  }
+
+  .v5-accent .v5-acc-svg--160 {
+    display: block;
+  }
+
+  .v5-accent .v5-acc-text {
+    min-height: 0;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------ reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .v5-accent :is(.lfc202, .lfc160) {
+    animation: none;
+  }
+
+  .v5-accent .v5-acc-svg {
+    transition: none;
+  }
+
+  .v5-accent .v5-acc-card:hover .v5-acc-svg {
+    scale: none;
+  }
+}
