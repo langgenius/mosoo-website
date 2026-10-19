@@ -165,8 +165,8 @@
   color: var(--ink);
 }
 /* While the third act's iris opens, the nav has no plate of its own (a plate would leave a band over the
-   half-night screen); its words turn light once the circle covers them. */
-.v4-nav:is([data-tone="clear"], [data-tone="clear-night"]) {
+   half-night screen); each item turns light once the circle covers it (src/effects/stage.ts). */
+.v4-nav[data-tone="clear"] {
   background: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -174,13 +174,16 @@
 .v4-nav[data-tone="night"] {
   background: rgb(14 15 13 / 0.82);
 }
-.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) {
+.v4-nav[data-tone="night"],
+.v4-nav[data-tone="clear"] .v4-brand[data-night] {
   color: var(--night-ink);
 }
-.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) .v4-nav-link {
+.v4-nav[data-tone="night"] .v4-nav-link,
+.v4-nav[data-tone="clear"] .v4-nav-link[data-night] {
   color: rgb(242 244 242 / 0.7);
 }
-.v4-nav:is([data-tone="night"], [data-tone="clear-night"]) .v4-btn-ink {
+.v4-nav[data-tone="night"] .v4-btn-ink,
+.v4-nav[data-tone="clear"] .v4-btn-ink[data-night] {
   background: var(--night-ink);
   color: var(--night);
 }

@@ -89,6 +89,7 @@ export function initStage(): void {
   if (!frameBlock || !frameLine || !hero || !heroWindow) return;
   const heroParts = [...hero.querySelectorAll<HTMLElement>("[data-hero-part]")];
   const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const navItems = nav ? [...nav.querySelectorAll<HTMLElement>(".v4-brand, .v4-nav-link, .v4-btn")] : [];
   const faces = [...stage.querySelectorAll<HTMLElement>("[data-face]")];
   const cards = [...feed.querySelectorAll<HTMLElement>("[data-card]")];
 
@@ -106,6 +107,8 @@ export function initStage(): void {
   // Offset from the hero window's resting centre to the stage centre, where the portal opens.
   let glideX = 0;
   let glideY = 0;
+  // Radius at which the night iris reaches each nav item's centre (the item turns light there).
+  let navReach: number[] = [];
 
   const progress = (): number => clamp((window.scrollY - top) / run);
 
@@ -119,6 +122,12 @@ export function initStage(): void {
     heroWindow!.style.transform = kept;
     glideX = box.left + box.width / 2 - (r.left + r.width / 2);
     glideY = box.top + box.height / 2 - (r.top + r.height / 2);
+    const cx = pin!.clientWidth / 2;
+    const cy = pin!.clientHeight * 0.52;
+    navReach = navItems.map((item) => {
+      const b = item.getBoundingClientRect();
+      return Math.hypot(b.left + b.width / 2 - cx, b.top + b.height / 2 - cy);
+    });
   }
 
   function flip(on: boolean): void {
@@ -195,15 +204,21 @@ export function initStage(): void {
     const travel = easeOut(span(p, T.travel[0], T.travel[1]));
     setStyle(now!, "transform", `translateX(${(travel * ruler!.clientWidth * 0.96).toFixed(1)}px)`);
     if (nav) {
-      // While the iris opens, the nav is clear (no plate of its own over a half-night screen); its words
-      // turn light once the circle covers them, and the night plate returns when the iris is full.
+      // While the iris opens, the nav is clear (no plate of its own over a half-night screen); each of its
+      // items turns light once the circle covers it, and the night plate returns when the iris is full.
       const under = stage!.getBoundingClientRect().bottom > nav.offsetHeight;
-      const covered = radius >= Math.hypot(w / 2 - 80, h * 0.52);
-      const tone = !under || iris <= 0 ? "" : iris >= 1 ? "night" : covered ? "clear-night" : "clear";
+      const tone = !under || iris <= 0 ? "" : iris >= 1 ? "night" : "clear";
       if ((nav.dataset["tone"] ?? "") !== tone) {
         if (tone) nav.dataset["tone"] = tone;
         else delete nav.dataset["tone"];
       }
+      navItems.forEach((item, i) => {
+        const night = tone === "clear" && radius >= (navReach[i] ?? Infinity);
+        if (("night" in item.dataset) !== night) {
+          if (night) item.dataset["night"] = "";
+          else delete item.dataset["night"];
+        }
+      });
     }
   }
 
@@ -237,6 +252,7 @@ export function initStage(): void {
     });
     face = 0;
     if (nav) delete nav.dataset["tone"];
+    navItems.forEach((item) => delete item.dataset["night"]);
   }
 
   function setMode(): void {
