@@ -589,7 +589,7 @@ function recentNotices(
 function UpdatesMenu(): ReactElement {
   return (
     <Menu.Root>
-      <Menu.Trigger className="group bg-green-500 text-on-accent hover:bg-green-600 focus-visible:ring-paper-100/60 data-[popup-open]:bg-green-600 inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md px-3 text-[14px] font-semibold shadow-sm transition-[background-color,transform] duration-150 outline-none active:scale-[0.98] focus-visible:ring-2 sm:px-4">
+      <Menu.Trigger className="i-btn group h-10 shrink-0 gap-1.5 px-3 text-[14px] sm:px-4">
         {t("Get updates")}
         <ChevronDown
           aria-hidden="true"
@@ -633,7 +633,7 @@ function UpdatesMenu(): ReactElement {
 
 function StatusHeader(): ReactElement {
   return (
-    <div className="bg-ink-900 px-4 pt-5 pb-[168px] sm:pt-6 sm:pb-[184px] md:px-6">
+    <div className="bg-[var(--bg-0)] px-4 pt-5 pb-[168px] sm:pt-6 sm:pb-[184px] md:px-6">
       <div className={`${CONTENT_WIDTH_CLASS} flex items-center justify-between gap-4`}>
         <div className="flex min-w-0 items-center gap-3">
           <a
@@ -723,7 +723,7 @@ export function StatusPage(): ReactElement {
           transition={{ duration: 0.28, ease: EASE_OUT }}
           className={`${CONTENT_WIDTH_CLASS} relative z-10 -mt-[120px] sm:-mt-[136px]`}
         >
-          <div className="overflow-hidden rounded-[24px] bg-white shadow-[0_32px_64px_-28px_rgba(11,26,20,0.38),0_1px_2px_rgba(11,26,20,0.06)] ring-1 ring-[rgba(11,26,20,0.06)]">
+          <div className="overflow-hidden rounded-[24px] bg-[var(--bg-1)] shadow-[0_32px_64px_-28px_rgba(0,0,0,0.5)] ring-1 ring-[var(--edge)]">
             <div
               aria-live="polite"
               className="flex flex-col items-center px-5 pt-10 pb-8 text-center sm:px-10 sm:pt-12 sm:pb-10"

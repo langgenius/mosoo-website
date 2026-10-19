@@ -82,17 +82,17 @@ function stageLines(words: TranscriptWords): TranscriptLine[] {
       verb: "Write",
       arg: "outputs/report.md",
       result: "session_files.updated",
-      at: 0.23,
+      at: 0.15,
       rulerAt: 0.22,
     },
-    { kind: "gap", at: 0.33, rulerAt: 0.44 },
-    { kind: "prompt", text: words.followUp, at: 0.7, rulerAt: 0.96 },
+    { kind: "gap", at: 0.25, rulerAt: 0.44 },
+    { kind: "prompt", text: words.followUp, at: 0.55, rulerAt: 0.96 },
     {
       kind: "step",
       verb: "Bash",
       arg: "python report.py",
       result: "grand_total 250",
-      at: 0.79,
+      at: 0.66,
       rulerAt: 0.965,
     },
     {
@@ -100,7 +100,7 @@ function stageLines(words: TranscriptWords): TranscriptLine[] {
       verb: "Write",
       arg: "outputs/report.md",
       result: "run.completed",
-      at: 0.88,
+      at: 0.78,
       rulerAt: 0.97,
     },
   ];
@@ -117,7 +117,7 @@ const EN = {
     // H-A / H-B: 1 x 18 each (phones: the H1 is 38px so 18 still fits).
     title: ["The Agent runtime", "for your backend."],
     // H-L: 2 x 44, at most 14 words.
-    lead: "One API call starts a sandboxed Session. Your app keeps its users and UI.",
+    lead: "One API call starts a sandboxed Session. Codex, Claude Agent SDK, OpenCode or Pi.",
     primary: "Try mosoo",
     windowName: WINDOW_NAME,
     lines: heroLines(EN_WORDS),
@@ -152,6 +152,11 @@ const EN = {
           "An open-source, API-first managed Agent runtime for application backends. One API runs OpenAI Codex, Claude Agent SDK, OpenCode or Pi, each Session in its own sandbox.",
       },
       {
+        question: "Is mosoo open source?",
+        answer:
+          "Yes, under Apache 2.0, with the source on GitHub. The hosted console runs at cloud.mosoo.ai, and the README explains local development. mosoo is in Alpha, so public APIs may still change.",
+      },
+      {
         question: "Do I need to create an Agent first?",
         answer:
           "No. On /api/v2 one request carries the harness, provider, model, instructions and input, and starts a durable Session. A saved Agent preset is optional; it also carries Skills, MCP servers and an Environment.",
@@ -170,11 +175,6 @@ const EN = {
         question: "Who pays for model usage?",
         answer:
           "You do, directly. Provider keys belong to your Project, and the provider bills your account. mosoo supplies no models and sets no spending cap. Usage shows measured tokens and cost estimates, not invoices.",
-      },
-      {
-        question: "Is mosoo open source?",
-        answer:
-          "Yes, under Apache 2.0, with the source on GitHub. The hosted console runs at cloud.mosoo.ai, and the README explains local development. mosoo is in Alpha, so public APIs may still change.",
       },
     ] satisfies FaqItem[],
   },
@@ -240,7 +240,7 @@ const ZH_WORDS: TranscriptWords = {
 const ZH: HomeCopy = {
   hero: {
     title: ["面向后端的", "Agent runtime。"],
-    lead: "一次 API 调用，启动一个带 sandbox 的 Session。用户和界面仍归你的应用。",
+    lead: "一次 API 调用，启动一个带 sandbox 的 Session。Codex、Claude Agent SDK、OpenCode 或 Pi。",
     primary: "试用 mosoo",
     windowName: WINDOW_NAME,
     lines: heroLines(ZH_WORDS),
@@ -275,6 +275,11 @@ const ZH: HomeCopy = {
           "面向应用后端的开源、API 优先托管 Agent runtime。一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi，每个 Session 都有自己的 sandbox。",
       },
       {
+        question: "mosoo 开源吗？",
+        answer:
+          "开源，采用 Apache 2.0 许可证，源码在 GitHub。托管控制台在 cloud.mosoo.ai，README 说明了本地开发。mosoo 处于 Alpha 阶段，公开 API 仍可能变化。",
+      },
+      {
         question: "需要先创建 Agent 吗？",
         answer:
           "不需要。在 /api/v2 上，一个请求带上 harness、模型供应商、模型、指令和输入，就启动持久 Session。Agent 预设可选，可再带上技能、MCP 服务器和环境。",
@@ -293,11 +298,6 @@ const ZH: HomeCopy = {
         question: "模型费用由谁支付？",
         answer:
           "由你直接支付。模型密钥属于你的项目，由模型供应商向你的账户计费。mosoo 不提供模型，也不设花费上限。用量显示实测 token 和估算成本，不是账单。",
-      },
-      {
-        question: "mosoo 开源吗？",
-        answer:
-          "开源，采用 Apache 2.0 许可证，源码在 GitHub。托管控制台在 cloud.mosoo.ai，README 说明了本地开发。mosoo 处于 Alpha 阶段，公开 API 仍可能变化。",
       },
     ],
   },
@@ -360,7 +360,7 @@ const JA_WORDS: TranscriptWords = {
 const JA: HomeCopy = {
   hero: {
     title: ["バックエンド用の", "Agent runtime。"],
-    lead: "API 1 回で、sandbox 付きの Session が始まる。ユーザーと UI はアプリ側。",
+    lead: "API 1 回で、sandbox 付きの Session が始まる。Codex、Claude Agent SDK、OpenCode、Pi。",
     primary: "mosoo を試す",
     windowName: WINDOW_NAME,
     lines: heroLines(JA_WORDS),
@@ -395,6 +395,11 @@ const JA: HomeCopy = {
           "バックエンド向けの、オープンソースで API ファーストなマネージド Agent runtime です。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で動かし、Session ごとに専用の sandbox を使います。",
       },
       {
+        question: "mosoo はオープンソースですか？",
+        answer:
+          "はい。Apache 2.0 ライセンスで、ソースは GitHub にあります。ホスト版のコンソールは cloud.mosoo.ai、ローカル開発の手順は README にあります。mosoo は Alpha 版で、公開 API は変わる可能性があります。",
+      },
+      {
         question: "先に Agent を作る必要はありますか？",
         answer:
           "いいえ。/api/v2 では、harness、プロバイダー、モデル、指示、入力を 1 つのリクエストに含めるだけで、永続的な Session が始まります。保存済みの Agent プリセットは任意で、スキル、MCP サーバー、Environment も持てます。",
@@ -413,11 +418,6 @@ const JA: HomeCopy = {
         question: "モデルの利用料金は誰が払いますか？",
         answer:
           "お客様が直接支払います。キーはプロジェクトに属し、プロバイダーが請求します。mosoo はモデルを提供せず、支出上限もありません。表示されるコストは推定で、請求書ではありません。",
-      },
-      {
-        question: "mosoo はオープンソースですか？",
-        answer:
-          "はい。Apache 2.0 ライセンスで、ソースは GitHub にあります。ホスト版のコンソールは cloud.mosoo.ai、ローカル開発の手順は README にあります。mosoo は Alpha 版で、公開 API は変わる可能性があります。",
       },
     ],
   },

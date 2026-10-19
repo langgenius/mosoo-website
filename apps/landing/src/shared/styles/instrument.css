@@ -47,7 +47,8 @@
   --ink-1: #eff1ee;
   --ink-2: #a9aca8;
   --ink-soft: #8c8f8b;
-  --ink-3: #737572;
+  /* 4.76:1 on --bg-0, 4.53:1 on --bg-1 (WCAG AA for small text). */
+  --ink-3: #7d7f7c;
   --ink-4: #4c4e4b;
   --mark: #151614;
   /* Signal only: <= 8px dots, 1-2px lines (ATLAS §2.3). */
@@ -69,6 +70,10 @@
     sans-serif;
   --font-code:
     "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* The other pages' Tailwind font utilities read these: point them at the
+     locked fonts so no page loads Geist or Cabinet Grotesk. */
+  --font-sans: var(--font-text);
+  --font-mono: var(--font-code);
 
   /* Motion: one curve for objects, one for feeds (UI-FORMS c.0). */
   --ease-object: cubic-bezier(0.16, 1, 0.3, 1);
@@ -185,11 +190,17 @@ html:has(.i-page) {
   letter-spacing: -0.005em;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.16s var(--ease-object);
+  transition:
+    background-color 0.16s var(--ease-object),
+    transform 0.16s var(--ease-object);
 }
 
 .i-btn:hover {
-  background: #ffffff;
+  background: #dfe2de;
+}
+
+.i-btn:active {
+  transform: scale(0.97);
 }
 
 .i-btn-sm {

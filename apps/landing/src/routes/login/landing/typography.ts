@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 
-export const DISPLAY_FONT = '"Cabinet Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif';
+// The instrument canvas's display token (Hedvig Letters Serif stand-in).
+export const DISPLAY_FONT = "var(--font-display)";
 
 export const sectionHeadingStyle: CSSProperties = {
   fontFamily: DISPLAY_FONT,

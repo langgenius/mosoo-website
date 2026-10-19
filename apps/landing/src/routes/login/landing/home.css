@@ -79,11 +79,20 @@
    card, past the right rail and cut by the viewport's right edge (Mintlify's
    product frame bleeds off the page; Enter Pro's card is cut by its plate). */
 .i-hero {
+  /* The copy's top; the card's top follows it to the H1's cap line. */
+  --hero-top: clamp(80px, 16svh, 160px);
   position: relative;
   display: flex;
-  align-items: center;
-  height: clamp(720px, calc(100svh - 64px), 900px);
-  padding: 0 var(--pad) 96px;
+  align-items: flex-start;
+  /* Short of the first screen, so the next section's line shows, while its
+     heading stays below the fold (first-screen word budget). */
+  height: clamp(680px, calc(100svh - 160px), 900px);
+  padding: var(--hero-top) var(--pad) 0;
+  /* The card is pressed onto the section line and cut by it (proposal §2.3,
+     design review P1-1); sideways it still runs past the rail to the
+     viewport's edge (U12). */
+  overflow-x: visible;
+  overflow-y: clip;
 }
 
 .i-hero-copy {
@@ -93,6 +102,7 @@
 .i-hero-copy .i-lead {
   max-width: 420px;
   margin-top: 28px;
+  text-wrap: balance;
 }
 
 .i-actions {
@@ -102,23 +112,32 @@
 }
 
 /* The card's top sits on the H1's first cap line (Hedvig at 68px: about
-   11px below the line box), so the object and the headline start together. */
+   11px below the line box), so the object and the headline start together.
+   It is placed against the hero, so it can run down past the section line. */
 .i-hero-row {
-  position: relative;
   flex: 1;
   min-width: 0;
 }
 
 .i-hero-object {
   position: absolute;
-  left: calc(720px - var(--pad));
-  top: 11px;
+  left: 720px;
+  top: calc(var(--hero-top) + 11px);
+  bottom: -32px;
+  display: flex;
   width: 760px;
+}
+
+.i-hero-object > .i-term {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 /* 02 Stage -------------------------------------------------------------------
    Static by default (the end state). With [data-live] (wide screens, motion
-   allowed) the section becomes a 240vh runway and the frame pins. */
+   allowed) the section becomes a 160vh runway (under one screen of pinned
+   scroll) and the frame, as tall as its content, pins under the header. */
 .i-stage {
   padding: 0 var(--pad);
 }
@@ -131,15 +150,14 @@
 }
 
 .i-stage[data-live] {
-  height: 240vh;
+  height: 160vh;
 }
 
 .i-stage[data-live] .i-stage-frame {
   position: sticky;
   top: 64px;
-  height: calc(100vh - 64px);
   min-height: 0;
-  padding: 0;
+  padding: 120px 0;
 }
 
 .i-stage-grid {
@@ -243,9 +261,9 @@
   position: absolute;
   top: calc(var(--at) * 100%);
   left: 0;
-  width: 9px;
-  height: 9px;
-  margin: -4.5px 0 0 -4px;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -3.5px;
   border-radius: 50%;
   background: var(--signal);
   box-shadow: 0 0 0 4px var(--signal-halo);
@@ -293,7 +311,7 @@
 }
 
 .i-term-name {
-  color: rgb(255 255 255 / 0.42);
+  color: rgb(255 255 255 / 0.48);
   font-size: 12px;
 }
 
@@ -346,7 +364,7 @@
 
 .i-term-result {
   padding-left: 14px;
-  color: rgb(255 255 255 / 0.4);
+  color: rgb(255 255 255 / 0.48);
 }
 
 .i-term-result::before {
@@ -390,6 +408,24 @@
   font-size: 18px;
 }
 
+/* The stage card continues the hero card's Session where it stops (from the
+   first result on), so it does not reprint the hero's lines; the room that
+   frees lets it read at 15px (design review P1-3). */
+.i-term-stage {
+  font-size: 15px;
+}
+
+.i-term-stage .i-term-track > li:nth-child(-n + 2) {
+  display: none;
+}
+
+/* At 15px the body is 400 high, so the end state holds its four steps whole
+   (no half line under the top fade) and the live print never has to shift
+   (design review P2-7). */
+.i-term-stage .i-term-body {
+  height: 400px;
+}
+
 .i-term-hero .i-term-bar {
   height: 48px;
 }
@@ -402,8 +438,10 @@
 /* The hero card keeps U12's locked body height (312) at its enlarged size,
    lines from the top, no fade: the running line waits above open space. */
 .i-term-hero .i-term-body {
+  flex: 1;
   justify-content: flex-start;
-  height: 312px;
+  height: auto;
+  min-height: 312px;
   padding: 32px 36px 36px;
   -webkit-mask-image: none;
   mask-image: none;
@@ -419,7 +457,7 @@
 
 /* 03 Spec table (U10, dark skin) ------------------------------------------- */
 .i-spec {
-  padding: 160px 0 160px;
+  padding: 160px 0 40px;
 }
 
 .i-spec-title {
@@ -565,7 +603,7 @@
   display: grid;
   grid-template-columns: 400px minmax(0, 1fr);
   column-gap: 80px;
-  padding: 160px var(--pad);
+  padding: 160px var(--pad) 40px;
 }
 
 .i-faq-title {
@@ -609,11 +647,17 @@
     fill 0.65s var(--ease-door);
 }
 
-.i-faq-row[open] .i-faq-mark,
-.i-faq-row summary:hover .i-faq-mark {
+.i-faq-row[open] .i-faq-mark {
   fill: var(--ink-1);
   stroke: var(--ink-1);
   transform: translateX(-10px);
+}
+
+/* Hover is not "open": it only brightens the outline (design review P2-2). */
+@media (hover: hover) and (pointer: fine) {
+  .i-faq-row:not([open]) summary:hover .i-faq-mark {
+    stroke: var(--ink-2);
+  }
 }
 
 .i-faq-q {
@@ -637,7 +681,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 160px var(--pad) 176px;
+  padding: 160px var(--pad) 96px;
   text-align: center;
 }
 
@@ -721,8 +765,7 @@
     transition: none;
   }
 
-  .i-faq-row[open] .i-faq-mark,
-  .i-faq-row summary:hover .i-faq-mark {
+  .i-faq-row[open] .i-faq-mark {
     transform: none;
   }
 }
@@ -733,9 +776,14 @@
     width: 520px;
   }
 
+  /* 901-1180: the card starts 48px past the 520 copy column and runs off the
+     viewport, so it never covers the H1 or the lead (review P0-1). */
   .i-hero-object {
-    left: auto;
-    right: calc(-200px - var(--pad));
+    left: calc(var(--pad) + 568px);
+  }
+
+  .i-h1 {
+    font-size: clamp(52px, 5.6vw, 68px);
   }
 
   .i-stage-grid {
@@ -748,16 +796,17 @@
     --pad: 12px;
   }
 
-  /* 38px keeps an 18-character value on one line at 390 (UI review P2-9). */
+  /* 38px keeps an 18-character value on one line at 390 (UI review P2-9);
+     tablets get a middle size (design review P1-2). */
   .i-h1 {
-    font-size: 38px;
+    font-size: clamp(38px, 6.4vw, 56px);
     line-height: 1.04;
     letter-spacing: -0.025em;
   }
 
   .i-h2,
   .i-spec-title {
-    font-size: 30px;
+    font-size: clamp(30px, 4.6vw, 40px);
     line-height: 1.08;
     letter-spacing: -0.02em;
   }
@@ -766,13 +815,22 @@
     font-size: 34px;
   }
 
-  /* The hero keeps the whole first screen, so the next heading starts
-     below the fold (first-screen word budget). */
+  /* The hero ends just short of the first screen, so the next heading
+     starts below the fold (first-screen word budget); the card fills down to
+     the section line and is cut there, so no black band is left below it
+     (design review P1-1, P1-2). Tablets stop at 760. */
   .i-hero {
-    display: block;
-    height: auto;
-    min-height: calc(100svh - 64px);
-    padding: 56px var(--pad) 72px;
+    display: flex;
+    flex-direction: column;
+    height: min(calc(100svh - 120px), 760px);
+    min-height: 560px;
+    padding: 56px var(--pad) 0;
+  }
+
+  .i-hero-row {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .i-hero-copy {
@@ -787,10 +845,10 @@
   .i-hero-object {
     position: relative;
     left: 0;
-    right: auto;
     top: 0;
+    flex: 1;
     width: calc(100% + 40px);
-    margin-top: 44px;
+    margin: 44px 0 -32px;
     transform: none;
   }
 
@@ -889,10 +947,11 @@
   .i-ruler-dot {
     top: 0;
     left: calc(var(--at) * 100%);
-    margin: -4px 0 0 -4.5px;
+    margin: -3.5px 0 0 -4px;
   }
 
-  .i-term {
+  .i-term,
+  .i-term-stage {
     font-size: 12px;
   }
 
@@ -901,21 +960,16 @@
   }
 
   .i-term-hero .i-term-body {
-    height: auto;
+    min-height: 0;
   }
 
-  /* Phones do not pin the stage, so its card shows the end state whole: it
-     continues the hero card's Session (same first prompt and Read, shown just
-     above), from the first result on, four steps and no clipped line. */
+  /* Phones do not pin the stage, so its card shows the end state whole:
+     four steps and no clipped line. */
   .i-term-stage .i-term-body {
     height: auto;
     padding-top: 24px;
     -webkit-mask-image: none;
     mask-image: none;
-  }
-
-  .i-term-stage .i-term-track > li:nth-child(-n + 2) {
-    display: none;
   }
 
   .i-term-track > li[data-current]::before {
@@ -936,8 +990,13 @@
     font-size: 28px;
   }
 
+  .i-spec-row dd {
+    flex-wrap: wrap;
+  }
+
   .i-flip-rest {
     display: block;
+    flex-basis: 100%;
     margin: 6px 0 0;
   }
 

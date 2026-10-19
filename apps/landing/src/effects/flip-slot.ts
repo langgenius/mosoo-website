@@ -5,13 +5,17 @@
 //
 // DOM contract: [data-flip] holds one [data-flip-item] per value; the first
 // is shown, the rest carry [hidden]. End state (no JavaScript, reduced
-// motion): the first value, with the other names listed under the table.
+// motion, and after one full turn through the names): the first value, with
+// the other names listed beside it. It turns once, not forever (reviews:
+// autoplay longer than 5s; every name readable at once).
 
 import { prefersReducedMotion, watchVisibility } from "./motion";
 
 const HOLD_MS = 2400;
 const TURN_MS = 520;
 const EASE = "cubic-bezier(.16,1,.3,1)";
+// The outgoing value leaves on an ease-out too, never ease-in.
+const EASE_OUT = "cubic-bezier(.22,1,.36,1)";
 
 export function mountFlipSlot(root: HTMLElement): () => void {
   const items = Array.from(
@@ -22,6 +26,7 @@ export function mountFlipSlot(root: HTMLElement): () => void {
   }
 
   let index = 0;
+  let done = false;
   let timer: number | undefined;
   // Hides the static list of the other names (CSS: [data-live] + .i-flip-rest).
   root.dataset["live"] = "";
@@ -38,7 +43,7 @@ export function mountFlipSlot(root: HTMLElement): () => void {
         { transform: "rotateX(0deg)", opacity: 1 },
         { transform: "rotateX(90deg)", opacity: 0 },
       ],
-      { duration: TURN_MS / 2, easing: "ease-in", fill: "forwards" },
+      { duration: TURN_MS / 2, easing: EASE_OUT, fill: "forwards" },
     ).onfinish = () => {
       out.hidden = true;
       next.hidden = false;
@@ -49,6 +54,12 @@ export function mountFlipSlot(root: HTMLElement): () => void {
         ],
         { duration: TURN_MS, easing: EASE, fill: "none" },
       );
+      // Back on the first name: rest there and show the list of the others.
+      if (index === 0) {
+        done = true;
+        stop();
+        delete root.dataset["live"];
+      }
     };
   };
 
@@ -60,7 +71,7 @@ export function mountFlipSlot(root: HTMLElement): () => void {
   };
 
   const unwatch = watchVisibility(root, (visible) => {
-    if (visible && timer === undefined) {
+    if (visible && timer === undefined && !done) {
       timer = window.setInterval(turn, HOLD_MS);
     } else if (!visible) {
       stop();

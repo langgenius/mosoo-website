@@ -225,7 +225,7 @@ function MoreCasesBand(): ReactElement {
         <div className="flex flex-wrap items-center gap-3">
           <a
             href="https://cloud.mosoo.ai/login"
-            className="bg-ink-900 focus-visible:ring-ring inline-flex h-10 items-center rounded-md px-5 text-[13.5px] font-semibold text-white transition-colors outline-none hover:bg-ink-800 focus-visible:ring-2"
+            className="i-btn h-10 px-5 text-[13.5px]"
           >
             {t("Start on mosoo Cloud")}
           </a>

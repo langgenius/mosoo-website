@@ -428,7 +428,7 @@ test("the static home page carries the whole page for readers without JavaScript
   ]);
   assert.match(
     en,
-    /<p class="mf-lead">One API call starts a sandboxed Session\. Your app keeps its users and UI\.<\/p>/,
+    /<p class="mf-lead">One API call starts a sandboxed Session\. Codex, Claude Agent SDK, OpenCode or Pi\.<\/p>/,
   );
   // Both transcripts: the acceptance workflow's CSV totals (230, then 250
   // after the follow-up) and the contract's event names.

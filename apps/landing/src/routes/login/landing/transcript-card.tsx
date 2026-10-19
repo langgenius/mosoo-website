@@ -29,6 +29,7 @@ export function TranscriptCard({
   return (
     <figure
       data-product-ui=""
+      translate="no"
       className={cn("i-term", className)}
       aria-label={windowName}
     >
