@@ -51,7 +51,7 @@ export function renderNav(locale: HomeLocale, copy: HomeCopy = HOME_COPY[locale]
   <div class="v4-nav-in">
     <a class="v4-brand" href="${homeHref(locale)}" aria-label="mosoo">${navMark()}<span class="v4-brand-word">mosoo</span></a>
     <nav class="v4-nav-links" aria-label="Primary site links">
-      <a class="v4-nav-link" href="${LINKS.docs}">${esc(copy.nav.docs)}</a>
+      <a class="v4-nav-link" href="${copy.nav.docsHref}">${esc(copy.nav.docs)}</a>
       <a class="v4-nav-link" href="${LINKS.github}">${esc(copy.nav.github)}</a>
       <a class="v4-btn v4-btn-ink v4-btn-sm" href="${LINKS.console}">${esc(copy.nav.cta)}</a>
     </nav>
@@ -154,9 +154,17 @@ ${renderAct3(copy)}
 
 function renderStatement(copy: HomeCopy): string {
   const [p0, p1, p2, p3, tail] = copy.statement.parts;
-  const g = (id: string) => `<span class="g">${runtimeGlyph(id, "g-glyph")}</span>`;
+  const ids = ["openai-runtime", "claude-agent-sdk", "acp-fallback", "pi"];
+  // CJK copy carries its own spacing; Latin copy is joined with spaces.
+  const join = /[\u3040-\u30ff\u3400-\u9fff]/.test(copy.statement.parts.join("")) ? "" : " ";
+  // Each name is bound to its circle (nowrap); a trailing comma moves after the circle.
+  const bound = [p0, p1, p2, p3].map((part, i) => {
+    const comma = /[,、，]$/.exec(part)?.[0] ?? "";
+    const name = comma ? part.slice(0, -1) : part;
+    return `<span class="nw">${esc(name)} <span class="g">${runtimeGlyph(ids[i] ?? "pi", "g-glyph")}</span>${comma}</span>`;
+  });
   return `<section class="statement">
-  <p class="statement-text"><span class="nw">${esc(p0)} ${g("openai-runtime")}</span> <span class="nw">${esc(p1).replace(/,$/, "")} ${g("claude-agent-sdk")},</span> <span class="nw">${esc(p2)} ${g("acp-fallback")}</span> <span class="nw">${esc(p3)} ${g("pi")}</span> ${esc(tail)}</p>
+  <p class="statement-text">${bound.join(join)}${join}${esc(tail)}</p>
 </section>`;
 }
 
@@ -167,7 +175,7 @@ function renderFaq(copy: HomeCopy): string {
       (item, i) => `<details class="faq-row" name="faq"${i === 0 ? " open" : ""}><summary>${indicator}<span class="faq-q">${esc(item.q)}</span></summary><p class="faq-a">${esc(item.a)}</p></details>`,
     )
     .join("");
-  return `<section class="faq" aria-labelledby="faq-title">
+  return `<section class="faq" id="faq" aria-labelledby="faq-title">
   <h2 id="faq-title" class="faq-title">${esc(copy.faq.title)}</h2>
   <div class="faq-rows">${items}</div>
 </section>`;
