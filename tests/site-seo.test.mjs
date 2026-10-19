@@ -432,8 +432,8 @@ test("the static home page carries the whole page for readers without JavaScript
   );
   // Both transcripts: the acceptance workflow's CSV totals (230, then 250
   // after the follow-up) and the contract's event names.
-  assert.match(textOf(en), /Read input\.csv 3 rows Bash python report\.py grand_total 230/);
-  assert.match(textOf(en), /Add south,20 and run it again\. Bash python report\.py grand_total 250/);
+  assert.match(textOf(en), /Read input\.csv 3 rows Write outputs\/initial\.json grand_total 230/);
+  assert.match(textOf(en), /Add south,20 and run it again\. Write outputs\/followup\.json grand_total 250/);
   assert.match(en, /session_files\.updated/);
   assert.match(en, /run\.completed/);
   // The spec table names every runtime, as the description does.

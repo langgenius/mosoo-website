@@ -417,7 +417,7 @@ function heroTranscript(copy) {
   return [
     ["prompt", words.prompt],
     ["step", "Read", "input.csv", words.rows],
-    ["step", "Bash", "python report.py"],
+    ["step", "Write", "outputs/initial.json"],
   ];
 }
 
@@ -426,11 +426,11 @@ function stageTranscript(copy) {
   return [
     ["prompt", words.prompt],
     ["step", "Read", "input.csv", words.rows],
-    ["step", "Bash", "python report.py", "grand_total 230"],
+    ["step", "Write", "outputs/initial.json", "grand_total 230"],
     ["step", "Write", "outputs/report.md", "session_files.updated"],
     ["gap"],
     ["prompt", words.followUp],
-    ["step", "Bash", "python report.py", "grand_total 250"],
+    ["step", "Write", "outputs/followup.json", "grand_total 250"],
     ["step", "Write", "outputs/report.md", "run.completed"],
   ];
 }

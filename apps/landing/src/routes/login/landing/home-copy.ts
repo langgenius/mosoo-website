@@ -12,8 +12,10 @@ import type { Locale } from "@/shared/locale";
 //
 // The two transcripts render the main repo's Session acceptance workflow
 // (scripts/public-api-session-workflow.ts): input.csv with three rows sums to
-// 230; after a follow-up appends south,20 it sums to 250. Verbs are the
-// console's built-in tool names; event names are the contract's.
+// 230; after a follow-up appends south,20 it sums to 250. The totals are
+// written to outputs/initial.json and outputs/followup.json (workflow:24, 33,
+// 161-162, 209-212); no script name is invented. Verbs are the console's
+// built-in tool names; event names are the contract's.
 
 export type TranscriptLine =
   | { kind: "prompt"; text: string; at: number; rulerAt: number }
@@ -50,7 +52,13 @@ function heroLines(words: TranscriptWords): TranscriptLine[] {
       at: 0,
       rulerAt: 0,
     },
-    { kind: "step", verb: "Bash", arg: "python report.py", at: 0, rulerAt: 0 },
+    {
+      kind: "step",
+      verb: "Write",
+      arg: "outputs/initial.json",
+      at: 0,
+      rulerAt: 0,
+    },
   ];
 }
 
@@ -71,8 +79,8 @@ function stageLines(words: TranscriptWords): TranscriptLine[] {
     },
     {
       kind: "step",
-      verb: "Bash",
-      arg: "python report.py",
+      verb: "Write",
+      arg: "outputs/initial.json",
       result: "grand_total 230",
       at: 0,
       rulerAt: 0.12,
@@ -89,8 +97,8 @@ function stageLines(words: TranscriptWords): TranscriptLine[] {
     { kind: "prompt", text: words.followUp, at: 0.55, rulerAt: 0.96 },
     {
       kind: "step",
-      verb: "Bash",
-      arg: "python report.py",
+      verb: "Write",
+      arg: "outputs/followup.json",
       result: "grand_total 250",
       at: 0.66,
       rulerAt: 0.965,
