@@ -93,6 +93,27 @@
   min-height: 100vh;
 }
 
+/* Japanese takes Japanese glyph forms (the shared stacks list Chinese faces
+   first); Chinese headings keep their phrases whole, Japanese ones break at
+   phrase boundaries. */
+.i-page:lang(ja) {
+  --font-display:
+    "Display Fallback", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP",
+    ui-serif, Georgia, serif;
+  --font-text:
+    "Inter Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    "Noto Sans CJK JP", Meiryo, ui-sans-serif, system-ui, sans-serif;
+  line-break: strict;
+}
+
+.i-page:lang(zh) .i-display {
+  word-break: keep-all;
+}
+
+.i-page:lang(ja) .i-display {
+  word-break: auto-phrase;
+}
+
 html:has(.i-page) {
   background: #0e0f0d;
   color-scheme: dark;

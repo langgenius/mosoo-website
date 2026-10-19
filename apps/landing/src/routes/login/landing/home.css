@@ -380,7 +380,9 @@
   background: var(--signal);
 }
 
-.i-term-step[data-current] .i-term-glyph {
+/* Only a step still running shows the frames; a step with its result is
+   done, so the last line of the end state reads "latest", not "running". */
+.i-term-step[data-current]:not(:has(.i-term-result)) .i-term-glyph {
   display: inline;
 }
 
@@ -742,9 +744,10 @@
     --pad: 12px;
   }
 
+  /* 38px keeps an 18-character value on one line at 390 (UI review P2-9). */
   .i-h1 {
-    font-size: 42px;
-    line-height: 1.02;
+    font-size: 38px;
+    line-height: 1.04;
     letter-spacing: -0.025em;
   }
 

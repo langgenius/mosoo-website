@@ -5,7 +5,6 @@ import { locale, LOCALE_LABELS, LOCALES, localeHref } from "@/shared/locale";
 import {
   blogUrl,
   docsUrl,
-  MOSOO_API_REFERENCE_URL,
   MOSOO_GITHUB_URL,
   MOSOO_LICENSE_URL,
   MOSOO_RELEASES_URL,
@@ -42,7 +41,7 @@ function columns(): {
       links: [
         { label: links.docs, href: docsUrl() },
         { label: links.quickstart, href: docsUrl("quickstart/") },
-        { label: links.api, href: MOSOO_API_REFERENCE_URL },
+        { label: links.api, href: docsUrl("api-reference-v2/") },
         { label: links.pricing, href: `/${locale}/pricing` },
         { label: links.status, href: statusPath() },
       ],

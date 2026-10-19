@@ -1,10 +1,14 @@
 import type { ReactElement } from "react";
 
+import { locale } from "@/shared/locale";
 import { RUNTIME_ICON_URL } from "@/shared/ui/brand-icons/runtime-icon-data";
+
+// Between the two values: a space in English, none after CJK punctuation.
+const VALUE_GAP = { en: " ", zh: "", ja: "" } as const;
 
 /**
  * A two-value statement heading (the second value softer) with a 10px, 1px
- * right-angle bracket after each phrase: ACE Studio's bracketed headline
+ * right-angle bracket after its first phrase: ACE Studio's bracketed headline
  * (issue #96, refs/devices/crops/issue-96-bracket-headline-corner-frame.jpg),
  * set in the display serif and without its colour.
  */
@@ -21,8 +25,10 @@ export function Bracketed({
           className={index === 0 ? "i-phrase" : "i-phrase i-soft"}
         >
           {line}
-          <i className="i-bracket" aria-hidden="true" />
-          {index < lines.length - 1 ? " " : null}
+          {/* One corner per heading, on the first value's line end: two
+              corners followed the ragged line ends (UI review P2-5). */}
+          {index === 0 ? <i className="i-bracket" aria-hidden="true" /> : null}
+          {index < lines.length - 1 ? VALUE_GAP[locale] : null}
         </span>
       ))}
     </>
