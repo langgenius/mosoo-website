@@ -129,7 +129,7 @@ const SECONDARY_CTA_CLASS =
 
 export function Hero(): ReactElement {
   return (
-    <section aria-labelledby="hero-title" className="px-4 pt-9 pb-7 md:px-6 md:pt-10 md:pb-7">
+    <section aria-labelledby="hero-title" className="px-4 pt-9 pb-7 md:px-6 md:pt-8 md:pb-7">
       <div className="mx-auto flex max-w-[1160px] flex-col items-center text-center">
         <Headline />
         <p

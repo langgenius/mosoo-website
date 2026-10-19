@@ -442,8 +442,11 @@ test("the static home page carries the whole page for readers without JavaScript
   assert.match(en, /"type": "inline",\n\s+"harness": "claude-agent-sdk"/);
   // The day 1 turn copies the attachment into the working directory, which is
   // what the day 3 follow-up reads (attachments are not mounted again).
-  assert.match(en, /cp session-files\/sales\.csv \. &amp;&amp; python analyze\.py sales\.csv/);
-  assert.match(en, /python analyze\.py sales\.csv --by channel/);
+  assert.match(textOf(en), /cp session-files\/sales\.csv \. && python analyze\.py sales\.csv/);
+  assert.match(textOf(en), /python analyze\.py sales\.csv --by channel/);
+  // In the narrow event cells a hyphenated token wraps whole, not at "-".
+  assert.match(en, /<span class="mf-nowrap">session-files\/sales\.csv<\/span>/);
+  assert.match(en, /<span class="mf-nowrap">--by<\/span>/);
   assert.match(en, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
   assert.match(en, /There are no Webhooks\./);
   assert.match(en, /mosoo is in Alpha\. Public APIs may still change\./);

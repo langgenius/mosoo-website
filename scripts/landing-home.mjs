@@ -1009,6 +1009,9 @@ export function homeHeadline(locale) {
 const escapeText = (value) =>
   String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 const escapeAttribute = (value) => escapeText(value).replaceAll('"', "&quot;");
+// A command token with a hyphen ("session-files/…", "--by") wraps as a whole,
+// as in the React stage (product-visual.tsx CommandText).
+const keepHyphenTokens = (html) => html.replace(/(\S*-\S*)/g, '<span class="mf-nowrap">$1</span>');
 
 // Terms kept on one line wherever they wrap (the same list as ui.tsx).
 // ...plus a Latin word and the Japanese particle after it ("Agent のタスク")
@@ -1148,7 +1151,7 @@ function eventTable(rows, caption) {
   const body = rows
     .map(
       ([type, tool, content]) =>
-        `<tr><td>${type}</td><td>${tool}</td><td>${escapeText(content)}</td></tr>`,
+        `<tr><td>${type}</td><td>${tool}</td><td>${keepHyphenTokens(escapeText(content))}</td></tr>`,
     )
     .join("");
   return `<div class="mf-table"><table translate="no"><caption class="mf-sr">${inline(caption)}</caption><thead class="mf-sr"><tr><th scope="col">type</th><th scope="col">toolName</th><th scope="col">content</th></tr></thead><tbody>${body}</tbody></table></div>`;
@@ -1614,10 +1617,12 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-soft{color:var(--mf-muted)}
 .mosoo-fallback .mf-lead{max-width:600px;margin-top:20px;font-size:18px;line-height:1.55;color:var(--mf-text);text-wrap:balance}
 .mosoo-fallback .mf-actions-row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:24px}
-.mosoo-fallback .mf-agent{margin-top:16px;font-size:15px}
+.mosoo-fallback .mf-agent{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;column-gap:12px;margin-top:16px;font-size:15px}
+.mosoo-fallback .mf-agent a{display:inline-flex;align-items:center;min-height:44px}
+@media (min-width:640px){.mosoo-fallback .mf-agent a{min-height:36px}}
 .mosoo-fallback .mf-agent a{font-weight:600}
-.mosoo-fallback .mf-hero>.mf-muted{margin-top:12px;font-size:15px}
-.mosoo-fallback .mf-runtimes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-top:24px;font-size:15px;font-weight:600}
+.mosoo-fallback .mf-hero>.mf-muted{margin-top:12px;font-size:15px;line-height:1.5}
+.mosoo-fallback .mf-runtimes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin-top:24px;font-size:15px;font-weight:600;line-height:1.5}
 .mosoo-fallback .mf-runtimes p{color:var(--mf-muted)}
 .mosoo-fallback .mf-runtimes ul{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;color:var(--mf-ink)}
 .mosoo-fallback .mf-muted,.mosoo-fallback .mf-intro{color:var(--mf-muted)}
@@ -1718,7 +1723,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback .mf-foot .mf-label{color:#f7f6f1}
 @media (max-width:639px){.mosoo-fallback .mf-actions-row{flex-direction:column;align-self:stretch}.mosoo-fallback .mf-actions-row a{width:100%}}
 @media (min-width:640px){.mosoo-fallback main{border-left:1px solid var(--mf-line);border-right:1px solid var(--mf-line)}.mosoo-fallback .mf-hero h1{max-width:1040px}}
-@media (min-width:768px){.mosoo-fallback .mf-bar{padding:0 max(24px,calc((100% - 1232px) / 2))}.mosoo-fallback main>section{padding:64px max(24px,calc((100% - 1160px) / 2))}.mosoo-fallback .mf-hero{padding:40px 24px 24px}.mosoo-fallback .mf-lead{font-size:19px}.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}.mosoo-fallback .mf-checks{grid-template-columns:repeat(2,minmax(0,1fr))}.mosoo-fallback .mf-faq{columns:2;column-gap:56px}.mosoo-fallback .mf-boundary{flex-direction:row;align-items:center}.mosoo-fallback .mf-zone{flex:1}.mosoo-fallback .mf-foot{padding:64px 24px 40px}}
+@media (min-width:768px){.mosoo-fallback .mf-bar{padding:0 max(24px,calc((100% - 1232px) / 2))}.mosoo-fallback main>section{padding:64px max(24px,calc((100% - 1160px) / 2))}.mosoo-fallback .mf-hero{padding:32px 24px 28px}.mosoo-fallback #how-it-works{padding-top:20px}.mosoo-fallback .mf-lead{font-size:19px}.mosoo-fallback .mf-cols{grid-template-columns:repeat(2,minmax(0,1fr))}.mosoo-fallback .mf-checks{grid-template-columns:repeat(2,minmax(0,1fr))}.mosoo-fallback .mf-faq{columns:2;column-gap:56px}.mosoo-fallback .mf-boundary{flex-direction:row;align-items:center}.mosoo-fallback .mf-zone{flex:1}.mosoo-fallback .mf-foot{padding:64px 24px 40px}}
 @media (min-width:1024px){.mosoo-fallback .mf-lead{max-width:880px}.mosoo-fallback .mf-beats{grid-template-columns:minmax(0,1.04fr) minmax(0,1fr)}.mosoo-fallback .mf-later{grid-column:1/-1;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);padding:20px;border:1px solid var(--mf-line);border-radius:12px}.mosoo-fallback .mf-checks{grid-template-columns:repeat(4,minmax(0,1fr))}.mosoo-fallback .mf-ledger{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)}}
 @media (min-width:1280px){.mosoo-fallback .mf-cols-wall{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
 </style>`;

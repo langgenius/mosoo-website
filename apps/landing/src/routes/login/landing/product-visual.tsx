@@ -213,7 +213,7 @@ function Panel({
   const Title = titleId === undefined ? "p" : "h3";
   return (
     <div className="border-border-strong bg-paper-50 min-w-0 rounded-[12px] border">
-      <div className="border-border-soft flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b px-3.5 py-2.5 sm:px-4">
+      <div className="border-border-soft flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-b px-3.5 py-2 sm:px-4">
         <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
           <Title id={titleId} className={cn(PHRASE_CLASS, "text-ink-900 text-[15px] font-semibold")}>
             <Phrases text={title} />
@@ -297,6 +297,27 @@ function ResponseLine(): ReactElement {
   );
 }
 
+/**
+ * Command text in a narrow cell: a token with a hyphen ("session-files/…",
+ * "--by") wraps as a whole, never at the hyphen. The copied text is unchanged.
+ */
+function CommandText({ text }: { text: string }): ReactElement {
+  return (
+    <>
+      {text.split(/(\S*-\S*)/).map((part, index) =>
+        part.includes("-") ? (
+          // Parts of one fixed string: the index is a stable key.
+          <span key={index} className="whitespace-nowrap">
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
+
 function EventList({ rows, condensed }: { rows: readonly EventRow[]; condensed: boolean }): ReactElement {
   const shown = condensed ? rows.filter((row) => row.key === true) : rows;
   // Phones stack each row (type, then the content under it); wider screens
@@ -333,7 +354,7 @@ function EventList({ rows, condensed }: { rows: readonly EventRow[]; condensed: 
               {row.toolName ?? ""}
             </td>
             <td className="text-ink-700 py-1.5 align-top [overflow-wrap:break-word] max-sm:block max-sm:p-0 max-sm:pl-3.5">
-              {row.content}
+              <CommandText text={row.content} />
             </td>
           </tr>
         ))}
@@ -534,7 +555,7 @@ export function ProductVisual(): ReactElement {
   const followUpMessage = t("Now split it by sales channel. Keep the same chart style.");
 
   return (
-    <section id="how-it-works" aria-labelledby="stage-title" className="px-4 pt-6 pb-14 md:px-6 md:pt-7 md:pb-16">
+    <section id="how-it-works" aria-labelledby="stage-title" className="px-4 pt-6 pb-14 md:px-6 md:pt-5 md:pb-16">
       <div className="mx-auto max-w-[1160px]">
         <div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-10">
           <h2
@@ -552,7 +573,7 @@ export function ProductVisual(): ReactElement {
 
         <div
           ref={watchArrivals}
-          className="stage-track border-border-strong bg-paper-200/60 mt-4 rounded-[18px] sm:border sm:p-3"
+          className="stage-track border-border-strong bg-paper-200/60 mt-4 rounded-[18px] sm:border sm:p-3 md:mt-3"
         >
           <div className="grid grid-cols-1 gap-x-3 gap-y-8 sm:gap-y-6 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,1fr)]">
             <article aria-labelledby="stage-start" className="stage-beat min-w-0">
