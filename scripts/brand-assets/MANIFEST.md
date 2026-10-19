@@ -1,5 +1,11 @@
 # Bamboo kit: asset manifest
 
+> 2026-10-19 (d-object redesign): the owner dropped the bamboo motif. The
+> generated files under `apps/landing/public/landing/bamboo/` are deleted from
+> the site; their rows below are history, and `generate.mjs` can still rebuild
+> them into a scratch folder with `--out`. The site's brand play now goes
+> through the logo outline (`apps/landing/scripts/assets/README.md`).
+
 Shared brand ingredients for the v2 redesign directions: a self-hosted Literata,
 and code-generated bamboo assets drawn from the mosoo mark's node geometry. No page
 references them yet; each direction opts in.

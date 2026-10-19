@@ -5,15 +5,17 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 // Guards for the brand kit (scripts/brand-assets/MANIFEST.md): the generated
-// files stay out of the website's CSS, CJK headings keep their own punctuation,
-// the stage plates carry no lime, and the manifest matches the files.
+// outline files stay out of the website's CSS, CJK headings keep their own
+// punctuation, and the manifest matches the files. The bamboo kit is gone
+// from the site (d-object redesign), so its plate and manifest checks went
+// with it.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const bamboo = join(root, "apps/landing/public/landing/bamboo");
+const outline = join(root, "apps/landing/public/brand/outline");
 const fonts = join(root, "apps/landing/public/fonts");
 const literataCss = readFileSync(join(root, "apps/landing/src/shared/styles/literata.css"), "utf8");
 
-test("the bamboo kit folder adds no Tailwind utilities to the website build", async (t) => {
+test("the generated outline folder adds no Tailwind utilities to the website build", async (t) => {
   let compile;
   let Scanner;
   try {
@@ -26,12 +28,12 @@ test("the bamboo kit folder adds no Tailwind utilities to the website build", as
   // Tailwind's automatic source detection scans apps/landing/public, so a word
   // in a generated SVG that names a utility (once: "ring") becomes global CSS.
   const fresh = () => compile('@import "tailwindcss";', { base: join(root, "apps/landing/src/shared/styles"), onDependency() {} });
-  const candidates = new Scanner({ sources: [{ base: bamboo, pattern: "**/*", negated: false }] }).scan();
+  const candidates = new Scanner({ sources: [{ base: outline, pattern: "**/*", negated: false }] }).scan();
   const without = (await fresh()).build([]);
   if ((await fresh()).build(candidates) !== without) {
     const live = [];
     for (const candidate of candidates) if ((await fresh()).build([candidate]) !== without) live.push(candidate);
-    assert.deepEqual(live, [], "candidates from apps/landing/public/landing/bamboo that emit CSS");
+    assert.deepEqual(live, [], "candidates from apps/landing/public/brand/outline that emit CSS");
   }
 });
 
@@ -69,33 +71,9 @@ test("zh and ja Literata stacks leave CJK punctuation to the CJK serif faces", (
   }
 });
 
-/** Palette entries of an indexed PNG (PLTE chunk), as hex strings. */
-function pngPalette(file) {
-  const buf = readFileSync(file);
-  for (let o = 8; o < buf.length; ) {
-    const length = buf.readUInt32BE(o);
-    if (buf.toString("latin1", o + 4, o + 8) === "PLTE") {
-      const body = buf.subarray(o + 8, o + 8 + length);
-      return Array.from({ length: length / 3 }, (_, i) => `#${body.subarray(i * 3, i * 3 + 3).toString("hex")}`);
-    }
-    o += 12 + length;
-  }
-  return [];
-}
-
-test("the stage plates carry no lime; the pixel plate's accent is a separate overlay", () => {
-  for (const name of readdirSync(bamboo).filter((file) => /^bamboo-plate-(paper|pixel)-\d+\.png$/.test(file))) {
-    assert.ok(!pngPalette(join(bamboo, name)).includes("#6fd305"), `${name} has no lime`);
-  }
-  for (const width of [1200, 2400]) {
-    assert.deepEqual(pngPalette(join(bamboo, `bamboo-plate-pixel-accent-${width}.png`)), ["#000000", "#6fd305"]);
-  }
-});
-
 test("MANIFEST.md lists every brand kit file with its current size", () => {
   const manifest = readFileSync(join(root, "scripts/brand-assets/MANIFEST.md"), "utf8");
   const files = [
-    ...readdirSync(bamboo).map((name) => `apps/landing/public/landing/bamboo/${name}`),
     ...readdirSync(fonts).filter((name) => name.startsWith("Literata")).map((name) => `apps/landing/public/fonts/${name}`),
     "apps/landing/src/shared/styles/literata.css",
   ];
