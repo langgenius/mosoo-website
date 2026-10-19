@@ -11,7 +11,8 @@
 //   [data-stage]            the runway; CSS makes it tall and the frame sticky
 //                           only while [data-live] is set
 //   [data-stage-frame]      the sticky frame
-//   [data-stage-track]      the lines, bottom-anchored in a fixed-height body
+//   [data-stage-track]      the lines in a fixed-height body: bottom-anchored
+//                           in the end state, top-anchored while live
 //   [data-at]               a line, revealed once progress reaches its value
 //   [data-ruler-at]         that line's place on the ruler (0..1)
 //   [data-ruler-dot]        the dot on the ruler
@@ -36,9 +37,10 @@ type Line = {
 export function mountTranscriptStage(root: HTMLElement): () => void {
   const frame = root.querySelector<HTMLElement>("[data-stage-frame]");
   const track = root.querySelector<HTMLElement>("[data-stage-track]");
+  const body = track?.parentElement;
   const ruler = root.querySelector<HTMLElement>("[data-ruler]");
   const dot = root.querySelector<HTMLElement>("[data-ruler-dot]");
-  if (!frame || !track || !ruler || !dot) {
+  if (!frame || !track || !body || !ruler || !dot) {
     return () => {};
   }
 
@@ -55,14 +57,12 @@ export function mountTranscriptStage(root: HTMLElement): () => void {
   let raf = 0;
   let current = -1;
   let rulerHeight = 0;
-  let trackHeight = 0;
 
   const measure = (): void => {
     for (const line of lines) {
       line.top = line.element.offsetTop;
       line.height = line.element.offsetHeight;
     }
-    trackHeight = track.scrollHeight;
     rulerHeight = ruler.offsetHeight;
   };
 
@@ -105,9 +105,16 @@ export function mountTranscriptStage(root: HTMLElement): () => void {
         line.element.toggleAttribute("data-hidden", index > last);
         line.element.toggleAttribute("data-current", index === last);
       }
+      // While live, the body is top-anchored: lines print from the top and
+      // the track only moves up once the printed lines overflow the body.
       const shown = lines[last];
-      const tail = shown ? trackHeight - (shown.top + shown.height) : 0;
-      track.style.transform = `translate3d(0, ${Math.max(0, tail)}px, 0)`;
+      const style = getComputedStyle(body);
+      const room =
+        body.clientHeight -
+        parseFloat(style.paddingTop) -
+        parseFloat(style.paddingBottom);
+      const overflow = shown ? shown.top + shown.height - room : 0;
+      track.style.transform = `translate3d(0, ${-Math.max(0, overflow)}px, 0)`;
     }
 
     // The dot walks between the ruler places of the printed line and the
