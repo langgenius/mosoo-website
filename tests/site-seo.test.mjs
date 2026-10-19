@@ -125,7 +125,7 @@ const sitemapEntries = (xml) =>
 
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
-  assert.match(html, /href="https:\/\/cloud\.mosoo\.ai">Mosoo<\/a>/);
+  assert.match(html, /href="https:\/\/cloud\.mosoo\.ai">mosoo<\/a>/);
   assert.match(html, /href="https:\/\/computer\.mosoo\.ai">Mosoo Computer<\/a>/);
   assert.match(html, new RegExp(`href="/${locale}/pricing"`));
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
@@ -258,18 +258,24 @@ test("landing and blog metadata never point at a missing default image", () => {
   );
   assert.match(
     landing,
-    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-geist-20260917\.png" \/>/,
+    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
   );
   assert.match(
     landing,
-    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-geist-20260917\.png" \/>/,
+    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
   );
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
-  assert.match(blogLayout, /\/brand\/social-card-geist-20260917\.png/);
+  assert.match(blogLayout, /\/brand\/social-card-20261019\.png/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/brand/social-card-geist-20260917.png", import.meta.url)),
+    existsSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url)),
     true,
   );
+  // The card states the README positioning and all four runtimes; its alt
+  // text says the same.
+  assert.match(landing, /<meta property="og:image:alt" content="mosoo: an open-source, API-first managed Agent runtime for application backends\. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi\." \/>/);
+  for (const page of ["apps/landing/pricing.html", "apps/landing/status.html", "apps/landing/use-cases.html"]) {
+    assert.doesNotMatch(read(page), /social-card-geist-20260917/, `${page} uses the current card`);
+  }
 });
 
 test("landing initial HTML exposes crawlable primary site links", () => {
@@ -512,11 +518,12 @@ test("pricing locale pages receive localized canonical metadata", () => {
 
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/pricing"/);
-  assert.match(zh, /<title>mosoo — 定价<\/title>/);
+  assert.match(zh, /<title>定价 \| mosoo<\/title>/);
+  assert.match(zh, />\s*定价\s*<\/h1>/);
   assert.match(zh, /rel="alternate" hreflang="en" href="https:\/\/mosoo\.ai\/en\/pricing"/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/pricing"/);
-  assert.match(ja, /<title>mosoo — 料金<\/title>/);
+  assert.match(ja, /<title>料金 \| mosoo<\/title>/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });
@@ -529,7 +536,8 @@ test("status pages expose localized canonical metadata and crawlable links", () 
   assert.match(source, /rel="canonical" href="https:\/\/mosoo\.ai\/health"/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/health"/);
-  assert.match(zh, /<title>mosoo — 系统状态<\/title>/);
+  assert.match(zh, /<title>系统状态 \| mosoo<\/title>/);
+  assert.match(zh, />\s*系统状态\s*<\/h1>/);
   assert.match(ja, /<html lang="ja">/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/health"/);
   assertInitialSiteLinks(zh, "zh");
@@ -549,7 +557,8 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   assert.match(source, /href="\/en\/use-cases\/ghfind"/);
   assert.match(zh, /<html lang="zh-CN">/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases"/);
-  assert.match(zh, /<title>mosoo — 用例<\/title>/);
+  assert.match(zh, /<title>用例 \| mosoo<\/title>/);
+  assert.match(zh, />\s*用例\s*<\/h1>/);
   assert.match(zh, /href="\/zh\/use-cases\/blueprint"/);
   assert.match(zh, /href="\/zh\/use-cases\/pitchpilot"/);
   assert.match(zh, /href="\/zh\/use-cases\/go-gym"/);
@@ -559,6 +568,34 @@ test("use-cases pages expose localized canonical metadata and crawlable links", 
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
+});
+
+test("use-case pages describe Sessions with the spec's words, a lowercase brand and no dashes", () => {
+  const sources = [
+    "apps/landing/src/routes/use-cases/i18n.ts",
+    "apps/landing/src/routes/use-cases/use-cases-data.ts",
+    "apps/landing/src/routes/use-cases/use-case-blueprint-page.tsx",
+    "apps/landing/src/routes/use-cases/use-case-codex-pet-page.tsx",
+    "apps/landing/src/routes/use-cases/use-case-ghfind-page.tsx",
+    "apps/landing/src/routes/use-cases/use-case-go-gym-page.tsx",
+    "apps/landing/src/routes/use-cases/use-case-pitchpilot-page.tsx",
+    "apps/landing/use-cases.html",
+    "apps/landing/use-cases/blueprint.html",
+    "apps/landing/use-cases/codex-pet.html",
+    "apps/landing/use-cases/ghfind.html",
+    "apps/landing/use-cases/go-gym.html",
+    "apps/landing/use-cases/pitchpilot.html",
+  ];
+  for (const path of sources) {
+    // Strings only: code comments may keep their punctuation.
+    const text = read(path)
+      .split("\n")
+      .filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line))
+      .join("\n");
+    assert.doesNotMatch(text, /\b[Cc]attle\b|Pet Agent/, `${path} names no removed Agent type (SPEC section 8)`);
+    assert.doesNotMatch(text, /\bMosoo\b(?! Computer)/, `${path} writes the brand in lowercase`);
+    assert.doesNotMatch(text, /[—–]/, `${path} has no em or en dashes`);
+  }
 });
 
 test("the use-cases gallery switches to a featured grid at three cases", () => {
@@ -585,7 +622,8 @@ test("the blueprint case page keeps its canonical, screenshot, and outbound link
     true,
   );
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/blueprint"/);
-  assert.match(zh, /<title>mosoo — Blueprint：人人可用的站点构建器<\/title>/);
+  assert.match(zh, /<title>Blueprint：人人可用的站点构建器 \| mosoo<\/title>/);
+  assert.match(zh, />\s*Blueprint：人人可用的站点构建器\s*<\/h1>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/blueprint"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
@@ -622,9 +660,9 @@ test("the pitchpilot case page keeps its localized metadata, screenshot, and out
     );
   }
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/pitchpilot"/);
-  assert.match(zh, /<title>mosoo — PitchPilot：Agent 驱动的 Web 应用<\/title>/);
+  assert.match(zh, /<title>PitchPilot：Agent 驱动的 Web 应用 \| mosoo<\/title>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/pitchpilot"/);
-  assert.match(ja, /<title>mosoo — PitchPilot：Agent 搭載 Web アプリ<\/title>/);
+  assert.match(ja, /<title>PitchPilot：Agent 搭載 Web アプリ \| mosoo<\/title>/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
 });
@@ -652,7 +690,7 @@ test("the go-gym case page keeps its localized metadata, screenshots, and outbou
     true,
   );
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/go-gym"/);
-  assert.match(zh, /<title>mosoo — Go Gym：多用户 Agent Backend<\/title>/);
+  assert.match(zh, /<title>Go Gym：多用户 Agent Backend \| mosoo<\/title>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/go-gym"/);
   assertInitialSiteLinks(zh, "zh");
   assertInitialSiteLinks(ja, "ja");
@@ -667,7 +705,7 @@ test("the codex-pet case page keeps its canonical, screenshot, and repository li
   assert.match(source, /href="https:\/\/github\.com\/Yevanchen\/mosoo-codex-pet"/);
   assert.doesNotMatch(source, /apps\.mosoo\.ai/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/codex-pet"/);
-  assert.match(zh, /<title>mosoo — Codex Pet：Agent as API<\/title>/);
+  assert.match(zh, /<title>Codex Pet：Agent as API \| mosoo<\/title>/);
   assertInitialSiteLinks(zh, "zh");
 });
 
@@ -691,6 +729,6 @@ test("the ghfind case page keeps its canonical, screenshot, and outbound links",
     true,
   );
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/ghfind"/);
-  assert.match(zh, /<title>mosoo — ghfind：深度项目评测估值引擎<\/title>/);
+  assert.match(zh, /<title>ghfind：深度项目评测估值引擎 \| mosoo<\/title>/);
   assertInitialSiteLinks(zh, "zh");
 });
