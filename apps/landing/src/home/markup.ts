@@ -50,7 +50,7 @@ export function renderNav(locale: HomeLocale, copy: HomeCopy = HOME_COPY[locale]
 <header class="v4-nav" data-nav>
   <div class="v4-nav-in">
     <a class="v4-brand" href="${homeHref(locale)}" aria-label="mosoo">${navMark()}<span class="v4-brand-word">mosoo</span></a>
-    <nav class="v4-nav-links" aria-label="Primary">
+    <nav class="v4-nav-links" aria-label="Primary site links">
       <a class="v4-nav-link" href="${LINKS.docs}">${esc(copy.nav.docs)}</a>
       <a class="v4-nav-link" href="${LINKS.github}">${esc(copy.nav.github)}</a>
       <a class="v4-btn v4-btn-ink v4-btn-sm" href="${LINKS.console}">${esc(copy.nav.cta)}</a>
