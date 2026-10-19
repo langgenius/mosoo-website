@@ -184,7 +184,7 @@ export function SupplyWall(): ReactElement {
       <SpecCite section="s3" />
       <p className="v2a-intro">
         {t(
-          "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.",
+          "4 runtimes, the providers below, or a custom OpenAI-compatible endpoint at a public HTTPS URL. mosoo checks the runtime, model, and protocol before anything runs.",
         )}
       </p>
 

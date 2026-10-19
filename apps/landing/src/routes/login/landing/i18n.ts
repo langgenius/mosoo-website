@@ -8,8 +8,8 @@ import { locale } from "@/shared/locale";
 const ZH_MESSAGES = {
   "Pick a runtime. Use your own model key.":
     "选一个 runtime，|用你自己的模型密钥。",
-  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
-    "4 个 runtime、下列模型供应商，或任何兼容 OpenAI 的 HTTPS 端点。mosoo 会在执行前检查 runtime、模型和协议是否匹配。",
+  "4 runtimes, the providers below, or a custom OpenAI-compatible endpoint at a public HTTPS URL. mosoo checks the runtime, model, and protocol before anything runs.":
+    "4 个 runtime、下列模型供应商，或公网 HTTPS 地址上的自定义 OpenAI 兼容端点。mosoo 会在执行前检查 runtime、模型和协议是否匹配。",
   "Runtimes":
     "Runtime",
   "Model providers (your keys)":
@@ -367,8 +367,8 @@ type Message = keyof typeof ZH_MESSAGES;
 const JA_MESSAGES = {
   "Pick a runtime. Use your own model key.":
     "runtime を選び、|自分のモデルキーを使う",
-  "4 runtimes, the providers below, or any OpenAI-compatible HTTPS endpoint. mosoo checks the runtime, model, and protocol before anything runs.":
-    "4 つの runtime、以下のプロバイダー、そして OpenAI 互換の任意の HTTPS エンドポイントに対応します。mosoo は実行前に runtime、モデル、プロトコルの組み合わせを確認します。",
+  "4 runtimes, the providers below, or a custom OpenAI-compatible endpoint at a public HTTPS URL. mosoo checks the runtime, model, and protocol before anything runs.":
+    "4 つの runtime、以下のプロバイダー、そして公開 HTTPS URL にある OpenAI 互換のカスタムエンドポイントに対応します。mosoo は実行前に runtime、モデル、プロトコルの組み合わせを確認します。",
   "Runtimes":
     "runtime",
   "Model providers (your keys)":
