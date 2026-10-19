@@ -279,6 +279,22 @@ function Runtimes(): ReactElement {
         </table>
       </div>
 
+      {/* Phones: the same facts as a list, one runtime per entry. */}
+      <dl className="ct-matrix-list">
+        {RUNTIMES.map((runtime) => (
+          <div key={runtime.id}>
+            <dt>
+              <span translate="no">{runtime.name}</span>{" "}
+              <code translate="no">{runtime.id}</code>
+            </dt>
+            <dd>
+              <span translate="no">{runtime.protocols.join(separator)}</span>
+              {runtime.note === undefined ? null : <span className="ct-note">{t(runtime.note)}</span>}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
       <p className="ct-p ct-after-table">
         <strong>{t("Model providers (your keys)")}</strong>{" "}
         <span translate="no">{PROVIDERS.join(separator)}</span>

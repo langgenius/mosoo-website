@@ -188,6 +188,11 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   font-weight: 600;
 }
 
+/* The Japanese title runs about twice as long as the Chinese one. */
+:lang(ja) .ct-page .ct-h1 {
+  font-size: clamp(27px, 2.7vw, 39px);
+}
+
 :lang(zh) .ct-page .ct-h2,
 :lang(ja) .ct-page .ct-h2 {
   font-size: clamp(24px, 2.2vw, 31px);
@@ -200,6 +205,12 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   margin: 0;
   text-wrap: pretty;
   hanging-punctuation: first;
+}
+
+.ct-alpha,
+.ct-footnote,
+.ct-exhibit figcaption {
+  text-wrap: pretty;
 }
 
 .ct-prose p + p {
@@ -390,13 +401,14 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 
 .ct-seal {
   position: absolute;
-  right: 6px;
-  bottom: -30px;
+  /* Phones: bottom left of Exhibit 1, clear of the kit's Replay control. */
+  left: 4px;
+  bottom: 4px;
   z-index: 2;
   display: grid;
   place-items: center;
-  width: 104px;
-  height: 104px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   background: var(--ct-lime);
   box-shadow: inset 0 0 0 5px var(--ct-lime), inset 0 0 0 6px rgba(15, 26, 2, 0.45);
@@ -518,22 +530,27 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 
 /* ------------------------------------------------------------- quote */
 
+/* The page's one opinion, in the spec's own words: a pull quote set as a
+   reading pause (no box, no rule), its opening mark hung into the margin. */
 .ct-quote {
-  max-width: 30em;
-  margin: 36px 0;
-  padding: 0 0 0 22px;
-  border-left: 1px solid var(--ct-rule);
+  max-width: 24em;
+  margin: 44px 0 40px;
+  padding: 0;
 }
 
-.ct-quote p {
+.ct-quote > p:first-child {
   margin: 0;
-  font-size: 1.3em;
+  font-size: clamp(24px, 2.3vw, 32px);
   font-style: italic;
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-indent: -0.42em;
+  text-wrap: balance;
 }
 
 .ct-quote footer {
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 /* -------------------------------------------------------------- table */
@@ -581,6 +598,7 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 .ct-table .ct-id {
   display: block;
   margin-top: 2px;
+  white-space: nowrap;
   font-family: var(--ct-mono);
   font-size: 14px;
   font-weight: 400;
@@ -658,7 +676,7 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 }
 
 .ct-command code {
-  flex: 1 1 20rem;
+  flex: 1 1 100%;
   min-width: 0;
   overflow-x: auto;
   font-size: 15px;
@@ -746,7 +764,7 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
 
 .ct-receipt {
   position: relative;
-  padding-bottom: 56px;
+  padding-bottom: 72px;
 }
 
 @media (min-width: 1080px) {
@@ -760,10 +778,19 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
     top: 12px;
     right: 6px;
     bottom: auto;
+    left: auto;
   }
 
+  /* The console's 10px chips read at 12px (kit README: scale 1.2 in a hero). */
   .ct-zoom {
-    zoom: 1.12;
+    zoom: 1.2;
+  }
+}
+
+/* Below the desktop grid: the console's 10 to 11px labels at about 11.5 to 12.5px. */
+@media (max-width: 1079px) {
+  .ct-zoom {
+    zoom: 1.14;
   }
 }
 
@@ -771,16 +798,16 @@ html[data-page="home"] .landing-shell[data-theme="landing"] {
   --kit-code-size: 15px;
 }
 
+/* Code at the reading size where the column allows it (YC floor: code is at
+   least body size); phones keep 15px so IDs do not scroll (kit README). */
 @media (min-width: 1080px) {
   .ct-code {
-    --kit-code-size: 16px;
+    --kit-code-size: 18px;
   }
 }
 
 .ct-quote-tr {
-  margin-top: 6px !important;
-  font-size: 1em !important;
-  font-style: normal !important;
+  margin: 8px 0 0;
   color: var(--ct-ink-2);
 }
 
@@ -836,4 +863,49 @@ html[data-page="home"]:lang(zh) .landing-footer > div > p:first-child {
 html[data-page="home"]:lang(ja) .landing-footer > div > p:first-child {
   font-family: var(--font-literata-ja) !important;
   font-style: normal;
+}
+
+/* ------------------------------------------------- matrix on phones */
+
+.ct-matrix-list {
+  display: none;
+  margin: 28px 0 0;
+  border-top: 1px solid var(--ct-rule);
+}
+
+.ct-matrix-list > div {
+  padding: 12px 0 13px;
+  border-bottom: 1px solid var(--ct-hair);
+}
+
+.ct-matrix-list dt {
+  font-weight: 600;
+}
+
+.ct-matrix-list dt code {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--ct-ink-2);
+  white-space: nowrap;
+}
+
+.ct-matrix-list dd {
+  margin: 2px 0 0;
+  font-family: var(--ct-sans);
+  font-size: 15px;
+  color: var(--ct-ink-2);
+}
+
+.ct-matrix-list .ct-note {
+  display: block;
+}
+
+@media (max-width: 639px) {
+  .ct-table-wrap {
+    display: none;
+  }
+
+  .ct-matrix-list {
+    display: block;
+  }
 }

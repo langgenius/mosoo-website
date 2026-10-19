@@ -1648,6 +1648,7 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback:lang(zh) :is(h1,h2,h3){word-break:keep-all;overflow-wrap:anywhere}
 .mosoo-fallback:lang(ja) :is(h1,h2,h3){word-break:auto-phrase}
 .mosoo-fallback:lang(zh) h1,.mosoo-fallback:lang(ja) h1{font-size:clamp(28px,3vw,44px)}
+.mosoo-fallback:lang(ja) h1{font-size:clamp(27px,2.7vw,39px)}
 .mosoo-fallback:lang(zh) h2,.mosoo-fallback:lang(ja) h2{font-size:clamp(24px,2.2vw,31px)}
 .mosoo-fallback p,.mosoo-fallback dd,.mosoo-fallback li{max-width:66ch}
 .mosoo-fallback p{margin:12px 0 0}
@@ -1669,8 +1670,8 @@ export const HOME_FALLBACK_STYLE = `<style>
 .mosoo-fallback figcaption{max-width:62ch;margin-top:14px;color:var(--mf-muted)}
 .mosoo-fallback figcaption strong{color:var(--mf-ink)}
 .mosoo-fallback .mf-seal{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--mf-lime);color:var(--mf-lime-ink);font-family:"Geist Mono",ui-monospace,monospace;font-size:14px;font-weight:600}
-.mosoo-fallback .mf-quote{max-width:30em;margin:32px 0;padding:0 0 0 22px;border-left:1px solid var(--mf-rule)}
-.mosoo-fallback .mf-quote>p:first-child{margin:0;font-size:1.3em;font-style:italic;line-height:1.4}
+.mosoo-fallback .mf-quote{max-width:24em;margin:44px 0 40px;padding:0}
+.mosoo-fallback .mf-quote>p:first-child{margin:0;font-size:clamp(24px,2.3vw,32px);font-style:italic;line-height:1.25;letter-spacing:-.01em;text-indent:-.42em;text-wrap:balance}
 .mosoo-fallback .mf-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:0 48px}
 .mosoo-fallback .mf-ledger{margin:8px 0 0;padding:0;list-style:none}
 .mosoo-fallback .mf-ledger li{padding:12px 0;border-bottom:1px solid var(--mf-line)}
