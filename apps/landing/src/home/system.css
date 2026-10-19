@@ -1,0 +1,609 @@
+/* v5 home: the system layer (imported first by v5.css). Sources: staging production/v5/BRIEF.md §3 (tokens, type,
+   line language, motion), TOOLS-REVIEW.md (decisions), refs/frame/v5/layout/STUDY.md §1–§2 (Frame's measured
+   values), v4d d-object.css (the paper, the dot grid, the H1), src/effects/v5/README.md (engine contracts).
+   Sections style themselves in sections/<name>.css; defaults they are meant to override are wrapped in :where(). */
+
+/* ------------------------------------------------------------------------------------------------- fonts */
+/* The three OFL faces in public/fonts (licences next to them). Latin only: CJK falls through to the system faces
+   named in the stacks below, so /zh and /ja never download them for nothing. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/Inter-Variable-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
+}
+/* Hedvig Letters Serif 400, with v4d's metric overrides (its line box stands in for Arizona Mix's), so the 72px H1
+   sets exactly as v4d's did. */
+@font-face {
+  font-family: "Hedvig Letters Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/HedvigLettersSerif-Regular-latin.woff2") format("woff2");
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+  unicode-range: U+0000-2FFF;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF;
+}
+
+/* ------------------------------------------------------------------------------------------------ tokens */
+:root {
+  /* Ground (BRIEF §3.1) */
+  --frame: #f4f4f4; /* Frame --white-smoke: the desk around the one sheet; chroma 0 */
+  --paper: #ffffff;
+  --dot: rgb(22 24 21 / 0.1); /* v4d's faint 1px dot grid on the paper */
+  /* Ink (v4d UI-LOCK §1.1). ink-3 only for text of 24px and up (4.0:1 on white); small muted text uses ink-3-text. */
+  --ink: #161815;
+  --ink-2: #515350;
+  --ink-3: #7f817e;
+  --ink-3-text: #6b6d6a; /* 5.2:1 on white, 4.8:1 on the frame (staging refs/dub/v5/STUDY.md §1.6) */
+  --line: rgb(22 24 21 / 0.1);
+  --line-2: rgb(22 24 21 / 0.18);
+  /* Accent (Frame). Solid lime only on: the primary CTA, the full lime screen, the running dot, the light end of a
+     line field. Never as text or hairline on white (1.25:1); never white text on lime. */
+  --accent: #bcf870;
+  --accent-hover: color-mix(in oklab, var(--accent) 62%, #ffffff); /* Ramp: a lime button hovers brighter */
+  --accent-tint: #deffb5; /* CTA glow, rare grounds */
+  --accent-deep: #3d630d; /* shadows near lime only, never text */
+  --accent-shadow: rgb(61 99 13 / 0.22);
+  --on-lime-2: rgb(22 24 21 / 0.7); /* secondary text on lime: 6.9:1 */
+  /* Type (BRIEF §3.2): Hedvig display, Inter, Fragment Mono for keycaps, events, files and commands only. */
+  --font-display:
+    "Hedvig Letters Serif", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Hiragino Mincho ProN",
+    "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
+  --font-sans:
+    "Inter", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans", "Microsoft YaHei UI", "Microsoft YaHei",
+    "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  /* Layout */
+  --w: min(1120px, 100% - 48px); /* content width (v4d) */
+  --sec-gap: 144px; /* between sections (v4d .d-sec) */
+  /* Motion curves (src/effects/v5/README.md, BRIEF §3.4) */
+  --ease-quad: cubic-bezier(0.3333, 0.6667, 0.6667, 1); /* Frame IX2 outQuad: title rise */
+  --ease-quart: cubic-bezier(0.25, 1, 0.5, 1); /* Intent power3.out: cards, footer links */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1); /* Intent expo.out: footer brand */
+  --ease-stage: cubic-bezier(0.531, 0.247, 0.35, 1); /* CTRL's switch, fitted */
+  --ease-cta: cubic-bezier(0, 0, 0.2, 1); /* savee.com CTA growth */
+  --ease-theme: cubic-bezier(0.4, 0, 0.2, 1); /* Ramp theme switch, link colour */
+  --ease-hover-in: cubic-bezier(0, 0.64, 0.19, 1); /* Mintlify card hover in (700–1000 ms; out 300–500 ms) */
+  color-scheme: light;
+}
+
+/* Japanese system faces ahead of the Simplified Chinese ones (v4d app.css): otherwise kanji come from PingFang SC
+   and kana from Hiragino Sans GB, and one word mixes two weights. */
+:root:lang(ja) {
+  --font-display:
+    "Hedvig Letters Serif", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Noto Serif CJK JP", ui-serif,
+    Georgia, serif;
+  --font-sans:
+    "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
+    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* The kit (T4) reads its own --kit-* tokens (same values); point them at the page's, as kit.css asks the system
+   layer to. Two classes, because kit.css loads after this file and sets them on .kit. */
+.v5 .kit {
+  --kit-ink: var(--ink);
+  --kit-ink-2: var(--ink-2);
+  --kit-ink-3: var(--ink-3);
+  --kit-paper: var(--paper);
+  --kit-sub: var(--frame);
+  --kit-accent: var(--accent);
+  --kit-accent-tint: var(--accent-tint);
+  --kit-accent-deep: var(--accent-deep);
+}
+
+/* -------------------------------------------------------------------------------------------------- base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--frame);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font: 400 16px/1.5 var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:where(h1, h2, h3, h4, p, ul, ol, figure, blockquote, dl, dd) {
+  margin: 0;
+}
+
+:where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+:where(a) {
+  color: inherit;
+}
+
+:where(button) {
+  font: inherit;
+  color: inherit;
+}
+
+:where(img, video, canvas) {
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--accent-tint);
+  color: var(--ink);
+}
+
+/* Focus: 2px ink everywhere (on white, frame and lime alike), never lime. */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* The skip link's target. */
+main:focus {
+  outline: none;
+}
+
+.v5-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------------------- frame and paper */
+/* v4d's ground with Frame's colours: one white sheet inset 16px on the frame (8px on phones), radius 12, the dot
+   grid; the footer sits on the frame below it. overflow-x: clip, not hidden, so the sticky stage still sticks. */
+.v5 {
+  --inset: 16px; /* the frame around the paper; full-bleed parts (the footer) cancel it with a negative margin */
+  position: relative; /* the nav's containing block before the engine fixes it, and without JS */
+  min-height: 100vh;
+  overflow-x: clip;
+  padding: var(--inset) var(--inset) 0;
+}
+
+.v5-paper {
+  position: relative;
+  border-radius: 12px;
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+  box-shadow: 0 0 30px rgb(0 0 0 / 0.05); /* Frame's paper: the edge reads on #f4f4f4 (1.10:1) */
+  padding: 72px 0 96px; /* top: the strip the loose nav bar (72px) sits in */
+}
+
+.v5-wrap {
+  width: var(--w);
+  margin-inline: auto;
+}
+
+:where(main > .v5-sec + .v5-sec) {
+  margin-top: var(--sec-gap);
+}
+
+/* --------------------------------------------------------------------------------------------- type scale */
+/* Two-tone serif headings (v4a's use, BRIEF §3.2): the second line in ink-3 (a grey with a little green in it).
+   Markup: ui.ts twoTone(), one block span per line. On lime, .v5-on-lime sets --tone-b to ink 70%. */
+.v5-h1 {
+  font: 400 72px/1 var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+.v5-h2 {
+  font: 400 48px/1.04 var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+.v5-h2--lg {
+  font-size: 64px;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.v5-h2--xl {
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+:is(.v5-h1, .v5-h2) > span {
+  display: block;
+  text-wrap: balance;
+}
+
+/* Safety net: a run with no break point (a long word, a CJK line under keep-all) wraps instead of leaving the
+   paper at 390px. Breaks the copy carries still come first. */
+:is(.v5-h1, .v5-h2) {
+  overflow-wrap: break-word;
+}
+
+.v5-tone-b {
+  color: var(--tone-b, var(--ink-3));
+}
+
+.v5-lead {
+  font: 400 20px/1.5 var(--font-sans);
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.v5-body {
+  font: 400 16px/1.55 var(--font-sans);
+  color: var(--ink-2);
+}
+
+.v5-small {
+  font: 400 14px/20px var(--font-sans);
+  color: var(--ink-3-text);
+}
+
+.v5-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+/* CJK (v4d): display lines break only at the spaces and punctuation the copy carries; ja kana set proportionally;
+   ja running text breaks at phrases. */
+:lang(zh) :is(.v5-h1, .v5-h2),
+:lang(ja) :is(.v5-h1, .v5-h2) {
+  word-break: keep-all;
+  letter-spacing: -0.01em;
+}
+
+:lang(ja) :is(.v5-h1, .v5-h2) {
+  font-feature-settings: "palt";
+}
+
+:lang(ja) :is(.v5-lead, .v5-body) {
+  word-break: auto-phrase;
+}
+
+/* -------------------------------------------------------------------------------------------------- buttons */
+/* Lime primary with Frame's glow (0 4px 24px #DEFFB5), hovering brighter (Ramp); ink secondary. Height 48. */
+.v5-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 8px;
+  font: 500 16px/1 var(--font-sans);
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s var(--ease-theme),
+    transform 0.15s var(--ease-expo);
+}
+
+.v5-btn:active {
+  transform: scale(0.97);
+}
+
+.v5-btn--lime {
+  background: var(--accent);
+  color: var(--ink);
+  box-shadow: 0 4px 24px var(--accent-tint);
+}
+
+.v5-btn--lime:hover {
+  background: var(--accent-hover);
+}
+
+.v5-btn--ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.v5-btn--ink:hover {
+  background: #2a2c28;
+}
+
+/* A row of buttons (hero, closing). */
+:where(.v5-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ----------------------------------------------------------------------------------------- line language */
+/* One line for the whole page (BRIEF §3.3): 1px ink, shared by keycaps, tab labels, the line figures and the FAQ
+   rules. */
+
+/* Keycap (Frame .rectangle-span, measured: 1px #000, r8, white, 0 1px 3px rgba(0,0,0,.15), 5/16/6 padding, mono
+   at 0.82 of the sentence, sitting on the sentence's baseline). Inside a .v5-keys sentence, whose line pitch is the
+   keycap box (38px) plus 8, so lines with and without keycaps space alike (Frame: 45.86px). */
+.v5-kc {
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 4px;
+  padding: 5px 14px 6px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  color: var(--ink);
+  font: 400 0.84em/1.48 var(--font-mono);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.v5-keys {
+  line-height: 46px;
+}
+
+/* Tab label (Frame .gradient-headline-wrap): outline 1px, top corners 10, the lower half fading into the ground
+   (--tab-bg: the section's own ground; .v5-on-lime sets lime). Frame keeps 26px under it. */
+.v5-tab {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 26px;
+  padding: 8px 15px;
+  border-radius: 10px 10px 0 0;
+  outline: 1px solid var(--ink);
+  color: var(--ink);
+  font: 400 16px/1.25 var(--font-sans);
+}
+
+.v5-tab::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  height: 30px;
+  background: linear-gradient(transparent, var(--tab-bg, var(--paper)) 46%);
+  pointer-events: none;
+}
+
+.v5-tab > span {
+  position: relative;
+  z-index: 1;
+}
+
+/* On the full lime screen: ink text, ink 70% for the second line and small text, no lime on lime. */
+.v5-on-lime {
+  --tone-b: var(--on-lime-2);
+  --tab-bg: var(--accent);
+  color: var(--ink);
+}
+
+.v5-on-lime .v5-btn--lime {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 4px 24px var(--accent-shadow);
+}
+
+/* ------------------------------------------------------------------------- engine contracts (T6 README) */
+/* Hero rise on first paint, CSS only (rise.ts never waits on the hero): data-rise-load="title | line | fade". */
+@keyframes v5-rise-title-move {
+  from {
+    translate: 0 150px;
+    scale: 0.9;
+  }
+}
+
+@keyframes v5-rise-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+[data-rise-load="title"] {
+  animation: v5-rise-fade 1.5s var(--ease-quad) both;
+}
+
+@media (min-width: 992px) {
+  [data-rise-load="title"] {
+    animation:
+      v5-rise-title-move 1s var(--ease-quad) both,
+      v5-rise-fade 1.5s var(--ease-quad) both;
+  }
+}
+
+[data-rise-load="line"] {
+  animation: v5-rise-fade 1.5s var(--ease-quad) 0.3s both;
+}
+
+[data-rise-load="fade"] {
+  animation: v5-rise-fade 1s var(--ease-quart) both;
+}
+
+/* Stage (stage.ts): unpinned is the CSS default (phones, reduced motion, no JS: every step stacked). Pinned: the
+   section is 350vh, [data-stage-pin] sticks for 100vh, .v5-stage-frame clips one stack of .v5-stage-screen layers;
+   the incoming layer slides over the outgoing one, which stays opaque for the whole 0.9 s (no empty frame), with
+   an 8px bleed so blurred edges stay outside the clip. .v5-stage-say > * is a sentence scrubbed by --step-p. */
+[data-stage][data-stage-mode="pinned"] {
+  height: 350vh;
+}
+
+[data-stage][data-stage-mode="pinned"] [data-stage-pin] {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-frame {
+  display: grid;
+  overflow: hidden;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-screen {
+  grid-area: 1 / 1;
+  margin: -8px;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-screen[data-stage-state="active"] {
+  z-index: 2;
+  translate: 0 0;
+  filter: none;
+  visibility: visible;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-screen[data-stage-state="next"] {
+  z-index: 3;
+  translate: 0 100%;
+  visibility: hidden;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-screen[data-stage-state="past"] {
+  z-index: 1;
+  translate: 0 -20%;
+  filter: blur(5px);
+  visibility: hidden;
+}
+
+[data-stage][data-stage-ready] .v5-stage-screen {
+  transition:
+    translate 0.9s var(--ease-stage),
+    filter 0.9s var(--ease-stage),
+    visibility 0s linear 0.9s;
+}
+
+[data-stage][data-stage-ready] .v5-stage-screen[data-stage-state="active"] {
+  transition:
+    translate 0.9s var(--ease-stage),
+    filter 0.9s var(--ease-stage),
+    visibility 0s;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-say {
+  display: grid;
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-say > * {
+  --in: clamp(0, var(--step-p, 0) * 4, 1);
+  --out: clamp(0, var(--step-p, 0) * 4 - 3, 1);
+  grid-area: 1 / 1;
+  opacity: calc(var(--in) - var(--out));
+  translate: 0 calc((1 - var(--in)) * 120px - var(--out) * 120px);
+}
+
+[data-stage][data-stage-mode="pinned"] .v5-stage-say > :last-child {
+  --out: 0;
+}
+
+/* Line field (T2, linefield.ts): the host fills its positioned parent; the poster is the t0 frame (fit none,
+   centred; add .v5-lf--cover for fit cover); the runtime puts its canvas over it. Two hosts per board switch at
+   720px, T1's phone breakpoint: .v5-lf--wide (desktop params) and .v5-lf--phone. */
+[data-linefield] {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-linefield] > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: 50% 50%;
+}
+
+.v5-lf--cover > img {
+  object-fit: cover;
+}
+
+.v5-lf--phone {
+  display: none;
+}
+
+/* Copy engine (copy-prompt.ts): without JS the button could not reach the clipboard. */
+html:not(.js) [data-copy] {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------------------------- phones */
+@media (max-width: 720px) {
+  :root {
+    --w: calc(100% - 32px);
+    --sec-gap: 88px;
+  }
+
+  .v5 {
+    --inset: 8px;
+  }
+
+  .v5-paper {
+    border-radius: 10px;
+    padding-bottom: 64px;
+  }
+
+  .v5-h1 {
+    font-size: 42px;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
+  .v5-h2 {
+    font-size: 34px;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+  }
+
+  .v5-h2--lg,
+  .v5-h2--xl {
+    font-size: 40px;
+    line-height: 1.04;
+  }
+
+  .v5-lead {
+    font-size: 17px;
+  }
+
+  .v5-keys {
+    line-height: 42px;
+  }
+
+  .v5-lf--phone {
+    display: block;
+  }
+
+  .v5-lf--wide {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------ reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-rise-load] {
+    animation: none;
+  }
+
+  .v5-btn {
+    transition: none;
+  }
+}

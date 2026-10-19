@@ -1,0 +1,194 @@
+/* 0 Nav (sections/nav.ts). The nav engine's CSS contract (src/effects/v5/README.md "Nav"), with the page's sizes:
+   the engine writes --nav-p (0 = the loose bar at the top, 1 = the floating glass bar), data-nav-mode="live",
+   data-nav-cta-state and data-nav-theme; everything visible is here. Bar: 72 -> 56px high, full width (inset 16)
+   -> min(720px, 100% - 32px), top 16 -> 12, radius 0 -> 12; the glass leads the geometry (opaque by p = .4) so the
+   hero title never shows through it. No JS: the loose bar stays in the page, CTA shown. Reduced motion: p = 1. */
+
+.v5-skip {
+  position: absolute;
+  z-index: 60;
+  top: 24px;
+  left: -9999px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 14px/1 var(--font-sans);
+  text-decoration: none;
+}
+
+.v5-skip:focus {
+  left: 24px;
+}
+
+[data-nav] {
+  --p: var(--nav-p, 0);
+  position: absolute; /* no JS / failed init: the loose bar stays in the page */
+  z-index: 50;
+  top: 16px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: calc(100% - 32px);
+  height: 72px;
+  margin-inline: auto;
+  padding-inline: 32px;
+  isolation: isolate;
+  border-radius: calc(12px * var(--p));
+  color: var(--ink);
+  font: 500 14.5px/1 var(--font-sans);
+}
+
+[data-nav][data-nav-mode="live"] {
+  position: fixed;
+  top: calc(16px - 4px * var(--p));
+  width: calc((100% - 32px) * (1 - var(--p)) + min(720px, 100% - 32px) * var(--p));
+  height: calc(72px - 16px * var(--p));
+  padding-inline: calc(32px - 16px * var(--p)) calc(32px - 24px * var(--p));
+}
+
+/* The glass: white 78% + blur 12 + a 10% ink edge; lime 84% over the full lime screen, switched in 0.1 s. */
+[data-nav]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1px solid rgb(22 24 21 / 0.1);
+  background-color: rgb(255 255 255 / 0.78);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
+  backdrop-filter: blur(12px) saturate(1.08);
+  box-shadow:
+    0 1px 2px rgb(22 24 21 / 0.06),
+    0 10px 30px -14px rgb(22 24 21 / 0.22);
+  opacity: clamp(0, var(--p) * 2.5, 1);
+  transition:
+    background-color 0.1s var(--ease-theme),
+    border-color 0.1s var(--ease-theme),
+    box-shadow 0.1s var(--ease-theme);
+}
+
+[data-nav][data-nav-theme="accent"]::before {
+  border-color: rgb(22 24 21 / 0.14);
+  background-color: rgb(188 248 112 / 0.84);
+  box-shadow:
+    0 1px 2px var(--accent-shadow),
+    0 10px 30px -14px var(--accent-shadow);
+}
+
+.v5-nav-brand {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 44px;
+  color: var(--ink);
+}
+
+/* The lockup at 20px high (public/brand/v5/logo-nav.svg's geometry, inlined), ink in every theme. */
+.v5-nav-logo {
+  display: block;
+  height: 20px;
+  width: auto;
+  aspect-ratio: 161.167 / 34.704;
+}
+
+.v5-nav-end,
+.v5-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* padding-block makes a 44px tap target without changing the look. */
+.v5-nav-links a {
+  padding-block: 15px;
+  color: var(--ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s var(--ease-theme);
+}
+
+.v5-nav-links a:hover {
+  color: var(--ink);
+}
+
+/* The CTA slot (savee.com): max-width 0 -> 200px and opacity in 180 ms once the hero CTA is behind the bar. A closed
+   slot is inert (the engine). The slot clips, so the button's focus ring sits inside its edge. */
+[data-nav-cta] {
+  display: inline-flex;
+  flex: none;
+  overflow: hidden;
+  max-width: 200px;
+  opacity: 1;
+  transition:
+    max-width 0.18s var(--ease-cta),
+    opacity 0.18s var(--ease-cta),
+    margin-left 0.18s var(--ease-cta);
+}
+
+.js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
+  max-width: 0;
+  margin-left: -24px; /* cancels the row's gap while closed */
+  opacity: 0;
+}
+
+/* The bar's end padding (8px at p = 1) is sized for the button; without it the last link would sit 8px from the
+   edge, so the row steps in to match the start padding (16px). */
+.v5-nav-end {
+  transition: padding-right 0.18s var(--ease-cta);
+}
+
+.js [data-nav]:not([data-nav-cta-state="on"]) .v5-nav-end {
+  padding-right: calc(8px * var(--p));
+}
+
+.v5-nav-cta .v5-btn {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14.5px;
+  box-shadow: none;
+  transition: transform 0.15s var(--ease-expo); /* colours switch at once, never cross-fade (TOOLS-REVIEW T6) */
+}
+
+.v5-nav-cta .v5-btn:focus-visible {
+  outline-offset: -4px;
+}
+
+/* Over the lime screen the CTA turns ink: never lime on lime. */
+[data-nav][data-nav-theme="accent"] .v5-nav-cta .v5-btn--lime {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 600px) {
+  .v5-nav-wide {
+    display: none;
+  }
+
+  [data-nav],
+  [data-nav][data-nav-mode="live"] {
+    gap: 16px;
+    padding-inline: 16px calc(16px - 8px * var(--p));
+  }
+
+  .v5-nav-end,
+  .v5-nav-links {
+    gap: 16px;
+  }
+
+  .js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
+    margin-left: -16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-nav]::before,
+  [data-nav-cta],
+  [data-nav-cta] *,
+  .v5-nav-end {
+    transition: none;
+  }
+}
