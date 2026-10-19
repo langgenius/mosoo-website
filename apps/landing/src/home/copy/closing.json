@@ -1,5 +1,5 @@
 {
-  "$comment": "Slots of sections/closing.ts. h2a + h2b = the two-line H2 (<= 30 characters together); the setup-prompt card: legend (its label), prompt (the sentence the Copy button puts on the clipboard), copy / copied (button states, also announced); then the lime CTA (primary) and the caption. X placeholders of realistic length. Budgets: tests/home-copy-slots.test.mjs.",
+  "$comment": "Slots of sections/closing.ts, on the T1 closing plate (1120x480 at 1440). h2a + h2b: the two-line serif H2 (48px; 34px at 390), centred, <= 30 characters together; each line one line at 1440 up to 20 characters. Then the setup-prompt card in its glass bezel: legend = the card's label in the glass bar (Inter 13px, one line up to 40); prompt = the sentence the Copy button puts on the clipboard (Inter 16px; one line up to about 50 characters at 1440, two lines at 390); copy / copied = the button's two states (the button is as wide as the longer one; the live region announces copied). Then primary = the lime CTA, and caption = the one line under it (what happens when you click; one line at 1440, two at 390 when it reaches 50). X placeholders of realistic length; measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs.",
   "en": {
     "h2a": "Xxxxx xxxx xxxxx",
     "h2b": "Xxxxxxx.",
@@ -8,7 +8,7 @@
     "copy": "Xxxx",
     "copied": "Xxxxxx",
     "primary": "Xxx xxxxx",
-    "caption": "Xxxxx xxxx Xxxxx, Xxxxxx Xxxx, Xxxxxx."
+    "caption": "Xx Xxxxx. Xxxx xx xxxxx, xx xxxxxx xxxx."
   },
   "zh": {
     "h2a": "ＸＸＸ",
@@ -18,7 +18,7 @@
     "copy": "ＸＸ",
     "copied": "ＸＸＸ",
     "primary": "ＸＸＸＸＸ",
-    "caption": "ＸＸＸ Xxxxx、Xxxxxx Xxxx、Xxxxxx。"
+    "caption": "ＸＸＸＸ，ＸＸＸＸＸ，ＸＸＸＸＸＸ。"
   },
   "ja": {
     "h2a": "ＸＸＸ",
@@ -28,6 +28,6 @@
     "copy": "ＸＸＸ",
     "copied": "ＸＸＸＸ",
     "primary": "ＸＸＸＸＸＸ",
-    "caption": "Xxxxx、Xxxxxx Xxxx、Xxxxxx ＸＸＸＸＸ。"
+    "caption": "ＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸ。"
   }
 }

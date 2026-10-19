@@ -1,2 +1,172 @@
-/* 5 Closing (sections/closing.ts): owned by the faq + closing agent. Scope every rule under .v5-closing; tokens, type, buttons, the
-   line language and the engine contracts come from ../system.css (see ./README.md). Empty until the section lands. */
+/* 5 Closing (sections/closing.ts). Scoped to .v5-closing; tokens, type, buttons and the focus ring come from
+   ../system.css, the plate's bitmap and grain from ../v5-fields.css (.v5-field--closing, T1).
+   Sources (staging): v4d's closing (d-object.css .d-plate-field / .d-close-h / .d-ccard* at 9e92312: 20px plate,
+   centred 48px title, a 568px card); GitBook's glass bezel (refs/elevenlabs/v5/STUDY.md §3.3-3.4, measured in
+   refs/gitbook/v5/glass/gb-glass.json: padding 0 8 8 under a top bar, rgba(28,25,23,.06), blur(5px), r16,
+   0 4px 12px rgba(0,0,0,.15); the white card opaque, r16 as well); Frame's lime CTA glow (system .v5-btn--lime).
+   The plate keeps T1's 1120x480 bitmap at 1:1 on desktop (sizes in NOTES.md). */
+
+.v5-closing-plate {
+  /* The title's second line: ink-3 on this plate measured 3.05:1 at the median and 2.57:1 on the darkest 5% of
+     the grain under it; ink-3-text keeps the two tones and clears 3:1 (NOTES.md, contrast). */
+  --tone-b: var(--ink-3-text);
+  border-radius: 20px; /* v4d .d-plate-field */
+  padding: 64px 24px 60px; /* 64 + title 100 + 32 + bezel 112 + 32 + CTA 48 + 12 + caption 20 + 60 = 480 */
+  text-align: center;
+}
+
+/* GitBook's window, our way: the glass is only the 8px edge and the top bar (here the legend, not window dots). */
+.v5-closing-bezel {
+  width: min(584px, 100%); /* v4d's 568px card plus the 8px edge each side */
+  margin: 32px auto 0;
+  padding: 0 8px 8px;
+  border-radius: 16px;
+  background: rgb(28 25 23 / 0.06);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  text-align: left;
+}
+
+.v5-closing-legend {
+  padding: 10px 12px; /* a 40px bar: GitBook's is 44 with three dots; ours carries the label */
+  color: var(--ink);
+  font: 500 13px/20px var(--font-sans);
+}
+
+.v5-closing-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 8px 8px 8px 20px;
+  border-radius: 16px; /* GitBook: the white card is r16 like its frame, not concentric */
+  background: var(--paper);
+}
+
+.v5-closing-prompt {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  font: 400 16px/24px var(--font-sans);
+  letter-spacing: -0.005em;
+  overflow-wrap: anywhere; /* a long URL in the sentence wraps instead of leaving the card */
+  -webkit-user-select: all;
+  user-select: all; /* one click selects the whole sentence, for a reader copying by hand (no JS, no clipboard) */
+}
+
+/* Copy: an ink button inside the card (8px in from its edge, r8). Its two faces share one cell: the hidden one is
+   the done state's footprint (check + copied label), so the width never changes; the check on the live face shows
+   while the engine's data-done is set. */
+.v5-closing-copy {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  height: 48px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 15px/1 var(--font-sans);
+  cursor: pointer;
+  transition:
+    background-color 0.15s var(--ease-theme),
+    transform 0.15s var(--ease-expo);
+}
+
+.v5-closing-copy:hover {
+  background: #2a2c28; /* system .v5-btn--ink:hover */
+}
+
+.v5-closing-copy:active {
+  transform: scale(0.97);
+}
+
+.v5-closing-face {
+  display: inline-flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.v5-closing-face--size {
+  visibility: hidden;
+}
+
+.v5-closing .v5-closing-check {
+  width: 18px;
+  height: 18px;
+  margin-left: -4px;
+}
+
+.v5-closing-face:not(.v5-closing-face--size) .v5-closing-check {
+  display: none;
+}
+
+.v5-closing-copy[data-done] .v5-closing-face .v5-closing-check {
+  display: block;
+}
+
+.v5-closing-actions {
+  margin-top: 32px;
+}
+
+/* Reached by Tab, they stop below the floating nav bar (12 + 56 px), not under it. */
+.v5-closing-copy,
+.v5-closing-actions .v5-btn {
+  scroll-margin-top: 96px;
+}
+
+.v5-closing-caption {
+  margin-top: 12px;
+  color: var(--ink-2);
+  font: 400 14px/20px var(--font-sans);
+}
+
+:lang(ja) .v5-closing-prompt {
+  word-break: auto-phrase;
+}
+
+@media (max-width: 720px) {
+  .v5-closing-plate {
+    padding: 48px 16px 44px;
+  }
+
+  .v5-closing-bezel {
+    margin-top: 28px;
+  }
+
+  /* The sentence takes the card's full width; Copy drops under it, at the right. Beside it the sentence had 155px
+     (four lines at 390). */
+  .v5-closing-card {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 8px 8px 16px;
+  }
+
+  .v5-closing-prompt {
+    flex-basis: 100%;
+    padding-right: 8px;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .v5-closing-copy {
+    height: 44px;
+    margin-left: auto;
+    padding: 0 14px;
+    font-size: 14px;
+  }
+
+  .v5-closing-actions {
+    margin-top: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-closing-copy {
+    transition: none;
+  }
+}
