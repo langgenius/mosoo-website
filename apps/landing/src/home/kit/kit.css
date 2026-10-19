@@ -1,0 +1,820 @@
+/* T4 product-vector kit (see index.ts). Rules from refs/apollo/v5/STUDY.md §2.4 / §4, measured at Apollo's
+   display scale (a 600px tile, main row 14px): every length below is a multiple of the root size --k, so the
+   same object is Apollo-sized at 14px ("card") and v4b-sized at 20px ("stage").
+     radii      big card 1.4k (v4b 28px at 20px), strip .85k (20 at 1000), float .6k, tile .66k (20% of side)
+     lines      hairline 1px ink 10%; connector .085k (2 at 1000 = 1.2px at 14px), 2.35k long, ink 22%
+     shadows    only on what sits on something: top .3k/1.3k 8% ink (Apollo action card 0 4px 18px .08)
+     fade       rows 1 / .6 / .2 (/ .08); colour: neutrals + one lit element per object
+   Tokens are local (--kit-*) with the v5 values (BRIEF §3.1), because app.css still defines --accent as the
+   old #6fd305. Map them to the global tokens once those are v5: .kit { --kit-accent: var(--accent); ... }.
+   Static on purpose (Apollo's illustrations do not move); motion belongs to the stage engine (data-kit-part). */
+
+@property --k {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 14px;
+}
+
+.kit {
+  --k: 1em;
+  --kit-ink: #161815;
+  --kit-ink-2: #515350;
+  --kit-ink-3: #7f817e;
+  --kit-paper: #fff;
+  --kit-sub: #f4f4f4;
+  --kit-line: rgb(22 24 21 / 0.1);
+  --kit-line-2: rgb(22 24 21 / 0.18);
+  --kit-wire: rgb(22 24 21 / 0.22);
+  --kit-well: rgb(22 24 21 / 0.025);
+  --kit-accent: #bcf870;
+  --kit-accent-tint: #deffb5;
+  --kit-accent-deep: #3d630d;
+  --kit-sans: var(--font-sans, "Inter", ui-sans-serif, system-ui, sans-serif);
+  --kit-mono: var(--font-mono, "Fragment Mono", ui-monospace, monospace);
+  --kit-shadow-top: 0 0 0 1px rgb(22 24 21 / 0.05), 0 calc(var(--k) * 0.3) calc(var(--k) * 1.3) rgb(22 24 21 / 0.08);
+  box-sizing: border-box;
+  color: var(--kit-ink);
+  font-family: var(--kit-sans);
+  font-size: var(--kit-size, 14px);
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.kit *,
+.kit *::before,
+.kit *::after {
+  box-sizing: border-box;
+}
+
+/* Zero specificity, so every .kit-* rule below wins over the reset. */
+:where(.kit) :where(p, ol) {
+  margin: 0;
+  padding: 0;
+}
+
+/* v4b's large fragment: chip text 20px on a wide screen, 15px on a phone. */
+.kit--stage {
+  font-size: var(--kit-size, clamp(15px, 0.9vw + 8px, 20px));
+}
+
+/* CJK: the page's stacks (app.css), set here too so a zh / ja object is right inside any page; no tracking.
+   break-word, not anywhere: anywhere lowers min-content to one glyph and lets flex rows crush a label. */
+.kit:lang(zh) {
+  --kit-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC",
+    "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  line-break: strict;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+}
+
+.kit:lang(ja) {
+  --kit-sans: "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
+    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+  line-break: strict;
+  overflow-wrap: break-word;
+  word-break: auto-phrase;
+}
+
+.kit:lang(zh) *,
+.kit:lang(ja) * {
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------------------------------------ glyphs */
+.kit-g {
+  display: block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+}
+
+/* The mosoo sidebar family has exactly one plane at 12% (MAIN apps/web/src/shared/ui/sidebar-icons.tsx);
+   lit, that plane takes the accent inside its ink outline (Apollo line art: one face filled, STUDY §3.4). */
+.kit-gp {
+  fill: currentColor;
+  fill-opacity: 0.12;
+}
+
+.kit-g--lit .kit-gp {
+  fill: var(--kit-accent);
+  fill-opacity: 1;
+}
+
+.kit-mono {
+  font-family: var(--kit-mono);
+  font-size: 0.84em;
+  letter-spacing: 0;
+}
+
+/* --------------------------------------------------------------------------------- the Session card */
+.kit-session {
+  position: relative;
+  width: 100%;
+  padding: calc(var(--k) * 1.3) calc(var(--k) * 1.6) calc(var(--k) * 1.45);
+  border-radius: calc(var(--k) * 1.4);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.04);
+}
+
+.kit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--k) * 0.8);
+}
+
+.kit-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.6);
+  height: calc(var(--k) * 2.4);
+  padding: 0 calc(var(--k) * 1.05) 0 calc(var(--k) * 0.45);
+  border-radius: 999px;
+  background: var(--kit-sub);
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+}
+
+.kit-chip-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--k) * 1.5);
+  height: calc(var(--k) * 1.5);
+  border-radius: 50%;
+  background: var(--kit-paper);
+}
+
+.kit-chip-ic .kit-g {
+  width: calc(var(--k) * 0.85);
+  height: calc(var(--k) * 0.85);
+}
+
+/* The running mark: 6px lime in a 1px ink ring (BRIEF §3.1); grows only above the stage size. */
+.kit-live {
+  display: block;
+  flex: none;
+  width: max(6px, calc(var(--k) * 0.3));
+  height: max(6px, calc(var(--k) * 0.3));
+  border-radius: 50%;
+  background: var(--kit-accent);
+  box-shadow: 0 0 0 1px var(--kit-ink);
+}
+
+/* The grey sentence. ink-3 only where it is 24px (BRIEF §3.1); smaller it stays ink-2. */
+.kit-line {
+  margin-top: calc(var(--k) * 1.2);
+  color: var(--kit-ink-2);
+  font-size: 1.2em;
+  letter-spacing: -0.011em;
+  line-height: 1.42;
+  text-wrap: pretty;
+}
+
+@media (min-width: 1100px) {
+  .kit--stage .kit-line {
+    color: var(--kit-ink-3);
+  }
+}
+
+/* v4b: one line, cut by the container (the plate clips the card). */
+.kit-session--bleed .kit-line {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.kit-ctl {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.5);
+  margin-top: calc(var(--k) * 1.55);
+}
+
+.kit-btn {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--k) * 2.2);
+  height: calc(var(--k) * 2.2);
+  border-radius: 50%;
+}
+
+.kit-btn .kit-g {
+  width: calc(var(--k) * 1.1);
+  height: calc(var(--k) * 1.1);
+}
+
+.kit-btn--line {
+  box-shadow: inset 0 0 0 1px var(--kit-line-2);
+  color: var(--kit-ink-2);
+}
+
+/* The one action: the console's send key, ink here (solid lime is kept for the CTA). */
+.kit-btn--ink {
+  margin-left: auto;
+  background: var(--kit-ink);
+  color: var(--kit-paper);
+}
+
+.kit-file {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2);
+  padding: 0 calc(var(--k) * 0.85) 0 calc(var(--k) * 0.6);
+  border-radius: 999px;
+  background: var(--kit-sub);
+  white-space: nowrap;
+}
+
+.kit-file .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+  color: var(--kit-ink-2);
+}
+
+/* Keycap on the sentence's baseline (BRIEF §3.3, Frame's measured keycap). */
+.kit-key {
+  display: inline-block;
+  margin: 0 0.12em;
+  padding: 0.06em 0.5em 0.1em;
+  border: 1px solid var(--kit-ink);
+  border-radius: 0.45em;
+  background: var(--kit-paper);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+  color: var(--kit-ink);
+  font-family: var(--kit-mono);
+  font-size: 0.78em;
+  letter-spacing: 0;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+/* Watch, compact form: the rows fade toward the bottom edge, which is close, so the stream reads as going on. */
+.kit-session--watch {
+  padding-bottom: calc(var(--k) * 1.05);
+}
+
+/* Watch, stream form: Session card -> connector -> the card the events stream into (Apollo gtm-system /
+   source-of-truth: the lower part is 76-89% of the upper one's width; no shadow, it sits on nothing). */
+.kit-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.kit-stream {
+  width: 80%;
+  padding: calc(var(--k) * 0.95) calc(var(--k) * 1.15) calc(var(--k) * 0.95);
+  border-radius: calc(var(--k) * 0.9);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+}
+
+.kit-stream .kit-events {
+  margin-top: calc(var(--k) * 0.8);
+  padding-top: 0;
+  border-top: 0;
+}
+
+.kit-events {
+  display: grid;
+  gap: calc(var(--k) * 0.7);
+  margin-top: calc(var(--k) * 1.2);
+  padding-top: calc(var(--k) * 1.1);
+  border-top: 1px solid var(--kit-line);
+  list-style: none;
+}
+
+.kit-ev {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.6);
+  font-size: 0.95em;
+}
+
+.kit-ev .kit-g {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.kit-ev:nth-child(2),
+.kit-fchip:nth-child(2) {
+  opacity: 0.6;
+}
+
+.kit-ev:nth-child(3),
+.kit-fchip:nth-child(3) {
+  opacity: 0.2;
+}
+
+.kit-ev:nth-child(n + 4),
+.kit-fchip:nth-child(n + 4) {
+  opacity: 0.08;
+}
+
+/* Return: the front card on two earlier turns (v4d F19), the underlay band above it. */
+.kit-stack {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  padding: calc(var(--k) * 1) 0 calc(var(--k) * 1.25);
+}
+
+.kit-session--front {
+  z-index: 3;
+  box-shadow: var(--kit-shadow-top);
+}
+
+.kit-back {
+  position: absolute;
+  z-index: 2;
+  right: calc(var(--k) * 0.85);
+  bottom: calc(var(--k) * 0.62);
+  left: calc(var(--k) * 0.85);
+  height: calc(var(--k) * 4);
+  border-radius: calc(var(--k) * 1.25);
+  background: rgb(255 255 255 / 0.74);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.05);
+}
+
+.kit-back--2 {
+  z-index: 1;
+  right: calc(var(--k) * 1.75);
+  bottom: 0;
+  left: calc(var(--k) * 1.75);
+  background: rgb(255 255 255 / 0.46);
+}
+
+.kit-meta {
+  color: var(--kit-ink-2);
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.kit-track {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.7);
+  margin-top: calc(var(--k) * 1.3);
+}
+
+.kit-track-end {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--k) * 2.4);
+  height: calc(var(--k) * 2.4);
+  border-radius: 50%;
+  background: var(--kit-sub);
+}
+
+.kit-track-end .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+}
+
+.kit-track-rail {
+  flex: 1;
+  height: calc(var(--k) * 0.55);
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(22 24 21 / 0.07);
+}
+
+.kit-track-rail i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--kit-ink-3);
+}
+
+.kit-status {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.45);
+  margin-top: calc(var(--k) * 1.15);
+  color: var(--kit-ink-2);
+  font-size: 0.95em;
+}
+
+.kit-status .kit-g {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* --------------------------------------------------------------------------------------- underlay */
+/* A T1 strip with T1's grain (v5-fields.css); the box's own background is the placeholder in T1's stops
+   (accent, tint, mint, mist), shown when v5-fields.css is not loaded. */
+.kit-underlay {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  background: linear-gradient(90deg, #d9e9f4 0%, #d3f0f1 20%, #d2f8e2 38%, #deffb5 56%, #bcf870 74%, #bcf870 100%);
+  pointer-events: none;
+}
+
+/* Strip b has its lime end first (T1 fields.mjs, limeAt "start"); the placeholder follows. */
+.kit-underlay--b {
+  background: linear-gradient(270deg, #d9e9f4 0%, #d3f0f1 20%, #d2f8e2 38%, #deffb5 56%, #bcf870 74%, #bcf870 100%);
+}
+
+.kit-underlay > .kit-underlay-tex {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+}
+
+/* Above the Return card, 1k out (Apollo: 23-24 at 1000 = 14px at 14px). */
+.kit-underlay--top {
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: calc(var(--k) * 4);
+  border-radius: calc(var(--k) * 1.4);
+}
+
+/* Behind a chip or tile, offset down-left (Apollo "Access email": -7, +8 at 1000). */
+.kit-underlay--chip {
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  transform: translate(calc(var(--k) * -0.3), calc(var(--k) * 0.34));
+}
+
+/* ------------------------------------------------------------------------------- the small objects */
+.kit-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--kit-ink-2);
+  font-size: 0.72em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.kit-eyebrow .kit-g {
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.kit-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--k) * 2.3);
+  height: calc(var(--k) * 2.3);
+  border-radius: calc(var(--k) * 0.55);
+  background: var(--kit-sub);
+}
+
+.kit-icon .kit-g {
+  width: calc(var(--k) * 1.3);
+  height: calc(var(--k) * 1.3);
+}
+
+.kit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2);
+  padding: 0 calc(var(--k) * 0.85) 0 calc(var(--k) * 0.65);
+  border-radius: 999px;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+  white-space: nowrap;
+}
+
+.kit-pill .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+  color: var(--kit-ink-2);
+}
+
+.kit-wire {
+  display: block;
+  flex: none;
+  border-radius: 999px;
+  background: var(--kit-wire);
+}
+
+.kit-wire--across {
+  width: calc(var(--k) * 2.35);
+  height: max(1px, calc(var(--k) * 0.085));
+}
+
+.kit-wire--down {
+  width: max(1px, calc(var(--k) * 0.085));
+  height: calc(var(--k) * 2.35);
+}
+
+/* Harness strip (Apollo CONNECTED SOURCE: strip 104, tiles 77, gap 22, radius 20 at 1000). Its ground is
+   half-white, a step lighter than whatever it sits on (Apollo #F9F9F6 on #EFEFEB), so it holds on a grey
+   well, a white card or the stage plate alike. */
+.kit-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.95);
+  padding: calc(var(--k) * 0.62);
+  border-radius: calc(var(--k) * 0.85);
+  background: rgb(255 255 255 / 0.55);
+  box-shadow: inset 0 0 0 1px var(--kit-line);
+}
+
+.kit-strip > .kit-eyebrow {
+  flex: none;
+  max-width: 6.5em;
+  padding-left: calc(var(--k) * 0.45);
+}
+
+.kit-strip-tiles {
+  display: flex;
+  gap: calc(var(--k) * 0.9);
+}
+
+.kit-tile {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  border-radius: calc(var(--k) * 0.66);
+}
+
+.kit-tile-face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(var(--k) * 3.3);
+  height: calc(var(--k) * 3.3);
+  border-radius: inherit;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.06), 0 1px 2px rgb(22 24 21 / 0.06);
+}
+
+.kit-tile-face .kit-g {
+  width: calc(var(--k) * 1.55);
+  height: calc(var(--k) * 1.55);
+}
+
+.kit-tile--lit .kit-tile-face,
+.kit-fchip--lit .kit-fchip-face {
+  box-shadow: var(--kit-shadow-top);
+}
+
+/* Key row: key card, connector, the dotted wall with a grant inside. */
+.kit-keyrow {
+  display: inline-flex;
+  align-items: center;
+}
+
+.kit-keycard {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.7);
+  padding: calc(var(--k) * 0.7) calc(var(--k) * 1.05) calc(var(--k) * 0.7) calc(var(--k) * 0.7);
+  border-radius: calc(var(--k) * 0.74);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+}
+
+.kit-keycard-t {
+  display: grid;
+  gap: calc(var(--k) * 0.3);
+}
+
+.kit-keycard-n {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Dots, not words: ink-3 is fine below 24px here. */
+.kit-mask {
+  color: var(--kit-ink-3);
+  font-size: 0.9em;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+/* The sandbox: a dotted wall (ElevenLabs dotted line, BRIEF §3.3) around a faint well. */
+.kit-cell {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--k) * 0.7);
+  padding: calc(var(--k) * 0.9) calc(var(--k) * 1);
+  border-radius: calc(var(--k) * 0.85);
+  background: var(--kit-well);
+}
+
+.kit-dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.kit-dots-r {
+  x: 0.625px;
+  y: 0.625px;
+  width: calc(100% - 1.25px);
+  height: calc(100% - 1.25px);
+  rx: calc(var(--k) * 0.85);
+  fill: none;
+  stroke: var(--kit-ink);
+  stroke-dasharray: 0.01 4;
+  stroke-linecap: round;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
+}
+
+.kit-proc {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: calc(var(--k) * 0.65);
+  padding: calc(var(--k) * 0.5) calc(var(--k) * 1) calc(var(--k) * 0.5) calc(var(--k) * 0.5);
+  border-radius: calc(var(--k) * 0.6);
+  background: var(--kit-paper);
+  box-shadow: var(--kit-shadow-top);
+  white-space: nowrap;
+}
+
+.kit-proc .kit-icon {
+  width: calc(var(--k) * 2);
+  height: calc(var(--k) * 2);
+}
+
+.kit-proc .kit-icon .kit-g {
+  width: calc(var(--k) * 1.1);
+  height: calc(var(--k) * 1.1);
+}
+
+.kit-cell-status {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.5);
+  color: var(--kit-ink-2);
+  font-size: 0.92em;
+}
+
+/* Files: outputs/ and its files, faded and running off the edge (the card clips them). */
+.kit-files {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.75);
+  white-space: nowrap;
+}
+
+.kit-folder {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+}
+
+.kit-folder .kit-g {
+  width: calc(var(--k) * 1.35);
+  height: calc(var(--k) * 1.35);
+}
+
+.kit-files-row {
+  display: flex;
+  gap: calc(var(--k) * 0.5);
+}
+
+.kit-fchip,
+.kit-rchip {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  flex: none;
+  border-radius: 999px;
+}
+
+.kit-fchip-face,
+.kit-rchip-face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2.15);
+  padding: 0 calc(var(--k) * 0.9) 0 calc(var(--k) * 0.65);
+  border-radius: inherit;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+}
+
+.kit-fchip-face .kit-g,
+.kit-rchip .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+  color: var(--kit-ink-2);
+}
+
+/* Resume: earlier turn, the gap on a connector, the turn that picks it up. */
+.kit-resume {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The earlier turn: the same pill, faded like an older row. */
+.kit-rchip--from {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2.15);
+  padding: 0 calc(var(--k) * 0.9) 0 calc(var(--k) * 0.65);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+  opacity: 0.6;
+}
+
+.kit-resume-gap {
+  position: relative;
+  display: block;
+  padding: calc(var(--k) * 0.3) 0;
+}
+
+.kit-resume-t {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + var(--k) * 0.6);
+  color: var(--kit-ink-2);
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.kit-rchip--to .kit-rchip-face {
+  height: calc(var(--k) * 2.4);
+  padding: 0 calc(var(--k) * 1.05) 0 calc(var(--k) * 0.75);
+  box-shadow: var(--kit-shadow-top);
+  font-weight: 500;
+}
+
+.kit-rchip-note {
+  margin-left: calc(var(--k) * 0.2);
+  padding-left: calc(var(--k) * 0.6);
+  border-left: 1px solid var(--kit-line-2);
+  color: var(--kit-ink-2);
+  font-weight: 400;
+}
+
+/* Narrow slots (a phone card, a narrow bento cell): the strip drops its eyebrow (the card names it) and the
+   key row stands up, its connector running down as Apollo's do. A slot opts in with
+   `container: kit / inline-size`; phones get the same rules from the viewport. Duplicated on purpose:
+   one block cannot serve both @container and @media. */
+@container kit (max-width: 400px) {
+  .kit-strip > .kit-eyebrow {
+    display: none;
+  }
+
+  .kit-keyrow {
+    flex-direction: column;
+  }
+
+  .kit-keyrow > .kit-wire--across {
+    width: max(1px, calc(var(--k) * 0.085));
+    height: calc(var(--k) * 1.6);
+  }
+}
+
+@media (max-width: 480px) {
+  .kit-strip > .kit-eyebrow {
+    display: none;
+  }
+
+  .kit-keyrow {
+    flex-direction: column;
+  }
+
+  .kit-keyrow > .kit-wire--across {
+    width: max(1px, calc(var(--k) * 0.085));
+    height: calc(var(--k) * 1.6);
+  }
+}
+
+@media (forced-colors: active) {
+  .kit-underlay {
+    display: none;
+  }
+
+  .kit-live {
+    forced-color-adjust: none;
+  }
+}
