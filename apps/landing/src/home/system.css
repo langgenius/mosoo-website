@@ -116,6 +116,8 @@ html {
   color: var(--ink);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Whatever Tab or an anchor scrolls to stops below the floating nav (12 + 56px), not under it (WCAG 2.4.11). */
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -406,11 +408,14 @@ main:focus {
 }
 
 /* ------------------------------------------------------------------------- engine contracts (T6 README) */
-/* Hero rise on first paint, CSS only (rise.ts never waits on the hero): data-rise-load="title | line | fade". */
+/* Hero rise on first paint, CSS only (rise.ts never waits on the hero): data-rise-load="title | line | fade".
+   The title moves only from 992px (phones fade). The breakpoint sets the distance, not the animation list: a list
+   that changed at 992px would replay the move whenever the width crossed it (an iPad turning to landscape, a
+   window resize), with the title jumping 150px down first. */
 @keyframes v5-rise-title-move {
   from {
-    translate: 0 150px;
-    scale: 0.9;
+    translate: 0 var(--rise-title-y);
+    scale: var(--rise-title-s);
   }
 }
 
@@ -421,14 +426,17 @@ main:focus {
 }
 
 [data-rise-load="title"] {
-  animation: v5-rise-fade 1.5s var(--ease-quad) both;
+  --rise-title-y: 0px;
+  --rise-title-s: 1;
+  animation:
+    v5-rise-title-move 1s var(--ease-quad) both,
+    v5-rise-fade 1.5s var(--ease-quad) both;
 }
 
 @media (min-width: 992px) {
   [data-rise-load="title"] {
-    animation:
-      v5-rise-title-move 1s var(--ease-quad) both,
-      v5-rise-fade 1.5s var(--ease-quad) both;
+    --rise-title-y: 150px;
+    --rise-title-s: 0.9;
   }
 }
 

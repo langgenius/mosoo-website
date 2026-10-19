@@ -98,10 +98,6 @@ const BAMBOO_CARDS = {
   "social-card-geist-20260917.png": "31c8f6e3f2c0459494019090c080a38b43315ac2d578833cacd0c578358ce388",
 };
 const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261020.png";
-// Pages owned by other v5 tracks that still point at the bamboo card. The
-// integrator empties this when the home and the blog take a v5 card
-// (staging v5/subpages/NOTES.md, requests 3 and 4).
-const PENDING_BAMBOO = new Set(["apps/landing/index.html", "apps/blog/src/layouts/BaseLayout.astro"]);
 
 const sha256 = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const filesUnder = (dir) =>
@@ -150,15 +146,21 @@ test("no page's og:image or twitter:image is a bamboo card", () => {
   const violations = images
     .map(({ page, url }) => ({ page, url, reason: bambooReason(url) }))
     .filter(({ reason }) => reason !== null);
-  const unexpected = violations.filter(({ page }) => !PENDING_BAMBOO.has(page));
-  assert.deepEqual(unexpected, [], "pages that share a bamboo card");
+  assert.deepEqual(violations, [], "pages that share a bamboo card");
 });
 
-test("status, use cases and pricing share the v5 card, a 1200 x 630 PNG", () => {
-  for (const page of ["apps/landing/status.html", "apps/landing/use-cases.html", "apps/landing/pricing.html"]) {
+test("the home, the blog, status, use cases and pricing share the v5 card, a 1200 x 630 PNG", () => {
+  for (const page of [
+    "apps/landing/index.html",
+    "apps/landing/status.html",
+    "apps/landing/use-cases.html",
+    "apps/landing/pricing.html",
+  ]) {
     const urls = shareImages().filter((image) => image.page === page).map((image) => image.url);
     assert.deepEqual(urls, [V5_CARD, V5_CARD], `${page} og:image and twitter:image`);
   }
+  const blog = shareImages().filter((image) => image.page === "apps/blog/src/layouts/BaseLayout.astro");
+  assert.deepEqual(blog.map((image) => image.url), [V5_CARD], "the blog's default share image");
   const png = readFileSync(join(publicDir, new URL(V5_CARD).pathname));
   assert.equal(png.subarray(1, 4).toString("latin1"), "PNG");
   assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1200, 630], "IHDR width and height");

@@ -99,7 +99,9 @@ const FIELDS = [
     grain: { tier: "film", opacity: 1 },
     sizes: [
       { css: [1120, 480], scale: 0.5 },
-      { css: [358, 400], scale: 0.5, media: MOBILE },
+      // 390: the plate is the content width (342) and 468 tall with the closing's placeholders (staging
+      // v5/sections/faq-closing/NOTES.md §2), so cover keeps the bitmap at 1:1 there.
+      { css: [342, 472], scale: 0.5, media: MOBILE },
     ],
   },
   {

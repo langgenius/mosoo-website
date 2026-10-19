@@ -270,21 +270,24 @@ test("landing and blog metadata never point at a missing default image", () => {
   );
   assert.match(
     landing,
-    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
+    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261020\.png" \/>/,
   );
   assert.match(
     landing,
-    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-20261019\.png" \/>/,
+    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261020\.png" \/>/,
   );
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
-  assert.match(blogLayout, /\/brand\/social-card-20261019\.png/);
+  assert.match(blogLayout, /\/brand\/social-card-v5-20261020\.png/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/brand/social-card-20261019.png", import.meta.url)),
+    existsSync(new URL("../apps/landing/public/brand/social-card-v5-20261020.png", import.meta.url)),
     true,
   );
-  // The card states the README positioning and all four runtimes; its alt
-  // text says the same.
-  assert.match(landing, /<meta property="og:image:alt" content="mosoo: an open-source, API-first managed Agent runtime for application backends\. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi\." \/>/);
+  // The v5 card shows the hero line (temporary: apps/landing/scripts/assets/social-card-v5.mjs COPY); the alt text
+  // of the home and the blog says what is on it.
+  const cardAlt = "mosoo: Run agents from your backend. Continue them days later.";
+  assert.ok(landing.includes(`<meta property="og:image:alt" content="${cardAlt}" />`));
+  assert.ok(landing.includes(`<meta name="twitter:image:alt" content="${cardAlt}" />`));
+  assert.ok(blogLayout.includes(`ogImageAlt = "${cardAlt}"`));
   for (const page of ["apps/landing/pricing.html", "apps/landing/status.html", "apps/landing/use-cases.html"]) {
     assert.doesNotMatch(read(page), /social-card-geist-20260917/, `${page} uses the current card`);
   }

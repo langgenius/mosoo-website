@@ -1,4 +1,5 @@
-// v5 social card (1200 x 630), the og:image / twitter:image of the subpages (status, use cases, pricing).
+// v5 social card (1200 x 630), the og:image / twitter:image of the home, the blog's default and the subpages (status,
+// use cases, pricing).
 // Run (repo root): node apps/landing/scripts/assets/social-card-v5.mjs
 //   CHROME=<Chrome or Chrome for Testing binary> overrides the default macOS Google Chrome path.
 // Writes apps/landing/public/brand/social-card-v5-20261020.png and prints its size and SHA-256.
@@ -27,7 +28,8 @@ const H = 630;
 
 // TEMPORARY copy: the v4d hero H1 and CTA (home-copy.json en.hero, 2026-10-19), standing in until the v5
 // content phase writes the hero line. When it lands, change these three strings, regenerate, and give the file
-// a new date (and update the og:image of status.html, use-cases.html and pricing.html with it).
+// a new date (and update with it the og:image of index.html, status.html, use-cases.html and pricing.html, the
+// blog's BaseLayout.astro default, the home's imageAlt in scripts/landing-locales.mjs and the blog's ogImageAlt).
 const COPY = {
   line1: "Run agents from your backend.",
   line2: "Continue them days later.",

@@ -97,10 +97,10 @@
   --v5-field-grain: 1;
 }
 
-/* closing-358x400@0.5x.webp: 358x400 CSS, 4716 B, displayed mean #e3e1de */
+/* closing-342x472@0.5x.webp: 342x472 CSS, 4880 B, displayed mean #e3e1de */
 @media (max-width: 720px) {
   .v5-field--closing {
-    --v5-field-img: url("/landing/v5/fields/closing-358x400@0.5x.webp");
+    --v5-field-img: url("/landing/v5/fields/closing-342x472@0.5x.webp");
     --v5-field-base: #ebeae8;
   }
 }

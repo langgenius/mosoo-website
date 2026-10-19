@@ -4,7 +4,7 @@
    Plain CSS on purpose: the forms are locked shapes, not utility soup. */
 
 :root {
-  --d-frame: #e1dfdb;
+  --d-frame: #f4f4f4; /* v5: the home's frame (src/home/system.css --frame, Frame's white smoke), so every page shares one desk */
   --d-paper: #ffffff;
   --d-tile: #f5f3f0;
   --d-ink: #161815;

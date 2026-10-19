@@ -1,6 +1,6 @@
 // The home's motion, started by src/main.tsx once the static HTML is in the DOM. The engines are T6's
 // (src/effects/v5/, README.md there is the API) plus T2's line field and two small home modules; each reads its
-// data-* declarations and is a no-op when they are missing, so a section that is still a stub costs nothing.
+// data-* declarations and is a no-op when they are missing, so a page without that part costs nothing.
 //
 //   <html data-damp>         damped wheel scrolling           src/effects/v5/damp-scroll.ts
 //   [data-nav]               nav morph, CTA, theme zones      src/effects/v5/nav.ts (range: min(400px, 45vh))
@@ -65,7 +65,7 @@ export function initHomeEffects(root: ParentNode = document): () => void {
   const stops = [
     document.documentElement.hasAttribute("data-damp") ? initDampScroll() : () => {},
     initNavWithRange(root),
-    initStage(root),
+    initStage(root), // before initRise: the rise engine reads the pinned stage's layout
     initRise(root),
     initFooter(root),
     initFooterMark(root), // after initFooter: it follows the state the footer engine writes

@@ -1,5 +1,5 @@
 // 5 Closing (BRIEF §4 row 5). v4d's closing (owner-approved at 9e92312: the serif two-line title and the SETUP
-// PROMPT card on a grain field) on T1's closing plate (.v5-field--closing, 1120x480 / 358x400); the card sits in
+// PROMPT card on a grain field) on T1's closing plate (.v5-field--closing, 1120x480 / 342x472); the card sits in
 // GitBook's 8px glass bezel (staging refs/elevenlabs/v5/STUDY.md §3.3-3.4: blur 5px, 6% stone, r16, one
 // backdrop-filter), which blurs the grain under it; below it the lime "Try mosoo" with Frame's glow and one line
 // under the button. Styles: ./closing.css; slots and measurements: staging v5/sections/faq-closing/NOTES.md.

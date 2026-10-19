@@ -173,6 +173,15 @@ test("the hero's marketing words fit the first-screen budget (en)", () => {
   assert.equal(h.harnesses.length, 4, "four harness keycaps");
 });
 
+// The first screen also shows the stage plate's first state (Call, sections/stage.ts): its words and the four
+// keycaps are the first screen's object words, at most 16 in tools/budget.ts (staging v5/sections/hero-stage/NOTES.md
+// §6: keycaps 6 + Call 7 = 13 with today's placeholders).
+test("the keycaps and the Call state fit the first screen's object words (en)", () => {
+  const keycaps = COPY.hero.en.harnesses.reduce((sum, value) => sum + words(value), 0);
+  const call = kitStates(COPY.stage.en.kit).call.reduce((sum, value) => sum + words(value), 0);
+  assert.ok(keycaps + call <= 16, `first-screen object words: keycaps ${keycaps} + Call ${call} > 16`);
+});
+
 test("zh and ja fill the same slots as en, no more and no fewer", () => {
   const shape = (node) =>
     Array.isArray(node)

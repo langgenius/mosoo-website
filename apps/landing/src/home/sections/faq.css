@@ -38,7 +38,6 @@
   padding: 22px 0;
   list-style: none;
   cursor: pointer;
-  scroll-margin-top: 96px; /* a question reached by Tab stops below the floating nav bar (12 + 56 px), not under it */
   transition: padding-bottom var(--faq-t);
 }
 

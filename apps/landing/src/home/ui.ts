@@ -38,11 +38,3 @@ export function button(href: string, label: string, tone: ButtonTone, extra = ""
 export function tabLabel(label: string, tag: "p" | "span" = "p"): string {
   return `<${tag} class="v5-tab"><span>${esc(label)}</span></${tag}>`;
 }
-
-/**
- * The scaffold box a section stub shows until its section agent replaces it: a dashed frame with a mono label.
- * aria-hidden, so the label is neither read out nor counted as page words. Styles: ./sections/stub.css.
- */
-export function stubLabel(text: string): string {
-  return `<span class="v5-stub-label" aria-hidden="true">${esc(text)}</span>`;
-}

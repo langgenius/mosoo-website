@@ -113,12 +113,6 @@
   margin-top: 32px;
 }
 
-/* Reached by Tab, they stop below the floating nav bar (12 + 56 px), not under it. */
-.v5-closing-copy,
-.v5-closing-actions .v5-btn {
-  scroll-margin-top: 96px;
-}
-
 .v5-closing-caption {
   margin-top: 12px;
   color: var(--ink-2);

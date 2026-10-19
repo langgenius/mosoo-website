@@ -15,8 +15,8 @@ agents own everything shared.
 | 5 Closing | `closing.ts` | `closing.css` | `../copy/closing.json` | faq + closing agent | `<section id="start" data-section="closing" class="v5-sec v5-closing">` |
 | 6 Footer | `footer.ts` | `footer.css` | `../copy/footer.json` | system | `<footer class="v5-ft" data-footer>` |
 
-The five content sections are stubs today: each renders its wrapper, the engine declarations below and a dashed
-placeholder body (`.v5-stub*`, styled by `stub.css`, which goes away once all five have landed).
+All five content sections have landed (UI lock: X placeholders of realistic length in the copy files; the slot table
+and the evidence are in staging `v5/UI-LOCK.md`). The hero ends at its CTA row: the plate under it is the stage's.
 
 ## What a module is
 
@@ -67,7 +67,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
   (`main > .v5-sec + .v5-sec`); set your own `margin-top` on your section.
 - T1 fields: `../v5-fields.css` (`.v5-field`, `.v5-field--hero`, `--closing`, `--lime`, `--underlay-a|b|c`); it
   owns `::before` / `::after` of the element it is on. T4 kit: `../kit/kit.css`.
-- Phones switch at 720px (T1's plates, the paper inset); the nav at 600px; the stage pins at 901px and up.
+- Phones switch at 720px (T1's plates, the paper inset; up to there the floating nav trades its links for the CTA
+  once the CTA is in); the nav hides its wide links at 600px; the stage pins from 901px wide and 680px tall.
 - Colour rules: no white text on lime, no lime text or lime hairlines on white, focus ring 2px ink (from the
   system), text contrast at least 4.5:1 under 24px and 3:1 from 24px.
 
@@ -76,9 +77,9 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
 | Section | Must carry |
 | --- | --- |
 | `<html>` | `data-damp` (index.html) and the head's `js` class line (index.html) |
-| Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; lead and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` (exactly one on the page). Line field hosts: `<div data-linefield="hero" class="v5-lf--wide">` and `<div data-linefield="hero-mobile" class="v5-lf--phone">`, each with its `<img data-linefield-poster src="/landing/v5/lines/<id>.svg" alt="">`, inside a positioned board |
-| Stage | the section `data-stage` (optional `data-stage-at="0,0.34,0.67"`), its sticky layer `data-stage-pin`, every part of step k `data-stage-step="k"`. Pinned layering is the contract in `../system.css`: `.v5-stage-frame` (clips) > `.v5-stage-screen` (one per step), `.v5-stage-say > *` (sentences scrubbed by `--step-p`). Unpinned (below 901px, reduced motion, no JS) is the CSS default and must read as three stacked states |
-| Accent | `data-theme-zone="accent"` on the lime element only (not the white gap before it): the nav turns lime glass with an ink CTA while that box is under the bar's centre line. Title wrapper `data-rise="block"`, H2 `data-rise="title"`, its second line `data-rise="line"`, each card `data-rise="card"`. The full lime screen itself is CSS (Frame: `linear-gradient(var(--accent) 0 calc(100svh + 40px), var(--paper) 100%)`) |
+| Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; lead and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` (exactly one on the page) |
+| Stage | the section `data-stage` (`data-stage-at="0,0.27,0.64"`, `data-stage-media` = where it pins: 901px wide and 680px tall), its sticky layer `data-stage-pin`, every part of step k `data-stage-step="k"`. Pinned layering is the contract in `../system.css` (`.v5-stage-screen`, one per step; the section's height there is 350vh, `stage.css` sets 300vh); the captions switch with the object instead of the scrubbed `.v5-stage-say`. Unpinned (smaller screens, reduced motion, no JS) is the CSS default and reads as three stacked plates. Line field hosts, in the first step's plate (the plate is the stage): `<div data-linefield="hero" class="v5-lf--wide">` and `<div data-linefield="hero-mobile" class="v5-lf--phone">`, each with its `<img data-linefield-poster src="/landing/v5/lines/<id>.svg" alt="">`. `../effects.ts` starts the stage engine before the rise engine, which reads the pinned layout |
+| Accent | `data-theme-zone="accent"` on `.v5-acc-zone` only: an absolutely positioned box inside the lime panel over the solid stretch and the first half of the fade (not the white gap before the edge, not the pale end): the nav turns lime glass with an ink CTA while that box is under the bar's centre line. Title wrapper `data-rise="block"`, H2 `data-rise="title"`, its second line `data-rise="line"`, each card `data-rise="card"`. The full lime screen itself is CSS (Frame: `linear-gradient(var(--accent) 0 calc(100svh + 40px), transparent 100%)`). The five figures are inline copies of `public/landing/v5/figures/*.svg` (`tests/home-figures.test.mjs` keeps them equal) |
 | FAQ | one native `<details name="faq">` per item, the first `open`; the question is the `<summary>`'s text, the answer the rest of the `<details>` (decorations aria-hidden, no text). Title `data-rise="block"` / `"title"` / `"line"` |
 | Closing | the copy engine: `<button type="button" data-copy data-copied-label="…">` with a `[data-copy-label]` span, in the same `[data-product-ui]` card as the `[data-prompt]` sentence and a polite `[data-copy-status]` region (hidden without JS by the system). Title rise as above |
 | Footer | `data-footer`, `data-footer-links` around the columns, `data-footer-link` on each column, `data-footer-brand` on the seam, `data-footer-rise` on the mark then the letters; the mark's `.bm-fill` / `.bm-block` / `.bm-bar` paths (`../footer-mark.ts`: draw, ink fill, desktop hover redraw) |
@@ -93,6 +94,6 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
 ## Shared files (system / integrator only)
 
 `../markup.ts` (frame, section order), `../copy.ts`, `../ui.ts`, `../system.css`, `../v5.css`, `../effects.ts`,
-`../footer-mark.ts`, `../copy-prompt.ts`, `nav.*`, `footer.*`, `stub.css`, `apps/landing/index.html`,
+`../footer-mark.ts`, `../copy-prompt.ts`, `nav.*`, `footer.*`, `apps/landing/index.html`,
 `src/main.tsx`, `scripts/landing-home.mjs`, `scripts/landing-locales.mjs`, the tests. A section agent who needs a
 change there writes it down as a request for the integrator.

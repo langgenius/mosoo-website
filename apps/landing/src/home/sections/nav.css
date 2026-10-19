@@ -184,11 +184,57 @@
   }
 }
 
+/* Phones and small tablets: the links and the CTA do not fit one bar in every language (/ja at 390 needs 434px of
+   the bar's 358: ドキュメント, ログイン, mosoo を試す; /en at 375 needs 352 of 343). So the bar's end is one grid cell
+   that holds either: once the CTA is in, the links fade out (120 ms) and the CTA grows in their place (180 ms, from
+   80 ms), and the floating bar keeps the logo and the CTA; going back, the CTA goes first and the links fade in after
+   it. Sharing the cell, the two never sit side by side, so nothing overflows mid-swap whatever the labels' lengths.
+   Both CTAs open the console; Docs is the hero's second button and the footer's. Hidden links leave the tab order.
+   Without JS the bar stays at the top, right above the hero's own lime CTA, so it shows the links only. */
+@media (max-width: 720px) {
+  .v5-nav-end {
+    display: grid;
+    justify-items: end;
+  }
+
+  .v5-nav-links,
+  [data-nav-cta] {
+    grid-area: 1 / 1;
+  }
+
+  .js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
+    margin-left: 0; /* one cell: no row gap to cancel */
+  }
+
+  .js [data-nav][data-nav-cta-state="on"] [data-nav-cta] {
+    transition-delay: 0.08s;
+  }
+
+  .v5-nav-links {
+    transition:
+      opacity 0.18s var(--ease-cta) 0.12s,
+      visibility 0s;
+  }
+
+  .js [data-nav][data-nav-cta-state="on"] .v5-nav-links {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.12s var(--ease-cta),
+      visibility 0s linear 0.12s;
+  }
+
+  html:not(.js) [data-nav-cta] {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-nav]::before,
   [data-nav-cta],
   [data-nav-cta] *,
-  .v5-nav-end {
+  .v5-nav-end,
+  .v5-nav-links {
     transition: none;
   }
 }

@@ -157,24 +157,8 @@
   width: min(31em, 100%);
 }
 
-/* TOOLS-REVIEW T4: the stream card's label in sentence case, not the all-caps kicker. */
-.v5-stage .kit-eyebrow {
-  font-size: 0.8em;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-/* TOOLS-REVIEW T4: the running dot at v4b's 8px, its 1px ink ring kept (kit.css draws 6px at this size). */
-.v5-stage .kit-live {
-  width: 8px;
-  height: 8px;
-}
-
-/* The grey sentence: ink-3 only where it sets at 24px (kit 20px); ink-2 below that (contrast under 24px). */
-.v5-stage .kit-line {
-  color: var(--kit-ink-2);
-}
-
+/* The grey sentence: ink-3 where it sets at 24px (the kit at 20px, the media query above); kit.css keeps it ink-2
+   everywhere else (contrast under 24px). */
 @media (min-width: 1280px) and (min-height: 840px) {
   .v5-stage .kit-line {
     color: var(--kit-ink-3);

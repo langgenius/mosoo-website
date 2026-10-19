@@ -85,15 +85,17 @@ side-by-side images, one regenerating command) lives in staging
   waiting for JS (Frame's H1 waits for IX2; its LCP is 2.3 s):
 
 ```css
-@keyframes rise-title-move { from { translate: 0 150px; scale: .9; } }
+/* The breakpoint sets the move's distance, never the animation list: a list that changed at 992px would replay
+   the move each time the width crossed it (a tablet turning, a window resize). */
+@keyframes rise-title-move { from { translate: 0 var(--rise-title-y); scale: var(--rise-title-s); } }
 @keyframes rise-fade { from { opacity: 0; } }
-[data-rise-load="title"] { animation: rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) both; }
-@media (min-width: 992px) {
-  [data-rise-load="title"] {
-    animation: rise-title-move 1s cubic-bezier(.3333, .6667, .6667, 1) both,
-               rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) both;
-  }
+[data-rise-load="title"] {
+  --rise-title-y: 0px;
+  --rise-title-s: 1;
+  animation: rise-title-move 1s cubic-bezier(.3333, .6667, .6667, 1) both,
+             rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) both;
 }
+@media (min-width: 992px) { [data-rise-load="title"] { --rise-title-y: 150px; --rise-title-s: .9; } }
 [data-rise-load="line"] { animation: rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) .3s both; }
 [data-rise-load="fade"] { animation: rise-fade 1s cubic-bezier(.25, 1, .5, 1) both; }
 @media (prefers-reduced-motion: reduce) { [data-rise-load] { animation: none; } }

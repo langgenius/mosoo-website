@@ -32,7 +32,7 @@ const {
   description,
   canonical,
   ogImage,
-  ogImageAlt = "mosoo: an open-source, API-first managed Agent runtime for application backends. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi.",
+  ogImageAlt = "mosoo: Run agents from your backend. Continue them days later.",
   type = "website",
   publishedTime,
   author,
@@ -43,7 +43,7 @@ const {
   surface = "paper",
 } = Astro.props;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImageUrl = ogImage ?? new URL("/brand/social-card-20261019.png", Astro.site).href;
+const ogImageUrl = ogImage ?? new URL("/brand/social-card-v5-20261020.png", Astro.site).href;
 const hreflangEntries = (hreflang ? Object.entries(hreflang) : []).filter(
   (entry): entry is [string, string] => Boolean(entry[1]),
 );

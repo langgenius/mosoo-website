@@ -155,18 +155,21 @@
   height: calc(var(--k) * 0.85);
 }
 
-/* The running mark: 6px lime in a 1px ink ring (BRIEF §3.1); grows only above the stage size. */
+/* The running mark: 8px lime in a 1px ink ring (v4b's size, TOOLS-REVIEW T4; BRIEF §3.1); grows only above the
+   stage size. */
 .kit-live {
   display: block;
   flex: none;
-  width: max(6px, calc(var(--k) * 0.3));
-  height: max(6px, calc(var(--k) * 0.3));
+  width: max(8px, calc(var(--k) * 0.4));
+  height: max(8px, calc(var(--k) * 0.4));
   border-radius: 50%;
   background: var(--kit-accent);
   box-shadow: 0 0 0 1px var(--kit-ink);
 }
 
-/* The grey sentence. ink-3 only where it is 24px (BRIEF §3.1); smaller it stays ink-2. */
+/* The grey sentence: ink-2 (4.5:1 and up at any size). ink-3 is only for 24px text (BRIEF §3.1), which this line is
+   only at a 20px root; the kit cannot know its computed size, so a page that sets the kit at 20px opts in itself
+   (the home's stage: sections/stage.css). */
 .kit-line {
   margin-top: calc(var(--k) * 1.2);
   color: var(--kit-ink-2);
@@ -174,12 +177,6 @@
   letter-spacing: -0.011em;
   line-height: 1.42;
   text-wrap: pretty;
-}
-
-@media (min-width: 1100px) {
-  .kit--stage .kit-line {
-    color: var(--kit-ink-3);
-  }
 }
 
 /* v4b: one line, cut by the container (the plate clips the card). */
@@ -457,11 +454,9 @@
   align-items: center;
   gap: 0.45em;
   color: var(--kit-ink-2);
-  font-size: 0.72em;
+  font-size: 0.8em; /* sentence case, not an all-caps kicker (TOOLS-REVIEW T4) */
   font-weight: 500;
-  letter-spacing: 0.06em;
   line-height: 1.25;
-  text-transform: uppercase;
 }
 
 .kit-eyebrow .kit-g {
