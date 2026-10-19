@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-damp>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,7 +9,7 @@
       content="An open-source, API-first managed Agent runtime for application backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#e1dfdb" />
+    <meta name="theme-color" content="#f4f4f4" />
     <link rel="canonical" href="https://mosoo.ai/en" />
     <link rel="alternate" hreflang="en" href="https://mosoo.ai/en" />
     <link rel="alternate" hreflang="zh-CN" href="https://mosoo.ai/zh" />
@@ -17,11 +17,15 @@
     <link rel="alternate" hreflang="x-default" href="https://mosoo.ai/en" />
     <link rel="icon" href="/favicon.ico" sizes="64x64" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- The hero H1 is set in the display face (Hedvig Letters Serif, the --font-display stand-in) and the lead and
-         buttons in Inter; React only asks for them once it renders. Fetch both with the page so the headline does not
-         reflow when they arrive late on slow networks. -->
+    <!-- Before first paint: the nav engine's CTA slot starts closed under .js, and the copy button shows only with JS
+         (src/effects/v5/README.md). Without JS the class never lands and the static page stays complete. -->
+    <script>document.documentElement.classList.add("js")</script>
+    <!-- The first screen sets the H1 in the display face (Hedvig Letters Serif), the lead and buttons in Inter and the
+         harness keycaps in Fragment Mono: fetch all three with the page so the headline does not reflow when they
+         arrive late on slow networks. -->
     <link rel="preload" href="/fonts/HedvigLettersSerif-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/Inter-Variable-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/FragmentMono-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="mosoo" />
@@ -52,10 +56,10 @@
     <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-20261019.png" />
     <meta name="twitter:image:alt" content="mosoo: an open-source, API-first managed Agent runtime for application backends. One API, 4 runtimes: OpenAI Codex, Claude Agent SDK, OpenCode, and Pi." />
 
-    <!-- mosoo:home-head (JSON-LD and fallback styles per locale, filled by scripts/landing-locales.mjs) -->
+    <!-- mosoo:home-head (the JSON-LD per locale, filled by scripts/landing-locales.mjs) -->
   </head>
   <body>
-    <div id="root"><!-- mosoo:home-fallback (the full home page as static HTML per locale, filled by scripts/landing-locales.mjs; React replaces it on mount) --></div>
+    <div id="root"><!-- mosoo:home-fallback (the whole home page as static HTML per locale, src/home/markup.ts, filled by scripts/landing-locales.mjs; src/main.tsx renders it in dev) --></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

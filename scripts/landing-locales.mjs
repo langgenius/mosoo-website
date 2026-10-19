@@ -1,11 +1,12 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { HOME_FALLBACK_STYLE, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
+import { renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
 // Home page head copy (copy deck section 14). The meta description leads with
-// the README positioning line (langgenius/mosoo README.md:8-9). The body, the FAQ and the JSON-LD
-// come from landing-home.mjs and are written into the markers in index.html.
+// the README positioning line (langgenius/mosoo README.md:8-9). The static v5
+// home (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
+// landing-home.mjs and are written into the markers in index.html.
 // imageAlt describes the social card that ships today
 // (public/brand/social-card-20261019.png: the README positioning line and the
 // four runtimes); change it together with the og:image when the card is
@@ -354,7 +355,8 @@ function localizeHomeHead(source, locale) {
   const copy = HOME_SEO[locale];
   const url = `https://mosoo.ai/${locale}`;
   return applyReplacements(source, [
-    [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
+    // The home's <html> also declares the damped scroll (src/effects/v5/damp-scroll.ts).
+    [`<html lang="${en.lang}" data-damp>`, `<html lang="${copy.lang}" data-damp>`],
     [en.title, copy.title],
     [en.description, copy.description],
     [en.socialTitle, copy.socialTitle],
@@ -410,11 +412,7 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
 // into the markers, so the EN-to-locale replacements never touch them.
 export function renderLandingLocale(source, locale) {
   if (!HOME_SEO[locale]) throw new Error(`Unsupported landing locale: ${locale}`);
-  const head = fillMarker(
-    localizeHomeHead(source, locale),
-    "home-head",
-    `${HOME_FALLBACK_STYLE}\n${renderHomeJsonLd(locale)}`,
-  );
+  const head = fillMarker(localizeHomeHead(source, locale), "home-head", renderHomeJsonLd(locale));
   return fillMarker(head, "home-fallback", renderHomeFallback(locale));
 }
 
