@@ -127,15 +127,15 @@ export function FeaturesSection(): ReactElement {
       </h2>
       <SpecCite section="s5" />
 
-      <ol className="mt-12">
+      <ol className="mt-10">
         {features().map((feature) => {
           const Drawing = feature.drawing;
           return (
             <li
               key={feature.title}
-              className="grid gap-5 border-t border-[rgba(109,120,106,0.35)] py-9 md:grid-cols-[132px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[132px_minmax(0,1.15fr)_minmax(0,0.85fr)]"
+              className="grid gap-4 border-t border-[rgba(109,120,106,0.35)] py-7 md:grid-cols-[132px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[132px_minmax(0,1.15fr)_minmax(0,0.85fr)]"
             >
-              <div className="w-[132px]">
+              <div className="w-[104px] md:w-[132px]">
                 <Drawing />
               </div>
               <div>

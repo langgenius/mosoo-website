@@ -91,16 +91,17 @@ export function SplitSection(): ReactElement {
       </h2>
       <SpecCite section="s1" />
 
-      <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-14">
+      <div className="mt-10 grid gap-10 md:grid-cols-2 md:gap-14">
         <DutyList heading={t("Your app keeps")} duties={appDuties()} tone="app" />
         <DutyList heading={t("mosoo runs")} duties={mosooDuties()} tone="mosoo" />
       </div>
 
       <LimitsLedger />
 
-      <div className="mt-16">
+      <div className="mt-12">
         <SystemPath />
-        <div className="mt-6 rounded-[16px] bg-[rgba(251,251,249,0.94)] p-3 shadow-[0_0_0_1px_rgba(11,26,20,0.1),0_18px_40px_-18px_rgba(11,26,20,0.25)] sm:p-5">
+        {/* One frame: the kit island's own (v2a wrapped it in a second shell). */}
+        <div className="mt-6">
           <KeyBoundary locale={locale} />
         </div>
       </div>
