@@ -75,6 +75,21 @@ test("every home string fits its locked slot in every locale", () => {
   assert.deepEqual(overflow, []);
 });
 
+// Greedy word wrap, as a browser breaks Latin text at spaces.
+const wrap = (value, width) =>
+  value.split(" ").reduce((lines, word) => {
+    const last = lines.at(-1);
+    if (last !== undefined && `${last} ${word}`.length <= width) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+    return lines;
+  }, []);
+
+test("the copyable prompt shows whole at 390px (2 lines of 28)", () => {
+  // UI-LOCK U06-C: the phone clamps the sentence at two lines, so a longer
+  // sentence would hide its end, the part a coding agent needs.
+  assert.ok(wrap(COPY.en.close.prompt, 28).length <= 2, COPY.en.close.prompt);
+});
+
 test("zh and ja fill the same slots as en, no more and no fewer", () => {
   const shape = (node) =>
     Array.isArray(node) ? node.map(shape) : typeof node === "object" ? Object.fromEntries(Object.entries(node).map(([k, v]) => [k, shape(v)])) : typeof node;

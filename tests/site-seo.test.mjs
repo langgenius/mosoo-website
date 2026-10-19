@@ -442,7 +442,7 @@ test("the static home page carries the whole page for readers without JavaScript
   assert.equal(en.match(/translate="no">run\./g)?.length, 1);
   assert.doesNotMatch(en, /data-dock=/);
   assert.equal(en.match(/class="d-sat s\d" data-sat>/g)?.length, 4);
-  assert.match(en, /<span class="d-ccard-p">Read mosoo\.ai\/llms\.txt and start my first mosoo Session\.<\/span>/);
+  assert.match(en, /<span class="d-ccard-p">Read mosoo\.ai\/llms\.txt and start my first Session\.<\/span>/);
   // Product objects carry data-product-ui, as on the React page.
   assert.equal(en.match(/data-product-ui/g)?.length, 4);
   // No content-led furniture: no tables, no code blocks, no screenshots.

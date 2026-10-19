@@ -45,7 +45,7 @@
       "items": [
         {
           "q": "Is it hosted, or do I run it?",
-          "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache-2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
+          "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
         },
         {
           "q": "Do I need to create an Agent first?",
@@ -73,7 +73,7 @@
       "a": "Start a Session",
       "b": "from your agent.",
       "legend": "Setup prompt",
-      "prompt": "Read mosoo.ai/llms.txt and start my first mosoo Session.",
+      "prompt": "Read mosoo.ai/llms.txt and start my first Session.",
       "button": "Copy",
       "done": "Copied",
       "fine": "Codex, Claude Code, Cursor and more."
@@ -81,11 +81,11 @@
   },
   "zh": {
     "hero": {
-      "h1a": "从你的后端运行 Agent。",
+      "h1a": "从后端运行 Agent。",
       "h1b": "几天后，接着上一轮。",
-      "lead": "开源，也有托管版。每个 Session 独享 sandbox，用你的密钥。",
+      "lead": "开源，可托管。每个 Session 独享 sandbox。",
       "primary": "试用 mosoo",
-      "secondary": "阅读快速开始"
+      "secondary": "快速开始"
     },
     "object": {
       "line": "同一 Session。",
@@ -98,7 +98,7 @@
       ]
     },
     "verbs": [
-      { "verb": "调用。", "desc": "一个请求，就在独立的 sandbox 里启动一个 Session。" },
+      { "verb": "调用。", "desc": "一个请求，在独立 sandbox 里启动 Session。" },
       { "verb": "跟踪。", "desc": "事件实时流回，文件作为产出物返回。" },
       { "verb": "继续。", "desc": "几天后，把下一轮发给同一个 Session。" }
     ],
@@ -125,7 +125,7 @@
       "items": [
         {
           "q": "是托管服务，还是要自己运行？",
-          "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache-2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
+          "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache 2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
         },
         {
           "q": "需要先创建 Agent 吗？",
@@ -161,9 +161,9 @@
   },
   "ja": {
     "hero": {
-      "h1a": "Agent をバックエンドから。",
-      "h1b": "数日後に、その続きを。",
-      "lead": "OSS とホスト版。Session ごとに sandbox、キーは自前。",
+      "h1a": "バックエンドで Agent を。",
+      "h1b": "数日後に、続きを。",
+      "lead": "OSS・ホスト版。Session ごとに sandbox、キーは自前。",
       "primary": "mosoo を試す",
       "secondary": "クイックスタート"
     },
@@ -178,9 +178,9 @@
       ]
     },
     "verbs": [
-      { "verb": "呼ぶ。", "desc": "1 つのリクエストで、専用 sandbox の Session が始まります。" },
-      { "verb": "見る。", "desc": "イベントがストリームで届き、ファイルは成果物として返ります。" },
-      { "verb": "戻る。", "desc": "数日後でも、次の turn を同じ Session に送れます。" }
+      { "verb": "呼ぶ。", "desc": "1 回のリクエストで、専用 sandbox の Session を開始。" },
+      { "verb": "見る。", "desc": "イベントはストリームで、ファイルは成果物で届く。" },
+      { "verb": "戻る。", "desc": "数日後でも、同じ Session に次の turn を。" }
     ],
     "stack": {
       "label": "ターン 2",
@@ -205,7 +205,7 @@
       "items": [
         {
           "q": "ホスト版？それとも自分で動かす？",
-          "a": "ホスト版のコンソール cloud.mosoo.ai をすぐに使えます。ソースは Apache-2.0 で GitHub にあり、ローカルで動かす手順は README にあります。mosoo は現在 Alpha 版で、公開 API は変わる可能性があります。"
+          "a": "ホスト版 cloud.mosoo.ai をすぐ使えます。ソースは Apache 2.0 で GitHub にあり、ローカルでの動かし方は README にあります。mosoo は Alpha 版で、公開 API は変わることがあります。"
         },
         {
           "q": "先に Agent を作る必要はありますか？",
@@ -213,7 +213,7 @@
         },
         {
           "q": "モデル API を直接呼ぶのと何が違いますか？",
-          "a": "モデル API が返すのは返答だけです。mosoo はその周りの Agent を実行します。隔離された sandbox、ファイルの受け渡し、イベントのストリーム、使用量の記録、turn をまたいで残る作業ディレクトリです。"
+          "a": "モデル API は返答を返すだけです。mosoo はその周りの Agent を動かします。隔離された sandbox、ファイルの入出力、イベントのストリーム、使用量の記録、turn をまたいで残る作業ディレクトリ。"
         },
         {
           "q": "どの harness とモデルを使えますか？",
@@ -221,11 +221,11 @@
         },
         {
           "q": "数日後に返信するとどうなりますか？",
-          "a": "sandbox が回収された後でも、同じ Session で続きが実行されます。mosoo は最後にコミットされたチェックポイントから、作業ディレクトリとネイティブな会話を復元します。コールドスタートは時間がかかることがあります。"
+          "a": "sandbox が回収された後でも、同じ Session で続きます。mosoo は最後にコミットしたチェックポイントから、作業ディレクトリとネイティブな会話を復元します。コールドスタートは遅くなりえます。"
         },
         {
           "q": "キーは sandbox に入りますか？",
-          "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外に置かれ、sandbox には期限付きの許可だけが渡ります。環境変数は例外で、sandbox 内のコードから読み取れます。"
+          "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外にあり、sandbox には期限付きの許可だけが渡ります。環境変数は例外で、sandbox 内のコードが読めます。"
         }
       ]
     },
@@ -233,7 +233,7 @@
       "a": "手元の agent で",
       "b": "Session を開始。",
       "legend": "設定用プロンプト",
-      "prompt": "mosoo.ai/llms.txt を読み、最初の Session を開始して。",
+      "prompt": "mosoo.ai/llms.txt を読み、最初の Session を開始。",
       "button": "コピー",
       "done": "コピー済",
       "fine": "Codex、Claude Code、Cursor など。"
