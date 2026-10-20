@@ -15,7 +15,7 @@
       { "label": "Harness", "line": "One of four, fixed for the whole Session." },
       { "label": "Model key", "line": "Your provider key, kept outside the sandbox." },
       { "label": "Sandbox", "line": "One per Session, with full access inside." },
-      { "label": "Files", "line": "Files in outputs/ come back as downloads." },
+      { "label": "Files", "line": "Written to outputs/, ready to download." },
       { "label": "Resume", "line": "Same Session ID, a minute or a week later." }
     ]
   },

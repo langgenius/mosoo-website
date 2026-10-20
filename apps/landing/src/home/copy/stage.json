@@ -108,7 +108,7 @@
       },
       "watch": {
         "status": "実行中",
-        "action": "input.csv から {file} を書き込み中",
+        "action": "{file} を書き込み中",
         "file": "outputs/report.md",
         "stream": "あなたのバックエンド",
         "events": ["ファイル変更", "ツール実行完了", "実行開始"]
