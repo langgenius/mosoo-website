@@ -51,9 +51,11 @@ const LINES = {
   "hero-mobile": { w: 720, h: 460 },
 } as const;
 
+/** loading="lazy": the host of the other breakpoint is display:none, and a lazy image that is not rendered is not
+ *  fetched (motion review P2-6: both posters downloaded at every width). */
 function lineHost(id: keyof typeof LINES, cls: string): string {
   const { w, h } = LINES[id];
-  return `<div data-linefield="${id}" class="${cls}"><img data-linefield-poster src="/landing/v5/lines/${id}.svg" alt="" width="${w}" height="${h}" decoding="async"></div>`;
+  return `<div data-linefield="${id}" class="${cls}"><img data-linefield-poster src="/landing/v5/lines/${id}.svg" alt="" width="${w}" height="${h}" loading="lazy" decoding="async"></div>`;
 }
 
 export function render(locale: HomeLocale, copy: HomeCopy): string {

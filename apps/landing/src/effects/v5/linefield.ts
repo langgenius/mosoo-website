@@ -23,10 +23,14 @@
 //   object-fit:none (fit "none") or cover (fit "cover"). The canvas uses the same mapping.
 //   data-linefield-src (optional) overrides the params URL.
 // Behaviour: the canvas mounts when the host first enters the viewport, draws the t0 frame (identical
-// to the poster), hides the poster and runs at 0.7 rad/s; it pauses off-screen (IntersectionObserver)
-// and resumes where it stopped. Device-pixel aware (capped at 2x); strokes stay `stroke` CSS px at any
-// scale, like the poster's non-scaling-stroke. Reduced motion or no JS: only the poster shows.
-// data-linefield-state on the host reads poster | running | paused.
+// to the poster), hides the poster and runs at 0.7 rad/s for at most RUN_S seconds, slowing to a stop
+// over the last EASE_S, then rests on its frame: moving content that starts by itself stops within
+// 5 s (WCAG 2.2.2; staging v5 motion review P1-2). It runs again each time the host comes back into
+// view, and, inside a pinned stage ([data-stage]), each time the stage switches step, so the lines move
+// when something happens. It pauses off-screen (IntersectionObserver) and resumes where it stopped.
+// Device-pixel aware (capped at 2x); strokes stay `stroke` CSS px at any scale, like the poster's
+// non-scaling-stroke. Reduced motion or no JS: only the poster shows.
+// data-linefield-state on the host reads poster | running | rest | paused.
 // Wiring: initLinefields(root) mounts every [data-linefield] host (add it to initMotion in ./index.ts).
 
 export const LINEFIELD_PARAMS_URL = "/landing/v5/lines/params.json";
@@ -37,6 +41,10 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 const MAX_DPR = 2;
 // Longest step one frame may take (s), so a dropped or throttled frame never jumps the phase.
 const MAX_STEP = 0.1;
+/** Seconds one start runs (WCAG 2.2.2 allows motion that starts by itself if it stops within 5 s). */
+export const RUN_S = 4.5;
+/** The last seconds of a run, over which the phase speed eases to zero (smoothstep). */
+const EASE_S = 1.5;
 
 export type Ramp = {
   from: string;
@@ -330,7 +338,7 @@ function loadParams(url: string): Promise<Map<string, LinefieldParams>> {
   return pending;
 }
 
-function setState(host: HTMLElement, state: "poster" | "running" | "paused"): void {
+function setState(host: HTMLElement, state: "poster" | "running" | "rest" | "paused"): void {
   host.dataset["linefieldState"] = state;
 }
 
@@ -355,6 +363,7 @@ function createPlayer(host: HTMLElement, params: LinefieldParams): Player | null
   let t = params.t0 ?? 0;
   let last = -1;
   let frame = 0;
+  let left = 0; // seconds of the current run still to go
 
   const paint = () => {
     computeFrame(field, t, xy);
@@ -370,18 +379,26 @@ function createPlayer(host: HTMLElement, params: LinefieldParams): Player | null
     paint();
   };
   const tick = (now: number) => {
-    frame = requestAnimationFrame(tick);
-    if (last >= 0) {
-      t = (t + Math.min(MAX_STEP, (now - last) / 1000)) % period;
-    }
+    const dt = last >= 0 ? Math.min(MAX_STEP, (now - last) / 1000) : 0;
     last = now;
+    left = Math.max(0, left - dt);
+    const ease = Math.min(1, left / EASE_S);
+    t = (t + dt * ease * ease * (3 - 2 * ease)) % period;
     if (Math.min(window.devicePixelRatio || 1, MAX_DPR) === view.dpr) {
       paint();
     } else {
       resize(); // moved to a screen with another pixel ratio
     }
+    if (left > 0) {
+      frame = requestAnimationFrame(tick);
+    } else {
+      frame = 0;
+      setState(host, "rest");
+    }
   };
+  /** Starts (or restarts) a run of RUN_S seconds from the current phase. */
   const play = () => {
+    left = RUN_S;
     if (frame === 0) {
       last = -1;
       frame = requestAnimationFrame(tick);
@@ -470,9 +487,23 @@ export function mountLinefield(host: HTMLElement): () => void {
   });
   reduced.addEventListener("change", sync);
   observer.observe(host);
+  // In a pinned stage, a step switch starts a new run: the lines move with the change of state.
+  const stage = host.closest<HTMLElement>("[data-stage]");
+  const steps =
+    stage && typeof MutationObserver !== "undefined"
+      ? new MutationObserver(() => {
+          if (visible && !reduced.matches) {
+            player?.play();
+          }
+        })
+      : null;
+  if (stage) {
+    steps?.observe(stage, { attributes: true, attributeFilter: ["data-step"] });
+  }
   return () => {
     disposed = true;
     observer.disconnect();
+    steps?.disconnect();
     reduced.removeEventListener("change", sync);
     player?.destroy();
     player = null;

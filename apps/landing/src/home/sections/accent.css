@@ -136,31 +136,17 @@
   }
 }
 
-/* It runs only while its figure is in view: a view() timeline holds --comet at "running" across the figure's cover
-   range and lets it fall back to "paused" outside it. No script, so it also works without JS. Browsers without
-   scroll-driven animations skip the block and the comet simply runs. Reduced motion: animation none (below), the
-   comet parks at its fixed spot, which no play state overrides. */
-@keyframes v5-acc-in-view {
-  from,
-  to {
-    --comet: running;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .v5-accent .v5-acc-card[data-part="resume"] .v5-acc-fig {
-    --comet: paused;
-    animation-name: v5-acc-in-view;
-    animation-duration: auto;
-    animation-timing-function: linear;
-    animation-fill-mode: none;
-    animation-timeline: view();
-  }
-}
-
+/* It runs only in short bursts: src/effects/v5/play-for.ts sets data-playing on the figure for 4.5 s each time it
+   comes into view, so the comet moves, then stops where it is (WCAG 2.2.2: motion that starts by itself stops within
+   5 s; staging v5 motion review P1-2). It used to loop for as long as the card was on screen. Paused at its first
+   frame without JS. Reduced motion: animation none (below), the comet parks at its fixed spot. */
 .v5-accent :is(.lfc202, .lfc160) {
   animation: v5-acc-comet 10.5s linear infinite;
-  animation-play-state: var(--comet, running);
+  animation-play-state: paused;
+}
+
+.v5-accent [data-playing] :is(.lfc202, .lfc160) {
+  animation-play-state: running;
 }
 
 /* Hover (BRIEF §3.4, Mintlify §2.6): the figure grows to 1.02 over a soft tint glow; in 900 ms on Mintlify's
@@ -262,6 +248,18 @@
 
   .v5-accent .v5-acc-text {
     min-height: 0;
+  }
+}
+
+/* Forced colors (Windows high contrast): the page drops the lime and the cards' shadows, so the cards get a frame and
+   the line figures the text colour (motion review P2-4). */
+@media (forced-colors: active) {
+  .v5-accent .v5-acc-card {
+    border: 1px solid CanvasText;
+  }
+
+  .v5-accent .v5-acc-svg path:not(mask path) {
+    stroke: CanvasText;
   }
 }
 

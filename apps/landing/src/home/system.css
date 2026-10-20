@@ -628,3 +628,20 @@ html:not(.js) [data-copy] {
     transition: none;
   }
 }
+
+/* -------------------------------------------------------------------------------------------------- print */
+/* Printing or saving as PDF shows the end state: no element waits hidden for a scroll that never comes, and the
+   floating bar stays at the top of the first page instead of over every page (motion review P2-2). */
+@media print {
+  [data-rise],
+  [data-footer-link],
+  [data-footer-rise] {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+
+  [data-nav] {
+    position: absolute !important;
+  }
+}

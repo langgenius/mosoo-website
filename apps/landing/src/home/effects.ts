@@ -8,7 +8,8 @@
 //   [data-rise]              title rise, card entrance        src/effects/v5/rise.ts
 //   [data-footer]            links, brand from the seam       src/effects/v5/footer.ts
 //   .bm-* in the footer mark draw, ink fill, hover redraw    ./footer-mark.ts (T5 variant A)
-//   [data-linefield]         line field canvas                src/effects/v5/linefield.ts (T2)
+//   [data-linefield]         line field canvas, 4.5 s runs    src/effects/v5/linefield.ts (T2)
+//   [data-play-for]          short motion bursts (the comet)  src/effects/v5/play-for.ts
 //   [data-copy]              copy the setup prompt            ./copy-prompt.ts (v4c)
 //
 // The same list as initMotion() in src/effects/v5/index.ts, except that the nav gets its range first
@@ -16,6 +17,7 @@
 
 import { initDampScroll, initFooter, initNav, initRise, initStage } from "../effects/v5/index.ts";
 import { initLinefields } from "../effects/v5/linefield.ts";
+import { initPlayFor } from "../effects/v5/play-for.ts";
 import { initCopyPrompt } from "./copy-prompt.ts";
 import { initFooterMark } from "./footer-mark.ts";
 
@@ -70,6 +72,7 @@ export function initHomeEffects(root: ParentNode = document): () => void {
     initFooter(root),
     initFooterMark(root), // after initFooter: it follows the state the footer engine writes
     initLinefields(root),
+    initPlayFor(root),
     initCopyPrompt(root),
   ];
   return () => {

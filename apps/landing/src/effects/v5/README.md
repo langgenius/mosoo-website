@@ -32,6 +32,11 @@ side-by-side images, one regenerating command) lives in staging
 | `nav.ts` | `[data-nav]`, `[data-nav-cta]`, `[data-nav-cta-watch]`, `[data-theme-zone]` | `--nav-p`, `data-nav-mode/state/cta-state/theme`, `inert` | ramp.design progress morph, Save.design float bar, savee.com CTA, Ramp theme switch | `refs/ramp-design/v5/STUDY.md` §1, §3.1, §4.1, §5.5 |
 | `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready`, `data-step`, `--stage-p`, `data-stage-state`, `--step-p` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
 | `footer.ts` | `[data-footer]`, `[data-footer-links/link/brand/rise]`, `[data-draw]` | inline hidden state, WAAPI, `data-footer-state` | Intent footer (`Footer.astro`, GSAP + Lottie) | `refs/intent/v5/STUDY.md` §1 |
+| `play-for.ts` | `[data-play-for="ms"]` | `data-playing` for at most `ms` (≤ 5000) each time the element comes into view | WCAG 2.2.2 (motion that starts by itself stops within 5 s) | staging `v5/review/motion-a11y-perf.md` P1-2 |
+
+Decorative loops stop within 5 s: the line field (`linefield.ts`) runs 4.5 s per start (on entering the view, and
+on each step switch of a pinned stage), easing to a stop over its last 1.5 s; the Resume comet runs under
+`data-playing` only.
 
 ## Damped scroll — `<html data-damp>`
 

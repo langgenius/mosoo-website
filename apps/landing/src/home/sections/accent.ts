@@ -13,8 +13,9 @@
 // second line and the sub fade in 300 ms later, a-14); the cards enter with the rise engine (Intent). The nav turns
 // lime while .v5-acc-zone is under its centre line: data-theme-zone sits on that box, which covers the solid
 // stretch and the first half of the fade, so the bar is white glass again over the pale end and never over the
-// white gap. The Resume comet is the group's only motion: ./accent.css runs it (T3's keyframes), pauses it while its
-// figure is off-screen (a view() timeline, no script) and stops it under reduced motion.
+// white gap. The Resume comet is the group's only motion: ./accent.css runs it (T3's keyframes) only while its
+// figure carries data-playing, one 4.5 s burst each time it comes into view (src/effects/v5/play-for.ts; WCAG
+// 2.2.2), and stops it under reduced motion.
 //
 // The gap line is a paragraph set as a display line, not a heading: the panel's H2 names the section
 // (aria-labelledby), so the outline does not get an empty heading before it. The card list keeps role="list":
@@ -152,7 +153,9 @@ function figure(part: Part): string {
       .replace(/<style>[\s\S]*?<\/style>\n?/, "")
       .replace("<svg ", `<svg class="v5-acc-svg v5-acc-svg--${size}" `),
   ).join("");
-  return `<div class="v5-acc-fig" aria-hidden="true">${svgs}</div>`;
+  // The comet's figure plays one burst each time it comes into view (src/effects/v5/play-for.ts, ./accent.css).
+  const play = part === "resume" ? ' data-play-for="4500"' : "";
+  return `<div class="v5-acc-fig" aria-hidden="true"${play}>${svgs}</div>`;
 }
 
 export function render(_locale: HomeLocale, copy: HomeCopy): string {

@@ -157,10 +157,15 @@
   outline-offset: -4px;
 }
 
-/* Over the lime screen the CTA turns ink: never lime on lime. */
+/* Over the lime screen the CTA turns ink: never lime on lime. Its focus ring, drawn inside the clipping slot, turns
+   white, or it would be ink on ink (1.0:1; motion review P1-1, WCAG 2.4.7); white on ink is 17.9:1. */
 [data-nav][data-nav-theme="accent"] .v5-nav-cta .v5-btn--lime {
   background: var(--ink);
   color: var(--paper);
+}
+
+[data-nav][data-nav-theme="accent"] .v5-nav-cta .v5-btn:focus-visible {
+  outline-color: var(--paper);
 }
 
 @media (max-width: 600px) {
