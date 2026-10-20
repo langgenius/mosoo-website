@@ -64,19 +64,24 @@
 }
 
 /* --------------------------------------------------------------------------------------- the three cards */
-/* One row of three (Mintlify's 1 + 1 + 1 row, refs/mintlify/v5/STUDY.md §1): Sandbox, Files and conversation, Resume,
-   read left to right as the life cycle. The five-part 2 + 3 grid of TOOLS-REVIEW T3 left with Harness and Model key,
-   which the spec table's screen now carries. Gap 16 and radius 12 (Mintlify), Frame's white-card shadow on lime.
-   Cards are as tall as the 202 figure and the text need (354 at 1440), not Mintlify's 412: so the H2, the sub and
-   the whole row share one 1280 x 800 screen (staging v5/graft/lime/NOTES.md). */
+/* One row of three unequal cards, 1fr 2fr 1fr: 272 / 544 / 272 at 1440 and 1280. Frame's own lime bento is unequal
+   (1.1fr 3fr, then 2fr 1.1fr: refs/frame/v5/layout/STUDY.md §3), and one row of three equal cards is the template
+   the playbook names (staging v5/review/graft-design.md P1-2). Left to right, a Session between turns: what goes
+   (the sandbox), what stays (the wide card: the working directory and the conversation, what the H2's second line
+   is made of), what does not change (the Session ID). Gap 16 and radius 12 (Mintlify), Frame's white-card shadow on
+   lime. The row is as tall as a narrow card (the 202 figure and the text: 354 at 1440, Mintlify's is 412), so the
+   H2, the sub and the row still share one 1280 x 800 screen (staging v5/polish/lime/NOTES.md). */
 .v5-accent .v5-acc-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
   gap: 16px;
   margin-top: 64px;
 }
 
+/* --fig: the size of the figure the card shows (the sizes are T3's files, sections/accent.ts FIGURES; the media
+   queries below switch them with the figures): 202 in a narrow card, 296 in the wide one. */
 .v5-accent .v5-acc-card {
+  --fig: 202px;
   display: flex;
   flex-direction: column;
   padding: 28px;
@@ -86,6 +91,26 @@
   color: var(--ink);
 }
 
+/* The wide card: text on the left, the larger Files figure on the right (Frame's Fast Nav card). The figure is as
+   tall as the row allows (296 in the 298 inside a 354 card) and needs no gap: its drawing starts 36 px into its box.
+   That leaves the text 192 px at 1440, a 24-character label on one line. The text keeps the bottom-left corner, so
+   the three labels of the row share one line. */
+.v5-accent .v5-acc-card--wide {
+  --fig: 296px;
+  display: grid;
+  grid-template: "text fig" 1fr / minmax(0, 1fr) auto;
+}
+
+.v5-accent .v5-acc-card--wide .v5-acc-fig {
+  grid-area: fig;
+}
+
+.v5-accent .v5-acc-card--wide .v5-acc-text {
+  grid-area: text;
+  align-self: end;
+  margin-top: 0;
+}
+
 /* The figure at its own size, centred in the space above the text (Mintlify: the object near the optical centre,
    the bottom-left corner kept for the label). */
 .v5-accent .v5-acc-fig {
@@ -93,21 +118,25 @@
   flex: 1;
   display: grid;
   place-items: center;
-  min-height: 202px;
+  min-height: var(--fig);
 }
 
+/* Each card carries its figure at three sizes (sections/accent.ts): lg from 1200 px wide, md below that and on
+   tablets, sm on phones. One shows at a time: a figure is never scaled with CSS (T3: lines keep their width). */
 .v5-accent .v5-acc-svg {
   position: relative; /* above the hover glow */
-  display: block;
-}
-
-.v5-accent .v5-acc-svg--160 {
   display: none;
 }
 
+.v5-accent .v5-acc-svg--lg {
+  display: block;
+}
+
 /* Label + line at the bottom-left (v4a spec row: label sans 16/24 w500, value sans 15/22 ink-2). The block keeps
-   room for a two-line value, so the labels of a row share one baseline whether a value wraps or not. */
+   room for a two-line value, so the labels of a row share one baseline whether a value wraps or not. Positioned, so
+   it paints above the wide card's hover glow, which reaches past the figure. */
 .v5-accent .v5-acc-text {
+  position: relative;
   min-height: 72px;
   margin-top: 24px;
 }
@@ -145,12 +174,12 @@
    comes into view, so the comet moves, then stops where it is (WCAG 2.2.2: motion that starts by itself stops within
    5 s; staging v5 motion review P1-2). It used to loop for as long as the card was on screen. Paused at its first
    frame without JS. Reduced motion: animation none (below), the comet parks at its fixed spot. */
-.v5-accent :is(.lfc202, .lfc160) {
+.v5-accent :is(.lfc202, .lfc160, .lfc96) {
   animation: v5-acc-comet 10.5s linear infinite;
   animation-play-state: paused;
 }
 
-.v5-accent [data-playing] :is(.lfc202, .lfc160) {
+.v5-accent [data-playing] :is(.lfc202, .lfc160, .lfc96) {
   animation-play-state: running;
 }
 
@@ -162,8 +191,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 264px;
-    height: 264px;
+    width: calc(var(--fig) + 62px); /* 264 around a 202 figure */
+    height: calc(var(--fig) + 62px);
     translate: -50% -50%;
     border-radius: 50%;
     background: radial-gradient(closest-side, var(--accent-tint), transparent);
@@ -187,22 +216,63 @@
   }
 }
 
-/* --------------------------------------------------------------------------------------------- tablets */
-/* Three 202 figures no longer fit a row (a card's inside is 163 px at 768): two columns, as Mintlify's grid has at
-   768, and Resume closes the life cycle across both. */
-@media (min-width: 721px) and (max-width: 1023px) {
-  .v5-accent .v5-acc-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+/* ------------------------------------------------------------------------------------- below 1200 px wide */
+/* The row narrows with the page from here (the content width is 1120 from 1200 px): at 1024 the cards are 228 / 456
+   / 228, and a narrow card's inside no longer holds the 202 figure. The md figures: 160 in the narrow cards, 202 in
+   the wide one. Padding 20 (tablets and phones too), so a narrow card's text is 188 px at 1024 and a line still
+   takes two lines. */
+@media (max-width: 1199px) {
+  .v5-accent .v5-acc-card {
+    --fig: 160px;
+    padding: 20px;
   }
 
-  .v5-accent .v5-acc-card:last-child {
-    grid-column: 1 / -1;
+  .v5-accent .v5-acc-card--wide {
+    --fig: 202px;
+  }
+
+  .v5-accent .v5-acc-svg--lg {
+    display: none;
+  }
+
+  .v5-accent .v5-acc-svg--md {
+    display: block;
+  }
+}
+
+/* ------------------------------------------------------------------------------------- tablets and phones */
+/* One column, each card a row: its label and line on the left, the figure on the right, as the wide card has them
+   on desktop (a narrow card of a 1fr 2fr 1fr row would be 164 px wide at 768). Top to bottom, the order of the row;
+   the wide card keeps its larger figure. */
+@media (max-width: 1023px) {
+  .v5-accent .v5-acc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v5-accent .v5-acc-card {
+    display: grid;
+    grid-template: "text fig" auto / minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 24px;
+  }
+
+  .v5-accent .v5-acc-card .v5-acc-fig {
+    grid-area: fig;
+  }
+
+  .v5-accent .v5-acc-card .v5-acc-text {
+    grid-area: text;
+    align-self: center;
+    min-height: 0;
+    margin-top: 0;
   }
 }
 
 /* ---------------------------------------------------------------------------------------------- phones */
-/* Frame at 390: the lime runs edge to edge (no frame gutters), one column, the 160 figures. The panel cancels the
-   paper's inset; its fade ends transparent, so the gutters come back grey and the paper white, with no seam. */
+/* Frame at 390: the lime runs edge to edge (no frame gutters), one column. The panel cancels the paper's inset; its
+   fade ends transparent, so the gutters come back grey and the paper white, with no seam. The figures are 96 and sit
+   beside the text, so a card is 136 px tall, not 282-304 with a 160 figure above the text (staging
+   v5/review/graft-yc.md P2-1): the three cards and the H2 come close to one screen. */
 @media (max-width: 720px) {
   .v5-accent .v5-acc-gap {
     padding-bottom: 100px;
@@ -223,29 +293,30 @@
   }
 
   .v5-accent .v5-acc-grid {
-    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     margin-top: 40px;
   }
 
   .v5-accent .v5-acc-card {
-    padding: 28px 20px 20px;
+    --fig: 96px; /* the wide card too: this rule comes after its md size */
+    column-gap: 12px;
   }
 
-  .v5-accent .v5-acc-fig {
-    min-height: 160px;
-  }
-
-  .v5-accent .v5-acc-svg--202 {
+  .v5-accent .v5-acc-svg--md {
     display: none;
   }
 
-  .v5-accent .v5-acc-svg--160 {
+  .v5-accent .v5-acc-svg--sm {
     display: block;
   }
+}
 
-  .v5-accent .v5-acc-text {
-    min-height: 0;
+/* Below 360 the text beside the figure would be 140 px and the labels would break (320: 作業ディレク / トリ):
+   the figure goes above the text, which then has the card's full width. */
+@media (max-width: 359px) {
+  .v5-accent .v5-acc-card {
+    grid-template: "fig" auto "text" auto / minmax(0, 1fr);
+    row-gap: 16px;
   }
 }
 
@@ -263,7 +334,7 @@
 
 /* ------------------------------------------------------------------------------------------ reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .v5-accent :is(.lfc202, .lfc160) {
+  .v5-accent :is(.lfc202, .lfc160, .lfc96) {
     animation: none;
   }
 

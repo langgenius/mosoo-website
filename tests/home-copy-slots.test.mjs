@@ -54,8 +54,9 @@ const BUDGETS = {
   "spec.labels.*": 12,
   "spec.values.files": 24,
   "spec.values.*": 40,
-  // the full lime screen; three cards in one row (staging v5/graft/lime/NOTES.md: a 24-character label stays on one
-  // line and a 48-character line takes at most two, 360-1440)
+  // the full lime screen; three unequal cards in one row, 1fr 2fr 1fr, rows on phones (staging v5/polish/lime/NOTES.md:
+  // a 24-character label stays on one line and a 48-character line takes at most two from 1199 to 1440, in the tablet
+  // rows and in the phone rows from 375 to 720; at 1024 a narrow card's label line holds about 23 characters)
   "accent.tab": 22,
   "accent.gap": 16,
   "accent.h2a": 24,
@@ -162,10 +163,13 @@ test("every en slot has a budget and fits it", () => {
   assert.deepEqual(overflow, []);
 });
 
-// The full lime screen tells a Session's life between turns in three cards, in this order (sections/accent.ts PARTS:
-// sandbox, files, resume); the five parts themselves are the spec table's. zh and ja follow en's shape (below).
-test("the lime screen has three cards (en)", () => {
-  assert.equal(COPY.accent.en.cards.length, 3, "accent.cards: Sandbox, Files and conversation, Resume");
+// The full lime screen tells a Session between turns in three cards, in this order (sections/accent.ts PARTS: sandbox,
+// files, resume). Each label is a change of state, "<thing>: <state>", not a part's name: the five parts themselves
+// are the spec table's rows (staging v5/review/graft-yc.md P2-1). zh and ja follow en's shape (below).
+test("the lime screen has three cards, each label a change of state (en)", () => {
+  const cards = COPY.accent.en.cards;
+  assert.equal(cards.length, 3, "accent.cards: the sandbox, the working directory, the Session ID");
+  for (const { label } of cards) assert.match(label, /^\S[^:]*: \S/, `"${label}" reads "<thing>: <state>"`);
 });
 
 // The spec table (sections/spec.ts): one row per part, in this order, and the Harness row's four names are the hero's

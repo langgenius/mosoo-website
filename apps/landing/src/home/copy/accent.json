@@ -1,9 +1,9 @@
 {
-  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md; the three cards: staging v5/graft/lime/NOTES.md, lines at 1440, 1024, 768 and 390). Before the edge, on white: tab (a tab label, sans 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (sans 20 / 17, two lines at 1440, three at 390), and three cards in one row, a Session's life between turns in this order: Sandbox (what goes), Files and conversation (what stays), Resume (how it comes back). Label 16 w500, one line; line 15, at most two lines, balanced (accent.css): write each line as two phrases of about the same length, and join with a no-break space (\\u00a0) what must not be split across lines (Session ID, working directory, Live processes; ja: the particle after a Latin word). The five parts of a Session (harness, model, sandbox, files, resume) are the spec table's, so the cards do not list them again. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source below; the tab, gap, H2 and sub: staging v5/content/NOTES.md.",
+  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md; the cards: staging v5/polish/lime/NOTES.md, lines measured from 320 to 1440). Before the edge, on white: tab (a tab label, sans 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (sans 20 / 17, two lines at 1440, three at 390), and one row of three unequal cards (1fr 2fr 1fr; one card per row on tablets and phones), a Session between turns in this order: the sandbox (what goes), the working directory with the conversation (what stays: the wide middle card), the Session ID (what does not change). Each label is a change of state, \"<thing>: <state>\" (zh / ja with a full-width colon), not a part's name: the five parts are the spec table's rows. Label 16 w500, one line; line 15, at most two lines, balanced (accent.css): write each line as two phrases of about the same length, and join with a no-break space (\\u00a0) what must not be split across lines (Session ID, Git state, Live processes end; ja: the particle after a Latin word). Say exactly what comes back: attachments never enter a checkpoint (staging v5/FIXES.md row 10), so the cards name the working directory and the conversation, never the uploaded files. Do not add another \"days later\": the hero, the stage, the spec table, the gap line and the FAQ already say it. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source below; the tab, gap, H2 and sub: staging v5/content/NOTES.md. The zh and ja cards (2026-10-20 polish) still need a native speaker's review.",
   "$source": {
     "h2": "v4b's line. The sandbox is reclaimed once idle (docs/prd/session-lifecycle.md L8); the Session has no inactivity deadline (SPEC §4 L60) and continues after the sandbox was reclaimed (SPEC §4 L53).",
     "sub": "A turn succeeds only when a checkpoint of its workspace and native conversation commits with it, and failed or cancelled turns never replace the last one (SPEC §4 L46, L49); the next input restores it, on a fresh sandbox once the old one was reclaimed (session-lifecycle.md L8).",
-    "cards": "Sandbox: a sandbox left idle is reclaimed automatically (session-lifecycle.md L8; SESSION_RUNTIME_IDLE_GRACE_MS = 5 min, apps/api/src/modules/runtime/domain/session-runtime-policy.ts L2), never before the turn's checkpoint commits (SPEC §4 L47); live processes, sockets and machine-wide temporary state are never carried over (SPEC §4 L54). Files and conversation: v4c's audited 'Files and conversation restored'; a later turn finds the working directory, files outside outputs/ included, and the harness's native conversation (SPEC §4 L53; README L26; session-files.md L9). Attachments never enter a checkpoint (SPEC §4 L54; session-files.md L16), so the line names the working directory, as the stage's Resume line does (v5 truth review P1-1). Resume: the Thread ID is the one handle (SPEC §4 L38) and the same Session ID continues (SPEC §7 L82); a reply days later has the same semantics after the sandbox was reclaimed, and the next input restores it on a fresh sandbox (SPEC §4 L53; session-lifecycle.md L8; 'fresh sandbox' is v4c's audited wording)."
+    "cards": "Main repo excellent-frost-5baed21b at 8faf66a79a. Card 1, Sandbox: reclaimed / When idle. Live processes end with it.: a sandbox left idle for SESSION_RUNTIME_IDLE_GRACE_MS is reclaimed automatically (docs/prd/session-lifecycle.md L8; 5 min, apps/api/src/modules/runtime/domain/session-runtime-policy.ts L2), never before the turn's checkpoint commits (docs/SPEC.md L47); live processes, sockets and machine-wide temporary state are never carried over (SPEC L54). Card 2, Working directory: kept / Git state, dependencies, and the conversation.: cold continuation exposes the same state as warm, the working directory including files outside outputs/, Git state and dependencies installed inside it, and the harness's native conversation (SPEC L53; README.md L26: keeps the working directory and the native conversation between turns; docs/prd/session-files.md L9). Attachments are mounted read-only from file storage and never enter a checkpoint (SPEC L54; session-files.md L16), so no card says the uploaded files come back. Card 3, Session ID: unchanged / On a fresh sandbox, never an empty Session.: the handle is one durable ID, thread.id (SPEC L38), and follow-up input uses the same handle (SPEC L72; acceptance: a follow-up after forced reclamation continues the same Session ID, SPEC L82); the next input restores the last committed native conversation on a fresh sandbox (session-lifecycle.md L8); a missing or unrestorable checkpoint fails the continuation explicitly: mosoo never opens an empty workspace or conversation in its place and never substitutes a new Session (SPEC L56). zh / ja say the same: zh 3 \"绝不会是空的 Session\" and ja 3 \"中身は空になりません\" are SPEC L56."
   },
   "en": {
     "tab": "Between turns",
@@ -12,9 +12,9 @@
     "h2b": "The Session stays.",
     "sub": "Every successful turn ends in a checkpoint. The next turn resumes from there.",
     "cards": [
-      { "label": "Sandbox", "line": "Reclaimed when idle. Live processes end with it." },
-      { "label": "Files and conversation", "line": "The whole working directory, not just outputs/." },
-      { "label": "Resume", "line": "Days later, same Session ID, on a fresh sandbox." }
+      { "label": "Sandbox: reclaimed", "line": "When idle. Live processes end with it." },
+      { "label": "Working directory: kept", "line": "Git state, dependencies, and the conversation." },
+      { "label": "Session ID: unchanged", "line": "On a fresh sandbox, never an empty Session." }
     ]
   },
   "zh": {
@@ -24,9 +24,9 @@
     "h2b": "Session 还在。",
     "sub": "成功的一轮，留下检查点。下一轮，从那里继续。",
     "cards": [
-      { "label": "Sandbox", "line": "闲置后自动回收，进程随之结束。" },
-      { "label": "文件和对话", "line": "整个工作目录，不只是 outputs/。" },
-      { "label": "续接", "line": "几天后，同一个 Session ID，sandbox 已换新。" }
+      { "label": "Sandbox：已回收", "line": "闲置后自动回收，进程随之结束。" },
+      { "label": "工作目录：保留", "line": "Git 状态、依赖和对话都在。" },
+      { "label": "Session ID：不变", "line": "在新 sandbox 上继续，绝不会是空的 Session。" }
     ]
   },
   "ja": {
@@ -36,9 +36,9 @@
     "h2b": "Session は残る。",
     "sub": "成功したターンはチェックポイントで終わり、次のターンはそこから再開します。",
     "cards": [
-      { "label": "Sandbox", "line": "アイドルが続くと回収。プロセスは残りません。" },
-      { "label": "ファイルと会話", "line": "outputs/ だけでなく、作業ディレクトリ全体。" },
-      { "label": "再開", "line": "数日後も、同じ Session ID を新しい sandbox で。" }
+      { "label": "Sandbox：回収済み", "line": "アイドルが続くと回収。プロセスは残りません。" },
+      { "label": "作業ディレクトリ：保持", "line": "Git の状態も、依存関係も、会話も。" },
+      { "label": "Session ID：変更なし", "line": "新しい sandbox でも、中身は空になりません。" }
     ]
   }
 }

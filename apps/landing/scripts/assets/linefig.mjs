@@ -16,9 +16,9 @@
 //
 // Options:
 //   --out <dir>      output folder (default apps/landing/public/landing/v5/figures)
-//   --set parts|ref  parts (default): five Session parts x (pick, alternate) x sizes
+//   --set parts|ref  parts (default): five Session parts x (pick, alternate) x sizes, plus the picks' MORE sizes
 //                    ref: ElevenLabs' three figures rebuilt from measured numbers, for the proof only; refused inside the repo
-//   --sizes 202,160  --ink #161815  --fill #FFFFFF
+//   --sizes 202,160  --ink #161815  --fill #FFFFFF   (passing --sizes writes exactly those sizes, without MORE)
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -35,6 +35,10 @@ const OUT = resolve(opt("out", join(LANDING, "public/landing/v5/figures")));
 const INK = opt("ink", "#161815");
 const FILL = opt("fill", "#FFFFFF");
 const SIZES = opt("sizes", "202,160").split(",").map(Number);
+// The full lime screen also shows three picks at sizes of their own (sections/accent.ts; staging
+// v5/polish/lime/NOTES.md): Files at 296 in the wide middle card, and all three at 96 beside the text on phones.
+// Picks only, and only in the default batch; the 202 and 160 files stay as they were, byte for byte.
+const MORE = argv.includes("--sizes") ? {} : { sandbox: [96], files: [296, 96], resume: [96] };
 
 // ---------- grammar (measured; refs/elevenlabs/v5/STUDY.md §2.2, §2.5) ----------
 const G = {
@@ -501,7 +505,7 @@ if (SET === "ref") {
 } else {
   for (const [part, variants] of Object.entries(PARTS)) {
     for (const [slot, v] of Object.entries(variants)) {
-      for (const S of SIZES) {
+      for (const S of [...SIZES, ...(slot === "pick" ? (MORE[part] ?? []) : [])]) {
         const p = pen(S);
         const r = v.draw(p);
         const fig = Array.isArray(r) ? { items: r } : r;
