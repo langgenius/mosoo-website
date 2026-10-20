@@ -364,7 +364,7 @@ function PlatformRow({
 
   return (
     <ServiceRow
-      name={t("Mosoo API & control plane")}
+      name={t("mosoo API & control plane")}
       status={status}
       detail={detail}
       description={t(
@@ -502,7 +502,7 @@ function recentNotices(
       notices.push({
         body: (
           <>
-            <span className="font-semibold">{t("Mosoo API & control plane")}</span> ·{" "}
+            <span className="font-semibold">{t("mosoo API & control plane")}</span> ·{" "}
             {t("A production invocation failed")}
           </>
         ),
@@ -700,14 +700,14 @@ export function StatusPage(): ReactElement {
       <div className="sp-notes">
         <div>
           <p className="sp-note-h">
-            {t("Signal source")} · {t("Cloudflare + Mosoo")}
+            {t("Signal source")} · {t("Cloudflare + mosoo")}
           </p>
           <p className="sp-note-p">
             {t(
-              "Status is derived from Cloudflare Worker outcomes and Mosoo Run terminal events. No synthetic Agent calls, no model-token spend.",
+              "Status is derived from Cloudflare Worker outcomes and mosoo Run terminal events. No synthetic Agent calls, no model-token spend.",
             )}{" "}
             {t(
-              "Cloudflare supplies invocation outcomes; Mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.",
+              "Cloudflare supplies invocation outcomes; mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.",
             )}
           </p>
         </div>
