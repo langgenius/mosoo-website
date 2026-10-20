@@ -446,6 +446,15 @@
   }
 }
 
+/* Below 360 the longest value, "Claude Agent SDK" with its glyph, is wider than the card at 28px (36px over its
+   content box at 320, 16 at 340, measured on the round 3a build; the time pass shows it for 1.4 s): 22px keeps it
+   inside (about 9px to spare at 320). */
+@media (max-width: 359px) {
+  .v5-spec .v5-spec-val {
+    font-size: 22px;
+  }
+}
+
 /* --------------------------------------------------------------------------------------------- forced colours */
 @media (forced-colors: active) {
   .v5-spec .v5-spec-card {
