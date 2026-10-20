@@ -1,17 +1,9 @@
 @import "tailwindcss";
 @import "./d-object.css";
 
-@font-face {
-  font-family: "Geist";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("/fonts/Geist-Variable.woff2") format("woff2-variations"),
-    url("/fonts/Geist-Variable.woff2") format("woff2");
-}
-/* No Cabinet Grotesk here: it shipped without a licence file (REVIEW-v4 §6.3,
-   #146), and the subpage titles use the display token below instead. */
+/* No Cabinet Grotesk, Geist or Geist Mono here: no rule asked for them, and
+   their files are gone from public/fonts (#143). The subpage titles use the
+   display token below. */
 /* Text: Hanken Grotesk (OFL), variable wght 100-900, the same file, range and
    fallback as the home (src/home/system.css). It has no CJK glyphs: the range
    is the file's own cmap, so /zh and /ja only fetch it for their Latin words
@@ -156,57 +148,53 @@
   src: url("/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
   unicode-range: U+0000-2FFF;
 }
-@font-face {
-  font-family: "Geist Mono";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
-    url("/fonts/GeistMono-Variable.woff2") format("woff2");
-}
 
 :root {
-  /* Brand green (#6FD305). A disciplined accent only (ATLAS §2.3): live dots,
-     1–2px lines and focus rings; primary actions stay ink. */
-  --green-50: #f4fce4;
-  --green-100: #e7f8c4;
-  --green-200: #d3f195;
-  --green-300: #b6e85f;
-  --green-400: #95dd2c;
-  --green-500: #6fd305;
-  --green-600: #5cb300;
-  --green-700: #498c07;
-  --green-800: #3a6e0e;
-  --green-900: #2c5113;
-  --green-950: #1a310b;
+  /* v5 colour on every page this sheet styles (#143, staging committee/PLAN.md
+     2-4 item 3): the home's one ink family, its frame, paper and lime
+     (src/home/system.css; d-object.css --d-* holds the same values). The older
+     names stay as aliases, so the Tailwind utilities and shared rules that
+     still read them get v5 values:
+       ink-950…700 → ink · 600…500 → ink-2 · 400 → ink-3-text (small text,
+       5.2:1 on white) · 300 → ink-3 (24px and up, or decoration) · 200, 100 →
+       the two line weights · 50 → the frame;
+       paper-50…100 → paper · 200 → frame · 300 → the frame's hover · 400 → line;
+       the green ramp → the lime family (no green text on white, so its dark
+       end is ink).
+     Before, these were cool greys, [data-theme="landing"] had a warm forest
+     set and the accent was #6fd305: four near-black text colours and a second
+     green across the subpages (committee/ui-inventory/INVENTORY.md §0). */
+  --green-50: var(--d-accent-tint);
+  --green-100: var(--d-accent-tint);
+  --green-200: var(--d-accent-tint);
+  --green-300: var(--d-accent-tint);
+  --green-400: var(--d-accent);
+  --green-500: var(--d-accent);
+  --green-600: var(--d-accent);
+  --green-700: var(--d-ink);
+  --green-800: var(--d-ink);
+  --green-900: var(--d-ink);
+  --green-950: var(--d-ink);
 
-  /* Signal lime — reserved for the single hero announcement chip. Deliberately
-     outside the brand-green ramp and theme-invariant: it must read as "new"
-     on the cool-gray root palette and on the warm landing palette alike, with
-     near-black ink on top (#050a08 on #c8ff00 ≈ 17:1). */
-  --lime: #c8ff00;
+  --lime: var(--d-accent);
 
-  /* Neutrals — true cool grays, GitHub-like. No green cast; the grays carry
-     the UI and the green only punctuates it. */
-  --ink-50: #f4f6f8;
-  --ink-100: #e9ecf0;
-  --ink-200: #d2d7dd;
-  --ink-300: #aeb5be;
-  --ink-400: #828a93;
-  --ink-500: #656c75;
-  --ink-600: #515860;
-  --ink-700: #3d434b;
-  --ink-800: #2b3036;
-  --ink-900: #1c2024;
-  --ink-950: #08090a;
+  --ink-50: var(--d-frame);
+  --ink-100: var(--d-line);
+  --ink-200: var(--d-line-2);
+  --ink-300: var(--d-ink-3);
+  --ink-400: var(--d-ink-3-text);
+  --ink-500: var(--d-ink-2);
+  --ink-600: var(--d-ink-2);
+  --ink-700: var(--d-ink);
+  --ink-800: var(--d-ink);
+  --ink-900: var(--d-ink);
+  --ink-950: var(--d-ink);
 
-  /* Paper — cool near-white surface ramp (was warm cream). */
-  --paper-50: #ffffff;
-  --paper-100: #fbfbfc;
-  --paper-200: #f4f6f8;
-  --paper-300: #e9ecf0;
-  --paper-400: #dfe3e8;
+  --paper-50: var(--d-paper);
+  --paper-100: var(--d-paper);
+  --paper-200: var(--d-frame);
+  --paper-300: var(--d-frame-2);
+  --paper-400: var(--d-line-2);
 
   /* Status accents — kept small, marker-level only. Each carries a paired
      darker text (_fg) and soft tint (_bg) so chips can render readable copy
@@ -226,13 +214,13 @@
   --ember-fg: #b91c1c;
   --ember-bg: #fbeaea;
   --success-fg: var(--green-800);
-  --success-bg: #edf9d8;
+  --success-bg: var(--d-accent-tint);
 
   --bg: var(--paper-100);
-  --bg-elevated: #ffffff;
+  --bg-elevated: var(--d-paper);
   --bg-sunken: var(--paper-200);
-  --bg-canvas: #ffffff;
-  --bg-sidebar: #fbfbfc;
+  --bg-canvas: var(--d-paper);
+  --bg-sidebar: var(--d-paper);
 
   --fg-1: var(--ink-900);
   --fg-2: var(--ink-500);
@@ -240,26 +228,24 @@
   --fg-muted: var(--ink-300);
   --fg-inverse: var(--paper-100);
 
-  /* Cool hairlines — ink-900 based, no green cast. */
-  --border-soft: rgba(28, 32, 36, 0.06);
-  --border-default: rgba(28, 32, 36, 0.1);
-  --border-strong: rgba(28, 32, 36, 0.16);
+  /* The home's two line weights (--line 10%, --line-2 18%). */
+  --border-soft: var(--d-line);
+  --border-default: var(--d-line);
+  --border-strong: var(--d-line-2);
 
-  /* Primary = black (neutral-first, like GitHub). Green is the rare accent. */
+  /* Primary = ink; the one solid colour for a button is the lime (UI-LOCK §1). */
   --primary: var(--ink-900);
   --primary-hover: var(--ink-800);
-  --fg-on-accent: #0f1a02; /* dark ink on bright green */
+  --fg-on-accent: var(--d-ink);
 
   --accent: var(--green-500);
-  --accent-hover: var(--green-600);
+  --accent-hover: var(--d-accent-hover);
   --accent-press: var(--green-800);
   --accent-soft: var(--green-50);
   --accent-soft-hover: var(--green-100);
-  --accent-ring: rgba(111, 211, 5, 0.45);
-  /* Keyboard focus indicator. Solid, so it clears the 3:1 non-text contrast
-     floor on paper (green-800 on #fbfbfc is 5.9:1); the translucent
-     --accent-ring stays for decorative halos only. */
-  --focus-ring: var(--green-800);
+  --accent-ring: var(--d-line-2);
+  /* Keyboard focus: 2px ink, as on the home (d-object.css :focus-visible). */
+  --focus-ring: var(--d-ink);
 
   --success: var(--green-700);
   --info: var(--sky);
@@ -314,13 +300,14 @@
   --r-lg: 14px;
   --r-xl: 20px;
 
-  --shadow-xs: 0 1px 0 rgba(28, 32, 36, 0.04), 0 1px 2px rgba(28, 32, 36, 0.04);
-  --shadow-sm: 0 1px 2px rgba(28, 32, 36, 0.05), 0 2px 6px rgba(28, 32, 36, 0.04);
-  --shadow-md: 0 4px 10px rgba(28, 32, 36, 0.06), 0 8px 20px rgba(28, 32, 36, 0.05);
-  --shadow-lg: 0 12px 28px rgba(28, 32, 36, 0.1), 0 4px 12px rgba(28, 32, 36, 0.05);
-  --shadow-xl: 0 30px 60px rgba(28, 32, 36, 0.16), 0 10px 20px rgba(28, 32, 36, 0.07);
-  --shadow-inset: inset 0 0 0 1px rgba(28, 32, 36, 0.06);
-  --shadow-focus: 0 0 0 2px var(--accent-ring);
+  /* Shadows on the v5 ink (#161815), not the old cool grey. */
+  --shadow-xs: 0 1px 0 rgb(22 24 21 / 0.04), 0 1px 2px rgb(22 24 21 / 0.04);
+  --shadow-sm: 0 1px 2px rgb(22 24 21 / 0.05), 0 2px 6px rgb(22 24 21 / 0.04);
+  --shadow-md: 0 4px 10px rgb(22 24 21 / 0.06), 0 8px 20px rgb(22 24 21 / 0.05);
+  --shadow-lg: 0 12px 28px rgb(22 24 21 / 0.1), 0 4px 12px rgb(22 24 21 / 0.05);
+  --shadow-xl: 0 30px 60px rgb(22 24 21 / 0.16), 0 10px 20px rgb(22 24 21 / 0.07);
+  --shadow-inset: inset 0 0 0 1px rgb(22 24 21 / 0.06);
+  --shadow-focus: 0 0 0 2px var(--focus-ring);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -357,72 +344,16 @@
 }
 
 /* ----------------------------------------------------------------------------
-   Landing scope — the pre-auth experience (marketing landing + auth card) was
-   redesigned on the warm paper/forest palette and is deliberately preserved.
-   Everything OUTSIDE this scope uses the GitHub-style cool-gray system in :root.
-   This block restores the original token values for the /login subtree only.
+   Landing scope (LandingShell's data-theme="landing": status, pricing and the
+   use-case pages). It used to restore the warm paper / forest palette of the
+   old landing; since #143 it reads the v5 aliases in :root like every other
+   page and keeps only its own status hues (status-page amber and ember).
    --------------------------------------------------------------------------- */
 [data-theme="landing"] {
-  --green-50: #e6f2eb;
-  --green-100: #cce5d6;
-  --green-200: #99c9ad;
-  --green-300: #66ae85;
-  --green-400: #339362;
-  --green-500: #127a46;
-  --green-600: #0c6d3b;
-  --green-700: #086030;
-  --green-800: #065026;
-  --green-900: #043a1b;
-  --green-950: #021f0e;
-
-  --ink-50: #f3f4f1;
-  --ink-100: #e5e7e1;
-  --ink-200: #c6cbc2;
-  --ink-300: #97a095;
-  --ink-400: #667065;
-  --ink-500: #434c46;
-  --ink-600: #2c332e;
-  --ink-700: #1b231f;
-  --ink-800: #101815;
-  --ink-900: #0b1a14;
-  --ink-950: #050a08;
-
-  --paper-50: #fafaf7;
-  --paper-100: #f7f6f1;
-  --paper-200: #efede4;
-  --paper-300: #e4e1d4;
-  --paper-400: #d1ccbb;
-
   --soil: #7a5230;
   --sky: #5a8fb8;
   --amber: #d49a3c;
   --ember: #c9523b;
-
-  --bg-sidebar: #fdfdfb;
-
-  --border-soft: rgba(11, 26, 20, 0.05);
-  --border-default: rgba(11, 26, 20, 0.08);
-  --border-strong: rgba(11, 26, 20, 0.14);
-
-  /* primary stays the warm green here, as the landing was originally designed */
-  --primary: var(--accent);
-  --primary-hover: var(--accent-hover);
-
-  --accent: var(--green-700);
-  --accent-hover: var(--green-600);
-  --accent-press: var(--green-800);
-  --accent-soft: var(--green-50);
-  --accent-soft-hover: var(--green-100);
-  --accent-ring: rgba(8, 96, 48, 0.22);
-  /* green-600 on paper-100 is 5.9:1 (the old 22% ring was 1.4:1). */
-  --focus-ring: var(--green-600);
-
-  --shadow-xs: 0 1px 0 rgba(11, 26, 20, 0.04), 0 1px 2px rgba(11, 26, 20, 0.04);
-  --shadow-sm: 0 1px 2px rgba(11, 26, 20, 0.04), 0 2px 6px rgba(11, 26, 20, 0.04);
-  --shadow-md: 0 4px 10px rgba(11, 26, 20, 0.05), 0 8px 20px rgba(11, 26, 20, 0.04);
-  --shadow-lg: 0 12px 28px rgba(11, 26, 20, 0.08), 0 4px 12px rgba(11, 26, 20, 0.04);
-  --shadow-xl: 0 30px 60px rgba(11, 26, 20, 0.14), 0 10px 20px rgba(11, 26, 20, 0.06);
-  --shadow-inset: inset 0 0 0 1px rgba(11, 26, 20, 0.06);
 }
 
 .dark,
@@ -856,11 +787,11 @@ html:has(.landing-shell[data-theme="landing"]) {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(28, 32, 36, 0.12);
+  background: rgb(22 24 21 / 0.12);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(28, 32, 36, 0.2);
+  background: rgb(22 24 21 / 0.2);
 }
 
 /* Streaming "Thinking…" indicator — a soft highlight sweeping left-to-right. */
@@ -927,20 +858,737 @@ html:has(.landing-shell[data-theme="landing"]) {
 }
 
 /* ----------------------------------------------------------------------------
-   v5 subpages (status, use cases), 2026-10-20 clean-up (REVIEW-v4 G9, #143).
-   Ink on the white paper and no green anywhere: titles take the display token
-   (Roboto Serif, the face of the home's two-tone serif), lines are
-   1px ink hairlines, the one button is ink. The colours read the d-object
-   chrome tokens, with the v5 values (BRIEF §3.1) as fallbacks, so the pages
-   follow the chrome when it moves.
+   v5 subpages (status, pricing, use cases): REVIEW-v4 G9, #143, #138.
+   Ink on the white paper: titles take the display token (--font-display, the
+   face of the home's headings), lines are the home's two hairlines, the frame
+   is the one neutral ground. One lime button per page, and only to mosoo; every
+   other action is the grey secondary or a text link (committee O1). The
+   colours read the d-object chrome tokens, with the v5 values (BRIEF §3.1) as
+   fallbacks, so the pages follow the chrome when it moves.
    --------------------------------------------------------------------------- */
 :root {
   --sub-ink: var(--d-ink, #161815);
   --sub-ink-2: var(--d-ink-2, #515350);
   --sub-ink-3: var(--d-ink-3, #7f817e);
-  --sub-line: var(--d-line, rgb(22 24 21 / 0.08));
-  --sub-line-2: var(--d-line-2, rgb(22 24 21 / 0.16));
+  --sub-ink-3-text: var(--d-ink-3-text, #6b6d6a);
+  --sub-line: var(--d-line, rgb(22 24 21 / 0.1));
+  --sub-line-2: var(--d-line-2, rgb(22 24 21 / 0.18));
   --sub-well: rgb(22 24 21 / 0.07);
+  --sub-frame: var(--d-frame, #f4f4f4);
+  --sub-frame-2: var(--d-frame-2, #ebebeb);
+  --sub-lime: var(--d-accent, #bcf870);
+  --sub-lime-hover: var(--d-accent-hover, #d8fba9);
+  --sub-lime-tint: var(--d-accent-tint, #deffb5);
+  /* Under a white card on the frame: a 6% ink ring and the kit's ground shadow (src/home/kit/kit.css). */
+  --sub-card-shadow: 0 0 0 1px rgb(22 24 21 / 0.06), 0 6px 26px rgb(22 24 21 / 0.08);
+  --sub-ease-theme: cubic-bezier(0.4, 0, 0.2, 1);
+  --sub-ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------- buttons */
+/* The home's buttons (src/home/system.css .v5-btn): 48px (44 on phones), r8,
+   Hanken 16/500, a 1px transparent border that shows as a frame in forced
+   colours. Lime for the one button that goes to mosoo, with the home's glow;
+   the grey secondary (committee O1: #f4f4f4, no line, no shadow) for the rest,
+   outbound links included. A text link sits beside them. */
+.sub-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--sub-ink);
+  font: 500 16px/1 var(--font-sans);
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s var(--sub-ease-theme),
+    transform 0.15s var(--sub-ease-expo);
+}
+
+.sub-btn:active {
+  transform: scale(0.97);
+}
+
+.sub-btn:focus-visible {
+  outline: 2px solid var(--sub-ink);
+  outline-offset: 2px;
+}
+
+.sub-btn svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.sub-btn--lime {
+  background: var(--sub-lime);
+  box-shadow: 0 4px 24px var(--sub-lime-tint);
+}
+
+.sub-btn--lime:hover {
+  background: var(--sub-lime-hover);
+}
+
+.sub-btn--grey {
+  background: var(--sub-frame);
+}
+
+.sub-btn--grey:hover {
+  background: var(--sub-frame-2);
+}
+
+.sub-btn:disabled,
+.sub-btn[aria-disabled="true"] {
+  background: var(--sub-frame);
+  box-shadow: none;
+  color: var(--sub-ink-3-text);
+  cursor: default;
+  transform: none;
+}
+
+/* A text link with the buttons' height and type: ink-2, underlined on hover. */
+.sub-tlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 8px;
+  color: var(--sub-ink-2);
+  font: 500 16px/1 var(--font-sans);
+  letter-spacing: -0.005em;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  white-space: nowrap;
+  transition: text-decoration-color 0.15s var(--sub-ease-theme);
+}
+
+.sub-tlink:hover {
+  text-decoration-color: currentColor;
+}
+
+.sub-tlink svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.sub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .sub-btn,
+  .sub-tlink {
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-btn,
+  .sub-tlink {
+    transition: none;
+  }
+
+  .sub-btn:active {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------- use cases */
+/* The use-case detail pages (routes/use-cases/case-parts.tsx), #143: cleaned
+   up, not re-laid out. No kicker over the title (the case's name is in the
+   way back), no outlined boxes or chips: the frame is the one ground for a
+   screenshot, the request path and a card; blocks sit under the home's
+   hairline; numbers only where steps happen in order, in ink-3-text. */
+.uc {
+  width: min(1120px, 100%);
+  margin-inline: auto;
+  padding: 64px 24px 96px;
+  color: var(--sub-ink);
+}
+
+.uc-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.uc-crumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--sub-ink);
+  font: 500 14px/20px var(--font-sans);
+}
+
+.uc-crumb li + li::before {
+  content: "/";
+  content: "/" / "";
+  margin: 0 8px;
+  color: var(--sub-ink-3-text);
+  font-weight: 400;
+}
+
+/* A 32px target around a 20px line, without moving the line. */
+.uc-crumb a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-block: -6px;
+  padding-block: 6px;
+  color: var(--sub-ink-2);
+  text-decoration: none;
+  transition: color 0.15s var(--sub-ease-theme);
+}
+
+.uc-crumb a:hover {
+  color: var(--sub-ink);
+}
+
+.uc-crumb svg {
+  width: 14px;
+  height: 14px;
+}
+
+.uc-h1 {
+  max-width: 860px;
+  margin: 24px 0 0;
+  color: var(--sub-ink);
+  text-wrap: balance;
+}
+
+.uc-lead {
+  max-width: 680px;
+  margin: 20px 0 0;
+  color: var(--sub-ink-2);
+  font: 400 16px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.uc-by {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 24px 0 0;
+  color: var(--sub-ink-3-text);
+  font: 400 14px/20px var(--font-sans);
+}
+
+.uc-by img {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.uc-by-name {
+  color: var(--sub-ink);
+  font-weight: 500;
+}
+
+.uc-head-actions {
+  margin-top: 28px;
+}
+
+.uc-sec {
+  margin-top: 96px;
+}
+
+.uc-sec--near {
+  margin-top: 80px;
+}
+
+.uc-sec--shot {
+  margin-top: 64px;
+}
+
+.uc-h2 {
+  margin: 0;
+  color: var(--sub-ink);
+}
+
+.uc-intro {
+  max-width: 720px;
+  margin: 16px 0 0;
+  color: var(--sub-ink-2);
+  font: 400 16px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+/* A screenshot (or the demo): a white card on the frame, the caption under it. */
+.uc-shot {
+  margin: 0;
+}
+
+.uc-board {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--sub-frame);
+}
+
+.uc-shot-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: var(--d-paper, #fff);
+  box-shadow: var(--sub-card-shadow);
+}
+
+.uc-cap {
+  margin: 12px 0 0;
+  color: var(--sub-ink-3-text);
+  font: 400 14px/20px var(--font-sans);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.uc-gallery {
+  display: grid;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+/* Steps, points and facts: under the home's hairline, a title and a sentence. */
+.uc-items {
+  display: grid;
+  gap: 32px 40px;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.uc-item,
+.uc-fact {
+  padding-top: 20px;
+  border-top: 1px solid var(--sub-line-2);
+}
+
+.uc-item-h {
+  margin: 0;
+  color: var(--sub-ink);
+  font: 500 16px/1.4 var(--font-sans);
+}
+
+.uc-item-p {
+  margin: 10px 0 0;
+  color: var(--sub-ink-2);
+  font: 400 15px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.uc-steps {
+  counter-reset: uc-step;
+}
+
+.uc-steps > li {
+  counter-increment: uc-step;
+}
+
+.uc-steps .uc-item-h::before {
+  content: counter(uc-step) ".";
+  margin-right: 8px;
+  color: var(--sub-ink-3-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.uc-facts {
+  display: grid;
+  gap: 32px 40px;
+}
+
+/* The stack: names with a middle dot before each; the row is pulled left by one dot inside a clipping box, so a
+   dot that would start a line is hidden. */
+.uc-tags {
+  margin: 10px 0 0;
+  overflow: hidden;
+}
+
+.uc-tags ul {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 2px;
+  margin: 0 0 0 -20px;
+  padding: 0;
+  list-style: none;
+  color: var(--sub-ink-2);
+  font: 500 15px/1.6 var(--font-sans);
+}
+
+.uc-tags li {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.uc-tags li::before {
+  content: "·";
+  content: "·" / "";
+  flex: none;
+  width: 20px;
+  color: var(--sub-ink-3-text);
+  text-align: center;
+}
+
+/* The request path: the hops on the frame, one per line, in the mono of objects. */
+.uc-path {
+  padding: 18px 20px 20px;
+  border-radius: 12px;
+  background: var(--sub-frame);
+}
+
+.uc-path-h {
+  margin: 0;
+  color: var(--sub-ink-2);
+  font: 500 14px/20px var(--font-sans);
+}
+
+.uc-path-list {
+  margin: 10px 0 0;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  color: var(--sub-ink);
+  font: 400 13px/2 var(--font-mono);
+}
+
+.uc-path-list li {
+  white-space: nowrap;
+}
+
+.uc-path-list li + li::before {
+  content: "->";
+  content: "->" / "";
+  margin-right: 8px;
+  color: var(--sub-ink-3-text);
+}
+
+.uc-note {
+  margin: 12px 0 0;
+  color: var(--sub-ink-3-text);
+  font: 400 14px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+/* codex-pet: the demo beside two facts. */
+.uc-demo {
+  display: grid;
+  gap: 32px;
+}
+
+.uc-demo-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.uc-video-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--d-paper, #fff);
+  box-shadow: var(--sub-card-shadow);
+}
+
+.uc-video-card video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.uc-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.uc-play-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgb(22 24 21 / 0.85);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  transition: scale 0.2s var(--sub-ease-expo);
+}
+
+.uc-play:hover .uc-play-dot {
+  scale: 1.05;
+}
+
+.uc-play-dot svg {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+
+.uc-video-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 4px 0;
+  color: var(--sub-ink);
+  font: 500 14px/20px var(--font-sans);
+}
+
+.uc-video-time {
+  color: var(--sub-ink-3-text);
+  font: 400 13px/20px var(--font-mono);
+}
+
+/* go-gym: the smoke test beside its result, the six hops, the cards. */
+.uc-proof {
+  display: grid;
+  gap: 32px;
+}
+
+.uc-panel {
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--sub-frame);
+}
+
+.uc-checks {
+  display: grid;
+  gap: 12px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.uc-checks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sub-ink);
+  font: 500 15px/1.4 var(--font-sans);
+}
+
+.uc-checks svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.uc-flow {
+  display: grid;
+  margin: 32px 0 0;
+  padding: 0;
+  counter-reset: uc-flow;
+  border-radius: 12px;
+  background: var(--sub-frame);
+  list-style: none;
+}
+
+.uc-flow li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 96px;
+  padding: 16px;
+  counter-increment: uc-flow;
+  color: var(--sub-ink);
+  font: 500 14px/1.4 var(--font-sans);
+}
+
+.uc-flow li::before {
+  content: counter(uc-flow);
+  color: var(--sub-ink-3-text);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.uc-flow li + li {
+  border-top: 1px solid var(--sub-line);
+}
+
+.uc-cards {
+  display: grid;
+  gap: 16px;
+  margin: 32px 0 0;
+}
+
+.uc-cards .uc-item-p {
+  margin-top: 8px;
+}
+
+/* A resource card links out: a still arrow, and hovering underlines the label (one change). */
+.uc-res {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 128px;
+  padding: 20px;
+  color: var(--sub-ink);
+  text-decoration: none;
+}
+
+.uc-res-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font: 500 15px/1.4 var(--font-sans);
+}
+
+.uc-res-label {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.15s var(--sub-ease-theme);
+}
+
+.uc-res:hover .uc-res-label {
+  text-decoration-color: currentColor;
+}
+
+.uc-res svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.uc-res-p {
+  margin-top: 8px;
+  color: var(--sub-ink-2);
+  font: 400 14px/1.55 var(--font-sans);
+}
+
+.uc-close {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 96px;
+  padding-top: 64px;
+  border-top: 1px solid var(--sub-line);
+  text-align: center;
+}
+
+.uc-close-h {
+  max-width: 640px;
+  text-wrap: balance;
+}
+
+.uc-close-p {
+  max-width: 640px;
+  margin: 16px 0 0;
+  color: var(--sub-ink-2);
+  font: 400 16px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.uc-close-actions {
+  justify-content: center;
+  margin-top: 28px;
+}
+
+@media (min-width: 640px) {
+  .uc-checks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .uc-cards--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .uc-items,
+  .uc-facts--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .uc-facts--2,
+  .uc-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .uc-demo {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    align-items: start;
+  }
+
+  .uc-proof {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    align-items: start;
+  }
+
+  .uc-flow {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .uc-flow li + li {
+    border-top: 0;
+    border-left: 1px solid var(--sub-line);
+  }
+}
+
+@media (min-width: 1024px) {
+  .uc-cards--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .uc {
+    padding: 48px 16px 80px;
+  }
+
+  .uc-sec,
+  .uc-sec--near {
+    margin-top: 64px;
+  }
+
+  .uc-sec--shot {
+    margin-top: 48px;
+  }
+
+  .uc-items {
+    margin-top: 32px;
+  }
+
+  .uc-board {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .uc-close {
+    margin-top: 80px;
+    padding-top: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uc-crumb a,
+  .uc-res-label,
+  .uc-play-dot {
+    transition: none;
+  }
 }
 
 /* ---------------------------------------------------------------- status */
@@ -989,48 +1637,28 @@ html:has(.landing-shell[data-theme="landing"]) {
   font: 400 13px/1.5 var(--font-sans);
 }
 
+/* "Report an issue" (a .sub-tlink) and "Get updates" (the grey .sub-btn that
+   opens the channels): the page's one action is not mosoo's console, so it is
+   the secondary (#143, INVENTORY §3 item 7: the ink-filled buttons retire). */
 .sp-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 20px;
-  padding-top: 6px;
-}
-
-.sp-quiet {
-  padding-block: 13px;
-  color: var(--sub-ink-2);
-  font: 500 14.5px/1 var(--font-sans);
-  text-decoration: none;
-  transition: color 150ms;
-}
-
-.sp-quiet:hover {
-  color: var(--sub-ink);
+  gap: 4px 12px;
 }
 
 .sp-btn {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  height: 40px;
-  padding: 0 14px 0 18px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--sub-ink);
-  color: #fff;
-  font: 500 14.5px/1 var(--font-sans);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color 150ms;
+  padding: 0 16px 0 20px;
 }
 
-.sp-btn:hover,
 .sp-btn[data-popup-open] {
-  background: var(--sub-ink-2);
+  background: var(--sub-frame-2);
 }
 
 .sp-btn svg {
+  width: 14px;
+  height: 14px;
   transition: transform 200ms var(--ease-out);
 }
 

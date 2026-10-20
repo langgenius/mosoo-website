@@ -1,9 +1,9 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ReactElement, ReactNode } from "react";
 
 import { GithubMark } from "../login/github-mark";
 import { Reveal } from "../login/landing/motion";
-import { MOSOO_GITHUB_URL } from "../login/links";
+import { MOSOO_GITHUB_URL, MOSOO_LOGIN_URL } from "../login/links";
 import { displayStyle } from "./display";
 import { t } from "./i18n";
 import { USE_CASES } from "./use-cases-data";
@@ -18,8 +18,20 @@ const CARD_TITLE_STYLE = displayStyle("22px", "-0.012em", 1.2);
 
 // v5 ink (app.css --sub-*): no green text, underline or focus ring on the page.
 const INK_950 = "text-[color:var(--sub-ink)]";
+// Hovering a card changes one thing, its title's underline (#143 item 7, hallmark gate 13); nothing moves or zooms.
 const TITLE_HOVER =
   "underline decoration-transparent decoration-1 underline-offset-[5px] transition-[text-decoration-color] duration-200 group-hover:decoration-[color:var(--sub-ink)]";
+
+// Both kinds of card say where they go, with the same still arrow (#143 item 7: the small cards had none).
+function ReadTheCase(): ReactElement {
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-[14px] font-medium ${INK_950}`}>
+      {t("Read the case")}
+      <ArrowRight aria-hidden="true" className="size-4" />
+    </span>
+  );
+}
+
 // Same box as the topbar, so the logo, headline, and cards share one left edge
 // at every width — the alignment the blog has between its header and content.
 const CONTAINER = "mx-auto w-full max-w-[1280px] px-4 md:px-6";
@@ -53,7 +65,7 @@ function CaseMeta({ useCase }: { useCase: UseCase }): ReactElement {
   return (
     <div className="overflow-hidden text-[13px] text-ink-500">
       <div className="-ml-5 flex flex-wrap items-center gap-y-1">
-        <MetaChunk className={`font-semibold ${INK_950}`}>{useCase.kicker}</MetaChunk>
+        <MetaChunk className={`font-medium ${INK_950}`}>{useCase.kicker}</MetaChunk>
         <MetaChunk>
           <span className="inline-flex items-center gap-1.5">
             <img
@@ -76,7 +88,7 @@ function HeroBand(): ReactElement {
     <section className="border-b border-ink-100">
       <div className={`${CONTAINER} pt-14 pb-12 md:pt-20 md:pb-16`}>
         <Reveal>
-          <p className="text-[13px] font-semibold tracking-[-0.01em] text-[color:var(--sub-ink-2)]">
+          <p className="text-[14px] font-medium text-[color:var(--sub-ink-2)]">
             {t("Use cases")}
           </p>
           <h1 className={`mt-3 max-w-3xl ${INK_950} [text-wrap:balance]`} style={HERO_TITLE_STYLE}>
@@ -118,12 +130,8 @@ function FeaturedCaseBody({ useCase }: { useCase: UseCase }): ReactElement {
             <p className="max-w-[52ch] text-[16px] leading-[1.6] text-ink-700 [text-wrap:pretty]">
               {useCase.summary}
             </p>
-            <span className="mt-1 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-[color:var(--ink-950)]">
-              {t("Read the case")}
-              <ArrowUpRight
-                aria-hidden="true"
-                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
+            <span className="mt-1">
+              <ReadTheCase />
             </span>
           </div>
         </div>
@@ -169,6 +177,9 @@ function GridCard({ useCase }: { useCase: UseCase }): ReactElement {
           <p className="line-clamp-2 text-[14px] leading-[1.6] text-ink-700 [text-wrap:pretty]">
             {useCase.summary}
           </p>
+          <span className="mt-auto pt-1">
+            <ReadTheCase />
+          </span>
         </div>
       </a>
     </Reveal>
@@ -180,27 +191,20 @@ function MoreCasesBand(): ReactElement {
     <Reveal className="mt-16 border-t border-ink-100 pt-10 md:mt-20">
       <div className="flex flex-col items-start justify-between gap-5 md:flex-row md:items-center">
         <div>
-          <p className="text-[15px] font-semibold text-[color:var(--ink-950)]">
+          <p className="text-[15px] font-medium text-[color:var(--sub-ink)]">
             {t("More cases are being written up.")}
           </p>
           <p className="mt-1 text-[13.5px] leading-[1.6] text-ink-700">
             {t("Shipping something on mosoo? We want the next case to be yours.")}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <a
-            href="https://cloud.mosoo.ai/login"
-            className="bg-ink-900 focus-visible:ring-ring inline-flex h-10 items-center rounded-md px-5 text-[13.5px] font-semibold text-white transition-colors outline-none hover:bg-ink-800 focus-visible:ring-2"
-          >
+        {/* The page's one lime button goes to mosoo; GitHub is the grey secondary (app.css .sub-btn, #143). */}
+        <div className="sub-actions">
+          <a href={MOSOO_LOGIN_URL} className="sub-btn sub-btn--lime">
             {t("Start on mosoo Cloud")}
           </a>
-          <a
-            href={MOSOO_GITHUB_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-[color:var(--ink-950)] ring-ink-900/15 hover:bg-ink-900/[0.06] focus-visible:ring-ring inline-flex h-10 items-center gap-2 rounded-md px-4 text-[13.5px] font-semibold ring-1 transition-colors outline-none focus-visible:ring-2"
-          >
-            <GithubMark className="size-4" />
+          <a href={MOSOO_GITHUB_URL} target="_blank" rel="noreferrer noopener" className="sub-btn sub-btn--grey">
+            <GithubMark />
             GitHub
           </a>
         </div>

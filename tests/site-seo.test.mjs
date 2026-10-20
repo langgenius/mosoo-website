@@ -151,7 +151,10 @@ const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /href="https:\/\/mosoo\.ai\/docs\/quickstart\/"/);
   assert.match(html, /href="https:\/\/mosoo\.ai\/blog"/);
   assert.match(html, /href="https:\/\/github\.com\/langgenius\/mosoo\/"/);
-  assert.match(html, /href="https:\/\/cloud\.mosoo\.ai\/login"/);
+  // The console login says what the home's bar and the subpages' bar say (copy/nav.json signIn), #143.
+  const signIn = homeCopy("nav")[locale].signIn;
+  assert.match(html, new RegExp(`href="https://cloud\\.mosoo\\.ai/login">${signIn}</a>`));
+  assert.doesNotMatch(html, /Log in/, "no Log in left in the static page");
 };
 
 test("the root sitemap aggregates every public content surface", () => {
@@ -631,6 +634,7 @@ test("use-case pages describe Sessions with the spec's words, a lowercase brand 
   const sources = [
     "apps/landing/src/routes/use-cases/i18n.ts",
     "apps/landing/src/routes/use-cases/use-cases-data.ts",
+    "apps/landing/src/routes/use-cases/case-parts.tsx",
     "apps/landing/src/routes/use-cases/use-case-blueprint-page.tsx",
     "apps/landing/src/routes/use-cases/use-case-codex-pet-page.tsx",
     "apps/landing/src/routes/use-cases/use-case-ghfind-page.tsx",
@@ -661,6 +665,79 @@ test("the use-cases gallery switches to a featured grid at three cases", () => {
   assert.match(source, /USE_CASES\.length < 3/);
   assert.match(source, /md:grid-cols-2/);
   assert.match(source, /lg:grid-cols-3/);
+  // #143 item 7: both kinds of card carry the same still arrow, and hovering one only underlines its title.
+  assert.equal(source.match(/<ReadTheCase \/>/g)?.length, 2, "the featured card and the grid card");
+  assert.doesNotMatch(source, /group-hover:(?:translate|scale|-translate)/, "nothing moves or zooms on hover");
+  assert.equal(source.match(/sub-btn--lime/g)?.length, 1, "one lime button, to mosoo");
+});
+
+// #143 (staging committee/PLAN.md 2-4, items 1, 5, 8): the five use-case pages, cleaned up to the home's system
+// (routes/use-cases/case-parts.tsx, app.css "use cases"). No uppercase kicker over a title: the case's name is in
+// the way back. Numbers only on steps that happen in order, in ink-3-text. Lime only for the button that goes to
+// mosoo; "Open the live app" leaves for someone else's site, so it is the grey secondary. The frame, not outlined
+// boxes or chips. No mosoo console capture.
+test("the use-case detail pages carry no kicker, no outlined box and lime only toward mosoo", () => {
+  const parts = read("apps/landing/src/routes/use-cases/case-parts.tsx");
+  const pages = ["blueprint", "codex-pet", "ghfind", "go-gym", "pitchpilot"].map((slug) =>
+    read(`apps/landing/src/routes/use-cases/use-case-${slug}-page.tsx`),
+  );
+  for (const source of [parts, ...pages]) {
+    assert.doesNotMatch(source, /uppercase|tracking-\[/, "no uppercase or spaced-out kicker");
+    assert.doesNotMatch(source, /padStart\(2, "0"\)/, "no 01 / 02 / 03");
+    assert.doesNotMatch(source, /bg-ink-900|ring-1|border-border|shadow-\[var|rounded-full border/, "no ink button or box");
+    assert.doesNotMatch(source, /bg-green|text-green|decoration-green/, "no green");
+  }
+  for (const page of pages) {
+    assert.match(page, /<CaseHeader\b/, "every page opens with the shared header");
+    assert.match(page, /<ClosingCta\b/, "every page ends with the shared closing");
+    assert.doesNotMatch(page, /sub-btn--lime/, "the pages add no lime of their own");
+  }
+  assert.match(parts, /<li aria-current="page" translate="no">\s*\{useCase\.name\}/, "the way back names the case");
+  assert.equal(parts.match(/sub-btn--lime/g)?.length, 1, "one lime button, in the closing");
+  assert.match(parts, /<a className="sub-btn sub-btn--lime" href=\{MOSOO_LOGIN_URL\}>/, "it goes to mosoo");
+  assert.match(
+    parts,
+    /<a className="sub-btn sub-btn--grey" href=\{href\} target="_blank" rel="noreferrer noopener">/,
+    "the outbound button is the grey secondary",
+  );
+  const css = read("apps/landing/src/shared/styles/app.css");
+  assert.match(css, /\.uc-steps \.uc-item-h::before \{[^}]*color: var\(--sub-ink-3-text\);/, "step numbers in ink-3-text");
+  assert.match(css, /\.uc-board \{[^}]*background: var\(--sub-frame\);/, "screenshots sit on the frame");
+  assert.match(read("apps/landing/src/shared/styles/d-object.css"), /\.d-footer-h \{[^}]*font: 500 14px\/20px var\(--font-sans\);/);
+});
+
+// #143 item 3: one ink family on the subpages. The old token names in app.css (the cool greys at :root, the warm
+// forest set [data-theme="landing"] used to restore, #6fd305) are aliases of the v5 values in d-object.css, and the
+// subpages' two hairlines are the home's 10% / 18%.
+test("the subpages' old colour tokens are aliases of the v5 ink, frame, paper and lime", () => {
+  const css = read("apps/landing/src/shared/styles/app.css");
+  const chrome = read("apps/landing/src/shared/styles/d-object.css");
+  const root = /\n:root \{([\s\S]*?)\n\}/.exec(css)?.[1] ?? "";
+  for (const [name, value] of [
+    ["--ink-950", "--d-ink"],
+    ["--ink-900", "--d-ink"],
+    ["--ink-700", "--d-ink"],
+    ["--ink-500", "--d-ink-2"],
+    ["--ink-400", "--d-ink-3-text"],
+    ["--ink-300", "--d-ink-3"],
+    ["--ink-100", "--d-line"],
+    ["--ink-50", "--d-frame"],
+    ["--paper-100", "--d-paper"],
+    ["--paper-200", "--d-frame"],
+    ["--green-500", "--d-accent"],
+    ["--border-default", "--d-line"],
+    ["--border-strong", "--d-line-2"],
+    ["--focus-ring", "--d-ink"],
+  ]) {
+    assert.match(root, new RegExp(`\\n\\s*${name}: var\\(${value}\\);`), `${name} is ${value}`);
+  }
+  const landing = /\[data-theme="landing"\] \{([^}]*)\}/.exec(css)?.[1] ?? "";
+  assert.doesNotMatch(landing, /--(?:ink|paper|green|accent|primary|border|shadow)/, "the landing theme restores no palette");
+  assert.match(chrome, /--d-line: rgb\(22 24 21 \/ 0\.1\);/);
+  assert.match(chrome, /--d-line-2: rgb\(22 24 21 \/ 0\.18\);/);
+  assert.match(chrome, /--d-accent: #bcf870;/);
+  const code = (sheet) => sheet.replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.doesNotMatch(code(css) + code(chrome), /#6fd305|#1c2024|#08090a|#0b1a14/i, "no old near-black or green");
 });
 
 test("the blueprint case page keeps its canonical, screenshot, and outbound links", () => {
@@ -740,12 +817,15 @@ test("the go-gym case page keeps its localized metadata, screenshots, and outbou
     ),
     true,
   );
+  // The mosoo console capture is gone (#143 item 8: it showed Published and Import package, the flow MAIN SPEC §8
+  // is retiring, and the owner wants no product screenshots).
   assert.equal(
     existsSync(
       new URL("../apps/landing/public/landing/use-cases/go-gym-mosoo-agents.png", import.meta.url),
     ),
-    true,
+    false,
   );
+  assert.doesNotMatch(read("apps/landing/src/routes/use-cases/use-case-go-gym-page.tsx"), /go-gym-mosoo-agents/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh\/use-cases\/go-gym"/);
   assert.match(zh, /<title>Go Gym：多用户 Agent Backend \| mosoo<\/title>/);
   assert.match(ja, /<link rel="canonical" href="https:\/\/mosoo\.ai\/ja\/use-cases\/go-gym"/);

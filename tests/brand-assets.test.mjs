@@ -1,22 +1,21 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 // Guards for the brand kit (scripts/brand-assets/MANIFEST.md): the generated
-// outline files stay out of the website's CSS, CJK headings keep their own
-// punctuation, and the manifest matches the files. The bamboo kit is gone
-// from the site (d-object redesign), so its plate and manifest checks went
-// with it. The v5 clean-up (2026-10-20) adds the social card and font guards
+// outline files stay out of the website's CSS. The bamboo kit is gone from the
+// site (d-object redesign), and so is the opt-in Literata (#143, 2026-10-21:
+// no page loaded it), so their plate, punctuation and manifest checks went
+// with them. The v5 clean-up (2026-10-20) adds the social card and font guards
 // at the end of this file.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const publicDir = join(root, "apps/landing/public");
 const outline = join(root, "apps/landing/public/brand/outline");
 const fonts = join(root, "apps/landing/public/fonts");
-const literataCss = readFileSync(join(root, "apps/landing/src/shared/styles/literata.css"), "utf8");
 
 test("the generated outline folder adds no Tailwind utilities to the website build", async (t) => {
   let compile;
@@ -37,54 +36,6 @@ test("the generated outline folder adds no Tailwind utilities to the website bui
     const live = [];
     for (const candidate of candidates) if ((await fresh()).build([candidate]) !== without) live.push(candidate);
     assert.deepEqual(live, [], "candidates from apps/landing/public/brand/outline that emit CSS");
-  }
-});
-
-/** Parse "U+0000-00B6, U+2013" into [[start, end], ...]. */
-const parseRanges = (value) =>
-  value.split(",").map((part) => {
-    const [start, end = start] = part.trim().replace(/^U\+/i, "").split("-");
-    return [Number.parseInt(start, 16), Number.parseInt(end, 16)];
-  });
-
-test("zh and ja Literata stacks leave CJK punctuation to the CJK serif faces", () => {
-  const faces = [...literataCss.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, body]) => ({
-    family: body.match(/font-family:\s*"([^"]+)"/)[1],
-    ranges: body.match(/unicode-range:\s*([^;]+);/)?.[1],
-  }));
-  // Middle dot, quotes, dashes, ellipsis, hyphenation point: full width in CJK text.
-  const punctuation = [0x00b7, 0x2014, 0x2018, 0x2019, 0x201c, 0x201d, 0x2026, 0x2027];
-  for (const variable of ["--font-literata-zh", "--font-literata-ja"]) {
-    const stack = literataCss.match(new RegExp(`${variable}:\\s*([^;]+);`))[1];
-    const families = [...stack.matchAll(/"([^"]+)"/g)].map(([, family]) => family);
-    const cjk = families.findIndex((family) => /Songti|STSong|Mincho|CJK|Serif SC|Serif JP/.test(family));
-    assert.ok(cjk > 0, `${variable} names a CJK serif face after its Latin faces`);
-    for (const family of families.slice(0, cjk)) {
-      const own = faces.filter((face) => face.family === family);
-      assert.ok(own.length > 0, `${variable}: "${family}" is declared in literata.css`);
-      for (const face of own) {
-        assert.ok(face.ranges, `${variable}: every "${family}" face has a unicode-range`);
-        const ranges = parseRanges(face.ranges);
-        for (const cp of punctuation) {
-          const hit = ranges.some(([start, end]) => cp >= start && cp <= end);
-          assert.equal(hit, false, `${variable}: "${family}" covers U+${cp.toString(16).toUpperCase().padStart(4, "0")}`);
-        }
-      }
-    }
-  }
-});
-
-test("MANIFEST.md lists every brand kit file with its current size", () => {
-  const manifest = readFileSync(join(root, "scripts/brand-assets/MANIFEST.md"), "utf8");
-  const files = [
-    ...readdirSync(fonts).filter((name) => name.startsWith("Literata")).map((name) => `apps/landing/public/fonts/${name}`),
-    "apps/landing/src/shared/styles/literata.css",
-  ];
-  for (const path of files) {
-    const row = manifest.split("\n").find((line) => line.startsWith(`| \`${path}\` |`));
-    assert.ok(row, `${path} has a row in MANIFEST.md`);
-    const bytes = statSync(join(root, path)).size.toLocaleString("en-US");
-    assert.ok(row.includes(`| ${bytes} |`), `${path}: MANIFEST.md says ${row.split("|")[2].trim()}, the file has ${bytes} bytes`);
   }
 });
 
@@ -184,23 +135,16 @@ test("public/ ships no bamboo file and no orphan social card", () => {
 
 const FONT_LICENCES = {
   FragmentMono: "FragmentMono-OFL.txt",
-  // vercel/geist-font: one OFL text covers Geist and Geist Mono.
-  Geist: "GeistMono-LICENSE.txt",
-  GeistMono: "GeistMono-LICENSE.txt",
   HankenGrotesk: "HankenGrotesk-OFL.txt",
-  // Inter left with its licence on 2026-10-20: Hanken Grotesk sets the pages and the share card's CTA.
-  Literata: "Literata-LICENSE.txt",
   // The display face since 2026-10-21 (committee O2; Hedvig Letters Serif left with its licence).
   RobotoSerif: "RobotoSerif-OFL.txt",
+  // Inter left with its licence on 2026-10-20: Hanken Grotesk sets the pages and the share card's CTA.
+  // Cabinet Grotesk (it had no licence file), Geist, Geist Mono and Literata left with theirs on 2026-10-21:
+  // no page loaded them (#143).
 };
-// Cabinet Grotesk has no licence file (the ITF Free Font License, unverified). The landing no longer loads it
-// (app.css); @mosoo/design-tokens (pkgs/design-tokens/mosoo.css, the blog) still references the file, so it
-// stays until that reference goes. Then delete the font and this entry (v5/subpages/NOTES.md, request 5).
-const PENDING_LICENCE = new Set(["CabinetGrotesk-Variable.woff2"]);
 
 test("every font that ships has its licence text next to it", () => {
   for (const file of readdirSync(fonts).filter((name) => /\.(woff2?|ttf|otf)$/.test(name))) {
-    if (PENDING_LICENCE.has(file)) continue;
     const family = file.replace(/-.*$/, "").replace(/\.\w+$/, "");
     const licence = FONT_LICENCES[family];
     assert.ok(licence, `${file}: no licence is known for the ${family} family`);
@@ -237,6 +181,17 @@ test("@font-face sources exist and every font preload is a face the page's style
   for (const [, name] of blogPreloads) {
     assert.ok(blogFaces.includes(name), `BaseLayout.astro preloads ${name}, which ${BLOG_CSS} does not declare`);
   }
+});
+
+// The other way round (#143): every font file that ships is one a stylesheet declares. Cabinet Grotesk, Geist, Geist
+// Mono and Literata shipped for months with no page loading them.
+test("public/fonts ships only faces a stylesheet declares", () => {
+  const declared = new Set(FONT_SHEETS.flatMap((sheet) => fontUrls(read(sheet)).map((url) => url.split("/").at(-1))));
+  for (const file of readdirSync(fonts).filter((name) => /\.(woff2?|ttf|otf)$/.test(name))) {
+    assert.ok(declared.has(file), `${file} is declared by no stylesheet (${FONT_SHEETS.join(", ")})`);
+  }
+  assert.equal(existsSync(join(root, "apps/landing/src/shared/styles/literata.css")), false, "literata.css is gone");
+  assert.doesNotMatch(read("pkgs/design-tokens/mosoo.css"), /@font-face/, "@mosoo/design-tokens declares no faces");
 });
 
 // zh and ja lines set Hanken's Latin at the x-height of the CJK face's own Latin (graft-design P2-3, staging

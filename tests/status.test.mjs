@@ -258,7 +258,8 @@ test("egress classification preserves failed run terminal events", () => {
 });
 
 // The page (v5 subpage clean-up, staging REVIEW-v4 G9 and §4.10): no green fill
-// anywhere, no logo of its own (the site nav carries the ink mark), one ink button.
+// anywhere, no logo of its own (the site nav carries the ink mark), one button, the
+// grey secondary (#143: lime only for a button to mosoo, no ink-filled buttons).
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
 const GREEN = /green-\d|#6fd305|#66c600|#5cb300|status-brand|--accent\b|#bcf870|\blime\b/i;
 
@@ -268,7 +269,7 @@ test("the status page carries no green and no logo of its own", () => {
   assert.doesNotMatch(code, GREEN, "status-page.tsx names a green");
   assert.doesNotMatch(page, /logo-mark\.svg|<img\b/, "the page draws no mark of its own");
   assert.doesNotMatch(page, /DISPLAY_FONT|Cabinet/, "the title takes the display token, not Cabinet Grotesk");
-  assert.match(page, /<Menu\.Trigger className="sp-btn">/, "Get updates is the ink button");
+  assert.match(page, /<Menu\.Trigger className="sub-btn sub-btn--grey sp-btn">/, "Get updates is the grey button");
 
   // Every rule the page's classes use (app.css, from the status block on) stays neutral or amber/ember.
   const css = read("apps/landing/src/shared/styles/app.css");
@@ -276,7 +277,8 @@ test("the status page carries no green and no logo of its own", () => {
   assert.ok(statusCss.length > 1000, "the status block is in app.css");
   assert.doesNotMatch(statusCss, GREEN, "the status CSS names a green");
   assert.doesNotMatch(css, /\.status-brand/, "the old green ramp is gone");
-  assert.match(statusCss, /\.sp-btn \{[^}]*background: var\(--sub-ink\);/);
+  assert.match(css, /\.sub-btn--grey \{\s*background: var\(--sub-frame\);/, "the grey secondary sits on the frame");
+  assert.doesNotMatch(statusCss, /\.sp-btn[^{]*\{[^}]*background: var\(--sub-ink\)/, "no ink-filled button");
   assert.match(statusCss, /\.sp-day--operational \{\s*background: var\(--sub-ink-2\);/);
 
   // The static page served before (and without) JavaScript.

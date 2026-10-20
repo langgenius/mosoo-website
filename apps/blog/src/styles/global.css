@@ -12,9 +12,9 @@
    The files are referenced from apps/landing/public/fonts the way
    @mosoo/design-tokens references the old ones: Vite emits hashed copies into
    this build. Licences: the OFL / licence texts next to those files.
-   The tokens below override the design-tokens stacks (Cabinet Grotesk,
-   Geist, Geist Mono); nothing on the blog asks for those faces any more, so
-   browsers never download them. Live covers set their labels in the site
+   The tokens below override the design-tokens stacks, which name system
+   faces only since #143 (its Cabinet Grotesk, Geist and Geist Mono faces and
+   files are gone). Live covers set their labels in the site
    fonts by design (src/covers/registry.ts), so they follow this switch too.
    ========================================================================== */
 @font-face {

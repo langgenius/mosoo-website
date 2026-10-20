@@ -535,11 +535,14 @@ function recentNotices(
   return notices;
 }
 
-/** The page's one button: ink, never the accent (REVIEW-v4 G9). */
+/**
+ * The page's one button: the grey secondary (app.css .sub-btn--grey). Lime is for a button that goes to mosoo, and
+ * the ink-filled button is gone from the site (#143, committee/ui-inventory/INVENTORY.md §3 item 7).
+ */
 function UpdatesMenu(): ReactElement {
   return (
     <Menu.Root>
-      <Menu.Trigger className="sp-btn">
+      <Menu.Trigger className="sub-btn sub-btn--grey sp-btn">
         {t("Get updates")}
         <ChevronDown aria-hidden="true" className="size-3.5" />
       </Menu.Trigger>
@@ -637,7 +640,7 @@ export function StatusPage(): ReactElement {
           </p>
         </div>
         <div className="sp-actions">
-          <a href={MOSOO_ISSUES_URL} target="_blank" rel="noreferrer noopener" className="sp-quiet">
+          <a href={MOSOO_ISSUES_URL} target="_blank" rel="noreferrer noopener" className="sub-tlink">
             {t("Report an issue")}
           </a>
           <UpdatesMenu />

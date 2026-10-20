@@ -5,6 +5,10 @@
 > the site; their rows below are history, and `generate.mjs` can still rebuild
 > them into a scratch folder with `--out`. The site's brand play now goes
 > through the logo outline (`apps/landing/scripts/assets/README.md`).
+>
+> 2026-10-21 (#143): Literata is deleted too (its four files, its licence and
+> `literata.css`): no page ever imported it. Its rows, Fonts and Usage below are
+> history; `font-metrics.mjs` still fits a fallback for any face.
 
 Shared brand ingredients for the v2 redesign directions: a self-hosted Literata,
 and code-generated bamboo assets drawn from the mosoo mark's node geometry. No page
@@ -40,10 +44,11 @@ node scripts/brand-assets/generate.mjs --out /tmp/check    # render elsewhere to
   becomes CSS on every page: the sprite's comment once said "ring" and emitted `.ring`.
   The test compiles Tailwind with only this folder's candidates. With the folder, the
   landing build's CSS is byte-identical to main's (SHA-1 `1b73c837…`, 2026-10-19).
-- The zh and ja Literata stacks leave U+00B7 and the quotes, dashes, ellipsis and
-  U+2027 to the CJK serif faces (see Fonts).
+- (Until 2026-10-21, with Literata: the zh and ja Literata stacks left U+00B7 and
+  the quotes, dashes, ellipsis and U+2027 to the CJK serif faces, and every kit
+  file had a row below with its current byte count. Both checks left with the
+  files.)
 - The stage plates carry no lime, and the pixel plate's accent overlay is lime only.
-- Every kit file has a row below with its current byte count.
 
 ## Files
 

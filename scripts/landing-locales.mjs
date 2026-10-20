@@ -56,7 +56,8 @@ const FALLBACK_LABELS = {
     docs: "Docs",
     quickstart: "Quickstart",
     blog: "Blog",
-    login: "Log in",
+    // The console login, named as the home's bar and the subpages' bar name it (copy/nav.json signIn), #143.
+    signIn: "Sign in",
   },
   zh: {
     pricing: "定价",
@@ -65,7 +66,7 @@ const FALLBACK_LABELS = {
     docs: "文档",
     quickstart: "快速开始",
     blog: "博客",
-    login: "登录",
+    signIn: "登录",
   },
   ja: {
     pricing: "料金",
@@ -74,7 +75,7 @@ const FALLBACK_LABELS = {
     docs: "ドキュメント",
     quickstart: "クイックスタート",
     blog: "ブログ",
-    login: "ログイン",
+    signIn: "ログイン",
   },
 };
 
@@ -343,7 +344,7 @@ function navReplacements(locale) {
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
-    [">Log in</a>", `>${labels.login}</a>`],
+    [">Sign in</a>", `>${labels.signIn}</a>`],
   ];
 }
 

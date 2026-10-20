@@ -20,7 +20,7 @@ const ZH_MESSAGES = {
   "Shipping something on mosoo? We want the next case to be yours.":
     "正在用 mosoo 构建产品？下一个案例希望就是你的。",
   "Start on mosoo Cloud": "在 mosoo Cloud 开始",
-  "Use case": "用例",
+  Breadcrumb: "面包屑导航",
   "Submitted by": "提交者",
   "One Agent behind an API. Any Codex can call it.": "API 背后的一个 Agent，任何 Codex 都能调用。",
   "The Codex Pet case study shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API: one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.":
@@ -64,11 +64,9 @@ const ZH_MESSAGES = {
   "Isolated, harness-neutral execution": "隔离且不绑定 harness 的执行",
   "Each Thread runs in its own sandbox. Production uses OpenCode, while the same business MCP path was verified with Codex and Claude without rewriting the app.":
     "每个 Thread 都运行在自己的 sandbox 中。生产环境使用 OpenCode，同一条业务 MCP 链路也已用 Codex 和 Claude 验证，无需重写应用。",
-  "Production smoke test": "生产 smoke test",
   "From one message to durable records": "从一条消息到持久记录",
   "A test user described breakfast, lunch, and 45 minutes of strength training in one message. The Agent created three user-scoped records and refreshed the dashboard.":
     "测试用户在一条消息里描述了早餐、午餐和 45 分钟力量训练。Agent 创建了三条用户范围内的记录，并刷新了仪表盘。",
-  "Verified result": "验证结果",
   "3 structured records": "3 条结构化记录",
   "1,150 kcal intake": "摄入 1,150 千卡",
   "64 g protein": "64 克蛋白质",
@@ -91,8 +89,6 @@ const ZH_MESSAGES = {
   "One use case, multiple harnesses": "一个用例，多种 harness",
   "Go Gym runs on OpenCode in production. The same Agent contract and business MCP were also exercised through Codex and Claude before release.":
     "Go Gym 在生产环境运行于 OpenCode。同一份 Agent 契约和业务 MCP 在发布前也通过 Codex 与 Claude 完成了验证。",
-  "Published Go Gym Agents for OpenCode, Codex, and Claude in the mosoo console.":
-    "mosoo 控制台中为 OpenCode、Codex 和 Claude 发布的 Go Gym Agent。",
   "Explore the product and stack": "探索产品与技术栈",
   "Use the production app and try a meal or workout log.":
     "使用生产应用，尝试记录一顿饭或一次训练。",
@@ -240,7 +236,7 @@ const JA_MESSAGES = {
   "Shipping something on mosoo? We want the next case to be yours.":
     "mosoo で何かをつくっていますか？次のケースはあなたの番です。",
   "Start on mosoo Cloud": "mosoo Cloud で始める",
-  "Use case": "ユースケース",
+  Breadcrumb: "パンくずリスト",
   "Submitted by": "投稿者",
   "One Agent behind an API. Any Codex can call it.": "API の向こうに Agent が 1 つ。どの Codex からでも呼び出せる。",
   "The Codex Pet case study shows how a workflow built in a coding IDE becomes a reusable mosoo-managed Agent exposed through an API: one uploaded avatar comes back as a validated ZIP with all nine Codex pet animation states.":
@@ -285,11 +281,9 @@ const JA_MESSAGES = {
   "Isolated, harness-neutral execution": "隔離された harness 非依存の実行",
   "Each Thread runs in its own sandbox. Production uses OpenCode, while the same business MCP path was verified with Codex and Claude without rewriting the app.":
     "各 Thread はそれぞれ専用の sandbox で実行されます。本番は OpenCode を使い、同じ業務 MCP 経路をアプリの書き換えなしで Codex と Claude でも検証しました。",
-  "Production smoke test": "本番 smoke test",
   "From one message to durable records": "1 件のメッセージから永続レコードへ",
   "A test user described breakfast, lunch, and 45 minutes of strength training in one message. The Agent created three user-scoped records and refreshed the dashboard.":
     "テストユーザーが 1 件のメッセージで朝食、昼食、45 分間の筋力トレーニングを伝えました。Agent はユーザー範囲のレコードを 3 件作成し、ダッシュボードを更新しました。",
-  "Verified result": "検証結果",
   "3 structured records": "3 件の構造化レコード",
   "1,150 kcal intake": "摂取 1,150 kcal",
   "64 g protein": "たんぱく質 64 g",
@@ -312,8 +306,6 @@ const JA_MESSAGES = {
   "One use case, multiple harnesses": "1 つのユースケース、複数の harness",
   "Go Gym runs on OpenCode in production. The same Agent contract and business MCP were also exercised through Codex and Claude before release.":
     "Go Gym の本番環境は OpenCode で動作します。同じ Agent 契約と業務 MCP は、リリース前に Codex と Claude でも検証されました。",
-  "Published Go Gym Agents for OpenCode, Codex, and Claude in the mosoo console.":
-    "mosoo コンソールで公開された OpenCode、Codex、Claude 向け Go Gym Agent。",
   "Explore the product and stack": "プロダクトとスタックを見る",
   "Use the production app and try a meal or workout log.":
     "本番アプリで食事やトレーニングを記録してみる。",
