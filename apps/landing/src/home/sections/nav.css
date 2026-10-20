@@ -211,8 +211,9 @@
   rotate: 180deg;
 }
 
-/* The panels: a paper card (opaque, so its text reads the same over the hero, the plates or the lime screen), the
-   bar's 1px edge and shadow family, r12. Hidden unless open (see the head comment). */
+/* The panels: a paper card (opaque, so its text reads the same over the hero, the plates or the lime screen), r12,
+   with the floating bar's own shadow and no line around it (O1, committee 2026-10-21: a card is not outlined; the
+   panel's 12% ink edge is gone). Hidden unless open (see the head comment). */
 .v5-nav-pop {
   display: none;
   position: fixed;
@@ -223,13 +224,13 @@
   margin: 0;
   padding: 8px;
   overflow: visible;
-  border: 1px solid rgb(22 24 21 / 0.12);
+  border: 0;
   border-radius: 12px;
   background: var(--paper);
   color: var(--ink);
   box-shadow:
     0 1px 2px rgb(22 24 21 / 0.06),
-    0 18px 40px -18px rgb(22 24 21 / 0.3);
+    0 10px 30px -14px rgb(22 24 21 / 0.22);
   font: 400 15px/1.4 var(--font-sans);
   text-align: left;
 }
@@ -358,20 +359,8 @@
   word-break: auto-phrase;
 }
 
-/* The New chip (the owner's screenshot; production's hero chip): lime, ink, caps. The hero has its own (hero.css). */
-.v5-nav-new {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--ink);
-  font: 600 10px/1 var(--font-sans);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+/* The New chip (the owner's screenshot; production's hero chip) is the system's, the hero pill's too (../system.css
+   .v5-new: one component, one size). */
 
 /* The language list: the three home pages, the current one in ink with a check. */
 .v5-nav-langs a {
@@ -548,13 +537,13 @@
     padding: 8px;
     overflow: auto;
     overscroll-behavior: contain;
-    border: 1px solid rgb(22 24 21 / 0.12);
+    border: 0; /* the panels' look: no line, the bar's shadow (O1) */
     border-radius: 12px;
     background: var(--paper);
     color: var(--ink);
     box-shadow:
       0 1px 2px rgb(22 24 21 / 0.06),
-      0 18px 40px -18px rgb(22 24 21 / 0.3);
+      0 10px 30px -14px rgb(22 24 21 / 0.22);
   }
 
   .v5-nav-links:popover-open {
@@ -606,7 +595,7 @@
     font: 500 14px/20px var(--font-sans);
   }
 
-  /* Hairlines between the three groups (products, links, language), on the square group boxes so they run
+  /* Hairlines between the four groups (products, links, language, Sign in), on the square group boxes so they run
      straight (the rows are rounded for their hover). */
   .v5-nav-dd--products {
     margin-bottom: 8px;
@@ -615,9 +604,9 @@
   }
 
   .v5-nav-dd--lang {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--line);
+    margin-block: 8px;
+    padding-block: 8px;
+    border-block: 1px solid var(--line);
   }
 
   .v5-nav-prod {
@@ -662,13 +651,13 @@
     clip-path: none;
   }
 
-  /* The language as three segments in one 1px frame, the current one raised on paper (all three in sight). */
+  /* The language as three segments in one grey well, the current one raised on paper with its ring and small shadow
+     (all three in sight); no line around the well (O1, as the footer's control: committee/MINUTES.md §2.4 item 7). */
   .v5-nav-langs {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     margin: 0 12px 4px;
     padding: 3px;
-    border: 1px solid var(--line-2);
     border-radius: 10px;
     background: var(--frame);
   }
@@ -693,12 +682,8 @@
     display: none;
   }
 
-  /* Sign in closes the sheet as a 1px ink line button (the page's secondary), lined up with the segments. */
-  .v5-nav-signin {
-    justify-content: center;
-    margin: 12px 12px 4px;
-    border: 1px solid var(--ink);
-  }
+  /* Sign in closes the sheet as a link like the others (Docs, Use cases, GitHub), as in the desktop row (O1: it was a
+     1px ink line button), in a group of its own under the language's hairline (.v5-nav-dd--lang above). */
 }
 
 /* Small phones (below 360px): at 320 the floating bar holds 268px of content; the logo (93), ja's CTA (129.5) and

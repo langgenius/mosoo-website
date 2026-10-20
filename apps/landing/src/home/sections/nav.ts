@@ -71,9 +71,9 @@ function productGlyph(id: "mosoo" | "computer"): string {
   return `<svg class="v5-nav-tile-g" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" ${SVG}><rect x="1.1" y="1.6" width="9.8" height="6.6" rx="1.2"/><path d="M6 8.2v2.2M3.6 10.4h4.8"/></svg>`;
 }
 
-/** The "New" chip: lime fill, ink text (the owner's screenshot; production's landing/hero.tsx L63-65). */
+/** The "New" chip: the system's .v5-new, as in the hero's pill (production's landing/hero.tsx L63-65). */
 function newChip(label: string): string {
-  return `<span class="v5-nav-new">${esc(label)}</span>`;
+  return `<span class="v5-new">${esc(label)}</span>`;
 }
 
 const host = (href: string): string => new URL(href).host;

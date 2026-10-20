@@ -1,13 +1,13 @@
 /* 2 Stage (sections/stage.ts), owned by the hero + stage agent. One plate, three states of the T4 Session.
-   Two layouts from one DOM (each step is an <article>: tag, object layer, caption):
-   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates;
+   Two layouts from one DOM (each step is an <article>: object layer, caption):
+   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates, no step row;
    - pinned ([data-stage-mode="pinned"], src/effects/v5/stage.ts): the articles are layers of one plate that sticks
-     88px from the top (under the 68px floating nav), the tag row and the captions switch with the object.
-   Plate composition (721px and up): tags top-left (32, 28); object from (50% - 140px, 96), Call and Watch running
-   off the right edge; caption bottom-left (32, 32), at most 560 wide. 50% - 140px keeps the object's left edge on
-   the line field's knot at any plate width (the "hero" host is centred, 1120 x 720, see .v5-lf--wide below).
-   Phones: a column (tag, object, caption) per plate. Every rule is scoped under .v5-stage (sections/README.md).
-   Values and references: staging v5/sections/hero-stage/NOTES.md. */
+     88px from the top (under the 68px floating nav), the step row and the captions switch with the object.
+   Plate composition (721px and up): the step row top-left (32, 32), pinned only; object from (50% - 140px, 96), Call
+   and Watch running off the right edge; caption bottom-left (32, 32), at most 560 wide. 50% - 140px keeps the
+   object's left edge on the line field's knot at any plate width (the "hero" host is centred, 1120 x 720, see
+   .v5-lf--wide below). Phones: a column (object, caption) per plate. Every rule is scoped under .v5-stage
+   (sections/README.md). Values and references: staging v5/sections/hero-stage/NOTES.md. */
 
 .v5-stage {
   --pin-top: 88px; /* the floating nav ends at 68 (12 + 56) */
@@ -65,13 +65,6 @@
   height: 720px;
 }
 
-.v5-stage .v5-step-tag {
-  position: absolute;
-  z-index: 5;
-  top: 28px;
-  left: 32px;
-}
-
 .v5-stage .v5-step-screen {
   position: absolute;
   z-index: 1;
@@ -93,25 +86,7 @@
   width: min(560px, 100% - 64px);
 }
 
-/* ---------------------------------------------------------------------------------- tags and captions */
-/* A step tag: the keycap's line language (1px ink, r8, white, Frame's 0 1px 3px shadow) in the sans. */
-.v5-stage .v5-stage-chip {
-  display: inline-flex;
-  align-items: center;
-  height: 32px;
-  max-width: 220px;
-  padding: 0 12px;
-  overflow: hidden;
-  border: 1px solid var(--ink);
-  border-radius: 8px;
-  background: var(--paper);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
-  color: var(--ink);
-  font: 500 15px/1 var(--font-sans);
-  letter-spacing: -0.005em;
-  white-space: nowrap;
-}
-
+/* -------------------------------------------------------------------------------------------- captions */
 /* -0.02em, not Inter's -0.014em: Hanken Grotesk has no optical-size axis and measured 7-11% looser at 22px / 500
    (staging v5/graft/font/NOTES.md §5, tracking-specimen.png). */
 .v5-stage .v5-step-title {
@@ -208,45 +183,57 @@
   content: none;
 }
 
-.v5-stage[data-stage-mode="pinned"] .v5-step-tag {
-  display: none;
-}
-
 .v5-stage[data-stage-mode="pinned"] .v5-stage-screen {
   margin: 0; /* the contract's -8px bleed is for opaque screens; these are transparent layers */
 }
 
-/* Tag row: active = the full tag; past = compact (13px, no shadow, hairline at 18% ink); next = not there yet. */
+/* The step row (O1, committee 2026-10-21: no box, no fill, no shadow; the words keep CTRL's contents row, BRIEF §3.4):
+   the lit step in ink 15px / 500, the told ones folded to ink-2 13px, the next ones not there yet; each rises in
+   (width, opacity, 6px) as it is lit and folds as the next one takes over. The row waits for the run: until
+   --stage-p leaves 0 (the engine's data-stage-started) it is out of sight, so the first screen shows no step word
+   and the first one to appear is "Call", as the stage starts to move. It stays in the accessibility tree (a list
+   of the three steps, the lit one aria-current="step"). */
 .v5-stage[data-stage-mode="pinned"] .v5-stage-tags {
   position: absolute;
   z-index: 5;
-  top: 28px;
+  top: 32px;
   left: 32px;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: baseline;
+  gap: 14px;
+  color: var(--ink);
+  font: 500 15px/20px var(--font-sans);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+.v5-stage[data-stage-mode="pinned"]:not([data-stage-started]) .v5-stage-tags {
+  opacity: 0;
+  translate: 0 8px;
+}
+
+.v5-stage .v5-stage-tags > li {
+  max-width: 220px;
+  overflow: clip; /* the width folds to 0 for a next step; clip keeps the baseline (hidden would not) */
 }
 
 .v5-stage .v5-stage-tags > [data-stage-state="past"] {
-  height: 26px;
-  padding: 0 9px;
-  border-color: rgb(22 24 21 / 0.18);
-  background-color: rgb(255 255 255 / 0.6);
-  box-shadow: none;
   color: var(--ink-2);
   font-size: 13px;
 }
 
 .v5-stage .v5-stage-tags > [data-stage-state="next"] {
   max-width: 0;
-  margin-left: -6px;
-  padding: 0;
-  border-width: 0;
+  margin-left: -14px; /* cancels the row's gap while it is not there */
   opacity: 0;
+  translate: 0 6px;
 }
 
-/* Under the tag row, the run as one 1px line (the page's line): 18% ink, filled with ink as --stage-p goes 0 -> 1, so
-   every pixel of the pinned scroll moves something, not only the two switches (design review P1-2). */
+/* Under the row, the run as one 132px 1px line (structure: 18% ink), filled with ink by --stage-fill: a third per
+   step, each third filling over its own step's stretch of the run, so the fill reaches the lit step as it lights
+   (with the fill following the scroll position alone, Resume was lit 87% of its stretch before the fill got under
+   it; staging committee/challenge/128.md §3) and every pixel of the pinned scroll still moves something (design
+   review P1-2). */
 .v5-stage[data-stage-mode="pinned"] .v5-stage-tags::after {
   content: "";
   position: absolute;
@@ -255,8 +242,8 @@
   width: 132px;
   height: 1px;
   background:
-    linear-gradient(var(--ink), var(--ink)) 0 0 / calc(var(--stage-p, 0) * 100%) 100% no-repeat,
-    rgb(22 24 21 / 0.18);
+    linear-gradient(var(--ink), var(--ink)) 0 0 / calc(var(--stage-fill, 0) * 100%) 100% no-repeat,
+    var(--line-2);
 }
 
 /* Captions: each clips its own box and rolls its text through it (past up, next below), cross-fading on the way: the
@@ -278,19 +265,21 @@
   translate: 0 100%;
 }
 
-/* Transitions only once the engine is ready (its first pinned paint never animates), with the switch's 0.9 s. */
+/* Transitions only once the engine is ready (its first pinned paint never animates), with the switch's 0.9 s; the row
+   itself comes in (and goes when the reader scrolls back to the top) in 0.6 s. */
+.v5-stage[data-stage-ready] .v5-stage-tags {
+  transition:
+    opacity 0.6s var(--ease-stage),
+    translate 0.6s var(--ease-stage);
+}
+
 .v5-stage[data-stage-ready] .v5-stage-tags > li {
   transition:
     max-width 0.9s var(--ease-stage),
-    height 0.9s var(--ease-stage),
-    padding 0.9s var(--ease-stage),
     margin 0.9s var(--ease-stage),
-    border-color 0.9s var(--ease-stage),
-    border-width 0.9s var(--ease-stage),
-    background-color 0.9s var(--ease-stage),
-    box-shadow 0.9s var(--ease-stage),
     color 0.9s var(--ease-stage),
     font-size 0.9s var(--ease-stage),
+    translate 0.9s var(--ease-stage),
     opacity 0.6s var(--ease-stage);
 }
 
@@ -355,7 +344,8 @@
   }
 
   /* A column with the caption at the bottom (Mintlify's label), at least 460 tall: the plates line up, and the first
-     one's caption stays under the 844px fold of a 390 phone (the tag is the only plate word on the first screen). */
+     one's caption stays under the 844px fold of a 390 phone (no plate word on the first screen but the card's). No
+     step label: each caption names its step. */
   .v5-stage .v5-step {
     display: flex;
     flex-direction: column;
@@ -363,12 +353,6 @@
     height: auto;
     min-height: 460px;
     padding: 20px 20px 22px;
-  }
-
-  .v5-stage .v5-step-tag {
-    position: relative;
-    top: auto;
-    left: auto;
   }
 
   .v5-stage .v5-step-screen {
@@ -382,7 +366,6 @@
     top: auto;
     left: auto;
     width: auto;
-    margin-top: 16px;
   }
 
   /* Call and Watch run off the right edge, as on the desktop plate. */
@@ -397,6 +380,13 @@
   .v5-stage .kit-session--bleed .kit-line {
     padding-right: 40px;
     white-space: normal;
+  }
+
+  /* Watch's card bleeds the same way, so its sentence keeps the same 40px: the file path (glyph and path, no box
+     since O1) no longer pushes "from" onto the next line by its own width, and at 320-360 en ran 15-17px under the
+     cut (measured 2026-10-21 04:10). */
+  .v5-stage .v5-step-obj > .kit-flow .kit-line {
+    padding-right: 40px;
   }
 
   .v5-stage .v5-step-obj > .kit-flow > .kit-stream {

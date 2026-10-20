@@ -159,6 +159,7 @@
 :root {
   /* Ground (BRIEF §3.1) */
   --frame: #f4f4f4; /* Frame --white-smoke: the desk around the one sheet; chroma 0 */
+  --frame-2: #ebebeb; /* a --frame fill under the pointer (the grey button, the hero's pill); chroma 0 */
   --paper: #ffffff; /* plain: the owner had v4d's 1px dot grid removed on 2026-10-20 (「背景灰色点阵太slop了」) */
   /* Ink (v4d UI-LOCK §1.1). ink-3 only for text of 24px and up (4.0:1 on white); small muted text uses ink-3-text,
      from 15px (.v5-small below); 14px text that cannot grow uses ink-2. */
@@ -177,7 +178,7 @@
   --accent-shadow: rgb(61 99 13 / 0.22);
   --on-lime-2: rgb(22 24 21 / 0.7); /* secondary text on lime: 6.9:1 */
   /* Type (BRIEF §3.2): Roboto Serif display, Hanken Grotesk (in place of Inter since 2026-10-20), Fragment Mono for
-     keycaps, events, files and commands only. */
+     paths, hosts, events and commands only (no keycaps since O1). */
   /* The one switch for every display heading (home, subpages, blog, share card; their sheets repeat it): a licensed
      face replaces the first two families here and under :lang(zh) / :lang(ja). */
   --font-display:
@@ -421,9 +422,11 @@ main:focus {
 }
 
 /* -------------------------------------------------------------------------------------------------- buttons */
-/* Lime primary with Frame's glow (0 4px 24px #DEFFB5), hovering brighter (Ramp); the secondary is a 1px ink line
-   (one solid button per screen: YC review P1-2, the solid ink secondary outweighed the lime primary 17.9:1 to 1.25:1).
-   Height 48. The transparent border shows as a frame in forced-colors mode, where backgrounds are dropped. */
+/* Lime primary with Frame's glow (0 4px 24px #DEFFB5), hovering brighter (Ramp); the secondary is grey: the frame's
+   #f4f4f4 fill, no line, no shadow, hovering --frame-2 (O1, committee 2026-10-21: the 1px ink secondary was one of
+   the owner's line frames; one solid colour per screen stays the lime, YC review P1-2). Height 48, r8, Hanken 16 / 500;
+   the 2px ink focus ring below. The transparent border shows as a frame in forced-colors mode, where backgrounds are
+   dropped. */
 .v5-btn {
   display: inline-flex;
   align-items: center;
@@ -466,14 +469,21 @@ main:focus {
   background: #2a2c28;
 }
 
-.v5-btn--line {
-  border-color: var(--ink);
-  background: var(--paper);
+.v5-btn--grey {
+  background: var(--frame);
   color: var(--ink);
 }
 
-.v5-btn--line:hover {
+.v5-btn--grey:hover {
+  background: var(--frame-2);
+}
+
+/* Disabled (none on the page yet): the same fill, the text down to ink-3-text (4.8:1 on the frame), no press. */
+.v5-btn--grey:is(:disabled, [aria-disabled="true"]) {
   background: var(--frame);
+  color: var(--ink-3-text);
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* A row of buttons (hero, closing). */
@@ -486,64 +496,39 @@ main:focus {
 }
 
 /* ----------------------------------------------------------------------------------------- line language */
-/* One line for the whole page (BRIEF §3.3): 1px ink, shared by keycaps, tab labels, the line figures and the FAQ
-   rules. */
+/* One line for the whole page (BRIEF §3.3, narrowed by O1, committee 2026-10-21): 1px ink draws structure only, never
+   around words: the FAQ rules, the spec table's top rule, the door's frame, the stage's progress line, the line
+   figures. Names, buttons, tabs, file names and pills carry no outline; mono is for code, paths, hosts and events. */
 
-/* Keycap (Frame .rectangle-span, measured: 1px #000, r8, white, 0 1px 3px rgba(0,0,0,.15), 5/16/6 padding, mono
-   at 0.82 of the sentence, sitting on the sentence's baseline). Inside a .v5-keys sentence, whose line pitch is the
-   keycap box (38px) plus 8, so lines with and without keycaps space alike (Frame: 45.86px). */
-.v5-kc {
-  display: inline-block;
-  vertical-align: baseline;
-  margin: 0 4px;
-  padding: 5px 14px 6px;
-  border: 1px solid var(--ink);
-  border-radius: 8px;
-  background: var(--paper);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+/* A harness name in running text (ui.ts harnessName / nameList): the sentence's face at 500 in ink, so the four
+   names read as names, not as buttons, and the sentence stays whole (the keycaps it replaces read as buttons or cut
+   the sentence up for 4 of 5 readers, committee/MINUTES.md §2.4). A name never breaks across lines. */
+.v5-hn {
   color: var(--ink);
-  font: 400 0.84em/1.48 var(--font-mono);
-  letter-spacing: -0.02em;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.v5-keys {
-  line-height: 46px;
-}
-
-/* Tab label (Frame .gradient-headline-wrap): outline 1px, top corners 10, the lower half fading into the ground
-   (--tab-bg: the section's own ground; .v5-on-lime sets lime). Frame keeps 26px under it. */
-.v5-tab {
-  position: relative;
-  display: inline-block;
-  margin-bottom: 26px;
-  padding: 8px 15px;
-  border-radius: 10px 10px 0 0;
-  outline: 1px solid var(--ink);
+/* The New chip (owner 2026-10-20 17:15: production's lime New must stay): one component, one size, in the hero's
+   announcement and in the Products panel. Lime, ink caps, 20px tall: the panel's 20px name line holds it as is, and
+   the hero's 34px pill holds it 7px in all round (sections/hero.ts and sections/nav.ts both write .v5-new). */
+.v5-new {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--accent);
   color: var(--ink);
-  font: 400 16px/1.25 var(--font-sans);
-}
-
-.v5-tab::after {
-  content: "";
-  position: absolute;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  height: 30px;
-  background: linear-gradient(transparent, var(--tab-bg, var(--paper)) 46%);
-  pointer-events: none;
-}
-
-.v5-tab > span {
-  position: relative;
-  z-index: 1;
+  font: 600 11px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* On the full lime screen: ink text, ink 70% for the second line and small text, no lime on lime. */
 .v5-on-lime {
   --tone-b: var(--on-lime-2);
-  --tab-bg: var(--accent);
   color: var(--ink);
 }
 
@@ -787,10 +772,6 @@ html:not(.js) [data-copy] {
 
   .v5-lead {
     font-size: 17px;
-  }
-
-  .v5-keys {
-    line-height: 42px;
   }
 
   .v5-lf--phone {

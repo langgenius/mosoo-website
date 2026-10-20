@@ -103,7 +103,7 @@ test("the bar's Products panel links both products, mosoo computer marked New, i
       computer.text,
       `${p.computer.name} ${NAV[locale].products.new} ${p.computer.line} computer.mosoo.ai`.replace(/\s+/g, " "),
     );
-    assert.equal(products.match(/class="v5-nav-new/g)?.length, 1, `${locale}: one New chip, on mosoo computer`);
+    assert.equal(products.match(/class="v5-new/g)?.length, 1, `${locale}: one New chip, on mosoo computer`);
     assert.match(products, /aria-labelledby="v5-nav-products-h"/, `${locale}: the list is named by its heading`);
   }
   // both names lowercase in every locale, as everywhere on this site (owner 2026-10-20 21:57: 「mosoo computer 一律小写」)
@@ -121,6 +121,33 @@ test("the bar's Products panel links both products, mosoo computer marked New, i
       "Agent のための永続的なクラウドコンピューター。",
     ],
   );
+});
+
+// O1 (committee 2026-10-21, staging committee/PLAN.md §3 1-2 items 5, 7-9): the New chip is one component, one size,
+// in the hero's pill and in the Products panel; the pill, the panels, the phone sheet, its language segments and its
+// Sign in carry no 1px line (the panels keep the floating bar's shadow; Sign in is a link like the desktop row's).
+test("the New chip is one component, and the bar's pieces carry no outline", () => {
+  const css = (name) => read(`apps/landing/src/home/${name}`);
+  const rule = (source, selector) => new RegExp(`(?:^|\\n)${selector} \\{([^}]*)\\}`).exec(source)?.[1] ?? "";
+  const system = css("system.css");
+  assert.match(rule(system, "\\.v5-new"), /height: 20px;/, "system.css draws the New chip once, 20px tall");
+  for (const file of ["sections/hero.css", "sections/nav.css"]) {
+    assert.doesNotMatch(css(file), /\.v5-(?:hero|nav)-new\b/, `${file} draws no New chip of its own`);
+  }
+  assert.doesNotMatch(read("apps/landing/src/home/sections/nav.ts"), /v5-nav-new/, "the panel writes the system's chip");
+  for (const locale of LOCALES) {
+    const hero = element(home(locale), "section", 'data-section="hero"');
+    assert.match(hero, /<a class="v5-hero-news"[^>]*><span class="v5-new">New<\/span>/, `${locale}: the pill's chip`);
+  }
+  const hero = css("sections/hero.css");
+  assert.match(rule(hero, "\\.v5-hero \\.v5-hero-news"), /border: 1px solid transparent;/, "the pill: no visible line");
+  const nav = css("sections/nav.css");
+  assert.match(rule(nav, "\\.v5-nav-pop"), /border: 0;/, "the panels: no line");
+  for (const selector of ["  \\.v5-nav-links", "  \\.v5-nav-langs", "  \\.v5-nav-signin"]) {
+    assert.doesNotMatch(rule(nav, selector), /border(?:-\w+)?: 1px/, `${selector.trim()} (phone sheet): no line`);
+  }
+  const footerLangs = rule(css("sections/footer.css"), "\\.v5-ft-langs");
+  assert.doesNotMatch(footerLangs, /border:/, "the footer's language well: no line");
 });
 
 test("the bar's language switch lists the three home pages with hreflang, the current one marked", () => {

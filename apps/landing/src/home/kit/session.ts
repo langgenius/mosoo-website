@@ -2,7 +2,7 @@
 // reads as the same object changing: chip -> sentence -> body.
 //   Call    harness chip, the instruction as the request's string, the attached file  (lit: none; the request
 //           has no keys to press: v5's first 5-second test read the console composer's + and send as a chat box)
-//   Watch   Running chip, the current action with the file being written as a keycap; a connector down to
+//   Watch   Running chip, the current action with the file being written as a path; a connector down to
 //           the card the events stream into, rows fading 1 / .6 / .2     (lit: the lime dot)
 //   Return  Turn 2 on two earlier turns, "+7 days", the restore track, restored  (lit: T1 underlay above)
 // Sources: v4b fragment (renderPaperHero / .pp-frag*, owner: "传达是清晰的"), v4d F19 stack (.d-stack*),

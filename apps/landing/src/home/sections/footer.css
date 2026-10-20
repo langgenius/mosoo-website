@@ -69,19 +69,15 @@
   color: var(--ink-3-text);
 }
 
-/* Harnesses are names, not links (motion-a11y-perf P2-8: the rows looked like the links beside them): ink, in
-   Fragment Mono at 13px (the face the hero sets the same four names in, as keycaps), no hover. */
+/* Harnesses are names, not links (motion-a11y-perf P2-8: the rows looked like the links beside them): ink, where
+   the links are ink-2, in the list's own Hanken 14 / 20 (O1, committee 2026-10-21: mono is for code and paths, not
+   names; it was Fragment Mono 13 to match the hero's keycaps, which are gone), no hover. */
 .v5-ft-rt {
   display: flex;
   align-items: center;
   gap: 8px;
   color: var(--ink);
   cursor: default;
-}
-
-.v5-ft-rt-name {
-  font: 400 13px/20px var(--font-mono);
-  letter-spacing: -0.01em;
 }
 
 .v5-ft-tile {
@@ -151,9 +147,12 @@
   font: 400 14px/20px var(--font-sans);
 }
 
-/* The language control (owner 2026-10-20 17:15 「多语言切换不明显」; Notion's and Cursor's footers frame theirs): a
-   globe, then the three languages in one 1px frame, the current one raised on paper. Three choices, so all stay in
-   sight instead of behind a menu. Each segment is a real link with hreflang; 32px tall (WCAG 2.5.8). */
+/* The language control (owner 2026-10-20 17:15 「多语言切换不明显」; Notion's and Cursor's footers set theirs apart): a
+   globe, then the three languages in one grey well (ink 3% on the frame), the current one raised on paper with an 8%
+   ring and a small shadow, so it differs by more than its colour (WCAG 1.4.1). No line around the well (O1,
+   committee 2026-10-21: only the 1px border went; a --frame fill would vanish on the footer, which is the frame). Three
+   choices, so all stay in sight instead of behind a menu. Each segment is a real link with hreflang; 32px tall (WCAG
+   2.5.8). */
 .v5-ft-lang {
   grid-column: 1 / span 4;
   display: flex;
@@ -170,7 +169,6 @@
 .v5-ft-langs {
   display: inline-flex;
   padding: 3px;
-  border: 1px solid var(--line-2);
   border-radius: 10px;
   background: rgb(22 24 21 / 0.03);
 }

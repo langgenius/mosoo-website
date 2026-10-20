@@ -58,7 +58,7 @@ export interface SessionWatchProps extends KitBase {
   status: string;
   /** The current action; `{file}` marks where the file being written sits (appended when absent). */
   action: string;
-  /** The file being written, drawn as a keycap (the object's one mono token). */
+  /** The file being written, drawn as a file path: glyph + mono path, no box (parts.ts filePath; the one mono token). */
   file: string;
   /** Newest first; two or three rows, faded 1 / .6 / .2. */
   events: readonly EventRow[];

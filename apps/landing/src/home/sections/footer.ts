@@ -81,7 +81,7 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
     .map((name, i) => {
       const id = HARNESS_IDS[i];
       if (!id) throw new Error(`footer harness ${name} has no runtime id`);
-      // A name, not a link (motion-a11y-perf P2-8): set as the hero's keycaps set it, in Fragment Mono (footer.css).
+      // A name, not a link (motion-a11y-perf P2-8): ink in the list's own Hanken, no hover (footer.css).
       return `<li class="v5-ft-rt"><span class="v5-ft-tile" aria-hidden="true">${runtimeGlyph(id)}</span><span class="v5-ft-rt-name" translate="no">${esc(name)}</span></li>`;
     })
     .join("");

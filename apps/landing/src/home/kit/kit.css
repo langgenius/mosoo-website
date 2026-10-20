@@ -227,21 +227,24 @@
   color: var(--kit-ink-2);
 }
 
-/* Keycap on the sentence's baseline (BRIEF §3.3, Frame's measured keycap). */
+/* A file path in the running text (parts.ts filePath): the file glyph in ink-2, then the path in Fragment Mono at the
+   kit's mono size, in ink; no box, no shadow (O1, committee 2026-10-21: the keycap was one of the outlined family).
+   The glyph sits on the text's x-height band; glyph and path never break apart. */
 .kit-key {
-  display: inline-block;
-  margin: 0 0.12em;
-  padding: 0.06em 0.5em 0.1em;
-  border: 1px solid var(--kit-ink);
-  border-radius: 0.45em;
-  background: var(--kit-paper);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
   color: var(--kit-ink);
   font-family: var(--kit-mono);
-  font-size: 0.78em;
+  font-size: 0.84em;
   letter-spacing: 0;
-  line-height: 1.35;
   white-space: nowrap;
+}
+
+.kit-key > .kit-g {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin: 0 0.3em 0 0.1em;
+  vertical-align: -0.2em;
+  color: var(--kit-ink-2);
 }
 
 /* Watch, compact form: the rows fade toward the bottom edge, which is close, so the stream reads as going on. */

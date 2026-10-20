@@ -8,14 +8,17 @@
 //   object    the T4 kit Session (../kit): Call bleeds off the plate's right edge like v4b's fragment
 //             (kit proof 04); Watch is the stream form (card -> connector -> the backend's event list, kit proof
 //             02); Return is the F19 stack with the T1 underlay (kit proof 06)
-//   tags      top-left: the step tags; pinned, the past ones collapse into one compact row (CTRL's step cards,
-//             staging refs/ctrl/v5/STUDY.md §1.6), the next ones wait unseen
+//   steps     top-left, pinned only: the step names as words (no box, O1), the lit one in ink, the told ones folded
+//             to a small grey contents row (CTRL's step cards, staging refs/ctrl/v5/STUDY.md §1.6), the next ones
+//             unseen, a 1px progress line under them; the row waits for the run to start (the engine's
+//             data-stage-started), so the first screen shows no step word, and the lit one is aria-current="step"
 //   caption   bottom-left: title + one line per step (Mintlify's bento label position); pinned, the captions roll
 //             over each other at the switch, so neither the object nor the caption is ever empty
-// Markup per step: one <article> holding its tag, its object layer (.v5-stage-screen, the engine contract in
-// ../system.css) and its caption. Unpinned, each article is a plate. Pinned, the articles are stacked layers of
-// one plate and only the tag row above them is shown; the per-article tags are display:none, so no word is shown
-// twice. The articles carry data-rise="card": unpinned plates below the fold enter with the rise engine.
+// Markup per step: one <article> holding its object layer (.v5-stage-screen, the engine contract in ../system.css)
+// and its caption. Unpinned (phones, tablets, reduced motion, no JS), each article is a plate and its caption names
+// the step: the stacked plates carry no step label (a lone "Call" read as a tab without siblings; committee
+// 2026-10-21, PLAN §3 1-2 item 3). Pinned, the articles are stacked layers of one plate under the step row. The
+// articles carry data-rise="card": unpinned plates below the fold enter with the rise engine.
 
 import type { HomeCopy, HomeLocale } from "../copy.ts";
 import { HARNESS_IDS } from "../copy.ts";
@@ -91,15 +94,12 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
     }),
   ];
   const lines = `<div class="v5-step-lines" aria-hidden="true">${lineHost("hero", "v5-lf--wide")}${lineHost("hero-mobile", "v5-lf--phone")}</div>`;
-  const tags = s.steps
-    .map((step, i) => `<li class="v5-stage-chip" data-stage-step="${i}">${esc(step.tag)}</li>`)
-    .join("");
+  const tags = s.steps.map((step, i) => `<li data-stage-step="${i}">${esc(step.tag)}</li>`).join("");
   const steps = s.steps.map((step, i) => {
     const state = STATES[i] ?? "call";
     const id = `stage-${state}`;
     return `<article class="v5-step v5-step--${state} v5-field v5-field--hero" data-rise="card" aria-labelledby="${id}">
-${i === 0 ? lines : ""}<p class="v5-stage-chip v5-step-tag">${esc(step.tag)}</p>
-<div class="v5-stage-screen v5-step-screen" data-stage-step="${i}"><div class="v5-step-obj">${objects[i] ?? ""}</div></div>
+${i === 0 ? lines : ""}<div class="v5-stage-screen v5-step-screen" data-stage-step="${i}"><div class="v5-step-obj">${objects[i] ?? ""}</div></div>
 <div class="v5-step-cap" data-stage-step="${i}"><div class="v5-step-cap-in"><h2 id="${id}" class="v5-step-title">${esc(step.title)}</h2><p class="v5-step-line">${esc(step.line)}</p></div></div>
 </article>`;
   });

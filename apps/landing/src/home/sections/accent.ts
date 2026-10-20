@@ -1,8 +1,9 @@
 // 3 The full lime screen (staging production/v5/BRIEF.md §4 row 3). Styles: ./accent.css; copy: ../copy/accent.json.
 //
 // Frame's white-to-lime screen (staging refs/frame/v5/motion/STUDY.md §4, layout/STUDY.md §3), in two parts:
-// 1. The white gap: a stretch of near-empty paper with a tab label and a short line in the display face, then
-//    130 px of nothing before the edge (Frame: "Our Mission Statement" + "Be focused.").
+// 1. The white gap: a stretch of near-empty paper with a short line in the display face, then 130 px of nothing
+//    before the edge (Frame: "Be focused."). No tab label over it: the outlined "Between turns" tab was an eyebrow and
+//    one of the outlined family (O1, committee 2026-10-21; playbook L195), so "Days pass." stands alone.
 // 2. The lime panel: a hard edge (no shadow, no gradient at the top), as wide as the paper (full bleed on phones),
 //    solid for at least one screen and 40 px, then a long linear fade that ends transparent so the paper comes back
 //    without a seam. On it: the two-tone H2, a sub, and one row of three unequal white cards, 1fr 2fr 1fr (Frame's
@@ -28,7 +29,7 @@
 // Safari drops list semantics from a list styled list-style: none (../system.css).
 
 import type { HomeCopy, HomeLocale } from "../copy.ts";
-import { esc, tabLabel, twoTone } from "../ui.ts";
+import { esc, twoTone } from "../ui.ts";
 
 /** The three cards in reading order, a Session between turns: what goes, what stays, what does not change. */
 const PARTS = ["sandbox", "files", "resume"] as const;
@@ -198,7 +199,6 @@ export function render(_locale: HomeLocale, copy: HomeCopy): string {
   return `<section id="session" data-section="accent" class="v5-sec v5-accent" aria-labelledby="accent-title">
 <div class="v5-wrap v5-acc-gap">
 <div data-rise="block">
-${tabLabel(a.tab)}
 <p class="v5-h2 v5-h2--xl v5-acc-gap-line" data-rise="line">${esc(a.gap)}</p>
 </div>
 </div>

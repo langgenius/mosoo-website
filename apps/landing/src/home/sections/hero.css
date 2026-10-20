@@ -1,10 +1,10 @@
 /* 1 Hero (sections/hero.ts), owned by the hero + stage agent. v4d's centred first screen, measured from 9e92312
    d-object.css: .d-hero padding-top 64 (phones 40), .d-h1 72/1 (here .v5-h1 from ../system.css), .d-lead 22px below
-   the H1, .d-actions 28px below the lead. Changed from v4d: the lead carries the four harness keycaps, so it is
-   wider (760 instead of 600) and balanced, which breaks it after [Claude Agent SDK] at 1440 (two lines; the slot
-   table in staging v5/sections/hero-stage/NOTES.md); the secondary CTA is the system's line button (1px ink), so
-   the lime primary is the only solid one (YC review P1-2). The plate below the CTA row is the stage's (./stage.css sets the gap). Every rule is scoped
-   under .v5-hero (sections/README.md). */
+   the H1, .d-actions 28px below the lead. Changed from v4d: the lead names the four harnesses (system .v5-hn), so it
+   is wider (760 instead of 600) and balanced: two lines at 1440 in en, zh and ja, three at 390; the secondary CTA is
+   the system's grey button (no line, no shadow), so the lime primary is the only solid colour (YC review P1-2). The
+   plate below the CTA row is the stage's (./stage.css sets the gap). Every rule is scoped under .v5-hero
+   (sections/README.md). */
 
 .v5-hero .v5-hero-in {
   padding-top: 48px;
@@ -12,11 +12,13 @@
 }
 
 /* The announcement (owner 2026-10-20 17:15; production's hero pill, origin/main landing/hero.tsx L59-71): one line,
-   centred over the H1. A paper pill in the page's line (1px, 18% ink), the lime New chip inside it (ink, caps; the
-   only lime on the first screen besides the CTA), the line in ink, a drawn arrow in ink-2 that nudges 2px on hover.
-   It takes 16px of the hero's top padding (64 -> 48; phones 40 -> 28): the H1 and everything under it move down 42px
-   at 1440 (H1 top 152 -> 194) and 40px at 390 (120 -> 160), measured on the built page (staging
-   v5/polish/nav/NOTES.md §3.3). */
+   centred over the H1. A pill on the frame's fill, no line (O1: a pill is not outlined), hovering a shade darker; the
+   system's New chip inside it (../system.css .v5-new: lime, ink caps, 20px, the only lime on the first screen besides
+   the CTA), 7px in from the pill's edge all round (6 on phones), so the two radii are concentric; the line in ink, a
+   drawn arrow in ink-2 that nudges 2px on hover. The transparent border shows the pill in forced-colors mode. It
+   takes 16px of the hero's top padding (64 -> 48; phones 40 -> 28): the H1 and everything under it move down 42px at
+   1440 (H1 top 152 -> 194) and 40px at 390 (120 -> 160), measured on the built page (staging v5/polish/nav/NOTES.md
+   §3.3). */
 .v5-hero .v5-hero-news {
   display: inline-flex;
   align-items: center;
@@ -24,33 +26,19 @@
   max-width: 100%;
   height: 34px;
   margin-bottom: 24px;
-  padding: 0 14px 0 4px;
-  border: 1px solid var(--line-2);
+  padding: 0 14px 0 6px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: var(--paper);
+  background: var(--frame);
   color: var(--ink);
   font: 500 14px/1 var(--font-sans);
   text-decoration: none;
   white-space: nowrap;
-  transition: border-color 0.15s var(--ease-theme);
+  transition: background-color 0.15s var(--ease-theme);
 }
 
 .v5-hero .v5-hero-news:hover {
-  border-color: rgb(22 24 21 / 0.4);
-}
-
-.v5-hero .v5-hero-new {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  height: 24px;
-  padding: 0 9px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--ink);
-  font: 600 11px/1 var(--font-sans);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  background: var(--frame-2);
 }
 
 .v5-hero .v5-hero-news-t {
@@ -83,20 +71,6 @@
   margin-top: 28px;
 }
 
-/* The glyph variant of the keycap (KEYCAP_GLYPHS in hero.ts, off): a 12px ink runtime glyph before the name, on
-   the name's x-height band. */
-.v5-hero .v5-hero-kc--g {
-  padding-left: 11px;
-}
-
-.v5-hero .v5-hero-kc-g {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 7px;
-  vertical-align: -1px;
-}
-
 /* Tablets: 72px holds a 32-character first line only from about 1180px of measure; between the phone breakpoint
    and the desktop the H1 scales with the viewport so each line breaks at most once. */
 @media (min-width: 721px) and (max-width: 1199px) {
@@ -114,14 +88,8 @@
     height: 32px;
     gap: 8px;
     margin-bottom: 20px;
-    padding-right: 12px;
+    padding: 0 12px 0 5px;
     font-size: 13.5px;
-  }
-
-  .v5-hero .v5-hero-new {
-    height: 22px;
-    padding: 0 8px;
-    font-size: 10.5px;
   }
 
   .v5-hero .v5-hero-lead {
@@ -134,18 +102,15 @@
 }
 
 /* Small phones: ja's line ("mosoo computer をリリースしました", 238px at 13.5px with the ja Latin face) makes a 328px
-   pill, wider than the 312px the hero leaves at 360; at 13px (229px) with tighter gaps the pill is 308px and stays
-   whole down to 360 (measured 2026-10-20 22:12, en / zh / ja at 390, 375, 360). Narrower (350 and below) ja ends in
-   an ellipsis, the link intact. */
+   pill, wider than the 312px the hero leaves at 360; at 13px (229px in Chrome, 231px in WebKit) with 4px gaps the pill
+   is 309px in Chrome, 311px in WebKit (with the system's 20px New chip, 6px in) and stays whole down to 360 (measured
+   2026-10-21 04:00, en / zh / ja at 390, 375, 360, 320, Chrome and the system WebKit; first 2026-10-20 22:12).
+   Narrower (350 and below) ja ends in an ellipsis, the link intact. */
 @media (max-width: 380px) {
   .v5-hero .v5-hero-news {
-    gap: 5px;
-    padding-right: 10px;
+    gap: 4px;
+    padding-right: 9px;
     font-size: 13px;
-  }
-
-  .v5-hero .v5-hero-new {
-    padding: 0 6px;
   }
 }
 

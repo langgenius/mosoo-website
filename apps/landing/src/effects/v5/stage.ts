@@ -9,10 +9,14 @@
 // and motion is allowed; otherwise it writes nothing, and the CSS default (all steps stacked) is the end state.
 //
 // Unlike v4c it draws no motion itself. Per frame it writes:
-//   [data-stage]       data-stage-mode="pinned", data-step="k", --stage-p (0–1 over the pinned run), and
+//   [data-stage]       data-stage-mode="pinned", data-step="k", --stage-p (0–1 over the pinned run), --stage-fill
+//                      ((k + the lit step's --step-p) / n: the run told by steps, so a progress line filled by it
+//                      reaches step k's share as step k lights), data-stage-started while --stage-p > 0 (the run
+//                      has begun; the CSS keeps the step names out of the first screen until then), and
 //                      data-stage-ready two frames after pinning (the CSS hangs its transitions on it, so the first
 //                      pinned paint never animates)
-//   [data-stage-step]  data-stage-state="past" | "active" | "next", --step-p (0–1 across that step's span)
+//   [data-stage-step]  data-stage-state="past" | "active" | "next", --step-p (0–1 across that step's span); an <li>
+//                      among them (a step name in a list) also gets aria-current="step" while it is the active one
 // Step k is active from at[k] to at[k + 1] (data-stage-at="0,0.34,0.67"; default k / n). Step 0 is active before
 // the pin starts and the last step after it ends, so neither edge has an empty frame; between steps the CSS keeps
 // the outgoing layer opaque under the incoming one (README), so no switch has one either. (v4c's empty frames at
@@ -60,6 +64,8 @@ function mountStage(stage: HTMLElement): () => void {
   let readyFrame = 0;
   let step = -1;
   let lastP = "";
+  let lastFill = "";
+  let started = false;
   const lastLocal = new Map<HTMLElement, string>();
 
   const measure = (): void => {
@@ -74,6 +80,11 @@ function mountStage(stage: HTMLElement): () => void {
     if (value !== lastP) {
       lastP = value;
       stage.style.setProperty("--stage-p", value);
+    }
+    const running = p > 0;
+    if (running !== started) {
+      started = running;
+      stage.toggleAttribute("data-stage-started", started);
     }
     let k = 0;
     for (let i = 1; i < n; i++) {
@@ -91,19 +102,36 @@ function mountStage(stage: HTMLElement): () => void {
         const state = i < k ? "past" : i === k ? "active" : "next";
         for (const el of els) {
           el.dataset["stageState"] = state;
+          if (el.localName === "li") {
+            if (i === k) {
+              el.setAttribute("aria-current", "step");
+            } else {
+              el.removeAttribute("aria-current");
+            }
+          }
         }
       }
     }
+    let litLocal = 0;
     for (const [i, els] of groups) {
       const a = at[i] ?? 0;
       const b = i + 1 < n ? (at[i + 1] ?? 1) : 1;
-      const local = (b > a ? clamp01((p - a) / (b - a)) : p >= a ? 1 : 0).toFixed(4);
+      const share = b > a ? clamp01((p - a) / (b - a)) : p >= a ? 1 : 0;
+      const local = share.toFixed(4);
+      if (i === step) {
+        litLocal = share;
+      }
       for (const el of els) {
         if (lastLocal.get(el) !== local) {
           lastLocal.set(el, local);
           el.style.setProperty("--step-p", local);
         }
       }
+    }
+    const fill = ((step + litLocal) / n).toFixed(4);
+    if (fill !== lastFill) {
+      lastFill = fill;
+      stage.style.setProperty("--stage-fill", fill);
     }
   };
 
@@ -120,14 +148,19 @@ function mountStage(stage: HTMLElement): () => void {
     readyFrame = 0;
     step = -1;
     lastP = "";
+    lastFill = "";
+    started = false;
     lastLocal.clear();
     delete stage.dataset["stageMode"];
     delete stage.dataset["stageReady"];
+    delete stage.dataset["stageStarted"];
     delete stage.dataset["step"];
     stage.style.removeProperty("--stage-p");
+    stage.style.removeProperty("--stage-fill");
     for (const els of groups.values()) {
       for (const el of els) {
         delete el.dataset["stageState"];
+        el.removeAttribute("aria-current");
         el.style.removeProperty("--step-p");
       }
     }

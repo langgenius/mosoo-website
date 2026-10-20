@@ -45,7 +45,8 @@ const BUDGETS = {
   // and ja (ja 'mosoo computer をリリースしました' is 16.5 wide, so the en budget is 34)
   "hero.news.tag": 6,
   "hero.news.text": 34,
-  // hero: H1 two lines of a 72px two-tone serif (one line each at 1440); lead "{pre} [keys] {or} [key] {post}"
+  // hero: H1 two lines of a 72px two-tone serif (one line each at 1440); lead "{pre} {name}, {name}, {name} {or} {name}
+  // {post}" (the names joined with 、 in zh and ja)
   "hero.h1a": 32,
   "hero.h1b": 28,
   "hero.lead.pre": 34,
@@ -61,7 +62,8 @@ const BUDGETS = {
   "stage.kit.harness": 16, // system: a product name
   // the spec table (graft 2026-10-20, staging v5/graft/INTEGRATION.md, the spec screen): the two-tone H2 over the
   // card (48px, one line each at 1440), five row labels (sans 14), the values (sans 17 after a 20px glyph: one line at
-  // 1440, at most two at 390); Files is one mono token in a keycap. The Harness row's names are hero.harnesses.
+  // 1440, at most two at 390); Files is one mono path after the file glyph, no box. The Harness row's names are
+  // hero.harnesses.
   "spec.h2a": 28,
   "spec.h2b": 30,
   "spec.labels.*": 12,
@@ -70,7 +72,6 @@ const BUDGETS = {
   // the full lime screen; three unequal cards in one row, 1fr 2fr 1fr, rows on phones (staging v5/polish/lime/NOTES.md:
   // a 24-character label stays on one line and a 48-character line takes at most two from 1199 to 1440, in the tablet
   // rows and in the phone rows from 375 to 720; at 1024 a narrow card's label line holds about 23 characters)
-  "accent.tab": 22,
   "accent.gap": 16,
   "accent.h2a": 24,
   "accent.h2b": 26,
@@ -205,11 +206,12 @@ test("each state of the Session object shows at most 14 words (en)", () => {
     const count = strings.reduce((sum, value) => sum + words(value), 0);
     assert.ok(count <= KIT_STATE_WORDS, `stage.kit ${state}: ${count} words > ${KIT_STATE_WORDS}`);
   }
-  assert.match(COPY.stage.en.kit.watch.action, /\{file\}/, "the watch action marks where the file keycap goes");
+  assert.match(COPY.stage.en.kit.watch.action, /\{file\}/, "the watch action marks where the file path goes");
 });
 
 // tools/budget.ts: at most 25 marketing words on the first screen. The hero's own slots must leave that room; the
-// keycaps are drawn objects (data-product-ui), so their names count as object words (first screen: at most 16).
+// harness names are product words (data-product-ui, ui.ts harnessName), so they count as object words (first screen:
+// at most 16).
 test("the hero's marketing words fit the first-screen budget (en)", () => {
   const h = COPY.hero.en;
   const marketing = [h.h1a, h.h1b, h.lead.pre, h.lead.or, h.lead.post, h.primary, h.secondary].reduce(
@@ -217,16 +219,17 @@ test("the hero's marketing words fit the first-screen budget (en)", () => {
     0,
   );
   assert.ok(marketing <= 25, `hero: ${marketing} marketing words > 25`);
-  assert.equal(h.harnesses.length, 4, "four harness keycaps");
+  assert.equal(h.harnesses.length, 4, "four harness names");
 });
 
-// The first screen also shows the stage plate's first state (Call, sections/stage.ts): its words and the four
-// keycaps are the first screen's object words, at most 16 in tools/budget.ts (staging v5/sections/hero-stage/NOTES.md
-// §6: keycaps 6 + Call 7 = 13 with today's placeholders).
-test("the keycaps and the Call state fit the first screen's object words (en)", () => {
-  const keycaps = COPY.hero.en.harnesses.reduce((sum, value) => sum + words(value), 0);
+// The first screen also shows the stage plate's first state (the Call card, sections/stage.ts): its words and the
+// four harness names in the lead are the first screen's object words, at most 16 in tools/budget.ts (counted the same
+// way as when the names were keycaps: staging v5/sections/hero-stage/NOTES.md §6, names 6 + Call 7 = 13). The step
+// row shows no word on the first screen (it waits for the run, sections/stage.css).
+test("the harness names and the Call card fit the first screen's object words (en)", () => {
+  const names = COPY.hero.en.harnesses.reduce((sum, value) => sum + words(value), 0);
   const call = kitStates(COPY.stage.en.kit).call.reduce((sum, value) => sum + words(value), 0);
-  assert.ok(keycaps + call <= 16, `first-screen object words: keycaps ${keycaps} + Call ${call} > 16`);
+  assert.ok(names + call <= 16, `first-screen object words: harness names ${names} + Call card ${call} > 16`);
 });
 
 test("zh and ja fill the same slots as en, no more and no fewer", () => {
@@ -266,7 +269,7 @@ const CJK_GROUPS = [
 ];
 const KIT_CJK = {
   "kit.call.instruction": 25, // set in Fragment Mono since v5 FIXES: the plate cuts it at 1440 from about 51 en characters
-  "kit.watch.action": 24, // with the file keycap in it: one line at 1440 and 1024, two at 390, as en
+  "kit.watch.action": 24, // with the file path in it: one line at 1440 and 1024, two at 390, as en
   "kit.watch.status": 8,
   "kit.watch.stream": 12,
   "kit.watch.events.*": 10,

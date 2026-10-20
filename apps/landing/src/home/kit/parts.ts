@@ -59,9 +59,12 @@ export function fileChip(name: string, mono = true): string {
   return `<span class="kit-file" data-kit-part="file">${glyph("file")}<span class="${mono ? "kit-mono" : "kit-file-t"}">${esc(name)}</span></span>`;
 }
 
-/** Inline keycap on the sentence's baseline (BRIEF §3.3: Fragment Mono, 1px ink, radius 8, white). */
-export function keycap(text: string): string {
-  return `<span class="kit-key" data-kit-part="key">${esc(text)}</span>`;
+/**
+ * A file path in the running text: the file glyph and the path in Fragment Mono, ink, with no box or shadow (O1,
+ * committee 2026-10-21: names, files and buttons carry no outline; mono is for paths). Glyph and path never part.
+ */
+export function filePath(text: string): string {
+  return `<span class="kit-key" data-kit-part="key">${glyph("file")}${esc(text)}</span>`;
 }
 
 /**
@@ -91,11 +94,11 @@ export function eventRows(rows: readonly EventRow[]): string {
   return `<ol class="kit-events" data-kit-part="events">${items}</ol>`;
 }
 
-/** A sentence with `{file}` replaced by the keycap (appended when the marker is missing). */
+/** A sentence with `{file}` replaced by the file path (appended when the marker is missing). */
 export function sentenceWithFile(text: string, file: string): string {
   const at = text.indexOf("{file}");
   if (at < 0) {
-    return `${esc(text)} ${keycap(file)}`;
+    return `${esc(text)} ${filePath(file)}`;
   }
-  return `${esc(text.slice(0, at))}${keycap(file)}${esc(text.slice(at + "{file}".length))}`;
+  return `${esc(text.slice(0, at))}${filePath(file)}${esc(text.slice(at + "{file}".length))}`;
 }

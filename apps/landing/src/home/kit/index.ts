@@ -20,7 +20,7 @@
 // (proof folder: staging v5/tools/kit; NOTES.md there lists sources, outputs and what is unverified).
 
 export { renderFileChipRow, renderHarnessStrip, renderKeyRow, renderResumeChip, renderSandboxCell } from "./objects.ts";
-export { chip, DOTTED_WALL, esc, eventRows, fileChip, glyph, keycap, LIVE_DOT, runtimeGlyph, underlay, wire } from "./parts.ts";
+export { chip, DOTTED_WALL, esc, eventRows, fileChip, filePath, glyph, LIVE_DOT, runtimeGlyph, underlay, wire } from "./parts.ts";
 export { renderSession, renderSessionCall, renderSessionReturn, renderSessionWatch } from "./session.ts";
 export type { KitGlyphId } from "./glyphs.ts";
 export type {
