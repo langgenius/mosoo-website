@@ -238,6 +238,48 @@ test("@font-face sources exist and every font preload is a face the page's style
   }
 });
 
+// zh and ja lines set Hanken's Latin at the x-height of the CJK face's own Latin (graft-design P2-3, staging
+// v5/polish/type/NOTES.md): the same file declared again with size-adjust, in three stylesheets and the kit. So: every
+// sheet declares the same scaled faces of that one file (no new download) with Hanken's line box kept, the zh / ja
+// stacks lead with them, and en still leads with "Hanken Grotesk".
+const KIT_CSS = "apps/landing/src/home/kit/kit.css";
+const faceBlock = (css, family) => {
+  const block = [...css.matchAll(/@font-face\s*{([^}]*)}/g)].map(([, body]) => body).find((body) => body.includes(`font-family: "${family}";`));
+  assert.ok(block, `no @font-face for "${family}"`);
+  const num = (name) => Number(new RegExp(`${name}:\\s*([\\d.]+)%`).exec(block)?.[1]);
+  return { block, size: num("size-adjust"), ascent: num("ascent-override"), descent: num("descent-override") };
+};
+const stackHead = (css, selector, prop) => {
+  const body = new RegExp(`(?:^|\\n)${selector.replace(/[()]/g, "\\$&")}\\s*{([^}]*)}`).exec(css)?.[1] ?? "";
+  return new RegExp(`${prop}:\\s*"([^"]+)"`).exec(body)?.[1];
+};
+
+test("zh / ja lead their sans stack with Hanken scaled to the CJK face's Latin; en keeps Hanken", () => {
+  const scales = {};
+  for (const sheet of FONT_SHEETS) {
+    const css = read(sheet);
+    const file = fontUrls(css).find((url) => url.endsWith("HankenGrotesk-latin.woff2"));
+    for (const [lang, family] of [["zh", "Hanken Grotesk SC"], ["ja", "Hanken Grotesk JP"]]) {
+      const face = faceBlock(css, family);
+      assert.ok(face.block.includes(`url("${file}")`), `${sheet}: "${family}" is not the Hanken file`);
+      assert.ok(face.size > 100, `${sheet}: "${family}" has no size-adjust above 100%`);
+      // The line box stays Hanken's 1000 / 303: the overrides undo the scale.
+      assert.ok(Math.abs((face.ascent * face.size) / 100 - 100) < 0.1, `${sheet}: "${family}" ascent moves the line box`);
+      assert.ok(Math.abs((face.descent * face.size) / 100 - 30.3) < 0.1, `${sheet}: "${family}" descent moves the line box`);
+      const fallback = faceBlock(css, `${family} Fallback`);
+      assert.ok(fallback.block.includes('local("Arial")'), `${sheet}: "${family} Fallback" is not Arial`);
+      assert.ok(Math.abs(fallback.size / face.size - 1.006) < 0.001, `${sheet}: "${family} Fallback" is not Arial at Hanken's width`);
+      (scales[family] ??= new Set()).add(face.size);
+      assert.equal(stackHead(css, `:root:lang(${lang})`, "--font-sans"), family, `${sheet}: :lang(${lang}) does not lead with "${family}"`);
+    }
+    assert.equal(stackHead(css, ":root", "--font-sans"), "Hanken Grotesk", `${sheet}: en no longer leads with Hanken Grotesk`);
+  }
+  for (const [family, sizes] of Object.entries(scales)) assert.equal(sizes.size, 1, `"${family}" differs between the stylesheets: ${[...sizes]}`);
+  const kit = read(KIT_CSS);
+  assert.equal(stackHead(kit, ".kit:lang(zh)", "--kit-sans"), "Hanken Grotesk SC");
+  assert.equal(stackHead(kit, ".kit:lang(ja)", "--kit-sans"), "Hanken Grotesk JP");
+});
+
 // The home's portal (apps/landing/src/effects/v5/portal.ts) redraws the lockup mark's block, BRAND_MARK.fill, as a
 // clip-path every frame. It reads M / L / H / V / C / Z path data only, and given anything else it quietly does
 // nothing, which leaves the spec table's screen in its still end state: a regenerated mark with arcs or smooth curves

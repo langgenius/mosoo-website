@@ -60,18 +60,20 @@
   font-size: var(--kit-size, clamp(15px, 0.9vw + 8px, 20px));
 }
 
-/* CJK: the page's stacks (app.css), set here too so a zh / ja object is right inside any page; no tracking.
+/* CJK: the page's stacks (system.css, app.css: Hanken at the CJK face's Latin x-height, faces declared there), set
+   here too so a zh / ja object is right inside any page; no tracking.
    break-word, not anywhere: anywhere lowers min-content to one glyph and lets flex rows crush a label. */
 .kit:lang(zh) {
-  --kit-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI",
-    "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --kit-sans: "Hanken Grotesk SC", "Hanken Grotesk SC Fallback", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
   line-break: strict;
   overflow-wrap: break-word;
   word-break: keep-all;
 }
 
 .kit:lang(ja) {
-  --kit-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+  --kit-sans: "Hanken Grotesk JP", "Hanken Grotesk JP Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
     "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
   line-break: strict;
   overflow-wrap: break-word;
