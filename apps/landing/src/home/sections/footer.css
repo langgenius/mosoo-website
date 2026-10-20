@@ -63,7 +63,9 @@
 }
 
 .v5-ft-out {
-  margin-left: 3px;
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: 0.05em;
   color: var(--ink-3-text);
 }
 

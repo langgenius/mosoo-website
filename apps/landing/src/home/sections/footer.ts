@@ -50,6 +50,11 @@ function lettersSvg(): string {
   return `<svg class="v5-ft-word-svg" viewBox="${x} ${y} ${w} ${h}" fill="currentColor" aria-hidden="true" focusable="false">${paths}</svg>`;
 }
 
+/** The external-link arrow, drawn in the page's line (1px-equivalent stroke, currentColor), not a Unicode glyph that
+ *  each font draws its own way (design review P2-10). */
+const OUT_ARROW =
+  '<svg class="v5-ft-out" viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 7.5L7.5 2.5M3.5 2.5H7.5V6.5"/></svg>';
+
 const item = (href: string, label: string, extra = ""): string =>
   `<li><a href="${esc(href)}"${extra}>${esc(label)}</a></li>`;
 
@@ -64,7 +69,7 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
   const q = encodeURIComponent(f.ask.prompt);
   const ask = ASSISTANTS.map(
     (a) =>
-      `<li><a href="${esc(a.href(q))}" rel="noopener" target="_blank" translate="no">${esc(a.name)}<span class="v5-ft-out" aria-hidden="true">↗</span></a></li>`,
+      `<li><a href="${esc(a.href(q))}" rel="noopener" target="_blank" translate="no">${esc(a.name)}${OUT_ARROW}</a></li>`,
   ).join("");
   const harnesses = c.harnesses.names
     .map((name, i) => {

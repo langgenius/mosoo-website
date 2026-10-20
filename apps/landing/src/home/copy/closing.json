@@ -3,7 +3,7 @@
   "$source": {
     "h2 + prompt": "v4d's closing, owner-approved (9e92312 home-copy.json close). llms.txt (src/worker.js) is the page the prompt points at: it says how to start a Session over the v2 API and how to set up with a coding agent.",
     "legend": "Coding agents the console's setup prompt is written for (MAIN apps/web/src/routes/project-overview/onboarding-setup-prompt.ts L6-L7: Codex, Claude Code, OpenCode, Cursor, Cline).",
-    "caption": "What the click does: Try mosoo opens the console (README L18, L43); the first sign-in creates a Default Project (SPEC §2 L22), and a run needs a model provider key first (onboarding prompt step 2, MAIN apps/web/src/shared/i18n/translations/en.json L859; llms.txt 'Before the first run')."
+    "caption": "What the click does and what it costs: Try mosoo opens the console (README L18, L43), free to start with no credit card (MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'). Four of the five personas of the v5 five-second test could not tell whether Try mosoo meant a free tier, a waitlist or a card form (staging v5/FIXES.md). The model key it needs first is FAQ 2's and llms.txt's ('Before the first run')."
   },
   "en": {
     "h2a": "Start your first",
@@ -13,7 +13,7 @@
     "copy": "Copy",
     "copied": "Copied",
     "primary": "Try mosoo",
-    "caption": "Opens the console: sign in, add a model key."
+    "caption": "Opens the console: free to start, no credit card."
   },
   "zh": {
     "h2a": "开始你的",
@@ -23,7 +23,7 @@
     "copy": "复制",
     "copied": "已复制",
     "primary": "试用 mosoo",
-    "caption": "打开控制台：登录，再添加你的模型密钥。"
+    "caption": "打开控制台：免费开始，无需信用卡。"
   },
   "ja": {
     "h2a": "最初の",
@@ -33,6 +33,6 @@
     "copy": "コピー",
     "copied": "コピー済",
     "primary": "mosoo を試す",
-    "caption": "コンソールでログインし、モデルキーを追加。"
+    "caption": "コンソールが開きます。無料で、カード不要。"
   }
 }

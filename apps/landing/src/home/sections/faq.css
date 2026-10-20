@@ -2,11 +2,13 @@
    Sources (staging): v4b's two columns, U16 (v4b paper.css .pp-q*); the indicator, REVIEW-v4 §4 G7 = Enter Pro's
    .faq-item__dot (refs/enter-pro/cdp2/cssom-rules.json: 6px, 1px ink ring, fills and moves -10px while the question
    moves +10px; the answer indented 10px under it); open and close, Frame (refs/frame/v5/motion/STUDY.md §5: 350 ms
-   ease, height 0 -> content, the answer from translateY(50% of itself) and opacity 0). Rules: 1px ink 8%.
+   ease, height 0 -> content, the answer from translateY(50% of itself) and opacity 0). Rules: 1px ink, the page's
+   one line (BRIEF §3.3; Frame's FAQ rules are 1px #000); they were 8% ink, where the line language broke off
+   (design review P2-2).
    Measurements and the slot table: staging v5/sections/faq-closing/NOTES.md. */
 
 .v5-faq {
-  --faq-rule: rgb(22 24 21 / 0.08); /* 1px ink 8% */
+  --faq-rule: var(--ink); /* 1px ink, the line language */
   --faq-t: 0.35s ease; /* Frame's FAQ: every part of the open and close in 350 ms, ease */
   interpolate-size: allow-keywords; /* the open height animates to its content (::details-content below) */
 }
