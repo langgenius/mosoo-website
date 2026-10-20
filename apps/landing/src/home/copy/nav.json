@@ -1,7 +1,7 @@
 {
   "$comment": "Slots of sections/nav.ts: the skip link, the bar's labels and its CTA. Budgets: tests/home-copy-slots.test.mjs. Keys starting with $ are notes, not copy.",
-  "$temporary": {
-    "*": "Real labels carried from v4d (scripts/landing-home.mjs SHELL.nav, home-copy.json hero.primary) because the task names these links (Docs, Use cases, GitHub, Sign in, Try mosoo); the content phase may rewrite them to the same widths."
+  "$source": {
+    "*": "Labels carried from v4d (scripts/landing-home.mjs SHELL.nav, home-copy.json hero.primary) for the links the v5 brief names (Docs, Use cases, GitHub, Sign in, Try mosoo; README L18 'Try mosoo'). Kept as written in the content phase."
   },
   "en": {
     "skip": "Skip to content",
