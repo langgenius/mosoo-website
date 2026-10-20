@@ -2,7 +2,7 @@
   "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md, slot table with lines at 1440 and 390). Before the edge, on white: tab (a tab label, Inter 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (Inter 20 / 17, two lines at 1440, three at 390), and five cards in this order: Harness, Model key, Sandbox, Files, Resume (label Inter 16 w500, one line; line Inter 15, one line in the wide cards, at most two in the narrow ones and at 390). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
   "$source": {
     "h2": "v4b's line. The sandbox is reclaimed once idle (docs/prd/session-lifecycle.md L8); the Session has no inactivity deadline (SPEC §4 L60) and continues after the sandbox was reclaimed (SPEC §4 L53).",
-    "sub": "A turn succeeds only when a checkpoint of its workspace and native conversation commits with it (SPEC §4 L46); the next input restores it, on a fresh sandbox once the old one was reclaimed (session-lifecycle.md L8).",
+    "sub": "A turn succeeds only when a checkpoint of its workspace and native conversation commits with it, and failed or cancelled turns never replace the last one (SPEC §4 L46, L49); the next input restores it, on a fresh sandbox once the old one was reclaimed (session-lifecycle.md L8).",
     "cards": "Harness: four (README L9), frozen for the Session (SPEC §3 L31). Model key: bring your own (SPEC §2 L25), never enters the sandbox (SPEC §5 L65). Sandbox: one per Session (SPEC §3 L32), full access inside (SPEC §5 L65). Files: what the Agent writes under outputs/ becomes downloadable artifacts (session-files.md L9). Resume: the Thread ID is the one handle (SPEC §4 L38); one minute or seven days later, same semantics (SPEC §4 L53)."
   },
   "en": {
@@ -10,7 +10,7 @@
     "gap": "Days pass.",
     "h2a": "The sandbox is gone.",
     "h2b": "The Session stays.",
-    "sub": "Every turn ends in a checkpoint. The next turn resumes from there.",
+    "sub": "Every successful turn ends in a checkpoint. The next turn resumes from there.",
     "cards": [
       { "label": "Harness", "line": "One of four, fixed for the whole Session." },
       { "label": "Model key", "line": "Your provider key, kept outside the sandbox." },
@@ -24,7 +24,7 @@
     "gap": "几天过去了。",
     "h2a": "sandbox 不在了，",
     "h2b": "Session 还在。",
-    "sub": "每一轮都以检查点收尾。下一轮，从那里继续。",
+    "sub": "成功的一轮，留下检查点。下一轮，从那里继续。",
     "cards": [
       { "label": "Harness", "line": "四选一，整个 Session 期间不会更换。" },
       { "label": "模型密钥", "line": "用你自己的密钥，它不会进入 sandbox。" },
@@ -38,7 +38,7 @@
     "gap": "数日が経つ。",
     "h2a": "sandbox は消えても、",
     "h2b": "Session は残る。",
-    "sub": "各ターンはチェックポイントで終わり、次のターンはそこから再開します。",
+    "sub": "成功したターンはチェックポイントで終わり、次のターンはそこから再開します。",
     "cards": [
       { "label": "Harness", "line": "4 つから選び、Session の間は変わりません。" },
       { "label": "モデルキー", "line": "ご自身のキーは sandbox の外に置かれます。" },
