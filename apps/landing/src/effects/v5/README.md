@@ -1,6 +1,6 @@
 # v5 motion engines (T6)
 
-The page's motion system: five small engines that read `data-*` declarations,
+The page's motion system: small engines that read `data-*` declarations,
 write attributes, custom properties and short WAAPI animations, and leave the
 look to CSS. No dependencies, no layout reads in wheel handlers, and every
 engine is a no-op when its elements are missing.
@@ -33,6 +33,7 @@ side-by-side images, one regenerating command) lives in staging
 | `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready`, `data-step`, `--stage-p`, `data-stage-state`, `--step-p` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
 | `footer.ts` | `[data-footer]`, `[data-footer-links/link/brand/rise]`, `[data-draw]` | inline hidden state, WAAPI, `data-footer-state` | Intent footer (`Footer.astro`, GSAP + Lottie) | `refs/intent/v5/STUDY.md` §1 |
 | `play-for.ts` | `[data-play-for="ms"]` | `data-playing` for at most `ms` (≤ 5000) each time the element comes into view | WCAG 2.2.2 (motion that starts by itself stops within 5 s) | staging `v5/review/motion-a11y-perf.md` P1-2 |
+| `harness-switch.ts` | `[data-switch="scroll \| time"]`, `[data-switch-item]`, `[data-switch-run]` | `data-switch-mode/driver/at/ready/pass`, `data-switch-state` | a13n's spec-sheet slot; v4a `flip-slot.ts`; v4c act 1 | "Harness switch" below; staging `v5/graft/switch/NOTES.md` |
 
 Decorative loops stop within 5 s: the line field (`linefield.ts`) runs 4.5 s per start (on entering the view, and
 on each step switch of a pinned stage), easing to a stop over its last 1.5 s; the Resume comet runs under
@@ -251,6 +252,7 @@ wordmark +198–200 ms). Focus inside the footer reveals everything at once.
 | Nav | held at p = 1 (the float bar) with no transitions; CTA and theme still switch, instantly | the bar stays in the page at the top (`position: absolute`), CTA shown |
 | Stage | not pinned: the CSS default, all steps stacked | stacked |
 | Footer | nothing hidden; mark fully drawn | composed |
+| Harness switch | not mounted: the section's still row | the same |
 
 A media-query change at runtime is followed: reduce → everything revealed and
 unpinned; damping and the pinned stage also return when it flips back.
@@ -270,3 +272,96 @@ unpinned; damping and the pinned stage also return when it flips back.
 Not here: the full lime screen itself is CSS only (Frame's hard edge,
 `linear-gradient(var(--accent) 0 calc(100svh + 40px), #fff 100%)`), hover is
 CSS, and the line field is T2's `linefield.ts`.
+
+## Harness switch — `[data-switch]`
+
+`harness-switch.ts` (2026-10-20, the v4c / v4a graft; proof, recordings and one regenerating command in staging
+`v5/graft/switch/`, `NOTES.md` there). One slot shows one of several values and rolls to the next: on the v5 page,
+the spec table's Harness value (runtime glyph and name in the display serif). `initMotion()` and the home's
+`src/home/effects.ts` start it after `initStage` (the scroll driver reads the pinned layout).
+
+| Piece | Value | Source |
+| --- | --- | --- |
+| Roll out | to `translate 0 -55%`, opacity 0, `blur(5px)` in 460 ms | a13n's spec-sheet slot, `k()` in staging `refs/a13n/downloads/stars-B_4FTUjC.js.txt` (the source of v4a `flip-slot.ts` and of v4c's first act-1 flip) |
+| Roll in | from `translate 0 70%`, opacity 0, `blur(5px)` in 640 ms, 80 ms after the roll out starts | same |
+| Curve | `cubic-bezier(.16, 1, .3, 1)` both ways | a13n's `c`; the same curve as Intent's expo.out (`--ease-expo`, BRIEF §3.4) |
+| Width | every value stacked in one grid cell (`overflow: clip`): the cell is as wide as the widest value, so the row never changes width | a13n `.slot { display: grid; overflow: clip }` |
+| `data-switch="scroll"` | the run's progress picks the value; `data-switch-span="a,b"` (default `0,1`) spreads the values evenly over that share of the run; crossing a threshold starts the roll in the scroll's direction; going back, a value holds until 32 px above its threshold | v4c design review P2-4 (the timed flip and the scroll were two clocks); `stage.ts` hysteresis |
+| Run | the closest `[data-switch-run]`, else the closest `[data-stage]`: a tall section around a sticky layer | `stage.ts` |
+| Scroll driver when | `data-switch-media`, default the run's `data-stage-media`, else `(min-width: 901px) and (min-height: 680px)`; outside it, and without a run, the time driver runs | `sections/stage.ts` `STAGE_MEDIA` |
+| `data-switch="time"` | while in view, one pass: second value → … → first value, one roll every `data-switch-hold` ms (default 2100, clamped 1000–6000). Four values take three rolls: 4.9 s of motion, inside WCAG 2.2.2's 5 s like `play-for.ts` and `linefield.ts`. Pauses while the slot is outside the middle 70 % of the viewport, under a mouse, focused within, or in a hidden tab. Rests on the first value; plays again after the slot has left the viewport entirely | a13n rolls every 2.4 s forever (not kept); v4a turned once |
+
+Writes: on `[data-switch]` `data-switch-mode="live"`, `data-switch-driver="scroll | time"`, `data-switch-at="k"`,
+`data-switch-ready` (two frames after going live), and for the time driver `data-switch-pass="play | hold | done"`;
+on every `[data-switch-item]` `data-switch-state="past | active | next"`.
+
+With the portal on the same screen (see "Portal" above): `data-switch-run` on the portal host; the door is open at
+1/3 of its run with the portal's defaults, so start the span after that (`0.4,0.95` there). Give each value about
+300–400 px of scroll (the sandbox: a 300vh run, span `0.1,0.9`, 360 px per value at 900 px tall); with the portal's
+250vh host that span leaves about 185 px per value, so make the host taller rather than the span wider.
+
+Why the scroll driver triggers a timed roll instead of scrubbing it: the reader decides which name shows and never
+comes to rest between two (a 40 px arrow-key step would stop a scrubbed roll half way: two half-clipped names). Why
+the time driver ends: a13n's loop is the motion review's P1-2 (motion that never stops); one pass shows each name
+once, then the row is still.
+
+Markup. The four names reach a screen reader once, from a visually hidden list; the animated slot is `aria-hidden`.
+Glyphs are `../home/runtime-glyphs.ts`, rendered as the hero's keycaps render them; values in `HARNESS_IDS` order (the
+first value is where the time driver rests: OpenAI Codex, the harness the stage's Call names):
+
+```html
+<dt>Harness</dt>
+<dd data-switch="scroll" data-switch-span="0.1,0.9" translate="no">
+  <ul class="v5-sr"><li>OpenAI Codex</li><li>Claude Agent SDK</li><li>OpenCode</li><li>Pi</li></ul>
+  <span class="hs" aria-hidden="true">
+    <span class="hs-item" data-switch-item><svg class="hs-glyph" viewBox="0 0 24 24" fill="currentColor"
+      fill-rule="evenodd" aria-hidden="true" focusable="false">…</svg><span>OpenAI Codex</span></span>
+    <!-- one [data-switch-item] per value -->
+  </span>
+</dd>
+```
+
+CSS. The static layout (no JS, reduced motion: every value in the row, wrapping) is the section's; this is what the
+engine needs (`.hs` / `.hs-item` are the sandbox's class names; the full sandbox CSS is staging
+`v5/graft/switch/sandbox/sandbox.css`). Keep it inside the media query: turning reduced motion on then shows the
+static row at the very next style recalc, a frame before the engine hears the change:
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+  [data-switch-mode="live"] .hs { display: inline-grid; overflow: clip; overflow-clip-margin: 8px; }
+  [data-switch-mode="live"] [data-switch-item] { grid-area: 1 / 1; }
+  [data-switch-mode="live"] [data-switch-state="past"] { translate: 0 -55%; opacity: 0; filter: blur(5px); visibility: hidden; }
+  [data-switch-mode="live"] [data-switch-state="next"] { translate: 0 70%; opacity: 0; filter: blur(5px); visibility: hidden; }
+  [data-switch-ready] [data-switch-state="active"] {
+    transition: translate .64s var(--ease-expo) .08s, opacity .64s var(--ease-expo) .08s, filter .64s var(--ease-expo) .08s;
+  }
+  [data-switch-ready] [data-switch-state="past"],
+  [data-switch-ready] [data-switch-state="next"] {
+    transition: translate .46s var(--ease-expo), opacity .46s var(--ease-expo), filter .46s var(--ease-expo),
+                visibility 0s linear .46s; /* a leaving value stays visible until it is gone */
+  }
+}
+```
+
+Measured on the sandbox (1440×900 and 390×844, headless Chrome; `data/` there):
+
+- Time driver: rolls 2102 / 4203 / 6304 ms after the slot entered the band; the last value is whole at 7029 ms, so
+  the motion lasts 4927 ms. Hover (3004 ms), focus (2503 ms) and a hidden tab (simulated, 2002 ms) push the next roll
+  back by exactly that long; leaving the view keeps the remaining time (1591 ms); after a whole pass, leaving the
+  viewport resets it unseen and coming back plays a whole pass again.
+- Scroll driver, keyboard: switches at y 721 / 1086 / 1444 going down (thresholds 720 / 1080 / 1440) and
+  1407 / 1041 / 683 going back (688 / 1048 / 1408); all 86 rests after ArrowDown, ArrowUp, PageDown and PageUp show
+  exactly one whole value. A jump over three values rolls once.
+- The slot is 351.77 px wide and the row 46 px tall in every frame of every roll (1440).
+- A roll: the brighter of the two values dips to opacity 0.22 at 83–100 ms after the switch (a13n's 80 ms gap; six
+  frames under 0.5); the new value is whole after 566–584 ms.
+- CPU (Chrome's own counters, medians of three, engine on vs the same page with it off): the engine's script time
+  is 0.2–0.3 ms for a whole pass, and once the pass is over the page is as idle as without it (0.1 ms per 7.5 s).
+  The rolls cost 179 style recalcs per pass (7–14 ms of main thread per roll over two runs): with the blur and the
+  delayed visibility switch Chrome restyles every frame; with neither, 52 (a plain div transition: 5). Kept for
+  a13n's look; dropping both is the fallback if a phone stutters.
+- Every harness name is in the accessibility tree once per table, live, under reduced motion and without JS.
+
+| | `prefers-reduced-motion: reduce` | No JS |
+| --- | --- | --- |
+| Harness switch | not mounted: every value in the row (the CSS default). Turned on at runtime: the engine clears its attributes and cancels a roll in flight, the gated CSS is static at once | the same |
