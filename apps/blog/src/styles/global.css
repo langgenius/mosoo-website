@@ -160,8 +160,9 @@
   --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   /* v5 colour tokens (BRIEF §3.1). Prefixed, because @mosoo/design-tokens
-     still owns --paper (#fbfbfc), --accent (#6fd305) and the ink ramp that the
-     article pages use. --v5-ink-3 is for text of 24px and up only. */
+     still owns --paper, --accent (#6fd305) and the ink ramp that the article
+     pages use (its --paper and ink ramp carry the v5 values since #143:
+     #ffffff, #161815 …). --v5-ink-3 is for text of 24px and up only. */
   --v5-frame: #f4f4f4;
   --v5-paper: #ffffff;
   --v5-ink: #161815;
