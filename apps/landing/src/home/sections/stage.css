@@ -320,11 +320,23 @@
 }
 
 /* ------------------------------------------------------------------------------------- tablets, 721-900 */
-/* Never pinned here: three plates of the desktop composition, a little shorter, the kit at 16px. */
+/* Never pinned here: three plates of the desktop composition, a little shorter, the kit at 16px. The Call card
+   still bleeds, but its instruction wraps inside the plate: the plate shows the card from 50% - 140px to its right
+   edge, so the line may be 50cqw + 140px wide, less the card's 1.6k padding and 16px of air (at 768 the one-line
+   instruction lost its closing quote to the cut). */
 @media (min-width: 721px) and (max-width: 900px) {
   .v5-stage {
     --plate-h: 600px;
     --kit-size: 16px;
+  }
+
+  .v5-stage .v5-step {
+    container-type: inline-size;
+  }
+
+  .v5-stage .kit-session--bleed .kit-line {
+    max-width: calc(50cqw + 140px - var(--k) * 1.6 - 16px);
+    white-space: normal;
   }
 }
 
