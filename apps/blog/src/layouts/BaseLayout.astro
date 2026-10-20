@@ -5,8 +5,10 @@ import Footer from "../components/Footer.astro";
 import { MOTION_VARIANT } from "../lib/motion";
 import type { Locale } from "../lib/i18n";
 // The two faces every page sets first (titles, text); the same files as the @font-face rules in
-// styles/global.css, so the preload and the stylesheet resolve to one hashed URL.
-import displayFontUrl from "../../../landing/public/fonts/HedvigLettersSerif-Regular-latin.woff2?url";
+// styles/global.css, so the preload and the stylesheet resolve to one hashed URL. Titles take the display face's
+// wght 440 file in English and its 400 file in zh / ja ("Roboto Serif Display CJK"): one display preload per page.
+import displayFontUrl from "../../../landing/public/fonts/RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2?url";
+import displayFontCjkUrl from "../../../landing/public/fonts/RobotoSerif-display-wdth86-opsz36-wght400-latin.woff2?url";
 import textFontUrl from "../../../landing/public/fonts/HankenGrotesk-latin.woff2?url";
 
 type HreflangAlternates = Partial<Record<"en" | "zh-CN" | "ja" | "x-default", string>>;
@@ -43,7 +45,7 @@ const {
   surface = "paper",
 } = Astro.props;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImageUrl = ogImage ?? new URL("/brand/social-card-v5-20261020.png", Astro.site).href;
+const ogImageUrl = ogImage ?? new URL("/brand/social-card-v5-20261021.png", Astro.site).href;
 const hreflangEntries = (hreflang ? Object.entries(hreflang) : []).filter(
   (entry): entry is [string, string] => Boolean(entry[1]),
 );
@@ -76,7 +78,7 @@ const alternateOgLocales = [
         <link rel="alternate" hreflang={code} href={new URL(href, Astro.site).href} />
       ))
     }
-    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={lang === "en" ? displayFontUrl : displayFontCjkUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={textFontUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg" />
     <link

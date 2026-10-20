@@ -10,7 +10,7 @@ import { renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 // home (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
 // landing-home.mjs and are written into the markers in index.html.
 // imageAlt describes the social card that ships today
-// (public/brand/social-card-v5-20261020.png, apps/landing/scripts/assets/
+// (public/brand/social-card-v5-20261021.png, apps/landing/scripts/assets/
 // social-card-v5.mjs): the text on the card, which is English in every locale:
 // the en hero H1 (copy/hero.json, kept from v4d in the content phase); change
 // it together with the og:image when the card is regenerated.
@@ -416,11 +416,19 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
   return applyReplacements(source, replacements);
 }
 
+// The display face's preload in index.html is the en file (wght 440). zh and ja set the Latin in their headings
+// in the wght 400 file ("Roboto Serif Display CJK", src/home/system.css), so their pages preload that one instead:
+// one display-font request per page.
+const DISPLAY_PRELOAD_EN =
+  '<link rel="preload" href="/fonts/RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2" as="font" type="font/woff2" crossorigin />';
+const DISPLAY_PRELOAD_CJK = DISPLAY_PRELOAD_EN.replace("-wght440-", "-wght400-");
+
 // Head copy is localized first, then the generated JSON-LD and static page go
 // into the markers, so the EN-to-locale replacements never touch them.
 export function renderLandingLocale(source, locale) {
   if (!HOME_SEO[locale]) throw new Error(`Unsupported landing locale: ${locale}`);
-  const head = fillMarker(localizeHomeHead(source, locale), "home-head", renderHomeJsonLd(locale));
+  const preloaded = locale === "en" ? source : replaceRequired(source, DISPLAY_PRELOAD_EN, DISPLAY_PRELOAD_CJK);
+  const head = fillMarker(localizeHomeHead(preloaded, locale), "home-head", renderHomeJsonLd(locale));
   return fillMarker(head, "home-fallback", renderHomeFallback(locale));
 }
 

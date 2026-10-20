@@ -275,16 +275,16 @@ test("landing and blog metadata never point at a missing default image", () => {
   );
   assert.match(
     landing,
-    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261020\.png" \/>/,
+    /<meta property="og:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261021\.png" \/>/,
   );
   assert.match(
     landing,
-    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261020\.png" \/>/,
+    /<meta name="twitter:image" content="https:\/\/mosoo\.ai\/brand\/social-card-v5-20261021\.png" \/>/,
   );
   assert.doesNotMatch(blogLayout, /\/og-default\.png/);
-  assert.match(blogLayout, /\/brand\/social-card-v5-20261020\.png/);
+  assert.match(blogLayout, /\/brand\/social-card-v5-20261021\.png/);
   assert.equal(
-    existsSync(new URL("../apps/landing/public/brand/social-card-v5-20261020.png", import.meta.url)),
+    existsSync(new URL("../apps/landing/public/brand/social-card-v5-20261021.png", import.meta.url)),
     true,
   );
   // The v5 card shows the en hero H1 (apps/landing/scripts/assets/social-card-v5.mjs COPY, the strings of

@@ -35,9 +35,11 @@ description in full, then category · date.
 
 - `cardTitle` replaces `title` on the card only (the article, feeds and
   metadata keep `title`). It is one line when it stays within about
-  **24 Latin characters or 10 CJK characters**: measured with Hedvig Letters
-  Serif 26px, that is one line at 1280 and wider, in the two-column layout
-  and on phones; the 1200–1279 band fits about 22. Without it the full
+  **24 Latin characters or 10 CJK characters**: measured with Roboto Serif
+  26px (24px on phones; 2026-10-21, the same budget Hedvig Letters Serif
+  had), that is one line at 1280 and wider, in the two-column layout from
+  about 768 and on phones from 375; the 1200–1279 band fits about 22, the
+  narrowest two-column widths (640–760) about 17. Without it the full
   title wraps to two or three lines, and the cards in a row still start their
   descriptions on one line. A Chinese card title breaks only at spaces and
   punctuation, so give it a comma or a space where the line may turn; without
@@ -96,7 +98,7 @@ over ~500 KB should be downsized.
 - `description` shows up in the OG card, the index dek, and the search
   snippet. Make it stand alone.
 - The first paragraph is the lede — write it like a magazine opener.
-- Type is the site's v5 set: Hedvig Letters Serif for titles and headings,
+- Type is the site's v5 set: Roboto Serif for titles and headings,
   Hanken Grotesk for text, Fragment Mono for code. Code samples render on the carbon
   dark surface; keep them under ~80 chars per line so they don't scroll on
   mobile.

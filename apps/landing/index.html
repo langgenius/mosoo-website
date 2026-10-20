@@ -20,10 +20,10 @@
     <!-- Before first paint: the nav engine's CTA slot starts closed under .js, and the copy button shows only with JS
          (src/effects/v5/README.md). Without JS the class never lands and the static page stays complete. -->
     <script>document.documentElement.classList.add("js")</script>
-    <!-- The first screen sets the H1 in the display face (Hedvig Letters Serif), the lead and buttons in Hanken Grotesk
+    <!-- The first screen sets the H1 in the display face (Roboto Serif), the lead and buttons in Hanken Grotesk
          and the harness keycaps in Fragment Mono: fetch all three with the page so the headline does not reflow when
          they arrive late on slow networks. -->
-    <link rel="preload" href="/fonts/HedvigLettersSerif-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/HankenGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/FragmentMono-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -38,7 +38,7 @@
       content="Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi."
     />
     <meta property="og:url" content="https://mosoo.ai/en" />
-    <meta property="og:image" content="https://mosoo.ai/brand/social-card-v5-20261020.png" />
+    <meta property="og:image" content="https://mosoo.ai/brand/social-card-v5-20261021.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="mosoo: Run agents from your backend. Continue them days later." />
@@ -53,7 +53,7 @@
       name="twitter:description"
       content="Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi."
     />
-    <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-v5-20261020.png" />
+    <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-v5-20261021.png" />
     <meta name="twitter:image:alt" content="mosoo: Run agents from your backend. Continue them days later." />
 
     <!-- mosoo:home-head (the JSON-LD per locale, filled by scripts/landing-locales.mjs) -->

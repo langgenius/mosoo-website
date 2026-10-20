@@ -2,18 +2,18 @@
 // use cases, pricing).
 // Run (repo root): node apps/landing/scripts/assets/social-card-v5.mjs
 //   CHROME=<Chrome or Chrome for Testing binary> overrides the default macOS Google Chrome path.
-// Writes apps/landing/public/brand/social-card-v5-20261020.png and prints its size and SHA-256.
+// Writes apps/landing/public/brand/social-card-v5-20261021.png and prints its size and SHA-256.
 //
 // The v5 language (staging production/v5/BRIEF.md §3): one white paper sheet on the #F4F4F4 frame, the black
-// lockup top left (public/brand/v5/logo-nav.svg), the home's two-tone serif line (Hedvig Letters Serif 400, the
-// second line in ink-3), and one lime element: the hero's CTA with Frame's light-lime glow. No photograph, no
+// lockup top left (public/brand/v5/logo-nav.svg), the home's two-tone serif line (Roboto Serif, the en display file,
+// the second line in ink-3), and one lime element: the hero's CTA with Frame's light-lime glow. No photograph, no
 // green logo, no lime text or lime line on white. Replaces the bamboo photo cards (REVIEW-v4 §6.2).
 // How: a 1200 x 630 HTML page with the fonts and the lockup inlined, shot by headless Chrome at device scale 1
 // (Chrome lays out the type exactly as the site does), then written as a palette PNG by sharp (the repo's own
 // copy, lib.mjs). Same Chrome and inputs give the same pixels; a new card gets a new dated file name, so social
-// caches that kept an old card cannot serve it under this URL. One exception: the CTA's face followed the site from
-// Inter to Hanken Grotesk on 2026-10-20 and the card was redrawn under the same name, because it had never been
-// published (https://mosoo.ai/brand/social-card-v5-20261020.png answered 404 that day).
+// caches that kept an old card cannot serve it under this URL. History: the 2026-10-20 card (Hedvig Letters Serif,
+// redrawn once under its name when the CTA moved from Inter to Hanken Grotesk, as it had never been published) gave
+// way to this one when the display face became Roboto Serif on 2026-10-21 (committee O2).
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -23,7 +23,7 @@ import { join } from "node:path";
 
 import { LANDING, sharp } from "./lib.mjs";
 
-const OUT = join(LANDING, "public", "brand", "social-card-v5-20261020.png");
+const OUT = join(LANDING, "public", "brand", "social-card-v5-20261021.png");
 const CHROME = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const W = 1200;
 const H = 630;
@@ -58,10 +58,11 @@ const lockup = readFileSync(join(PUBLIC, "brand", "v5", "logo-nav.svg"), "utf8")
 
 // Sizes are the site's v5 values scaled for a card seen at about half size in a feed: the lockup 20 -> 30 px,
 // the hero H1 72 px (d-object .d-h1, -0.03em), the button 40 -> 56 px (radius 10 -> 14, text 14.5 -> 21 px,
-// glow 0 4px 24px -> 0 6px 32px). The display face carries app.css's "Display Fallback" metric overrides.
+// glow 0 4px 24px -> 0 6px 32px). The display face carries the site's "Roboto Serif Display" face: same file,
+// weight and metric overrides (src/home/system.css).
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
-@font-face { font-family: "Card Display"; src: url("${fontUri("HedvigLettersSerif-Regular-latin.woff2")}") format("woff2");
-  font-weight: 400; font-display: block; size-adjust: 96%; ascent-override: 100%; descent-override: 28.125%; line-gap-override: 0%; }
+@font-face { font-family: "Card Display"; src: url("${fontUri("RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2")}") format("woff2");
+  font-weight: 440; font-display: block; size-adjust: 96%; ascent-override: 100%; descent-override: 28.125%; line-gap-override: 0%; }
 @font-face { font-family: "Card Sans"; src: url("${fontUri("HankenGrotesk-latin.woff2")}") format("woff2");
   font-weight: 100 900; font-display: block; }
 html, body { margin: 0; width: ${W}px; height: ${H}px; overflow: hidden; background: ${FRAME}; }

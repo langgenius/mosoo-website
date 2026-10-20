@@ -97,7 +97,7 @@ const BAMBOO_CARDS = {
   "social-card-20261019.png": "fd744e4902b145737ab28320b566b49ffa03da441557ffbb7235afe5b5c7e8bd",
   "social-card-geist-20260917.png": "31c8f6e3f2c0459494019090c080a38b43315ac2d578833cacd0c578358ce388",
 };
-const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261020.png";
+const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261021.png";
 
 const sha256 = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const filesUnder = (dir) =>
@@ -188,9 +188,10 @@ const FONT_LICENCES = {
   Geist: "GeistMono-LICENSE.txt",
   GeistMono: "GeistMono-LICENSE.txt",
   HankenGrotesk: "HankenGrotesk-OFL.txt",
-  HedvigLettersSerif: "HedvigLettersSerif-OFL.txt",
   // Inter left with its licence on 2026-10-20: Hanken Grotesk sets the pages and the share card's CTA.
   Literata: "Literata-LICENSE.txt",
+  // The display face since 2026-10-21 (committee O2; Hedvig Letters Serif left with its licence).
+  RobotoSerif: "RobotoSerif-OFL.txt",
 };
 // Cabinet Grotesk has no licence file (the ITF Free Font License, unverified). The landing no longer loads it
 // (app.css); @mosoo/design-tokens (pkgs/design-tokens/mosoo.css, the blog) still references the file, so it
@@ -278,6 +279,61 @@ test("zh / ja lead their sans stack with Hanken scaled to the CJK face's Latin; 
   const kit = read(KIT_CSS);
   assert.equal(stackHead(kit, ".kit:lang(zh)", "--kit-sans"), "Hanken Grotesk SC");
   assert.equal(stackHead(kit, ".kit:lang(ja)", "--kit-sans"), "Hanken Grotesk JP");
+});
+
+// The display face (committee O2, 2026-10-21): Roboto Serif as two static files, wght 440 for English and 400 for
+// the Latin in zh / ja headings, and Georgia fitted to them until they load. Every sheet declares the same faces
+// with Hedvig's line box; --font-display leads with the 440 face, under :lang(zh) / :lang(ja) with the 400 one; and
+// each page preloads exactly the display file its own stack uses, so it makes one display-font request.
+const DISPLAY = {
+  en: { family: "Roboto Serif Display", file: "RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2", weight: 440 },
+  cjk: { family: "Roboto Serif Display CJK", file: "RobotoSerif-display-wdth86-opsz36-wght400-latin.woff2", weight: 400 },
+};
+const DISPLAY_FALLBACK = "Roboto Serif Fallback";
+const displayStack = (css, selector) => {
+  const body = new RegExp(`(?:^|\\n)${selector.replace(/[()]/g, "\\$&")}\\s*{([^}]*)}`).exec(css)?.[1] ?? "";
+  const stack = /--font-display:\s*([^;]+);/.exec(body)?.[1] ?? "";
+  return [...stack.matchAll(/"([^"]+)"/g)].map(([, family]) => family).slice(0, 2);
+};
+const rangeOf = (block) => /unicode-range:\s*([^;]+);/.exec(block)?.[1].replace(/\s+/g, " ").trim();
+
+test("every sheet sets display headings in the Roboto Serif faces, with a Georgia stand-in on the same line box", () => {
+  assert.deepEqual(readdirSync(fonts).filter((name) => /hedvig/i.test(name)), [], "Hedvig files left in public/fonts");
+  for (const sheet of FONT_SHEETS) {
+    const css = read(sheet);
+    assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ""), /hedvig/i, `${sheet} still declares or stacks Hedvig`);
+    const fallback = faceBlock(css, DISPLAY_FALLBACK);
+    assert.ok(fallback.block.includes('src: local("Georgia");'), `${sheet}: "${DISPLAY_FALLBACK}" is not Georgia`);
+    // The faces' line box is 0.96 / 0.27em (100% / 28.125% at size-adjust 96%); the fallback's overrides undo its scale.
+    assert.ok(Math.abs((fallback.ascent * fallback.size) / 100 - 96) < 0.05, `${sheet}: the fallback's ascent moves the line box`);
+    assert.ok(Math.abs((fallback.descent * fallback.size) / 100 - 27) < 0.05, `${sheet}: the fallback's descent moves the line box`);
+    for (const { family, file, weight } of Object.values(DISPLAY)) {
+      const face = faceBlock(css, family);
+      assert.ok(fontUrls(face.block).some((url) => url.endsWith(`/${file}`)), `${sheet}: "${family}" is not ${file}`);
+      assert.ok(face.block.includes(`font-weight: ${weight};`), `${sheet}: "${family}" is not declared at ${weight}`);
+      assert.deepEqual([face.size, face.ascent, face.descent], [96, 100, 28.125], `${sheet}: "${family}" moves the line box`);
+      assert.equal(rangeOf(face.block), rangeOf(fallback.block), `${sheet}: "${family}" and the fallback cover different glyphs`);
+    }
+    assert.deepEqual(displayStack(css, ":root"), [DISPLAY.en.family, DISPLAY_FALLBACK], `${sheet}: en --font-display`);
+    for (const lang of ["zh", "ja"]) {
+      assert.deepEqual(displayStack(css, `:root:lang(${lang})`), [DISPLAY.cjk.family, DISPLAY_FALLBACK], `${sheet}: ${lang} --font-display`);
+    }
+  }
+});
+
+test("each home and blog page preloads the one display file its stack uses", async () => {
+  const { renderLandingLocale } = await import("../scripts/landing-locales.mjs");
+  const source = read("apps/landing/index.html");
+  for (const locale of ["en", "zh", "ja"]) {
+    const preloads = [...renderLandingLocale(source, locale).matchAll(/<link rel="preload" href="([^"]+)" as="font"/g)];
+    const display = preloads.map(([, href]) => href.split("/").at(-1)).filter((name) => name.startsWith("RobotoSerif-"));
+    assert.deepEqual(display, [locale === "en" ? DISPLAY.en.file : DISPLAY.cjk.file], `/${locale} display preloads`);
+  }
+  const layout = read("apps/blog/src/layouts/BaseLayout.astro");
+  const imported = Object.fromEntries([...layout.matchAll(/import (\w+) from "[^"]*\/([^/"]+\.woff2)\?url"/g)].map(([, name, file]) => [name, file]));
+  const choice = /<link rel="preload" href=\{lang === "en" \? (\w+) : (\w+)\} as="font"/.exec(layout);
+  assert.ok(choice, "the blog layout picks its display preload by lang");
+  assert.deepEqual([imported[choice[1]], imported[choice[2]]], [DISPLAY.en.file, DISPLAY.cjk.file], "the blog's en / zh-ja display preloads");
 });
 
 // The home's portal (apps/landing/src/effects/v5/portal.ts) redraws the lockup mark's block, BRAND_MARK.fill, as a
