@@ -187,9 +187,9 @@ const FONT_LICENCES = {
   // vercel/geist-font: one OFL text covers Geist and Geist Mono.
   Geist: "GeistMono-LICENSE.txt",
   GeistMono: "GeistMono-LICENSE.txt",
+  HankenGrotesk: "HankenGrotesk-OFL.txt",
   HedvigLettersSerif: "HedvigLettersSerif-OFL.txt",
-  Inter: "Inter-LICENSE.txt",
-  InterVariable: "Inter-LICENSE.txt",
+  // Inter left with its licence on 2026-10-20: Hanken Grotesk sets the pages and the share card's CTA.
   Literata: "Literata-LICENSE.txt",
 };
 // Cabinet Grotesk has no licence file (the ITF Free Font License, unverified). The landing no longer loads it
@@ -204,5 +204,36 @@ test("every font that ships has its licence text next to it", () => {
     const licence = FONT_LICENCES[family];
     assert.ok(licence, `${file}: no licence is known for the ${family} family`);
     assert.ok(existsSync(join(fonts, licence)), `${file}: ${licence} is missing`);
+  }
+});
+
+// A font swap (Inter -> Hanken Grotesk, 2026-10-20) touches three stylesheets and two preload lists. A preload
+// left behind downloads a font no rule uses; a renamed file breaks a face silently. So: every @font-face file
+// exists, and the home and the blog preload only files their own stylesheet declares.
+const HOME_CSS = "apps/landing/src/home/system.css";
+const BLOG_CSS = "apps/blog/src/styles/global.css";
+const FONT_SHEETS = [HOME_CSS, "apps/landing/src/shared/styles/app.css", BLOG_CSS];
+const read = (path) => readFileSync(join(root, path), "utf8");
+const fontUrls = (css) => [...css.matchAll(/url\("([^"]+\.woff2)"\)/g)].map(([, url]) => url);
+
+test("@font-face sources exist and every font preload is a face the page's stylesheet declares", () => {
+  for (const sheet of FONT_SHEETS) {
+    for (const url of fontUrls(read(sheet))) {
+      const file = url.startsWith("/") ? join(publicDir, url) : join(root, dirname(sheet), url);
+      assert.ok(existsSync(file), `${sheet}: ${url} does not exist`);
+    }
+  }
+  const homeFaces = new Set(fontUrls(read(HOME_CSS)));
+  const homePreloads = [...read("apps/landing/index.html").matchAll(/<link rel="preload" href="([^"]+)" as="font"/g)];
+  assert.ok(homePreloads.length > 0, "index.html preloads the first screen's fonts");
+  for (const [, href] of homePreloads) {
+    assert.ok(homeFaces.has(href), `index.html preloads ${href}, which ${HOME_CSS} does not declare`);
+  }
+  const blogFaces = fontUrls(read(BLOG_CSS)).map((url) => url.split("/").at(-1));
+  const layout = read("apps/blog/src/layouts/BaseLayout.astro");
+  const blogPreloads = [...layout.matchAll(/from "[^"]*\/([^/"]+\.woff2)\?url"/g)];
+  assert.ok(blogPreloads.length > 0, "the blog layout preloads its fonts");
+  for (const [, name] of blogPreloads) {
+    assert.ok(blogFaces.includes(name), `BaseLayout.astro preloads ${name}, which ${BLOG_CSS} does not declare`);
   }
 });

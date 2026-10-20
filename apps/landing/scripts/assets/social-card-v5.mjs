@@ -11,7 +11,9 @@
 // How: a 1200 x 630 HTML page with the fonts and the lockup inlined, shot by headless Chrome at device scale 1
 // (Chrome lays out the type exactly as the site does), then written as a palette PNG by sharp (the repo's own
 // copy, lib.mjs). Same Chrome and inputs give the same pixels; a new card gets a new dated file name, so social
-// caches that kept an old card cannot serve it under this URL.
+// caches that kept an old card cannot serve it under this URL. One exception: the CTA's face followed the site from
+// Inter to Hanken Grotesk on 2026-10-20 and the card was redrawn under the same name, because it had never been
+// published (https://mosoo.ai/brand/social-card-v5-20261020.png answered 404 that day).
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -60,7 +62,7 @@ const lockup = readFileSync(join(PUBLIC, "brand", "v5", "logo-nav.svg"), "utf8")
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
 @font-face { font-family: "Card Display"; src: url("${fontUri("HedvigLettersSerif-Regular-latin.woff2")}") format("woff2");
   font-weight: 400; font-display: block; size-adjust: 96%; ascent-override: 100%; descent-override: 28.125%; line-gap-override: 0%; }
-@font-face { font-family: "Card Sans"; src: url("${fontUri("Inter-Variable-latin.woff2")}") format("woff2");
+@font-face { font-family: "Card Sans"; src: url("${fontUri("HankenGrotesk-latin.woff2")}") format("woff2");
   font-weight: 100 900; font-display: block; }
 html, body { margin: 0; width: ${W}px; height: ${H}px; overflow: hidden; background: ${FRAME}; }
 .paper { position: absolute; inset: 24px; border-radius: 16px; background: ${PAPER}; }

@@ -53,7 +53,7 @@ node scripts/brand-assets/generate.mjs --out /tmp/check    # render elsewhere to
 | `apps/landing/public/fonts/Literata-Variable-latin-ext.woff2` | 70,736 | variable | Google Fonts | OFL-1.1 | Literata roman, Latin-ext subset (loads only when such characters appear) |
 | `apps/landing/public/fonts/Literata-Italic-Variable-latin.woff2` | 88,632 | variable | Google Fonts | OFL-1.1 | Literata italic, Latin |
 | `apps/landing/public/fonts/Literata-Italic-Variable-latin-ext.woff2` | 71,628 | variable | Google Fonts | OFL-1.1 | Literata italic, Latin-ext |
-| `apps/landing/public/fonts/Literata-LICENSE.txt` | 4,389 | text | google/fonts `ofl/literata/OFL.txt` | OFL-1.1 | Licence text shipped next to the fonts (repo convention, like `Inter-LICENSE.txt`) |
+| `apps/landing/public/fonts/Literata-LICENSE.txt` | 4,389 | text | google/fonts `ofl/literata/OFL.txt` | OFL-1.1 | Licence text shipped next to the fonts (repo convention, like `HankenGrotesk-OFL.txt`) |
 | `apps/landing/src/shared/styles/literata.css` | 7,255 | text | hand-written; metric values from `font-metrics.mjs` | repository | `@font-face` rules ("Literata", and "Literata Latin" for CJK pages), metric-matched Georgia fallbacks, `--font-literata*` stacks. Not imported anywhere yet |
 | `apps/landing/public/landing/bamboo/bamboo-plate-paper-2400.png` | 46,429 | 2400 x 1500 | `generate.mjs` job `plate-paper` | repository (original) | (a) v2a hero product-stage plate, desktop and 2x |
 | `apps/landing/public/landing/bamboo/bamboo-plate-paper-1200.png` | 14,380 | 1200 x 750 | `generate.mjs` job `plate-paper` | repository (original) | (a) same scene, re-screened for phones and 1x |

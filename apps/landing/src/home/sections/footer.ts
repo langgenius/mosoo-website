@@ -2,7 +2,7 @@
 // refs/intent/v5/STUDY.md §1, v5/tools/brand/NOTES.md §2.2):
 //   top row     the Ask-AI column in columns 1-3 (over the mark; v4c's Ask-AI, as a column), then four link columns
 //               from column 5 (over the letters): Harnesses (20px lime tiles with 12px ink runtime glyphs, Dub
-//               variant C, staging refs/dub/v5/STUDY.md §4), Product, Developers, Open source. Headings Inter
+//               variant C, staging refs/dub/v5/STUDY.md §4), Product, Developers, Open source. Headings sans
 //               14/20 w500, sentence case. No Pricing link (TOOLS-REVIEW T5).
 //   brand row   the T5 mark (variant A: the outline draws, then fills with ink) in columns 1-3 and the letters-only
 //               wordmark from column 5, aligned to the first link column; both rise out of the row's overflow:clip

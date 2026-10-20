@@ -20,11 +20,11 @@
     <!-- Before first paint: the nav engine's CTA slot starts closed under .js, and the copy button shows only with JS
          (src/effects/v5/README.md). Without JS the class never lands and the static page stays complete. -->
     <script>document.documentElement.classList.add("js")</script>
-    <!-- The first screen sets the H1 in the display face (Hedvig Letters Serif), the lead and buttons in Inter and the
-         harness keycaps in Fragment Mono: fetch all three with the page so the headline does not reflow when they
-         arrive late on slow networks. -->
+    <!-- The first screen sets the H1 in the display face (Hedvig Letters Serif), the lead and buttons in Hanken Grotesk
+         and the harness keycaps in Fragment Mono: fetch all three with the page so the headline does not reflow when
+         they arrive late on slow networks. -->
     <link rel="preload" href="/fonts/HedvigLettersSerif-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/Inter-Variable-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/HankenGrotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/FragmentMono-Regular-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />

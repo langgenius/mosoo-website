@@ -29,7 +29,7 @@
   --kit-accent: #bcf870;
   --kit-accent-tint: #deffb5;
   --kit-accent-deep: #3d630d;
-  --kit-sans: var(--font-sans, "Inter", ui-sans-serif, system-ui, sans-serif);
+  --kit-sans: var(--font-sans, "Hanken Grotesk", "Hanken Grotesk Fallback", ui-sans-serif, system-ui, sans-serif);
   --kit-mono: var(--font-mono, "Fragment Mono", ui-monospace, monospace);
   --kit-shadow-top: 0 0 0 1px rgb(22 24 21 / 0.05), 0 calc(var(--k) * 0.3) calc(var(--k) * 1.3) rgb(22 24 21 / 0.08);
   box-sizing: border-box;
@@ -63,16 +63,16 @@
 /* CJK: the page's stacks (app.css), set here too so a zh / ja object is right inside any page; no tracking.
    break-word, not anywhere: anywhere lowers min-content to one glyph and lets flex rows crush a label. */
 .kit:lang(zh) {
-  --kit-sans: "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC",
-    "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --kit-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI",
+    "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
   line-break: strict;
   overflow-wrap: break-word;
   word-break: keep-all;
 }
 
 .kit:lang(ja) {
-  --kit-sans: "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
-    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+  --kit-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
   line-break: strict;
   overflow-wrap: break-word;
   word-break: auto-phrase;

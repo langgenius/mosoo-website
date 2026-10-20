@@ -73,7 +73,7 @@ export interface SessionWatchProps extends KitBase {
 export interface SessionReturnProps extends KitBase {
   harness: HarnessRef;
   turn: string;
-  /** The gap since the last turn, e.g. "+7 days" (Inter: BRIEF §3.2 keeps mono for files, events, commands). */
+  /** The gap since the last turn, e.g. "+7 days" (sans: BRIEF §3.2 keeps mono for files, events, commands). */
   after: string;
   restored: string;
   /** Optional follow-up instruction (grey sentence). Mind the 14-word budget. */

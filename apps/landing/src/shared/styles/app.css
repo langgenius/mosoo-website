@@ -12,19 +12,34 @@
 }
 /* No Cabinet Grotesk here: it shipped without a licence file (REVIEW-v4 §6.3,
    #146), and the subpage titles use the display token below instead. */
-/* Inter is only a fallback behind Geist and has no CJK glyphs. Without a
-   unicode-range, Chinese and Japanese text made the browser download it (about
-   344 KB) just to find that out, then fall through to the system font anyway.
-   The range below leaves out U+3000 and up (CJK punctuation, kana, ideographs,
-   Hangul) and the full-width forms, so /zh and /ja skip the download. Latin text
-   renders exactly as before. */
+/* Text: Hanken Grotesk (OFL), variable wght 100-900, the same file, range and
+   fallback as the home (src/home/system.css). It has no CJK glyphs: the range
+   is the file's own cmap, so /zh and /ja only fetch it for their Latin words
+   and CJK text goes to the system faces in --font-sans. The fallback is Arial
+   with Hanken's width and line box (fitted on the pages' own text), so the
+   swap does not move the text. */
 @font-face {
-  font-family: "Inter";
+  font-family: "Hanken Grotesk";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/Inter-Variable-latin.woff2") format("woff2");
-  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
+  src: url("/fonts/HankenGrotesk-latin.woff2") format("woff2");
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Hanken Grotesk Fallback";
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 100.6%;
+  ascent-override: 99.4%;
+  descent-override: 30.12%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
 }
 /* Display: Hedvig Letters Serif 400 (OFL) stands in for ABC Arizona Mix
    (Intent's display face, commercial). The metric overrides keep its line box
@@ -50,16 +65,6 @@
   font-display: swap;
   src: url("/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
   unicode-range: U+0000-2FFF;
-}
-@font-face {
-  font-family: "Inter";
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("/fonts/InterVariable-Italic.woff2") format("woff2-variations"),
-    url("/fonts/InterVariable-Italic.woff2") format("woff2");
-  unicode-range: U+0000-2FFF, U+A640-A69F, U+A720-A7FF, U+FB00-FB4F;
 }
 @font-face {
   font-family: "Geist Mono";
@@ -176,8 +181,9 @@
     "Display Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Hiragino Mincho ProN",
     "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
   --font-sans:
-    "Inter", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans", "Microsoft YaHei UI", "Microsoft YaHei",
-    "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui, sans-serif;
+    "Hanken Grotesk", "Hanken Grotesk Fallback", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans",
+    "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --fs-12: 0.75rem;
@@ -242,8 +248,8 @@
     "Display Fallback", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Noto Serif CJK JP", ui-serif, Georgia,
     serif;
   --font-sans:
-    "Inter", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Noto Sans JP",
-    "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+    "Hanken Grotesk", "Hanken Grotesk Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
+    "Yu Gothic", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ----------------------------------------------------------------------------

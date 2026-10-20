@@ -97,7 +97,7 @@ over ~500 KB should be downsized.
   snippet. Make it stand alone.
 - The first paragraph is the lede — write it like a magazine opener.
 - Type is the site's v5 set: Hedvig Letters Serif for titles and headings,
-  Inter for text, Fragment Mono for code. Code samples render on the carbon
+  Hanken Grotesk for text, Fragment Mono for code. Code samples render on the carbon
   dark surface; keep them under ~80 chars per line so they don't scroll on
   mobile.
 - Block-quotes set in the serif and bend left of the column — use sparingly,
