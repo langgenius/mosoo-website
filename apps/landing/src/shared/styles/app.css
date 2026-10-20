@@ -1005,6 +1005,33 @@ html:has(.landing-shell[data-theme="landing"]) {
   }
 }
 
+/* --------------------------------------------------------------- pricing */
+/* #138: the status page's title (.sp, .sp-title), the home FAQ's answer in the
+   home's lead type (src/home/system.css .v5-lead), the one lime button. */
+.pp-answer {
+  max-width: 600px;
+  margin: 20px 0 0;
+  color: var(--sub-ink-2);
+  font: 400 20px/1.5 var(--font-sans);
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.pp-actions {
+  margin: 32px 0 0;
+}
+
+@media (max-width: 720px) {
+  .pp-answer {
+    margin-top: 16px;
+    font-size: 17px;
+  }
+
+  .pp-actions {
+    margin-top: 28px;
+  }
+}
+
 /* ------------------------------------------------------------- use cases */
 /* The use-case detail pages (routes/use-cases/case-parts.tsx), #143: cleaned
    up, not re-laid out. No kicker over the title (the case's name is in the

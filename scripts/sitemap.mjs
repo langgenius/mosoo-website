@@ -1,10 +1,11 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
-// Pages that stay published but out of the sitemap until their copy is rewritten.
-// Pricing is a noindexed static stub until langgenius/mosoo-website#138 rewrites it
-// (its old plan page stated capabilities the spec excludes; staging REVIEW-v4 G9);
-// nothing links it either. Paths, all locales.
+// Pages that stay published but out of the sitemap.
+// Pricing is kept as a noindexed page in the subpage shell (langgenius/mosoo-website#138:
+// the home FAQ's cost answer and one button; its old plan page stated capabilities the
+// spec excludes, staging REVIEW-v4 G9); no nav links it until the owner lists it.
+// Paths, all locales.
 export const UNLISTED_PAGES = ["/en/pricing", "/zh/pricing", "/ja/pricing"];
 
 const escapeXml = (value) =>

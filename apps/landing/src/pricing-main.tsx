@@ -15,14 +15,11 @@ if (!container) {
 
 document.documentElement.lang = htmlLanguage[locale];
 
-const openAuth = (): void => {
-  window.location.href = "https://cloud.mosoo.ai/login";
-};
-
+// The subpage shell (nav with Products and the language, footer), as on status; nothing on the page moves.
 createRoot(container).render(
   <StrictMode>
     <LandingShell>
-      <PricingPage onGetStarted={openAuth} />
+      <PricingPage />
     </LandingShell>
   </StrictMode>,
 );

@@ -143,7 +143,7 @@ const assertInitialSiteLinks = (html, locale = "en") => {
   // the second product's name in lowercase too (owner 2026-10-20 21:57: 「mosoo computer 一律小写」)
   assert.match(html, /href="https:\/\/computer\.mosoo\.ai">mosoo computer<\/a>/);
   assert.doesNotMatch(html, /\bMosoo\b/, "the brand is lowercase mosoo, mosoo computer included");
-  // Pricing is unlinked until it is rewritten (staging REVIEW-v4 G9, #138).
+  // Pricing is a page again but stays unlinked (#138: owner question 11, default), like the home's nav.
   assert.doesNotMatch(html, /href="\/(?:en|zh|ja)\/pricing"/);
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
   assert.match(html, new RegExp(`href="${locale === "en" ? "/health" : `/${locale}/health`}"`));
@@ -572,19 +572,59 @@ test("pricing locale pages receive localized canonical metadata", () => {
 });
 
 // Unlisted pages (scripts/sitemap.mjs) stay out of the index too, in every locale, and pricing claims nothing the
-// spec lacks until #138 rewrites it: no offers, no plans or quotas, no self-hosting, and no React page that does.
+// spec lacks: no offers, no plans or quotas, no self-hosting.
 test("unlisted pricing pages are noindex and claim no plans", () => {
   const source = read("apps/landing/pricing.html");
   for (const locale of LOCALES) {
     const html = renderPricingLocale(source, locale);
     assert.match(html, /<meta name="robots" content="noindex, follow" \/>/, `${locale} pricing is noindex`);
     assert.doesNotMatch(html, /"offers"|"Offer"|PreOrder/, `${locale} pricing JSON-LD has no offers`);
-    assert.doesNotMatch(html, /src="\/src\/pricing-main\.tsx"/, `${locale} pricing mounts no plan page`);
     assert.doesNotMatch(
       textOf(html),
       /sandbox hours|concurrency|coming soon|self-host|Pro\b|Enterprise|SSO|VPC|channels|forever/i,
       `${locale} pricing text`,
     );
+  }
+});
+
+// #138 (staging committee/PLAN.md 2-3): pricing stays a page, in the subpage shell like status, linked from no nav.
+// It says one thing, the home FAQ's answer to "What does it cost to start?" (copy/faq.json item 2), in its
+// paragraph, description and share text alike, so the FAQ is the only copy; then one lime "Try mosoo" to the
+// console. The plan-based React page (tiers, quotas, self-hosting the spec does not have) is deleted.
+test("pricing is the home FAQ's cost answer in the subpage shell, with one lime button", () => {
+  assert.match(homeFaq("en")[1].q, /cost/, "copy/faq.json item 2 is still the cost question");
+  const source = read("apps/landing/pricing.html");
+  assert.match(source, /<script type="module" src="\/src\/pricing-main\.tsx"><\/script>/, "the shell mounts");
+  assert.match(read("apps/landing/src/pricing-main.tsx"), /<LandingShell>\s*<PricingPage \/>\s*<\/LandingShell>/);
+  const page = read("apps/landing/src/routes/pricing/pricing-page.tsx");
+  assert.match(page, /import faq from "@\/home\/copy\/faq\.json"/, "the page reads the FAQ");
+  assert.match(page, /const COST_QUESTION = 1;/);
+  assert.match(page, /<h1 className="sp-title">/, "the title is the status page's, in the display token");
+  assert.equal(page.match(/sub-btn--lime/g)?.length, 1, "one lime button");
+  assert.match(page, /className="sub-btn sub-btn--lime" href=\{MOSOO_CLOUD_URL\}/, "to the console");
+  for (const gone of ["src/routes/pricing/pricing-data.ts", "src/routes/pricing/i18n.ts"]) {
+    assert.equal(existsSync(new URL(`../apps/landing/${gone}`, import.meta.url)), false, `${gone} is deleted`);
+  }
+  assert.doesNotMatch(page, /TIERS|METERED|unicorn/i, "no plans and no WebGL hero");
+
+  for (const locale of LOCALES) {
+    const html = renderPricingLocale(source, locale);
+    const answer = homeFaq(locale)[1].a;
+    for (const slot of [
+      /<meta\s+name="description"\s+content="([^"]*)"/,
+      /<meta\s+property="og:description"\s+content="([^"]*)"/,
+      /<meta\s+name="twitter:description"\s+content="([^"]*)"/,
+      /<p data-pricing-answer\b[^>]*>([^<]*)<\/p>/,
+    ]) {
+      assert.equal(decodeEntities(slot.exec(html)?.[1] ?? ""), answer, `${locale} pricing ${slot} carries the FAQ answer`);
+    }
+    const cta = homeCopy("nav")[locale].cta;
+    assert.match(
+      html,
+      new RegExp(`<a href="https://cloud\\.mosoo\\.ai" class="sub-btn sub-btn--lime">${cta}</a>`),
+      `${locale} Try mosoo, the lime button even without JavaScript`,
+    );
+    assert.match(html, new RegExp(`>\\s*${{ en: "Pricing", zh: "定价", ja: "料金" }[locale]}\\s*</h1>`));
   }
 });
 

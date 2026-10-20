@@ -1,7 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
+import { HOME_COPY } from "../apps/landing/src/home/copy.ts";
+import { homeFaq, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
 // Home page head copy. The title is the README positioning (langgenius/mosoo
 // README.md:8); the description says what the hero says: one API call from the
@@ -79,36 +80,50 @@ const FALLBACK_LABELS = {
   },
 };
 
-// Pricing is a static, noindexed stub until #138 (apps/landing/pricing.html): the description is also the page's
-// one paragraph, so localizing it localizes the page. Sources: console login subtitle (MAIN apps/web en.json L51
-// "No credit card required. Free to start."), SPEC §2 L25 (bring your own key, the provider bills that account),
-// SPEC §5 L66 (mosoo issues no invoices, settlements or payments).
-const PRICING_SEO = {
-  en: {
-    lang: "en",
-    title: "Pricing | mosoo",
-    description:
-      "mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices.",
-    socialDescription: "mosoo is free to start, with no credit card. Models run on your own provider key.",
-    imageAlt: "mosoo pricing",
-  },
-  zh: {
-    lang: "zh-CN",
-    title: "定价 | mosoo",
-    description:
-      "mosoo 免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不开具发票。",
-    socialDescription: "mosoo 免费开始，不需要信用卡。模型使用你自己的供应商密钥运行。",
-    imageAlt: "mosoo 定价",
-  },
-  ja: {
-    lang: "ja",
-    title: "料金 | mosoo",
-    description:
-      "mosoo は無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーがそのアカウントに請求します。mosoo は請求書を発行しません。",
-    socialDescription: "mosoo は無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動きます。",
-    imageAlt: "mosoo の料金",
-  },
-};
+// Pricing (#138, staging committee/PLAN.md 2-3) is kept as a page in the subpage shell, unlisted: noindex, out of
+// the sitemap (scripts/sitemap.mjs), linked from no nav. It says one thing, the home FAQ's answer to "What does it
+// cost to start?" (apps/landing/src/home/copy/faq.json item 2; sources in its $source: console en.json L51, SPEC §2
+// L25), and that answer is also its description and share text. So the FAQ is the only copy: the build writes the
+// answer into pricing.html's slots for every locale (fillPricingAnswer), and the React page reads the same item
+// (src/routes/pricing/pricing-page.tsx). The one button is the home's lime "Try mosoo" (copy/nav.json cta).
+const PRICING_QUESTION = 1;
+
+const escapeHtml = (value) =>
+  value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+
+function pricingAnswer(locale) {
+  const item = homeFaq(locale)[PRICING_QUESTION];
+  if (!item) throw new Error(`Landing locale build: copy/faq.json (${locale}) has no second question for pricing.`);
+  return escapeHtml(item.a);
+}
+
+const PRICING_SEO = Object.fromEntries(
+  [
+    ["en", "en", "Pricing | mosoo", "mosoo pricing"],
+    ["zh", "zh-CN", "定价 | mosoo", "mosoo 定价"],
+    ["ja", "ja", "料金 | mosoo", "mosoo の料金"],
+  ].map(([locale, lang, title, imageAlt]) => {
+    const answer = pricingAnswer(locale);
+    return [locale, { lang, title, description: answer, socialDescription: answer, imageAlt }];
+  }),
+);
+
+// The places in pricing.html that carry the answer; whatever stands there in the source, the build writes the en
+// answer in first, so the locale pass below swaps one known string.
+const PRICING_ANSWER_SLOTS = [
+  /(<meta\s+name="description"\s+content=")[^"]*(")/,
+  /(<meta\s+property="og:description"\s+content=")[^"]*(")/,
+  /(<meta\s+name="twitter:description"\s+content=")[^"]*(")/,
+  /(<p data-pricing-answer\b[^>]*>)[^<]*(<\/p>)/,
+];
+
+function fillPricingAnswer(source) {
+  const answer = PRICING_SEO.en.description;
+  return PRICING_ANSWER_SLOTS.reduce((html, slot) => {
+    if (!slot.test(html)) throw new Error(`Landing locale build could not find the pricing slot ${slot}`);
+    return html.replace(slot, (_, open, close) => `${open}${answer}${close}`);
+  }, source);
+}
 
 const STATUS_SEO = {
   en: {
@@ -413,8 +428,12 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
     ...navReplacements(locale),
     ...extraReplacements,
   ];
+  // A string listed twice (pricing's description is also its share text) is swapped once: replaceAll takes every copy.
+  const unique = replacements.filter(
+    ([search], index) => replacements.findIndex(([other]) => other === search) === index,
+  );
 
-  return applyReplacements(source, replacements);
+  return applyReplacements(source, unique);
 }
 
 // The display face's preload in index.html is the en file (wght 440). zh and ja set the Latin in their headings
@@ -435,7 +454,9 @@ export function renderLandingLocale(source, locale) {
 
 export function renderPricingLocale(source, locale) {
   if (!PRICING_SEO[locale]) throw new Error(`Unsupported pricing locale: ${locale}`);
-  return localizeSubpageHtml(source, locale, PRICING_SEO, "/pricing");
+  return localizeSubpageHtml(fillPricingAnswer(source), locale, PRICING_SEO, "/pricing", [
+    [">Try mosoo</a>", `>${escapeHtml(HOME_COPY[locale].nav.cta)}</a>`],
+  ]);
 }
 
 export function renderStatusLocale(source, locale) {

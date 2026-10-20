@@ -4,13 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pricing | mosoo</title>
+    <!-- The page says one thing, the home FAQ's answer to "What does it cost to start?" (src/home/copy/faq.json
+         item 2), and that answer is its description and share text too. The build writes it into every
+         data-pricing-answer slot and description for each locale (scripts/landing-locales.mjs fillPricingAnswer), so
+         the FAQ stays the only copy: the text here is a stand-in. -->
     <meta
       name="description"
-      content="mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices."
+      content="Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
     />
-    <!-- Unlisted until #138 rewrites the page: out of the index and the sitemap (scripts/sitemap.mjs) and linked from
-         nowhere. The old React page (src/routes/pricing) listed plans, quotas and self-hosting the spec does not
-         have (SPEC §8 L89-L91), so it is no longer mounted; this static page says only what holds today. -->
+    <!-- Kept as a page in the subpage shell (#138, staging committee/PLAN.md 2-3), unlisted: out of the index and the
+         sitemap (scripts/sitemap.mjs) and linked from no nav (owner question 11, default). The old React plan page
+         listed plans and quotas the spec does not have (SPEC §8 L89-L91); it is deleted. -->
     <meta name="robots" content="noindex, follow" />
     <meta name="theme-color" content="#f4f4f4" />
     <link rel="canonical" href="https://mosoo.ai/en/pricing" />
@@ -26,7 +30,7 @@
     <meta property="og:title" content="Pricing | mosoo" />
     <meta
       property="og:description"
-      content="mosoo is free to start, with no credit card. Models run on your own provider key."
+      content="Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
     />
     <meta property="og:url" content="https://mosoo.ai/en/pricing" />
     <meta property="og:image" content="https://mosoo.ai/brand/social-card-v5-20261021.png" />
@@ -39,7 +43,7 @@
     <meta name="twitter:title" content="Pricing | mosoo" />
     <meta
       name="twitter:description"
-      content="mosoo is free to start, with no credit card. Models run on your own provider key."
+      content="Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
     />
     <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-v5-20261021.png" />
     <meta name="twitter:image:alt" content="mosoo pricing" />
@@ -97,10 +101,16 @@
         <h1 style="font-family: var(--font-display, Georgia, serif); font-weight: 400; letter-spacing: -0.02em; max-width: 760px; margin: 0; font-size: 48px; line-height: 1.05">
           Pricing
         </h1>
-        <p style="max-width: 680px; margin: 24px 0 0; font-size: 18px; line-height: 1.6">
-          mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices.
+        <p data-pricing-answer style="max-width: 680px; margin: 24px 0 0; font-size: 18px; line-height: 1.6">
+          Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models.
+        </p>
+        <!-- The built page links app.css (pricing-main.tsx imports it), so without JavaScript this is the lime button
+             too; without the stylesheet it is a plain link. -->
+        <p style="margin: 24px 0 0; font-size: 16px; line-height: 1.6">
+          <a href="https://cloud.mosoo.ai" class="sub-btn sub-btn--lime">Try mosoo</a>
         </p>
       </main>
     </div>
+    <script type="module" src="/src/pricing-main.tsx"></script>
   </body>
 </html>
