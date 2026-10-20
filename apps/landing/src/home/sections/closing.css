@@ -118,6 +118,7 @@
   margin-top: 12px;
   color: var(--ink-2);
   font: 400 14px/20px var(--font-sans);
+  text-wrap: balance; /* two even lines on phones, not a lone "card." */
 }
 
 :lang(ja) :is(.v5-closing-prompt, .v5-closing-caption) {
