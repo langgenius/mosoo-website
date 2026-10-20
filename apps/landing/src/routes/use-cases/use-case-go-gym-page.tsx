@@ -72,7 +72,7 @@ const RESPONSIBILITIES = [
   {
     body: () =>
       t(
-        "Agent publication, Thread and Run lifecycle, user delegation, sandbox isolation, and harness selection.",
+        "Agent execution, Thread and Run lifecycle, user delegation, sandbox isolation, and harness selection.",
       ),
     name: "mosoo",
   },

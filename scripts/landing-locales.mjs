@@ -143,7 +143,8 @@ const USE_CASES_SEO = {
     title: "Use cases | mosoo",
     description:
       "Products built on mosoo: see what each product does, what mosoo provides, and how the rest of the stack fits together.",
-    socialDescription: "Real products built on mosoo: agents published once and called as APIs.",
+    socialDescription:
+      "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.",
     imageAlt: "mosoo use cases",
   },
   zh: {
@@ -151,7 +152,7 @@ const USE_CASES_SEO = {
     title: "用例 | mosoo",
     description:
       "用 mosoo 构建的产品：了解每个产品的作用、mosoo 提供的能力，以及技术栈其他部分如何协同。",
-    socialDescription: "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。",
+    socialDescription: "这些产品使用 mosoo 作为 Agent backend。每个案例都会说明产品、mosoo 提供的价值与集成路径。",
     imageAlt: "mosoo 用例",
   },
   ja: {
@@ -160,7 +161,7 @@ const USE_CASES_SEO = {
     description:
       "mosoo でつくられたプロダクト：各プロダクトの役割、mosoo が提供する機能、スタック全体の連携を紹介します。",
     socialDescription:
-      "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
+      "mosoo を Agent backend として使うプロダクト。各ケースでは、プロダクト、mosoo が提供する価値、統合経路を紹介します。",
     imageAlt: "mosoo ユースケース",
   },
 };

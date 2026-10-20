@@ -64,7 +64,7 @@ function CaseHeader(): ReactElement {
         </span>
       </div>
       <h1 className="text-fg-1 mt-5 max-w-[820px] [text-wrap:balance]" style={PAGE_HEADLINE_STYLE}>
-        {t("Publish one Agent. Let any Codex call it.")}
+        {t("One Agent behind an API. Any Codex can call it.")}
       </h1>
       <p className="text-fg-2 mt-5 max-w-[680px] text-[15px] leading-[1.65] [text-wrap:pretty]">
         {t(
@@ -263,7 +263,7 @@ function ClosingCta(): ReactElement {
         </h2>
         <p className="text-fg-2 mt-4 text-[14.5px] leading-[1.6] [text-wrap:pretty]">
           {t(
-            "Publish an Agent on mosoo, hand its Instruction for LLM to a coding agent, and ship the integration in an afternoon.",
+            "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.",
           )}
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

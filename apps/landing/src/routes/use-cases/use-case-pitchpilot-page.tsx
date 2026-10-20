@@ -299,7 +299,7 @@ function ClosingCta(): ReactElement {
         </h2>
         <p className="text-fg-2 mt-4 text-[14.5px] leading-[1.6] [text-wrap:pretty]">
           {t(
-            "Publish the Agent once, call it through Threads, and turn its events and files into the experience your users already understand.",
+            "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.",
           )}
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
