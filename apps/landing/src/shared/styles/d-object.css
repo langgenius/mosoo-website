@@ -89,25 +89,6 @@ html:has(.d-shell) {
   text-decoration: none;
 }
 
-.d-nav-links {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-/* padding-block makes a 44px tap target without changing the look. */
-.d-nav-links a {
-  padding-block: 15px;
-  color: var(--d-ink-2);
-  font: 500 14.5px/1 var(--font-sans);
-  text-decoration: none;
-}
-
-.d-nav-links a:hover,
-.d-nav-links a[aria-current] {
-  color: var(--d-ink);
-}
-
 /* ------------------------------------------------------------- shared bits */
 .d-home > section,
 .d-home > .d-coda {
@@ -1056,24 +1037,6 @@ html:has(.d-shell) {
   margin: 0;
 }
 
-.d-lang {
-  display: flex;
-  gap: 4px;
-}
-
-.d-lang a {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
-  color: var(--d-ink-2);
-  font-size: 13px;
-}
-
-.d-lang a[aria-current] {
-  background: rgb(22 24 21 / 0.07);
-  color: var(--d-ink);
-}
-
 /* ------------------------------------------------------- CJK line breaks */
 :lang(zh) .d-h1,
 :lang(zh) .d-h2,
@@ -1175,14 +1138,6 @@ html:has(.d-shell) {
 
   .d-nav {
     padding: 0 16px;
-  }
-
-  .d-nav-links {
-    gap: 20px;
-  }
-
-  .d-hide-sm {
-    display: none;
   }
 
   .d-home > section,

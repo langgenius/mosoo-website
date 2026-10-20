@@ -1,7 +1,11 @@
 import type { ReactElement } from "react";
 
 import { t } from "@/shared/i18n";
-import { LOCALE_LABELS, LOCALES, locale, localeHref, rememberLocale } from "@/shared/locale";
+import { htmlLanguage, LOCALE_LABELS, LOCALES, locale, localeHref, rememberLocale } from "@/shared/locale";
+
+import "@/shared/styles/site-nav.css";
+
+import { Globe } from "./site-nav";
 
 import {
   blogUrl,
@@ -42,7 +46,8 @@ function footerGroups(): readonly FooterGroup[] {
       heading: t("Product"),
       links: [
         { label: t("mosoo console"), href: MOSOO_CLOUD_URL },
-        { label: "Mosoo Computer", href: MOSOO_COMPUTER_URL, noTranslate: true },
+        // Lowercase like mosoo itself (owner 2026-10-20 21:57: 「mosoo computer 一律小写」); the URL keeps its spelling.
+        { label: "mosoo computer", href: MOSOO_COMPUTER_URL, noTranslate: true },
         { label: t("Use cases"), href: pathToUseCases() },
         { label: t("Status"), href: statusPath() },
       ],
@@ -88,6 +93,12 @@ function footerGroups(): readonly FooterGroup[] {
  * positioning line, then one bottom row with the credit and the language
  * switcher). No solid logo here: the page end already carries the large
  * outline (UI-FORMS §d rule 6).
+ *
+ * The language switcher is the home footer's (owner 2026-10-20 17:15
+ * 「多语言切换不明显」; src/home/sections/footer.ts): a globe, then the three
+ * languages in one 1px frame, the current one raised on paper, every choice in
+ * sight. Each is a real link to this page in that language (shared/styles/
+ * site-nav.css has the look).
  */
 export function SiteFooter(): ReactElement {
   return (
@@ -114,21 +125,24 @@ export function SiteFooter(): ReactElement {
         </nav>
         <div className="d-footer-bottom">
           <p>© 2026 LangGenius, Inc.</p>
-          <ul aria-label={t("Change language")} className="d-lang">
-            {LOCALES.map((code) => (
-              <li key={code}>
-                <a
-                  href={localeHref(code)}
-                  hrefLang={code === "zh" ? "zh-CN" : code}
-                  lang={code === "zh" ? "zh-CN" : code}
-                  aria-current={code === locale ? "true" : undefined}
-                  onClick={() => rememberLocale(code)}
-                >
-                  {LOCALE_LABELS[code].native}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="d-ft-lang">
+            <Globe className="d-ft-globe" />
+            <ul aria-label={t("Change language")} className="d-ft-langs">
+              {LOCALES.map((code) => (
+                <li key={code}>
+                  <a
+                    href={localeHref(code)}
+                    hrefLang={htmlLanguage[code]}
+                    lang={htmlLanguage[code]}
+                    aria-current={code === locale ? "true" : undefined}
+                    onClick={() => rememberLocale(code)}
+                  >
+                    {LOCALE_LABELS[code].native}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,0 +1,685 @@
+/* The subpages' bar (shared/ui/site-nav.tsx) and footer language switcher (shared/ui/site-footer.tsx): the home's
+   Products entry, language switch and phone sheet (owner 2026-10-20 17:15 「多语言切换不明显，原先product 入口没了」;
+   staging v5/polish/nav/DESIGN.md §2, §4; src/home/sections/nav.css and footer.css carry the same values). Imported by
+   the two components, so it loads wherever they render; every selector here is its own (d-nav-*, d-ft-*) or more
+   specific than d-object.css's, so the order of the two stylesheets does not matter.
+
+   The bar is d-object's 64px static bar at the top of the paper (no morph, no glass, no CTA: the hero carries the
+   primary button). Products and the language are buttons with native popovers; the panels are paper cards hung 8px
+   under the bar, from their own trigger by CSS anchor positioning (a browser without it gets them under the bar's right
+   end). They are absolutely positioned, so they scroll away with the bar. Up to 860px the <nav> itself is the popover
+   the menu button opens: a sheet under the bar with the panels inline. A popover the author gives a display shows even
+   when closed, so the panels only get one when open (or inside the open sheet). */
+
+.d-shell {
+  /* The home's values (src/home/system.css) where d-object's differ: lines at 10% / 18% ink, the v5 lime (d-object's
+     --d-accent is the older green), the CTA and theme eases. */
+  --d-nav-line: rgb(22 24 21 / 0.1);
+  --d-nav-line-2: rgb(22 24 21 / 0.18);
+  --d-nav-lime: #bcf870;
+  --d-nav-gap: 24px;
+  --d-nav-ease: cubic-bezier(0, 0, 0.2, 1);
+  --d-nav-ease-theme: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.d-nav {
+  gap: var(--d-nav-gap);
+  anchor-name: --d-bar;
+}
+
+.d-nav-end {
+  display: flex;
+  align-items: center;
+  gap: var(--d-nav-gap);
+}
+
+/* The <nav> is a popover only for the phone sheet: here it is the bar's row, so the browser's popover box (fixed,
+   centred, framed, Canvas colours) is undone and it always shows. */
+.d-nav-row {
+  position: static;
+  inset: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--d-nav-gap);
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+/* Links and the two triggers: one look (the home bar's). padding-block makes a 44px tap target without changing it;
+   the radius only rounds the focus ring. */
+.d-nav-a,
+.d-nav-tg {
+  display: inline-flex;
+  align-items: center;
+  padding-block: 15px;
+  border-radius: 6px;
+  color: var(--d-ink-2);
+  font: 500 14.5px/1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s var(--d-nav-ease-theme);
+}
+
+.d-nav-a:hover,
+.d-nav-tg:hover,
+.d-nav-a[aria-current="page"] {
+  color: var(--d-ink);
+}
+
+/* GitHub is its mark in the bar (the name stays its accessible name, and shows in the phone sheet). */
+.d-nav-ghm {
+  display: block;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+.d-nav-gh-t,
+.d-nav-pop-h {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------------------------------- the two dropdowns */
+.d-nav-dd {
+  display: flex;
+  align-items: center;
+}
+
+.d-nav-tg {
+  gap: 6px;
+  margin: 0;
+  padding-inline: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.d-nav-dd--products > .d-nav-tg {
+  anchor-name: --d-products;
+}
+
+.d-nav-dd--lang > .d-nav-tg {
+  anchor-name: --d-lang;
+}
+
+.d-nav-chev {
+  display: block;
+  flex: none;
+  margin-top: 1px;
+  transition: rotate 0.2s var(--d-nav-ease);
+}
+
+.d-nav-globe {
+  display: block;
+  flex: none;
+}
+
+/* While a panel is open its trigger reads ink and its chevron turns over. */
+.d-nav-dd:has(> .d-nav-pop:popover-open) > .d-nav-tg {
+  color: var(--d-ink);
+}
+
+.d-nav-dd:has(> .d-nav-pop:popover-open) .d-nav-chev {
+  rotate: 180deg;
+}
+
+/* The panels: a paper card, 1px 12% ink edge, the home bar's shadow family, r12. Hidden unless open. */
+.d-nav-pop {
+  display: none;
+  position: absolute;
+  inset: auto;
+  top: 88px; /* no anchor positioning: 8px under the bar (the shell's 16 + the bar's 64) */
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 8px;
+  overflow: visible;
+  border: 1px solid rgb(22 24 21 / 0.12);
+  border-radius: 12px;
+  background: var(--d-paper);
+  color: var(--d-ink);
+  box-shadow:
+    0 1px 2px rgb(22 24 21 / 0.06),
+    0 18px 40px -18px rgb(22 24 21 / 0.3);
+  font: 400 15px/1.4 var(--font-sans);
+  text-align: left;
+}
+
+.d-nav-pop:popover-open {
+  display: block;
+}
+
+/* 464 wide: every product line stays on one line (the home's measure: widest, ja mosoo, 378 of the 390 column). */
+.d-nav-pop--products {
+  right: 24px;
+  width: 464px;
+  max-width: calc(100% - 32px);
+}
+
+.d-nav-pop--lang {
+  right: 24px;
+  width: 216px;
+}
+
+/* With anchor positioning (Chrome 125+, Safari 26+): under the bar, from the trigger. The products panel starts 20px
+   left of "Products", so its tiles sit under the word; the language list ends 20px right of its chevron. Neither
+   leaves the viewport. */
+@supports (anchor-name: --d-a) {
+  .d-nav-pop {
+    top: calc(anchor(--d-bar bottom) + 8px);
+  }
+
+  .d-nav-pop--products {
+    right: auto;
+    left: clamp(16px, anchor(--d-products left) - 20px, 100% - 480px);
+  }
+
+  .d-nav-pop--lang {
+    right: max(16px, anchor(--d-lang right) - 20px);
+  }
+}
+
+/* Product rows (Dub's resource list): the 20px lime tile with a 12px ink glyph, the name (and the New chip), the host
+   in Fragment Mono at the right, one line under the name. */
+.d-nav-prods,
+.d-nav-langs {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.d-nav-prod {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "tile name host"
+    ". line line";
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--d-ink);
+  text-decoration: none;
+  transition: background-color 0.15s var(--d-nav-ease-theme);
+}
+
+.d-nav-prod:hover {
+  background: var(--d-frame);
+}
+
+.d-nav-prod:focus-visible {
+  outline-offset: -2px;
+}
+
+.d-nav-tile {
+  grid-area: tile;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: var(--d-nav-lime);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.05);
+  color: var(--d-ink);
+}
+
+.d-nav-tile-g {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+.d-nav-prod-name {
+  grid-area: name;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font: 500 15px/20px var(--font-sans);
+  white-space: nowrap;
+}
+
+.d-nav-prod-host {
+  grid-area: host;
+  color: var(--d-ink-2);
+  font: 400 12px/20px var(--font-mono);
+  letter-spacing: 0;
+}
+
+/* No orphaned last word, and ja breaks at phrases (as the home's lines, nav.css): the sheet never splits
+   「クラウドコンピュー / ター。」 or "… Agent / runtime。". */
+.d-nav-prod-line {
+  grid-area: line;
+  color: var(--d-ink-2);
+  font: 400 14px/20px var(--font-sans);
+  text-wrap: pretty;
+}
+
+.d-nav-prod-line:lang(ja) {
+  word-break: auto-phrase;
+}
+
+/* The New chip (the owner's screenshot; production's hero chip): lime, ink, caps. */
+.d-nav-new {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--d-nav-lime);
+  color: var(--d-ink);
+  font: 600 10px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The language list: this page in the three languages, the current one in ink with a check. */
+.d-nav-langs a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--d-ink-2);
+  font: 500 15px/20px var(--font-sans);
+  text-decoration: none;
+  transition:
+    background-color 0.15s var(--d-nav-ease-theme),
+    color 0.15s var(--d-nav-ease-theme);
+}
+
+.d-nav-langs a:hover {
+  background: var(--d-frame);
+  color: var(--d-ink);
+}
+
+.d-nav-langs a:focus-visible {
+  outline-offset: -2px;
+}
+
+.d-nav-langs a[aria-current="true"] {
+  color: var(--d-ink);
+}
+
+.d-nav-check {
+  display: block;
+  flex: none;
+  visibility: hidden;
+}
+
+.d-nav-langs a[aria-current="true"] .d-nav-check {
+  visibility: visible;
+}
+
+/* The phone menu button: only up to 860px. */
+.d-nav-menu {
+  display: none;
+}
+
+/* Small desktops (861-1023px): the row tightens to 20px gaps, as the home's. */
+@media (max-width: 1023px) {
+  .d-shell {
+    --d-nav-gap: 20px;
+  }
+}
+
+/* -------------------------------------------------------------------------------------- phones and tablets */
+/* Up to 860px, as on the home: the bar keeps the logo and the menu button; the button opens the sheet, the <nav> as a
+   popover under the bar: Products (the two rows), Docs, Use cases, GitHub, the language (three segments) and Sign in.
+   Every link is one tap away (d-object hid Use cases and GitHub up to 720px). */
+@media (max-width: 860px) {
+  .d-nav-end {
+    gap: 8px;
+  }
+
+  .d-nav-menu {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: 0 -14px 0 0; /* the two lines, not the 44px box, end at the bar's text edge */
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--d-ink);
+    cursor: pointer;
+  }
+
+  .d-nav-burger {
+    display: block;
+  }
+
+  .d-nav-burger path {
+    transform-origin: 9px 9px;
+    transition: transform 0.2s var(--d-nav-ease);
+  }
+
+  .d-nav-end:has(.d-nav-row:popover-open) .d-nav-burger-a {
+    transform: translateY(2.75px) rotate(45deg);
+  }
+
+  .d-nav-end:has(.d-nav-row:popover-open) .d-nav-burger-b {
+    transform: translateY(-2.75px) rotate(-45deg);
+  }
+
+  /* The sheet hangs from the bar's right end, 8px in from the paper's edges, at most 420px wide: the bar's width on
+     phones, a menu-sized card on tablets. Its place and look sit on the element and only display follows the open
+     state (the home's rule, staging v5/polish/nav/DESIGN.md "22:00" no. 2): while it fades out it stays in the top
+     layer for 150ms, and with its place tied to :popover-open it would drop back into the bar as a faded row. */
+  .d-nav-row {
+    position: absolute;
+    inset: auto;
+    top: 88px;
+    left: max(24px, 100% - 444px);
+    right: 24px;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-height: calc(100dvh - 112px);
+    padding: 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: 1px solid rgb(22 24 21 / 0.12);
+    border-radius: 12px;
+    background: var(--d-paper);
+    color: var(--d-ink);
+    box-shadow:
+      0 1px 2px rgb(22 24 21 / 0.06),
+      0 18px 40px -18px rgb(22 24 21 / 0.3);
+  }
+
+  .d-nav-row:popover-open {
+    display: flex;
+  }
+
+  @supports (anchor-name: --d-a) {
+    .d-nav-row {
+      top: calc(anchor(--d-bar bottom) + 8px);
+      left: max(anchor(--d-bar left) + 8px, anchor(--d-bar right) - 428px);
+      right: calc(anchor(--d-bar right) + 8px);
+      max-height: calc(100dvh - anchor(--d-bar bottom) - 24px);
+    }
+  }
+
+  /* In the sheet: the triggers give way to the panels' own headings, and the panels sit in the flow (shown whenever
+     the sheet is). */
+  .d-nav-dd {
+    display: block;
+  }
+
+  .d-nav-tg {
+    display: none;
+  }
+
+  .d-nav-row .d-nav-pop {
+    position: static;
+    display: block;
+    width: auto;
+    max-width: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .d-nav-pop-h {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 10px 12px 6px;
+    overflow: visible;
+    clip-path: none;
+    color: var(--d-ink);
+    font: 500 14px/20px var(--font-sans);
+  }
+
+  /* Hairlines between the three groups (products, links, language), on the square group boxes so they run straight
+     (the rows are rounded for their hover). */
+  .d-nav-dd--products {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--d-nav-line);
+  }
+
+  .d-nav-dd--lang {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--d-nav-line);
+  }
+
+  .d-nav-prod {
+    grid-template-columns: 20px minmax(0, 1fr);
+    grid-template-areas:
+      "tile name"
+      ". line"
+      ". host";
+    row-gap: 2px;
+  }
+
+  .d-nav-prod-line {
+    margin-top: 2px;
+  }
+
+  .d-nav-a {
+    min-height: 44px;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--d-ink);
+    font: 500 15px/20px var(--font-sans);
+  }
+
+  .d-nav-a:hover {
+    background: var(--d-frame);
+  }
+
+  .d-nav-a:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .d-nav-gh {
+    gap: 10px;
+  }
+
+  .d-nav-gh-t {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  /* The language as three segments in one 1px frame, the current one raised on paper (all three in sight). */
+  .d-nav-langs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0 12px 4px;
+    padding: 3px;
+    border: 1px solid var(--d-nav-line-2);
+    border-radius: 10px;
+    background: var(--d-frame);
+  }
+
+  .d-nav-langs a {
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 6px;
+    gap: 0;
+    font-size: 14px;
+    color: var(--d-ink-2);
+  }
+
+  .d-nav-langs a[aria-current="true"] {
+    background: var(--d-paper);
+    box-shadow:
+      0 0 0 1px rgb(22 24 21 / 0.08),
+      0 1px 2px rgb(22 24 21 / 0.08);
+  }
+
+  .d-nav-check {
+    display: none;
+  }
+
+  /* Sign in closes the sheet as a 1px ink line button (the page's secondary), lined up with the segments. */
+  .d-nav-signin {
+    justify-content: center;
+    margin: 12px 12px 4px;
+    border: 1px solid var(--d-ink);
+  }
+}
+
+/* Phones without anchor positioning (d-object: the shell's padding is 8 up to 720px, so the bar ends at 72). */
+@media (max-width: 720px) {
+  @supports not (anchor-name: --d-a) {
+    .d-nav-pop {
+      top: 80px;
+    }
+
+    .d-nav-row {
+      top: 80px;
+      left: max(16px, 100% - 436px);
+      right: 16px;
+      max-height: calc(100dvh - 104px);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------- motion */
+/* The panels drop in 4px and fade, 150 ms in and out (production's products menu: duration-150, translate-y-1); the
+   phone sheet the same. Reduced motion opens and closes them at once. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 861px) {
+  .d-nav-pop {
+    transition:
+      opacity 0.15s var(--d-nav-ease),
+      translate 0.15s var(--d-nav-ease),
+      display 0.15s allow-discrete,
+      overlay 0.15s allow-discrete;
+  }
+
+  .d-nav-pop:not(:popover-open) {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+
+  @starting-style {
+    .d-nav-pop:popover-open {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (max-width: 860px) {
+  .d-nav-row {
+    transition:
+      opacity 0.15s var(--d-nav-ease),
+      translate 0.15s var(--d-nav-ease),
+      display 0.15s allow-discrete,
+      overlay 0.15s allow-discrete;
+  }
+
+  .d-nav-row:not(:popover-open) {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+
+  @starting-style {
+    .d-nav-row:popover-open {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d-nav-a,
+  .d-nav-tg,
+  .d-nav-chev,
+  .d-nav-burger path,
+  .d-nav-prod,
+  .d-nav-langs a,
+  .d-footer .d-ft-langs a {
+    transition: none;
+  }
+}
+
+/* ----------------------------------------------------------------------------------- the footer's languages */
+/* As the home's footer: a globe, then the three languages in one 1px frame, the current one raised on paper; each
+   segment a real link with hreflang, 32px tall (WCAG 2.5.8). Scoped under .d-footer to outrank d-object's .d-footer a
+   whichever stylesheet loads last. */
+.d-ft-lang {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--d-ink);
+}
+
+.d-ft-globe {
+  display: block;
+  flex: none;
+}
+
+.d-footer .d-ft-langs {
+  display: inline-flex;
+  margin: 0;
+  padding: 3px;
+  list-style: none;
+  border: 1px solid var(--d-nav-line-2);
+  border-radius: 10px;
+  background: rgb(22 24 21 / 0.03);
+}
+
+.d-footer .d-ft-langs a {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 7px;
+  color: var(--d-ink-2);
+  font: 500 14px/20px var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s var(--d-nav-ease-theme);
+}
+
+.d-footer .d-ft-langs a:hover {
+  color: var(--d-ink);
+  text-decoration: none;
+}
+
+.d-footer .d-ft-langs a:focus-visible {
+  outline-offset: -2px;
+}
+
+.d-footer .d-ft-langs a[aria-current="true"] {
+  background: var(--d-paper);
+  color: var(--d-ink);
+  box-shadow:
+    0 0 0 1px rgb(22 24 21 / 0.08),
+    0 1px 2px rgb(22 24 21 / 0.08);
+}

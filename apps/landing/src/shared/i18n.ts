@@ -2,7 +2,13 @@ import { locale } from "./locale";
 
 // Strings for the site shell every landing page renders: the topbar, the mobile
 // menu, the Products menu and the footer. Copy source: the v1 copy deck §1, §12
-// and §18 (nav and footer microcopy).
+// and §18 (nav and footer microcopy). The bar's Products panel, language switch
+// and phone menu (owner 2026-10-20 17:15) say what the home's bar says
+// (src/home/copy/nav.json): "Language" is production's label (origin/main
+// shared/i18n.ts L4 / L32); "Language ({lang})" names the switch with the short
+// name it shows in place of {lang} (WCAG 2.5.3); the product lines are the
+// home's, the ja mosoo line in the home's shorter wording so it keeps to one
+// line in the 464px panel.
 const ZH_MESSAGES = {
   "Skip to content": "跳到正文",
   "mosoo home": "mosoo 首页",
@@ -13,6 +19,9 @@ const ZH_MESSAGES = {
   "Use cases": "用例",
   Blog: "博客",
   "Change language": "切换语言",
+  Language: "语言",
+  "Language ({lang})": "语言（{lang}）",
+  Menu: "菜单",
   "mosoo on GitHub": "mosoo 的 GitHub 主页",
   "mosoo on X": "mosoo 的 X 主页",
   "Sign in": "登录",
@@ -45,13 +54,15 @@ const JA_MESSAGES = {
   "Skip to content": "本文へスキップ",
   "mosoo home": "mosoo ホーム",
   Products: "プロダクト",
-  "Open-source Agent runtime for application backends.":
-    "アプリケーションのバックエンド向けのオープンソース Agent runtime。",
+  "Open-source Agent runtime for application backends.": "アプリのバックエンド向けオープンソース Agent runtime。",
   "A persistent cloud computer for agents.": "Agent のための永続的なクラウドコンピューター。",
   Docs: "ドキュメント",
   "Use cases": "ユースケース",
   Blog: "ブログ",
   "Change language": "言語を切り替える",
+  Language: "言語",
+  "Language ({lang})": "言語（{lang}）",
+  Menu: "メニュー",
   "mosoo on GitHub": "mosoo の GitHub",
   "mosoo on X": "mosoo の X",
   "Sign in": "ログイン",
