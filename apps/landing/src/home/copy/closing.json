@@ -3,7 +3,7 @@
   "$source": {
     "h2 + prompt": "v4d's closing, owner-approved (9e92312 home-copy.json close). llms.txt (src/worker.js) is the page the prompt points at: it says how to start a Session over the v2 API and how to set up with a coding agent.",
     "legend": "Coding agents the console's setup prompt is written for (MAIN apps/web/src/routes/project-overview/onboarding-setup-prompt.ts L6-L7: Codex, Claude Code, OpenCode, Cursor, Cline).",
-    "caption": "What the click does and what it costs: Try mosoo opens the console (README L18, L43), free to start with no credit card (MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'). Four of the five personas of the v5 five-second test could not tell whether Try mosoo meant a free tier, a waitlist or a card form (staging v5/FIXES.md). The model key it needs first is FAQ 2's and llms.txt's ('Before the first run')."
+    "caption": "What the click does and what it costs: Try mosoo opens the console (README L18, L43), free to start with no credit card (MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'). In the v5 five-second test three of five personas could not tell whether Try mosoo meant a free tier, a waitlist, a sales form or a card form, and the other two guessed a sign-up (staging v5/FIXES.md §1). The model key it needs first is FAQ 2's and llms.txt's ('Before the first run')."
   },
   "en": {
     "h2a": "Start your first",
