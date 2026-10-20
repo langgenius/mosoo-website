@@ -1,15 +1,15 @@
 {
   "$comment": "Slots of sections/faq.ts. a + b = the two-tone title alone in the left column (serif 48px; 34px at 390; each line one line up to 20 characters at both widths); items = six questions in native <details name=\"faq\"> (first open): q one line at 1440 (Inter 500 18px, up to 48 characters), one or two lines at 390 (17px); a up to four lines at 1440 (16px, 560px measure), six at 390. The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) starts with the en items, in order, then adds answers the page leaves out: tests/worker.test.mjs keeps them in step. Measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
   "$source": {
-    "items": "Items 1, 2, 4 and 6 are v4d's fact-checked answers (9e92312 home-copy.json faq): README L39, L43, L78; apps/web en.json L51 + SPEC §2 L25; README L9 + SPEC §3 L29-L31; SPEC §5 L65. Item 3 widens v4d's 'Why not call a model API directly?' to the sandbox services every v4 persona compared mosoo with (REVIEW-v4 §6.7): README L26, SPEC §4 L53. Item 5 rewrites 'What happens when I reply days later?' so the reader is the one who continues (REVIEW-v4 G6): SPEC §4 L53, L56; session-lifecycle.md L8."
+    "items": "Item 1 is the entity definition the visible page lacked (v5 SEO review P1): README L8 / SPEC §1 L7 verbatim, the hosted console README L43, Apache 2.0 README L78, Alpha README L39; it no longer pairs 'hosted' with 'run it yourself', because the README covers local development only (v5 truth review P2-2). Items 2, 4 and 6 are v4d's fact-checked answers (9e92312 home-copy.json faq): apps/web en.json L51 + SPEC §2 L25; README L9 + SPEC §3 L29-L31; SPEC §5 L65. Item 3 answers the sandbox services every persona compared mosoo with (REVIEW-v4 §6.7; v5 five-second test: E2B, Daytona, Modal) by what mosoo does only, with no claim about other products (v5 truth review P2-1): README L26, SPEC §4 L53. Item 5 rewrites 'What happens when I reply days later?' so the reader is the one who continues (REVIEW-v4 G6): SPEC §4 L53, L56; session-lifecycle.md L8."
   },
   "en": {
     "a": "Questions",
-    "b": "before you commit.",
+    "b": "before you start.",
     "items": [
       {
-        "q": "Is it hosted, or do I run it?",
-        "a": "Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change."
+        "q": "What is mosoo?",
+        "a": "mosoo is an open-source, API-first managed Agent runtime for application backends. Use the hosted console at cloud.mosoo.ai; the source is on GitHub under Apache 2.0. It is in Alpha, so public APIs may still change."
       },
       {
         "q": "What does it cost to start?",
@@ -17,7 +17,7 @@
       },
       {
         "q": "Why not a model API or a plain sandbox?",
-        "a": "A model API returns a reply, and a sandbox is a machine. mosoo runs the Agent: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox."
+        "a": "mosoo runs the Agent itself: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox."
       },
       {
         "q": "Which harnesses and models can I use?",
@@ -38,8 +38,8 @@
     "b": "值得先问的问题。",
     "items": [
       {
-        "q": "是托管服务，还是要自己运行？",
-        "a": "可以直接用托管控制台 cloud.mosoo.ai。源码以 Apache 2.0 许可证在 GitHub 上开源，README 说明了如何在本地运行。mosoo 目前处于 Alpha 阶段，公开 API 仍可能变化。"
+        "q": "mosoo 是什么？",
+        "a": "mosoo 是面向应用后端的开源托管 Agent 运行时。可直接用托管控制台 cloud.mosoo.ai；源码以 Apache 2.0 在 GitHub 开源。目前是 Alpha 版，公开 API 仍可能变化。"
       },
       {
         "q": "开始使用要付费吗？",
@@ -47,7 +47,7 @@
       },
       {
         "q": "为什么不直接用模型 API 或普通 sandbox？",
-        "a": "模型 API 只返回一条回复，sandbox 只是一台机器。mosoo 运行的是整个 Agent：harness 在自己的 sandbox 里工作，文件进出、事件流式返回、用量有记录，Session 也比 sandbox 活得更久。"
+        "a": "mosoo 运行的是整个 Agent：harness 在自己的 sandbox 里工作，文件进出、事件流式返回、用量有记录，Session 也比 sandbox 活得更久。"
       },
       {
         "q": "可以用哪些 harness 和模型？",
@@ -68,8 +68,8 @@
     "b": "確かめたいこと。",
     "items": [
       {
-        "q": "ホスト版？それとも自分で動かす？",
-        "a": "ホスト版 cloud.mosoo.ai をすぐ使えます。ソースは Apache 2.0 で GitHub にあり、ローカルでの動かし方は README にあります。mosoo は Alpha 版で、公開 API は変わることがあります。"
+        "q": "mosoo とは？",
+        "a": "mosoo は、アプリのバックエンド向けのオープンソースのマネージド Agent ランタイムです。ホスト版 cloud.mosoo.ai が使え、ソースは Apache 2.0 で GitHub にあります。現在 Alpha 版です。"
       },
       {
         "q": "始めるのに費用はかかりますか？",
@@ -77,7 +77,7 @@
       },
       {
         "q": "モデル API や普通の sandbox との違いは？",
-        "a": "モデル API は返答を返すだけ、sandbox はただのマシンです。mosoo は Agent を動かします。専用 sandbox の harness、ファイルの入出力、イベント配信、使用量の記録、sandbox より長く続く Session。"
+        "a": "mosoo は Agent そのものを動かします。専用 sandbox の harness、ファイルの入出力、イベント配信、使用量の記録、sandbox より長く続く Session。"
       },
       {
         "q": "どの harness とモデルを使えますか？",

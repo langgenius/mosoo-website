@@ -218,7 +218,7 @@ const CJK_GROUPS = [
   { name: "closing.h2a + h2b", paths: ["closing.h2a", "closing.h2b"], width: 15 },
 ];
 const KIT_CJK = {
-  "kit.call.instruction": 29, // runs off the plate at 1440 from about 58 en characters (hero-stage NOTES §6)
+  "kit.call.instruction": 25, // set in Fragment Mono since v5 FIXES: the plate cuts it at 1440 from about 51 en characters
   "kit.watch.action": 24, // with the file keycap in it: one line at 1440 and 1024, two at 390, as en
   "kit.watch.status": 8,
   "kit.watch.stream": 12,

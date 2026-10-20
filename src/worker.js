@@ -108,9 +108,9 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 
 ## Direct answers
 
-- Is it hosted, or do I run it? Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change.
+- What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. Use the hosted console at cloud.mosoo.ai; the source is on GitHub under Apache 2.0. It is in Alpha, so public APIs may still change.
 - What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models.
-- Why not a model API or a plain sandbox? A model API returns a reply, and a sandbox is a machine. mosoo runs the Agent: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox.
+- Why not a model API or a plain sandbox? mosoo runs the Agent itself: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox.
 - Which harnesses and models can I use? Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key.
 - Can I continue a Session days later? Yes. Send the next turn to the same Session, even after its sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer.
 - Do my keys enter the sandbox? No. Provider keys and MCP credentials stay outside; the sandbox only receives expiring grants for them. Environment variables are the exception: code in the sandbox can read them.

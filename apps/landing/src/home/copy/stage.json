@@ -1,9 +1,9 @@
 {
   "$comment": "Slots of sections/stage.ts (one plate, three states of the Session object; staging v5/sections/hero-stage/NOTES.md has the slot table with lines at 1440 / 390). steps[k].tag: the step tag at the plate's top-left (Inter 500 15px; pinned, the past tags shrink to 13px in one row). steps[k].title + steps[k].line: the caption at the plate's bottom-left (Inter 500 22px + Inter 16px, max 560 wide: one line each at 1440; phones 18 / 15px, title 1-2 lines, line 2 lines). kit: the props of the kit Session (src/home/kit renderSession) per state. kit.call.instruction is the first screen's sentence, drawn as the request's input string (Fragment Mono, ink, in quotes): at most 6 words (first-screen object words = keycap words + Call's words <= 16); one line at 1440 up to about 51 characters (the plate cuts it beyond), wrapped inside the plate on phones (two lines at 360-414). Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state; zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
   "$source": {
-    "story": "One CSV Session, values only from MAIN scripts/public-api-session-workflow.ts: the attached input.csv (L24, L85), outputs/report.md (L24), the follow-up that appends south,20 to the same CSV without recreating it (L33). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; OpenAPI v2 path + servers https://cloud.mosoo.ai/api/v2; the script posts to /projects/{id}/threads on an /api/v2 base, L60, L97). Events: SSE and saved history (SPEC §6 L73).",
+    "story": "One CSV Session, values only from MAIN scripts/public-api-session-workflow.ts: the uploaded input.csv (L24, L85; uploaded first, then referenced by the create call, L89-L96, PRD public-thread-api-surface.md L8), outputs/report.md (L24). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; OpenAPI v2 path + servers https://cloud.mosoo.ai/api/v2; the script posts to /projects/{id}/threads on an /api/v2 base, L60, L97). Events: SSE and saved events; a read returns the latest ones, not the whole history (SPEC §6 L73; PRD L26). Resume: a later turn finds the working directory and the native conversation of the last committed checkpoint (SPEC §4 L53); attachments never enter a checkpoint (SPEC §4 L54; session-files.md L16), so the line names what comes back instead of the CSV (v5 truth review P1-1).",
     "kit.harness": "Product name (README L9 'OpenAI Codex'; the chip draws the OpenAI mark before it); not translated.",
-    "kit.watch.events": "Plain words for three public event types, newest first: file.changed, tool.use.completed, run.started (MAIN pkgs/contracts/src/session/session.contract.ts L141, L148, L144; stage.ts EVENTS keeps the wire names as data).",
+    "kit.watch.events": "The console's own labels for three public event types, newest first: file.changed, tool.use.completed, run.started (MAIN apps/web/src/shared/ui/session-events/domain.ts maps them to en.json L987 'File changed', L994 'Tool result', L990 'Run started'; zh-CN.json / ja.json the same keys). stage.ts EVENTS keeps the wire names as data.",
     "kit.return": "Turn 2 = the follow-up turn; +7 days is SPEC's own example of a later reply (SPEC §4 L53: one minute or seven days, same semantics), not a measured duration; restored from the last committed checkpoint (SPEC §4 L46, L53)."
   },
   "en": {
@@ -11,17 +11,17 @@
       {
         "tag": "Call",
         "title": "Your backend sends the task.",
-        "line": "POST /api/v2/projects/{id}/threads, with input.csv attached."
+        "line": "POST /api/v2/projects/{id}/threads with the uploaded input.csv."
       },
       {
         "tag": "Watch",
         "title": "Events stream back as it works.",
-        "line": "Follow them live over SSE, or read the saved history any time."
+        "line": "Follow them live over SSE, or read the saved events later."
       },
       {
         "tag": "Resume",
         "title": "The same Session, a week later.",
-        "line": "Ask it to append south,20. No need to send input.csv again."
+        "line": "Its working directory and conversation come back as they were."
       }
     ],
     "kit": {
@@ -35,7 +35,7 @@
         "action": "Writing {file} from input.csv",
         "file": "outputs/report.md",
         "stream": "Your backend",
-        "events": ["File changed", "Tool use completed", "Run started"]
+        "events": ["File changed", "Tool result", "Run started"]
       },
       "return": {
         "turn": "Turn 2",
@@ -49,17 +49,17 @@
       {
         "tag": "发起",
         "title": "你的后端发出任务。",
-        "line": "附上 input.csv，POST 到 /api/v2/projects/{id}/threads。"
+        "line": "附上已上传的 input.csv，POST 到 /api/v2/projects/{id}/threads。"
       },
       {
         "tag": "观察",
         "title": "事件实时流回你的后端。",
-        "line": "用 SSE 实时跟进，也可随时读取历史记录。"
+        "line": "用 SSE 实时跟进，也可以稍后读取已保存的事件。"
       },
       {
         "tag": "续接",
         "title": "一周后，还是同一个 Session。",
-        "line": "让它追加 south,20，input.csv 不用再传。"
+        "line": "工作目录和对话，原样恢复。"
       }
     ],
     "kit": {
@@ -73,7 +73,7 @@
         "action": "正在根据 input.csv 写入 {file}",
         "file": "outputs/report.md",
         "stream": "你的后端",
-        "events": ["文件已变更", "工具调用完成", "运行开始"]
+        "events": ["文件已更改", "工具结果", "运行已开始"]
       },
       "return": {
         "turn": "第 2 轮",
@@ -87,17 +87,17 @@
       {
         "tag": "呼ぶ",
         "title": "バックエンドからタスクを送る。",
-        "line": "POST /api/v2/projects/{id}/threads に input.csv を添えて。"
+        "line": "POST /api/v2/projects/{id}/threads に input.csv の ID を添えて。"
       },
       {
         "tag": "見る",
         "title": "動くそばからイベントが届く。",
-        "line": "SSE でリアルタイムに追え、履歴もいつでも読めます。"
+        "line": "SSE でリアルタイムに追え、保存済みのイベントも後で読めます。"
       },
       {
         "tag": "再開",
         "title": "1 週間後も、同じ Session。",
-        "line": "south,20 の追記を頼むだけ。input.csv を送り直す必要はありません。"
+        "line": "作業ディレクトリと会話が、そのまま戻ります。"
       }
     ],
     "kit": {
@@ -111,7 +111,7 @@
         "action": "{file} を書き込み中",
         "file": "outputs/report.md",
         "stream": "あなたのバックエンド",
-        "events": ["ファイル変更", "ツール実行完了", "実行開始"]
+        "events": ["ファイル変更", "ツール結果", "実行開始"]
       },
       "return": {
         "turn": "ターン 2",
