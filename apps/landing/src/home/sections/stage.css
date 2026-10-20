@@ -167,7 +167,7 @@
 
 /* ----------------------------------------------------------------------------------------------- pinned */
 .v5-stage[data-stage-mode="pinned"] {
-  height: 300vh; /* about three screens (BRIEF §3.4), not the contract's 350vh */
+  height: 220vh; /* the plate plus about 1.2 screens of run (design review P1-2; was 300vh, the contract's is 350vh) */
 }
 
 .v5-stage[data-stage-mode="pinned"] [data-stage-pin] {
@@ -241,6 +241,20 @@
   padding: 0;
   border-width: 0;
   opacity: 0;
+}
+
+/* Under the tag row, the run as one 1px line (the page's line): 18% ink, filled with ink as --stage-p goes 0 -> 1, so
+   every pixel of the pinned scroll moves something, not only the two switches (design review P1-2). */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-tags::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 132px;
+  height: 1px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) 0 0 / calc(var(--stage-p, 0) * 100%) 100% no-repeat,
+    rgb(22 24 21 / 0.18);
 }
 
 /* Captions: each clips its own box and rolls its text through it (past up, next below), cross-fading on the way: the

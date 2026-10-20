@@ -36,10 +36,11 @@ const STATES = ["call", "watch", "return"] as const;
 
 /**
  * Where each state takes over, as a share of the pinned run (data-stage-at). Call has already been on screen since
- * the first screen, so it holds the shortest pinned stretch; at 1440x900 the plate stays pinned for 1,980 px of
- * scroll: Call 574, Watch 666, Return 740 (staging v5/sections/hero-stage/NOTES.md §3).
+ * the first screen, so it holds the shortest pinned stretch. The section is 220vh (stage.css): at 1440x900 the run is
+ * 1,080 px, Call 216, Watch 432, Return 432. It was 300vh with 0.27 / 0.64, and 77% of the 1,980 pinned pixels
+ * changed nothing on screen (staging v5/review/design.md P1-2); the tag row's progress line now moves with every one.
  */
-const STAGE_AT = "0,0.27,0.64";
+const STAGE_AT = "0,0.2,0.6";
 
 /** Pinned only where the plate (560-720px) fits under the floating nav: wide, and at least 680px tall. */
 const STAGE_MEDIA = "(min-width: 901px) and (min-height: 680px)";

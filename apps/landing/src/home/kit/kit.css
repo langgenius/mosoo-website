@@ -368,19 +368,16 @@
   height: calc(var(--k) * 1);
 }
 
+/* The track is the page's line (1px ink) between its two ends, not a filled capsule: the capsule read as a progress
+   or skeleton bar (design review P2-5; owner 10-19 15:04: no blank skeletons), next to the stage's own progress line. */
 .kit-track-rail {
   flex: 1;
-  height: calc(var(--k) * 0.55);
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgb(22 24 21 / 0.07);
+  height: 1px;
+  background: var(--kit-ink);
 }
 
 .kit-track-rail i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--kit-ink-3);
+  display: none;
 }
 
 .kit-status {

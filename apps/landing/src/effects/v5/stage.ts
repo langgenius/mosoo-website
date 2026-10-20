@@ -20,6 +20,12 @@
 // Options: data-stage-media (default "(min-width: 901px)"), data-stage-at.
 
 const WIDE = "(min-width: 901px)";
+/**
+ * Going back, a step holds until the progress is this far below its threshold: scrolling to and fro across a switch
+ * point no longer restarts the caption cross-fade on every pixel (it could leave all three captions near transparent
+ * for up to 900 ms; motion review P2-3). Going forward, switches stay exactly at their thresholds.
+ */
+const HOLD_BACK = 0.03;
 
 function thresholds(raw: string | undefined, n: number): number[] {
   const parsed = (raw ?? "").split(",").map((s) => Number.parseFloat(s));
@@ -74,6 +80,9 @@ function mountStage(stage: HTMLElement): () => void {
       if (p >= (at[i] ?? 1)) {
         k = i;
       }
+    }
+    if (step > 0 && k < step && p > (at[step] ?? 0) - HOLD_BACK) {
+      k = step;
     }
     if (k !== step) {
       step = k;
