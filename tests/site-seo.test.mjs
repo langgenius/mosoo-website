@@ -552,6 +552,23 @@ test("pricing locale pages receive localized canonical metadata", () => {
   assertInitialSiteLinks(ja, "ja");
 });
 
+// Unlisted pages (scripts/sitemap.mjs) stay out of the index too, in every locale, and pricing claims nothing the
+// spec lacks until #138 rewrites it: no offers, no plans or quotas, no self-hosting, and no React page that does.
+test("unlisted pricing pages are noindex and claim no plans", () => {
+  const source = read("apps/landing/pricing.html");
+  for (const locale of LOCALES) {
+    const html = renderPricingLocale(source, locale);
+    assert.match(html, /<meta name="robots" content="noindex, follow" \/>/, `${locale} pricing is noindex`);
+    assert.doesNotMatch(html, /"offers"|"Offer"|PreOrder/, `${locale} pricing JSON-LD has no offers`);
+    assert.doesNotMatch(html, /src="\/src\/pricing-main\.tsx"/, `${locale} pricing mounts no plan page`);
+    assert.doesNotMatch(
+      textOf(html),
+      /sandbox hours|concurrency|coming soon|self-host|Pro\b|Enterprise|SSO|VPC|channels|forever/i,
+      `${locale} pricing text`,
+    );
+  }
+});
+
 test("status pages expose localized canonical metadata and crawlable links", () => {
   const source = read("apps/landing/status.html");
   const zh = renderStatusLocale(source, "zh");

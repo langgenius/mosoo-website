@@ -6,9 +6,12 @@
     <title>Pricing | mosoo</title>
     <meta
       name="description"
-      content="Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid plans with more sandbox hours and concurrency are coming soon."
+      content="mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices."
     />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <!-- Unlisted until #138 rewrites the page: out of the index and the sitemap (scripts/sitemap.mjs) and linked from
+         nowhere. The old React page (src/routes/pricing) listed plans, quotas and self-hosting the spec does not
+         have (SPEC §8 L89-L91), so it is no longer mounted; this static page says only what holds today. -->
+    <meta name="robots" content="noindex, follow" />
     <meta name="theme-color" content="#f4f4f4" />
     <link rel="canonical" href="https://mosoo.ai/en/pricing" />
     <link rel="alternate" hreflang="en" href="https://mosoo.ai/en/pricing" />
@@ -23,7 +26,7 @@
     <meta property="og:title" content="Pricing | mosoo" />
     <meta
       property="og:description"
-      content="Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys."
+      content="mosoo is free to start, with no credit card. Models run on your own provider key."
     />
     <meta property="og:url" content="https://mosoo.ai/en/pricing" />
     <meta property="og:image" content="https://mosoo.ai/brand/social-card-v5-20261020.png" />
@@ -36,7 +39,7 @@
     <meta name="twitter:title" content="Pricing | mosoo" />
     <meta
       name="twitter:description"
-      content="Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys."
+      content="mosoo is free to start, with no credit card. Models run on your own provider key."
     />
     <meta name="twitter:image" content="https://mosoo.ai/brand/social-card-v5-20261020.png" />
     <meta name="twitter:image:alt" content="mosoo pricing" />
@@ -60,31 +63,6 @@
             "inLanguage": "en",
             "isPartOf": { "@id": "https://mosoo.ai/#website" },
             "about": { "@id": "https://mosoo.ai/#software" }
-          },
-          {
-            "@type": "SoftwareApplication",
-            "@id": "https://mosoo.ai/#software",
-            "name": "mosoo",
-            "applicationCategory": "DeveloperApplication",
-            "offers": [
-              {
-                "@type": "Offer",
-                "name": "Free",
-                "price": "0",
-                "priceCurrency": "USD",
-                "availability": "https://schema.org/InStock"
-              },
-              {
-                "@type": "Offer",
-                "name": "Pro",
-                "availability": "https://schema.org/PreOrder"
-              },
-              {
-                "@type": "Offer",
-                "name": "Enterprise",
-                "availability": "https://schema.org/PreOrder"
-              }
-            ]
           }
         ]
       }
@@ -120,11 +98,9 @@
           Pricing
         </h1>
         <p style="max-width: 680px; margin: 24px 0 0; font-size: 18px; line-height: 1.6">
-          Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid
-          plans with more sandbox hours and concurrency are coming soon.
+          mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices.
         </p>
       </main>
     </div>
-    <script type="module" src="/src/pricing-main.tsx"></script>
   </body>
 </html>

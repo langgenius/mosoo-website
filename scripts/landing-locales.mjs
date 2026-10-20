@@ -78,31 +78,33 @@ const FALLBACK_LABELS = {
   },
 };
 
+// Pricing is a static, noindexed stub until #138 (apps/landing/pricing.html): the description is also the page's
+// one paragraph, so localizing it localizes the page. Sources: console login subtitle (MAIN apps/web en.json L51
+// "No credit card required. Free to start."), SPEC §2 L25 (bring your own key, the provider bills that account),
+// SPEC §5 L66 (mosoo issues no invoices, settlements or payments).
 const PRICING_SEO = {
   en: {
     lang: "en",
     title: "Pricing | mosoo",
     description:
-      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid plans with more sandbox hours and concurrency are coming soon.",
-    socialDescription:
-      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys.",
+      "mosoo is free to start, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo issues no invoices.",
+    socialDescription: "mosoo is free to start, with no credit card. Models run on your own provider key.",
     imageAlt: "mosoo pricing",
   },
   zh: {
     lang: "zh-CN",
     title: "定价 | mosoo",
     description:
-      "在 mosoo Cloud 免费起步：以 BYOK 密钥在隔离 sandbox 中运行 Coding Agent。含更多 sandbox 时长与并发的付费方案即将上线。",
-    socialDescription: "在 mosoo Cloud 免费起步：以 BYOK 密钥在隔离 sandbox 中运行 Coding Agent。",
+      "mosoo 免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不开具发票。",
+    socialDescription: "mosoo 免费开始，不需要信用卡。模型使用你自己的供应商密钥运行。",
     imageAlt: "mosoo 定价",
   },
   ja: {
     lang: "ja",
     title: "料金 | mosoo",
     description:
-      "mosoo Cloud で無料で開始：BYOK キーを使い、隔離された sandbox で Coding Agent を実行。sandbox 時間と同時実行数を拡張する有料プランは近日公開。",
-    socialDescription:
-      "mosoo Cloud で無料で開始：BYOK キーを使い、隔離された sandbox で Coding Agent を実行。",
+      "mosoo は無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーがそのアカウントに請求します。mosoo は請求書を発行しません。",
+    socialDescription: "mosoo は無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動きます。",
     imageAlt: "mosoo の料金",
   },
 };
