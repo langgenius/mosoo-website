@@ -135,6 +135,33 @@ const FIELDS = [
     color: "#bcf870",
     grain: { tier: "film", opacity: 0.2 },
   },
+  {
+    // The spec screen's ground (sections/spec.ts, the window the portal opens; v5 fix round 2026-10-20, staging
+    // REVIEW-v5.md §6-5 and v5/review/graft-design.md P1-1): the hero ramp's light, shape, beams, blur and film
+    // grain with the chroma taken out, so the lime screen is again the page's one large colour, and lighter (L
+    // .980 -> .855; the hero runs .958 -> .70), so the lit corner sits near the frame (#f4f4f4) and the paper and
+    // the door reads by its 1px ink outline. Not flat --frame (graft-design mock A: the light and the beams go)
+    // and not the hero bitmap greyed (mock B: a dark grey far corner). Chosen from four T1 candidates (staging
+    // v5/polish/spec/NOTES.md §1). Desktop: the live window is a full screen (1440 x 900 here, cover keeps the lit
+    // corner at other sizes), and the still plate is 1120 wide; phones: the plate is the content width.
+    cls: "spec",
+    kind: "ramp",
+    shape: 1.2,
+    stops: [
+      [0.0, 0.98, 0, 250],
+      [0.3, 0.963, 0, 250],
+      [0.56, 0.938, 0, 250],
+      [0.8, 0.903, 0, 250],
+      [1.0, 0.855, 0, 250],
+    ],
+    streaks: { ...STREAK, amp: 0.1, seed: 7 },
+    blur: 5,
+    grain: { tier: "film", opacity: 0.9 },
+    sizes: [
+      { css: [1440, 900], scale: 0.5 },
+      { css: [358, 720], scale: 0.5, media: MOBILE },
+    ],
+  },
 ];
 
 // ------------------------------------------------------------------------------------- colour (float)

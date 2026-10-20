@@ -135,3 +135,18 @@
   --v5-field-base: #c1f97a;
   --v5-field-grain: 0.2;
 }
+
+/* spec-1440x900@0.5x.webp: 1440x900 CSS, 7980 B, displayed mean #ededed */
+.v5-field--spec {
+  --v5-field-img: url("/landing/v5/fields/spec-1440x900@0.5x.webp");
+  --v5-field-base: #f2f2f2;
+  --v5-field-grain: 0.9;
+}
+
+/* spec-358x720@0.5x.webp: 358x720 CSS, 1982 B, displayed mean #ededed */
+@media (max-width: 720px) {
+  .v5-field--spec {
+    --v5-field-img: url("/landing/v5/fields/spec-358x720@0.5x.webp");
+    --v5-field-base: #f1f1f1;
+  }
+}

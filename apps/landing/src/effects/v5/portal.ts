@@ -17,13 +17,17 @@
 // the edge is exact at every size and the clipped-away content is not hit-testable (a mask-image would still take
 // clicks). The optional 1 px frame redraws the same path, plus the mark's bar as a line under it.
 //
-// Motion: one zoom about a fixed point. The closed window sits on the host's centre, or on [data-portal-focus] when
-// there is one; it is data-portal-width wide (default 240 px), or wider when it needs to be to frame the focus whole
-// with FOCUS_PAD_PX to spare. The open window is centred and just covers the host. Every frame in between is the
-// closed window scaled about the one point that maps it onto the open one, so what the reader sees through the
-// closed window stays put while the door opens around it. The scale is geometric in the progress (equal scroll,
-// equal zoom ratio): small steps while the window is small, and the sides leave the screen briskly at the end
-// instead of creeping along its edges (a smoothstep left 1-35 px slivers over the last tenth of the range).
+// Motion: one zoom about a fixed point. The closed window stands on the host's vertical axis (the page's, as the mark
+// it is: v5 fix round, staging v5/review/graft-design.md P2-1, where a window centred on an off-axis focus sat 55 px
+// off the page's axis and cut the line under it). Without [data-portal-focus] it is centred in the host; with one it
+// is level with the focus, and wide enough to show the focus whole with FOCUS_PAD_PX to spare on both sides of the
+// axis; data-portal-room="px" hangs it from the focus instead: its top edge that far above the focus's top (the
+// room for what sits above the focus, so the window's top falls in a gap and cuts no line). It is at least
+// data-portal-width wide (default 240 px). The open window is centred and just covers the host. Every frame in
+// between is the closed window scaled about the one point that maps it onto the open one, so what the reader sees
+// through the closed window stays put while the door opens around it. The scale is geometric in the progress (equal
+// scroll, equal zoom ratio): small steps while the window is small, and the sides leave the screen briskly at the
+// end instead of creeping along its edges (a smoothstep left 1-35 px slivers over the last tenth of the range).
 //
 // Per frame it writes:
 //   [data-portal]          data-portal-mode="live", data-portal-state="closed" | "opening" | "open", --portal-p
@@ -32,8 +36,8 @@
 //   [data-portal-outline]  d = the block, [data-portal-line] d = the bar's line (both optional, in [data-portal-frame])
 // Options on the host: data-portal-range="-0.5,0.5" (where the door opens, in screens of scroll from the moment the
 // host's top reaches the viewport's top: negative values start it while the host is still coming in),
-// data-portal-width="240" (the closed window's least width), data-portal-media (default
-// "(min-width: 901px) and (min-height: 680px)").
+// data-portal-width="240" (the closed window's least width), data-portal-room (px above the focus, see Motion),
+// data-portal-media (default "(min-width: 901px) and (min-height: 680px)").
 // Not live (no JS, prefers-reduced-motion, outside the media query, or a pin a capture tool set to position: static):
 // it writes nothing, and the CSS default shows the content in the flow with no window. Focus inside the window opens
 // it at once, so a focused element is never clipped away, unless the focus came from a pointer press: a press can
@@ -209,6 +213,8 @@ function mountPortal(host: HTMLElement, mark: Mark): () => void {
   const [a, b] = range(host.dataset["portalRange"]);
   const closedAttr = Number.parseFloat(host.dataset["portalWidth"] ?? "");
   const closedPx = Number.isFinite(closedAttr) && closedAttr > 0 ? closedAttr : CLOSED_PX;
+  const roomAttr = Number.parseFloat(host.dataset["portalRoom"] ?? "");
+  const room = Number.isFinite(roomAttr) && roomAttr >= 0 ? roomAttr : null; // null: level with the focus
   const media = window.matchMedia(host.dataset["portalMedia"] ?? MEDIA);
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -239,16 +245,19 @@ function mountPortal(host: HTMLElement, mark: Mark): () => void {
     const w1 = covering(W + 2 * CLEAR_PX, H + 2 * CLEAR_PX);
     const box = layer.getBoundingClientRect();
     const c1 = { x: W / 2, y: H / 2 };
-    let fit = 0;
     if (focusEl) {
       const r = focusEl.getBoundingClientRect();
       const f = layoutBox(focusEl, layer) ?? { x: r.left - box.left, y: r.top - box.top, w: r.width, h: r.height };
-      c0 = { x: f.x + f.w / 2, y: f.y + f.h / 2 };
-      fit = covering(f.w + 2 * FOCUS_PAD_PX, f.h + 2 * FOCUS_PAD_PX);
+      // On the axis: as wide as the focus's farther side from it, twice, plus the pad on both sides.
+      const span = 2 * (Math.max(c1.x - f.x, f.x + f.w - c1.x) + FOCUS_PAD_PX);
+      const tall = room === null ? f.h + 2 * FOCUS_PAD_PX : room + f.h + FOCUS_PAD_PX;
+      w0 = Math.min(Math.max(closedPx, covering(span, tall)), w1);
+      const y = room === null ? f.y + f.h / 2 : f.y - room + (mark.aspect * w0) / 2;
+      c0 = { x: c1.x, y };
     } else {
       c0 = c1;
+      w0 = Math.min(closedPx, w1);
     }
-    w0 = Math.min(Math.max(closedPx, fit), w1);
     ratio = w1 / w0;
     // Scaling the closed window by `ratio` about `fixed` lands it on the open one: c1 = fixed + ratio (c0 - fixed).
     fixed = ratio > 1.0001 ? { x: (c1.x - ratio * c0.x) / (1 - ratio), y: (c1.y - ratio * c0.y) / (1 - ratio) } : c1;

@@ -25,9 +25,12 @@
 //                         every data-switch-hold ms (default 2100). Four values take three rolls: 2 × 2.1 s + the
 //                         0.72 s roll = 4.92 s of motion, inside the 5 s of WCAG 2.2.2 that every self-starting motion
 //                         on the page keeps (play-for.ts, linefield.ts), where a13n loops forever. It pauses while
-//                         the slot is outside the middle 70 % of the viewport, under a mouse, focused within, or in a
-//                         hidden tab. It rests on the first value (the first in the markup, the harness the stage's
-//                         Call names) and plays again once the slot has left the viewport entirely.
+//                         the slot is outside the middle 70 % of the viewport, under a mouse, focused within, in a
+//                         hidden tab, or, inside a live [data-portal] (portal.ts), while that door is not open: the
+//                         pass starts once the window is open, so it never rolls while the window still clips (v5 fix
+//                         round; staging v5/review/graft-yc.md P1-1: without that wait a value wider than the closed
+//                         window was cut). It rests on the first value (the first in the markup, the harness the
+//                         stage's Call names) and plays again once the slot has left the viewport entirely.
 //
 // Writes on [data-switch]: data-switch-mode="live", data-switch-driver="scroll | time", data-switch-at="k", and, two
 // frames after going live, data-switch-ready (the CSS hangs its transitions on it, so the first live paint never
@@ -143,6 +146,10 @@ function mountSwitch(root: HTMLElement): () => void {
   const timeDriver = (): (() => void) => {
     const hold = parseHold(root.dataset["switchHold"]);
     const first = 1 % n; // the pass starts here and ends on value 0
+    // A door around the slot (portal.ts): live, it writes data-portal-state; the pass waits for "open".
+    const door = root.closest<HTMLElement>("[data-portal]");
+    const doorOpen = (): boolean =>
+      !door || door.dataset["portalMode"] !== "live" || door.dataset["portalState"] === "open";
     let rolls = 0;
     let timer = 0;
     let due = 0;
@@ -169,7 +176,7 @@ function mountSwitch(root: HTMLElement): () => void {
         setPass("done");
         return;
       }
-      const go = inBand && !hovered && !focused && !document.hidden;
+      const go = inBand && !hovered && !focused && !document.hidden && doorOpen();
       if (go && !timer) {
         due = performance.now() + left;
         timer = window.setTimeout(roll, left);
@@ -228,6 +235,12 @@ function mountSwitch(root: HTMLElement): () => void {
       update();
     };
 
+    // The door's state changes a few times per pass through it (closed, opening, open): follow it.
+    const doorWatch = new MutationObserver(update);
+    if (door) {
+      doorWatch.observe(door, { attributes: true, attributeFilter: ["data-portal-mode", "data-portal-state"] });
+    }
+
     show(first, "ring");
     band.observe(root);
     view.observe(root);
@@ -238,6 +251,7 @@ function mountSwitch(root: HTMLElement): () => void {
     document.addEventListener("visibilitychange", update);
     return () => {
       window.clearTimeout(timer);
+      doorWatch.disconnect();
       band.disconnect();
       view.disconnect();
       root.removeEventListener("pointerenter", onPointer);
