@@ -7,6 +7,7 @@
 //   [data-nav]                nav.ts          loose bar → floating glass bar, CTA growth, theme zones (ramp.design,
 //                                             Save.design, savee.com, Ramp)
 //   [data-stage]              stage.ts        sticky section → progress → data-step (CTRL)
+//   [data-portal]             portal.ts       sticky host seen through the mark's block, which opens (Enter Pro, v4c)
 //   [data-switch]             harness-switch.ts  one value at a time, rolling by scroll or time (a13n, v4a, v4c)
 //   [data-footer]             footer.ts       links rise, brand rises from a seam, mark draws, replays (Intent)
 //
@@ -17,10 +18,11 @@ import { initDampScroll } from "./damp-scroll.ts";
 import { initFooter } from "./footer.ts";
 import { initHarnessSwitch } from "./harness-switch.ts";
 import { initNav } from "./nav.ts";
+import { initPortal } from "./portal.ts";
 import { initRise } from "./rise.ts";
 import { initStage } from "./stage.ts";
 
-export { initDampScroll, initFooter, initHarnessSwitch, initNav, initRise, initStage };
+export { initDampScroll, initFooter, initHarnessSwitch, initNav, initPortal, initRise, initStage };
 
 /** Starts every engine declared in root. Returns one cleanup for all of them. */
 export function initMotion(root: ParentNode = document): () => void {
@@ -28,6 +30,7 @@ export function initMotion(root: ParentNode = document): () => void {
     document.documentElement.hasAttribute("data-damp") ? initDampScroll() : () => {},
     initNav(root),
     initStage(root),
+    initPortal(root),
     initHarnessSwitch(root),
     initRise(root),
     initFooter(root),

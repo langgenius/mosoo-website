@@ -237,3 +237,18 @@ test("@font-face sources exist and every font preload is a face the page's style
     assert.ok(blogFaces.includes(name), `BaseLayout.astro preloads ${name}, which ${BLOG_CSS} does not declare`);
   }
 });
+
+// The home's portal (apps/landing/src/effects/v5/portal.ts) redraws the lockup mark's block, BRAND_MARK.fill, as a
+// clip-path every frame. It reads M / L / H / V / C / Z path data only, and given anything else it quietly does
+// nothing, which leaves the spec table's screen in its still end state: a regenerated mark with arcs or smooth curves
+// would switch the door off without an error anywhere.
+test("the portal can redraw BRAND_MARK.fill: closed M / L / H / V / C / Z path data with its concave sides", () => {
+  const source = read("apps/landing/src/shared/ui/brand-v5.generated.ts");
+  const fill = /"fill":"([^"]+)"/.exec(source)?.[1];
+  assert.ok(fill, "brand-v5.generated.ts has BRAND_MARK.fill");
+  const commands = fill.match(/[a-df-z]/gi) ?? [];
+  assert.deepEqual([...new Set(commands.map((c) => c.toUpperCase()))].filter((c) => !"MLHVCZ".includes(c)), []);
+  assert.equal(commands[0].toUpperCase(), "M", "starts with a move");
+  assert.equal(commands.at(-1).toUpperCase(), "Z", "a closed block");
+  assert.ok(commands.filter((c) => c.toUpperCase() === "C").length >= 2, "the two concave sides are curves");
+});

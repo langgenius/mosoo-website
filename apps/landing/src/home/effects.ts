@@ -5,6 +5,7 @@
 //   <html data-damp>         damped wheel scrolling           src/effects/v5/damp-scroll.ts
 //   [data-nav]               nav morph, CTA, theme zones      src/effects/v5/nav.ts (range: min(400px, 45vh))
 //   [data-stage]             pinned stage, data-step          src/effects/v5/stage.ts
+//   [data-portal]            the mark's window opens a screen src/effects/v5/portal.ts (the spec table)
 //   [data-switch]            one harness at a time, rolling   src/effects/v5/harness-switch.ts (the spec table)
 //   [data-rise]              title rise, card entrance        src/effects/v5/rise.ts
 //   [data-footer]            links, brand from the seam       src/effects/v5/footer.ts
@@ -16,7 +17,15 @@
 // The same list as initMotion() in src/effects/v5/index.ts, except that the nav gets its range first
 // (TOOLS-REVIEW T6: min(400px, 45vh); the engine reads data-nav-range once, at init).
 
-import { initDampScroll, initFooter, initHarnessSwitch, initNav, initRise, initStage } from "../effects/v5/index.ts";
+import {
+  initDampScroll,
+  initFooter,
+  initHarnessSwitch,
+  initNav,
+  initPortal,
+  initRise,
+  initStage,
+} from "../effects/v5/index.ts";
 import { initLinefields } from "../effects/v5/linefield.ts";
 import { initPlayFor } from "../effects/v5/play-for.ts";
 import { initCopyPrompt } from "./copy-prompt.ts";
@@ -69,7 +78,8 @@ export function initHomeEffects(root: ParentNode = document): () => void {
     document.documentElement.hasAttribute("data-damp") ? initDampScroll() : () => {},
     initNavWithRange(root),
     initStage(root), // before initRise: the rise engine reads the pinned stage's layout
-    initHarnessSwitch(root), // after the stage: its scroll driver reads the pinned layout
+    initPortal(root), // also before initRise: a live host is taller, and moves everything below it
+    initHarnessSwitch(root), // after the stage and the portal: its scroll driver reads their pinned layout
     initRise(root),
     initFooter(root),
     initFooterMark(root), // after initFooter: it follows the state the footer engine writes

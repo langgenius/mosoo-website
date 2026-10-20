@@ -558,6 +558,47 @@ main:focus {
   --out: 0;
 }
 
+/* Portal (portal.ts): not live (no JS, reduced motion, outside data-portal-media, a capture tool's unstuck pin) is the
+   CSS default, the content in the flow with no frame. Live: the host is tall (the pin's screen + the range's end + the
+   time the open content stays pinned; a section sets its own), the pin sticks for one screen, the window layer fills
+   it (the engine clips it to the mark's block) and the 1px frame is drawn over it until the door is open. */
+[data-portal-frame] {
+  display: none;
+}
+
+[data-portal][data-portal-mode="live"] {
+  height: 250vh;
+}
+
+[data-portal][data-portal-mode="live"] [data-portal-pin] {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: clip;
+}
+
+[data-portal][data-portal-mode="live"] [data-portal-window] {
+  position: absolute;
+  inset: 0;
+}
+
+[data-portal][data-portal-mode="live"] [data-portal-frame] {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1px;
+}
+
+[data-portal][data-portal-state="open"] [data-portal-frame] {
+  visibility: hidden;
+}
+
 /* Line field (T2, linefield.ts): the host fills its positioned parent; the poster is the t0 frame (fit none,
    centred; add .v5-lf--cover for fit cover); the runtime puts its canvas over it. Two hosts per board switch at
    720px, T1's phone breakpoint: .v5-lf--wide (desktop params) and .v5-lf--phone. */
@@ -666,5 +707,26 @@ html:not(.js) [data-copy] {
 
   [data-nav] {
     position: absolute !important;
+  }
+
+  /* The portal's end state: its inline clip and the live layout give way, so the content prints once, in the flow. */
+  [data-portal][data-portal-mode] {
+    height: auto !important;
+  }
+
+  [data-portal-pin] {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  [data-portal-window] {
+    position: relative !important;
+    inset: auto !important;
+    clip-path: none !important;
+  }
+
+  [data-portal-frame] {
+    display: none !important;
   }
 }
