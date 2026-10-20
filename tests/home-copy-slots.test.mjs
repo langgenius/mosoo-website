@@ -206,10 +206,72 @@ test("zh and ja fill the same slots as en, no more and no fewer", () => {
   }
 });
 
+// zh and ja are written to en's visual widths, by v4d's rule (9e92312 tests/home-copy-slots.test.mjs): a CJK
+// character is as wide as two Latin ones, so a slot of n en characters holds n / 2 full-width characters, a Latin
+// character or a space counting as half. The hero lead and the closing title are one run of text each, so their parts
+// share one budget (word order differs between the languages). The Session object's strings have no en character
+// budget (object words instead): their widths keep each on the line it takes in en (staging v5/content/NOTES.md).
+// Line breaks themselves are checked in the browser (staging v5/content/NOTES.md, the slot probe at 360-1440).
+const cjkWidth = (value) => [...value].reduce((sum, char) => sum + (char.charCodeAt(0) < 0x2e80 ? 0.5 : 1), 0);
+const CJK_GROUPS = [
+  { name: "hero.lead", paths: ["hero.lead.pre", "hero.lead.or", "hero.lead.post"] },
+  { name: "closing.h2a + h2b", paths: ["closing.h2a", "closing.h2b"], width: 15 },
+];
+const KIT_CJK = {
+  "kit.call.instruction": 29, // runs off the plate at 1440 from about 58 en characters (hero-stage NOTES §6)
+  "kit.watch.action": 24, // with the file keycap in it: one line at 1440 and 1024, two at 390, as en
+  "kit.watch.status": 8,
+  "kit.watch.stream": 12,
+  "kit.watch.events.*": 10,
+  "kit.return.turn": 8,
+  "kit.return.after": 6,
+  "kit.return.restored": 16,
+};
+
+test("zh and ja fit en's visual widths (full-width characters, Latin counting half)", () => {
+  const overflow = [];
+  const grouped = new Set(CJK_GROUPS.flatMap((group) => group.paths));
+  const at = (node, path) => path.split(".").reduce((value, key) => value[key], node);
+  for (const locale of ["zh", "ja"]) {
+    for (const section of SECTIONS) {
+      for (const [path, value] of leaves(COPY[section][locale])) {
+        const where = [section, ...path].join(".");
+        if (grouped.has(where)) continue;
+        if (section === "stage" && path[0] === "kit") {
+          const kit = Object.entries(KIT_CJK).find(([pattern]) => matches(pattern, path));
+          const text = path[2] === "action" ? value.replace("{file}", COPY.stage[locale].kit.watch.file) : value;
+          if (kit && cjkWidth(text) > kit[1]) overflow.push(`${locale} ${where}: ${cjkWidth(text)} > ${kit[1]} wide: ${text}`);
+          continue;
+        }
+        const budget = budgetFor(section, path);
+        if (budget && cjkWidth(value) > budget.chars / 2) {
+          overflow.push(`${locale} ${where}: ${cjkWidth(value)} > ${budget.chars / 2} wide: ${value}`);
+        }
+      }
+    }
+    for (const group of CJK_GROUPS) {
+      const width = group.paths.reduce((sum, path) => {
+        const [section, ...rest] = path.split(".");
+        return sum + cjkWidth(at(COPY[section][locale], rest.join(".")));
+      }, 0);
+      const limit =
+        group.width ??
+        group.paths.reduce((sum, path) => {
+          const [section, ...rest] = path.split(".");
+          return sum + (budgetFor(section, rest)?.chars ?? 0) / 2;
+        }, 0);
+      if (width > limit) overflow.push(`${locale} ${group.name}: ${width} > ${limit} wide`);
+    }
+  }
+  assert.deepEqual(overflow, []);
+});
+
 test("product names and machine tokens are spelled the same in every locale", () => {
   for (const locale of ["zh", "ja"]) {
     assert.deepEqual(COPY.hero[locale].harnesses, COPY.hero.en.harnesses, `${locale} hero harness names`);
     assert.equal(COPY.stage[locale].kit.harness, COPY.stage.en.kit.harness, `${locale} stage harness`);
+    assert.equal(COPY.stage[locale].kit.call.attachment, COPY.stage.en.kit.call.attachment, `${locale} attached file`);
+    assert.equal(COPY.stage[locale].kit.watch.file, COPY.stage.en.kit.watch.file, `${locale} file being written`);
     assert.deepEqual(
       COPY.footer[locale].columns.harnesses.names,
       COPY.footer.en.columns.harnesses.names,
