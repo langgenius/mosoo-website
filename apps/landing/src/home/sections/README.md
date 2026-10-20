@@ -7,7 +7,7 @@ agents own everything shared.
 
 | Section | Module | Styles | Copy | Owner | Wrapper |
 | --- | --- | --- | --- | --- | --- |
-| 0 Nav | `nav.ts` | `nav.css` | `../copy/nav.json` | system | `<a class="v5-skip">` + `<header class="v5-nav" data-nav>` |
+| 0 Nav | `nav.ts` | `nav.css` | `../copy/nav.json` | system | `<a class="v5-skip">` + `<header class="v5-nav" data-nav>`; inside, `<nav id="v5-nav-menu" popover>` holds the row (Products and the language list as `popover` panels, staging `v5/polish/nav/DESIGN.md`), which up to 860px is the sheet the menu button opens |
 | 1 Hero | `hero.ts` | `hero.css` | `../copy/hero.json` | hero + stage agent | `<section id="hero" data-section="hero" class="v5-sec v5-hero">` |
 | 2 Stage | `stage.ts` | `stage.css` | `../copy/stage.json` | hero + stage agent | `<section id="how-it-works" data-section="stage" class="v5-sec v5-stage" data-stage>` |
 | 2b Spec table | `spec.ts` | `spec.css` | `../copy/spec.json` | spec agent (graft 2026-10-20) | `<section id="parts" data-section="spec" class="v5-sec v5-spec" data-portal data-switch-run>` |
@@ -69,8 +69,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
   (`main > .v5-sec + .v5-sec`); set your own `margin-top` on your section.
 - T1 fields: `../v5-fields.css` (`.v5-field`, `.v5-field--hero`, `--closing`, `--lime`, `--underlay-a|b|c`); it
   owns `::before` / `::after` of the element it is on. T4 kit: `../kit/kit.css`.
-- Phones switch at 720px (T1's plates, the paper inset; up to there the floating nav trades its links for the CTA
-  once the CTA is in); the nav hides its wide links at 600px; the stage pins from 901px wide and 680px tall.
+- Phones switch at 720px (T1's plates, the paper inset); the nav gives its row to the menu button and its sheet up to
+  860px (the floating bar is 840px wide, the ja row needs 828); the stage pins from 901px wide and 680px tall.
 - Colour rules: no white text on lime, no lime text or lime hairlines on white, focus ring 2px ink (from the
   system), text contrast at least 4.5:1 under 24px and 3:1 from 24px.
 
@@ -79,7 +79,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
 | Section | Must carry |
 | --- | --- |
 | `<html>` | `data-damp` (index.html) and the head's `js` class line (index.html) |
-| Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; lead and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` (exactly one on the page) |
+| Nav | `<header data-nav>`, the CTA slot `data-nav-cta`; its `popover` panels (Products, the language list, the phone sheet) open and close without a script, and the nav engine also closes one when focus moves off it and its button, or when its button is hidden. A same-origin `a[hreflang]` to `/en`, `/zh` or `/ja` anywhere on the page (the bar's list, the footer's) writes the `mosoo_locale` cookie on click (`shared/locale.ts` `rememberLocale`, read by the worker's `/` redirect) |
+| Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; lead and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` (exactly one on the page); the announcement over the H1 `data-budget="chrome"` (site chrome: `tools/budget.ts` leaves its words out) and `data-rise-load="fade"` |
 | Stage | the section `data-stage` (`data-stage-at="0,0.2,0.6"`, `data-stage-media` = where it pins: 901px wide and 680px tall), its sticky layer `data-stage-pin`, every part of step k `data-stage-step="k"`. Pinned layering is the contract in `../system.css` (`.v5-stage-screen`, one per step; the section's height there is 350vh, `stage.css` sets 220vh); the captions switch with the object instead of the scrubbed `.v5-stage-say`. Unpinned (smaller screens, reduced motion, no JS) is the CSS default and reads as three stacked plates. Line field hosts, in the first step's plate (the plate is the stage): `<div data-linefield="hero" class="v5-lf--wide">` and `<div data-linefield="hero-mobile" class="v5-lf--phone">`, each with its `<img data-linefield-poster src="/landing/v5/lines/<id>.svg" alt="">`. `../effects.ts` starts the stage engine before the rise engine, which reads the pinned layout |
 | Spec table | the section is the portal's host (`data-portal`, `data-portal-range`, `data-portal-media` = where the stage pins) and the switch's run (`data-switch-run`); its first child `data-portal-pin` holds `data-portal-window` (the T1 field and the card, an opaque ground; no `data-rise` inside) and `<svg data-portal-frame>`; `data-portal-focus` on the first Harness value. The Harness `<dd>` is `data-switch="scroll"` (`data-switch-span`, `data-switch-media`): a visually hidden list with the four names, then an aria-hidden slot with one `data-switch-item` per harness (HARNESS_IDS order, names from `hero.harnesses`), then an aria-hidden small list. Still (no JS, reduced motion, below 901 x 680) it is a plate in the flow: the first harness large, the other three small. `../effects.ts` starts the portal and the switch after the stage and before the rise engine |
 | Accent | `data-theme-zone="accent"` on `.v5-acc-zone` only: an absolutely positioned box inside the lime panel over the solid stretch and the first half of the fade (not the white gap before the edge, not the pale end): the nav turns lime glass with an ink CTA while that box is under the bar's centre line. Title wrapper `data-rise="block"`, H2 `data-rise="title"`, its second line `data-rise="line"`, each card `data-rise="card"`. The full lime screen itself is CSS (Frame: `linear-gradient(var(--accent) 0 calc(100svh + 40px), transparent 100%)`). The three figures (sandbox, files, resume) are inline copies of `public/landing/v5/figures/*.svg` (`tests/home-figures.test.mjs` keeps them equal) |

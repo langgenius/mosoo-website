@@ -5,9 +5,11 @@
     "lead": "One API call from the backend starts a Session (README L32, SPEC §1 L12-L13; OpenAPI v2 POST /projects/{projectId}/threads), each Session in its own sandbox (README L9, SPEC §3 L32).",
     "harnesses": "README L9 names them OpenAI Codex, Claude Agent SDK, OpenCode and Pi; not translated (tests keep them equal in every locale).",
     "primary": "README L18 'Try mosoo' -> https://cloud.mosoo.ai.",
-    "secondary": "The v2 quickstart (copy.ts localeLinks().quickstart)."
+    "secondary": "The v2 quickstart (copy.ts localeLinks().quickstart).",
+    "news": "The announcement above the H1 (owner 2026-10-20 17:15: the NEW pill over the headline must stay). Production's strings (origin/main apps/landing/src/routes/login/landing/hero.tsx L63-66; shared/i18n.ts L19 / L47), with the product's name in lowercase (owner 2026-10-20 21:57: 「mosoo computer 一律小写」); the chip says New in every locale, as production's does. Chrome, not marketing copy: the link carries data-budget=\"chrome\" (tools/budget.ts leaves it out of the word counts)."
   },
   "en": {
+    "news": { "tag": "New", "text": "mosoo computer is live" },
     "h1a": "Run agents from your backend.",
     "h1b": "Continue them days later.",
     "lead": {
@@ -20,6 +22,7 @@
     "secondary": "Read the quickstart"
   },
   "zh": {
+    "news": { "tag": "New", "text": "mosoo computer 已上线" },
     "h1a": "从后端运行 Agent。",
     "h1b": "几天后，接着跑。",
     "lead": {
@@ -32,6 +35,7 @@
     "secondary": "快速开始"
   },
   "ja": {
+    "news": { "tag": "New", "text": "mosoo computer をリリースしました" },
     "h1a": "バックエンドから Agent を。",
     "h1b": "後日、その続きを。",
     "lead": {

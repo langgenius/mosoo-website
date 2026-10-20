@@ -7,8 +7,66 @@
    under .v5-hero (sections/README.md). */
 
 .v5-hero .v5-hero-in {
-  padding-top: 64px;
+  padding-top: 48px;
   text-align: center;
+}
+
+/* The announcement (owner 2026-10-20 17:15; production's hero pill, origin/main landing/hero.tsx L59-71): one line,
+   centred over the H1. A paper pill in the page's line (1px, 18% ink), the lime New chip inside it (ink, caps; the
+   only lime on the first screen besides the CTA), the line in ink, a drawn arrow in ink-2 that nudges 2px on hover.
+   It takes 16px of the hero's top padding (64 -> 48; phones 40 -> 28): the H1 and everything under it move down 42px
+   at 1440 (H1 top 152 -> 194) and 40px at 390 (120 -> 160), measured on the built page (staging
+   v5/polish/nav/NOTES.md §3.3). */
+.v5-hero .v5-hero-news {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  height: 34px;
+  margin-bottom: 24px;
+  padding: 0 14px 0 4px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 14px/1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.15s var(--ease-theme);
+}
+
+.v5-hero .v5-hero-news:hover {
+  border-color: rgb(22 24 21 / 0.4);
+}
+
+.v5-hero .v5-hero-new {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--ink);
+  font: 600 11px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.v5-hero .v5-hero-news-t {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.v5-hero .v5-hero-news-arrow {
+  display: block;
+  flex: none;
+  color: var(--ink-2);
+  transition: translate 0.2s var(--ease-cta);
+}
+
+.v5-hero .v5-hero-news:hover .v5-hero-news-arrow {
+  translate: 2px 0;
 }
 
 .v5-hero .v5-hero-h1 {
@@ -49,7 +107,21 @@
 
 @media (max-width: 720px) {
   .v5-hero .v5-hero-in {
-    padding-top: 40px;
+    padding-top: 28px;
+  }
+
+  .v5-hero .v5-hero-news {
+    height: 32px;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-right: 12px;
+    font-size: 13.5px;
+  }
+
+  .v5-hero .v5-hero-new {
+    height: 22px;
+    padding: 0 8px;
+    font-size: 10.5px;
   }
 
   .v5-hero .v5-hero-lead {
@@ -58,5 +130,32 @@
 
   .v5-hero .v5-hero-actions {
     margin-top: 24px;
+  }
+}
+
+/* Small phones: ja's line ("mosoo computer をリリースしました", 238px at 13.5px with the ja Latin face) makes a 328px
+   pill, wider than the 312px the hero leaves at 360; at 13px (229px) with tighter gaps the pill is 308px and stays
+   whole down to 360 (measured 2026-10-20 22:12, en / zh / ja at 390, 375, 360). Narrower (350 and below) ja ends in
+   an ellipsis, the link intact. */
+@media (max-width: 380px) {
+  .v5-hero .v5-hero-news {
+    gap: 5px;
+    padding-right: 10px;
+    font-size: 13px;
+  }
+
+  .v5-hero .v5-hero-new {
+    padding: 0 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-hero .v5-hero-news,
+  .v5-hero .v5-hero-news-arrow {
+    transition: none;
+  }
+
+  .v5-hero .v5-hero-news:hover .v5-hero-news-arrow {
+    translate: none;
   }
 }

@@ -23,15 +23,28 @@ const COPY = Object.fromEntries(
 
 // path (section.slot; * = every array item or object value) -> max characters (en)
 const BUDGETS = {
-  // system: the bar's labels must fit the 720px floating bar next to the CTA
+  // system: the bar's labels must fit the 840px floating bar next to the CTA (staging v5/polish/nav/NOTES.md: the
+  // widest row, ja with the CTA in, needs 828 at 24px gaps)
   "nav.skip": 24,
   "nav.home": 24,
   "nav.label": 24,
+  "nav.products.label": 14,
+  "nav.products.new": 6, // the New chip
+  "nav.products.items.*.name": 16, // product names: "mosoo computer" is the longest
+  "nav.products.items.*.line": 54, // one line in the 464px panel at 1440 (390px text column; ja mosoo 378px)
   "nav.docs": 14,
   "nav.useCases": 14,
   "nav.github": 14,
+  "nav.language": 14, // the language list's heading (shown in the phone sheet)
+  "nav.languageButton": 24, // aria-label; {lang} is langShort
+  "nav.langShort": 8, // EN / 中文 / 日本語 on the bar's switch
   "nav.signIn": 14,
+  "nav.menu": 14, // aria-label of the phone menu button
   "nav.cta": 14,
+  // the announcement over the H1 (data-budget="chrome": not first-screen marketing words): one line at 390 in en, zh
+  // and ja (ja 'mosoo computer をリリースしました' is 16.5 wide, so the en budget is 34)
+  "hero.news.tag": 6,
+  "hero.news.text": 34,
   // hero: H1 two lines of a 72px two-tone serif (one line each at 1440); lead "{pre} [keys] {or} [key] {post}"
   "hero.h1a": 32,
   "hero.h1b": 28,

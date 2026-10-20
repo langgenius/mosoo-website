@@ -1,36 +1,76 @@
 {
-  "$comment": "Slots of sections/nav.ts: the skip link, the bar's labels and its CTA. Budgets: tests/home-copy-slots.test.mjs. Keys starting with $ are notes, not copy.",
+  "$comment": "Slots of sections/nav.ts: the skip link, the bar's labels, the Products panel, the language switch, the phone menu button and the CTA. Budgets: tests/home-copy-slots.test.mjs. Keys starting with $ are notes, not copy.",
   "$source": {
-    "*": "Labels carried from v4d (scripts/landing-home.mjs SHELL.nav, home-copy.json hero.primary) for the links the v5 brief names (Docs, Use cases, GitHub, Sign in, Try mosoo; README L18 'Try mosoo'). Kept as written in the content phase."
+    "*": "Labels carried from v4d (scripts/landing-home.mjs SHELL.nav, home-copy.json hero.primary) for the links the v5 brief names (Docs, Use cases, GitHub, Sign in, Try mosoo; README L18 'Try mosoo'). Kept as written in the content phase.",
+    "products": "Owner 2026-10-20 17:15: the Products entry is back (staging production/briefs/owner-notes.md, last section). Labels and the Computer line are production's (origin/main apps/landing/src/shared/i18n.ts L5 / L33 'Products'; L8 / L36 'A persistent cloud computer for agents.'; routes/login/products.ts L16-29). The mosoo line is not production's ('…for coding agents.' is retired narrative, tests/site-seo.test.mjs RETIRED_NARRATIVE): it is MAIN README L8 'An open-source, API-first managed Agent runtime for application backends.' in the page title's short form (scripts/landing-locales.mjs L20 / L30 / L40). Both product names are lowercase, as everywhere on this site: mosoo, and mosoo computer (owner 2026-10-20 21:57: 「mosoo computer 一律小写」; production and MAIN docs/SPEC.md L89 write 'Mosoo Computer'). Hosts and URLs keep their own spelling (computer.mosoo.ai).",
+    "language": "Production's 'Language' label (origin/main shared/i18n.ts L4 / L32: 语言, 言語): the heading of the language list. languageButton is the switch's accessible name: it starts from the same word and keeps the visible short name ({lang} = langShort) in it (WCAG 2.5.3).",
+    "langShort": "The current language's short name on the bar's switch: EN / 中文 / 日本語 (each locale names itself).",
+    "menu": "The phone menu button's accessible name (the button shows two lines)."
   },
   "en": {
     "skip": "Skip to content",
     "home": "mosoo home",
     "label": "Primary site links",
+    "products": {
+      "label": "Products",
+      "new": "New",
+      "items": {
+        "mosoo": { "name": "mosoo", "line": "Open-source Agent runtime for application backends." },
+        "computer": { "name": "mosoo computer", "line": "A persistent cloud computer for agents." }
+      }
+    },
     "docs": "Docs",
     "useCases": "Use cases",
     "github": "GitHub",
+    "language": "Language",
+    "languageButton": "Language ({lang})",
+    "langShort": "EN",
     "signIn": "Sign in",
+    "menu": "Menu",
     "cta": "Try mosoo"
   },
   "zh": {
     "skip": "跳到正文",
     "home": "mosoo 首页",
     "label": "主要站点链接",
+    "products": {
+      "label": "产品",
+      "new": "New",
+      "items": {
+        "mosoo": { "name": "mosoo", "line": "面向应用后端的开源 Agent runtime。" },
+        "computer": { "name": "mosoo computer", "line": "为 Agent 准备的持久云端计算机。" }
+      }
+    },
     "docs": "文档",
     "useCases": "用例",
     "github": "GitHub",
+    "language": "语言",
+    "languageButton": "语言（{lang}）",
+    "langShort": "中文",
     "signIn": "登录",
+    "menu": "菜单",
     "cta": "试用 mosoo"
   },
   "ja": {
     "skip": "本文へスキップ",
     "home": "mosoo ホーム",
     "label": "主要なサイトリンク",
+    "products": {
+      "label": "プロダクト",
+      "new": "New",
+      "items": {
+        "mosoo": { "name": "mosoo", "line": "アプリのバックエンド向けオープンソース Agent runtime。" },
+        "computer": { "name": "mosoo computer", "line": "Agent のための永続的なクラウドコンピューター。" }
+      }
+    },
     "docs": "ドキュメント",
     "useCases": "ユースケース",
     "github": "GitHub",
+    "language": "言語",
+    "languageButton": "言語（{lang}）",
+    "langShort": "日本語",
     "signIn": "ログイン",
+    "menu": "メニュー",
     "cta": "mosoo を試す"
   }
 }

@@ -14,6 +14,17 @@
 //   the bar's centre line. The CSS swaps the glass in 0.1 s cubic-bezier(.4, 0, .2, 1), so white glass never
 //   greys the full lime screen.
 //
+// - Popovers ([popover] inside the bar: the Products panel, the language list and the phone sheet, which is the
+//   <nav> itself; src/home/sections/nav.ts). The browser opens them from their popovertarget buttons and closes them
+//   on Esc (focus back on the button) and on a click outside, with or without this script. The engine adds what the
+//   browser leaves out: an open one closes once keyboard focus has moved off it and its button (Tab past its last
+//   link), so focus never lands on the page under an open phone sheet (WCAG 2.4.11), and once its button is no
+//   longer shown (a tablet turned to landscape with the sheet open: the bar is a row again).
+// - Language: a click on a link to one of the site's locales (a same-origin a[hreflang] whose path starts /en, /zh
+//   or /ja: the bar's list and the footer's) remembers it in the mosoo_locale cookie, which the worker's "/"
+//   redirect reads before Accept-Language (shared/locale.ts rememberLocale, as the subpages' footer and production's
+//   language menu do). The links lead to their page with or without it.
+//
 // Also written: data-nav-mode="live" (the CSS fixes the bar only then, so a failed or missing script leaves it in
 // the page) and data-nav-state="top" | "morph" | "float". Reduced motion holds p at 1 (ramp.design gives its
 // compact bar directly under reduced motion, nav-css.json) and the CSS drops the transitions.
@@ -21,10 +32,13 @@
 // bar's centre line, used for the theme zones), data-nav-clear="68" (px from the viewport top to the floating bar's
 // bottom edge, used for the CTA). Keep the last two in step with the CSS bar size.
 
+import { isLocale, rememberLocale } from "../../shared/locale";
+
 const RANGE_PX = 400;
 const LINE_PX = 40; // 12 px top + half of a 56 px floating bar
 const CTA_CLEAR_PX = 68; // the hero CTA counts as gone once its bottom passes the float bar (12 + 56 px)
 const CTA_FALLBACK_Y = 80; // savee.com: scrollY > 80 (save-design/v5/savee-com-nav/threshold.json)
+const BELOW_PX = 100000; // the CTA observer's box reaches this far below the viewport (see "CTA" in initNav)
 
 function numberAttr(el: Element, name: string, fallback: number): number {
   const value = Number.parseFloat(el.getAttribute(name) ?? "");
@@ -85,7 +99,11 @@ export function initNav(root: ParentNode = document): () => void {
     }
   };
 
-  // CTA: the watched hero CTA is "gone" when it has left through the top, behind the floating bar.
+  // CTA: the watched hero CTA is "gone" when it has left through the top, behind the floating bar. The observed box
+  // runs from the bar's bottom edge to far below the viewport, so the one change it reports is the CTA crossing that
+  // edge: a jump from below the fold to above it (an anchor link, End, a short phone where the hero CTA starts below
+  // the fold) is still seen. With the viewport alone as the box, below and above were both "not intersecting", no
+  // entry came, and the bar's CTA stayed off (en at 320 x 640 after the announcement moved the hero down 40px).
   const ctaIo =
     watch && canObserve
       ? new IntersectionObserver(
@@ -95,7 +113,7 @@ export function initNav(root: ParentNode = document): () => void {
               setCta(!entry.isIntersecting && entry.boundingClientRect.bottom <= top + 1);
             }
           },
-          { rootMargin: `-${clear}px 0px 0px 0px` },
+          { rootMargin: `-${clear}px 0px ${BELOW_PX}px 0px` },
         )
       : null;
   if (ctaIo && watch) {
@@ -145,8 +163,48 @@ export function initNav(root: ParentNode = document): () => void {
     }
   };
 
+  // Popovers: close an open one when focus lands outside it and its button, or when its button is not shown.
+  const popovers = [...nav.querySelectorAll<HTMLElement>("[popover]")].map((panel) => ({
+    panel,
+    button: nav.querySelector(`[popovertarget="${CSS.escape(panel.id)}"]`),
+  }));
+  const isOpen = (panel: HTMLElement): boolean => panel.matches(":popover-open");
+  // focusin, not focusout: focus has already moved, so closing never sends it back to the button.
+  const onFocusIn = (event: FocusEvent): void => {
+    const target = event.target;
+    if (!(target instanceof Node)) {
+      return;
+    }
+    for (const { panel, button } of popovers) {
+      if (isOpen(panel) && !panel.contains(target) && !button?.contains(target)) {
+        panel.hidePopover();
+      }
+    }
+  };
+  const closeUnreachable = (): void => {
+    for (const { panel, button } of popovers) {
+      if (isOpen(panel) && button && button.getClientRects().length === 0) {
+        panel.hidePopover();
+      }
+    }
+  };
+
+  // Language: remember the reader's pick for the worker's "/" redirect.
+  const onClick = (event: MouseEvent): void => {
+    const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[hreflang]") : null;
+    if (!link) {
+      return;
+    }
+    const url = new URL(link.href, window.location.href);
+    const code = url.pathname.split("/")[1] ?? "";
+    if (url.origin === window.location.origin && isLocale(code)) {
+      rememberLocale(code);
+    }
+  };
+
   const onResize = (): void => {
     buildThemeIo();
+    closeUnreachable();
     onScroll();
   };
 
@@ -159,12 +217,16 @@ export function initNav(root: ParentNode = document): () => void {
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onResize, { passive: true });
   reduce.addEventListener("change", onScroll);
+  document.addEventListener("focusin", onFocusIn);
+  document.addEventListener("click", onClick);
 
   return () => {
     cancelAnimationFrame(frame);
     window.removeEventListener("scroll", onScroll);
     window.removeEventListener("resize", onResize);
     reduce.removeEventListener("change", onScroll);
+    document.removeEventListener("focusin", onFocusIn);
+    document.removeEventListener("click", onClick);
     ctaIo?.disconnect();
     themeIo?.disconnect();
     for (const key of ["navMode", "navState", "navCtaState", "navTheme"]) {

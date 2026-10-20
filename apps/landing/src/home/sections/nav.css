@@ -1,8 +1,15 @@
 /* 0 Nav (sections/nav.ts). The nav engine's CSS contract (src/effects/v5/README.md "Nav"), with the page's sizes:
    the engine writes --nav-p (0 = the loose bar at the top, 1 = the floating glass bar), data-nav-mode="live",
    data-nav-cta-state and data-nav-theme; everything visible is here. Bar: 72 -> 56px high, full width (inset 16)
-   -> min(720px, 100% - 32px), top 16 -> 12, radius 0 -> 12; the glass leads the geometry (opaque by p = .4) so the
-   hero title never shows through it. No JS: the loose bar stays in the page, CTA shown. Reduced motion: p = 1. */
+   -> min(--nav-float, 100% - 32px), top 16 -> 12, radius 0 -> 12; the glass leads the geometry (opaque by p = .4) so
+   the hero title never shows through it. No JS: the loose bar stays in the page, CTA shown. Reduced motion: p = 1.
+
+   The Products entry and the language switch (owner 2026-10-20 17:15; staging v5/polish/nav/DESIGN.md): each is a
+   button and a native popover. The panels hang under the bar (8px below its bottom edge, in both bar states) from
+   their own trigger, by CSS anchor positioning; a browser without it gets them under the bar's centre / right edge.
+   Up to 860px: the <nav> itself is the popover the menu button opens, a sheet under the bar, and the two
+   panels show inline in it (headings shown, triggers hidden). A popover the author gives a display shows even when
+   closed, so the panels only get one when open (or inside the sheet, which only displays while open or fading out). */
 
 .v5-skip {
   position: absolute;
@@ -23,6 +30,10 @@
 
 [data-nav] {
   --p: var(--nav-p, 0);
+  /* The floating bar's width: 720 in the v5 lock; 840 since it carries Products and the language switch. The widest
+     row (ja, CTA in, 24px gaps) needs 828 with the 24px logo gap (staging v5/polish/nav/NOTES.md §3); en 675, zh 618. */
+  --nav-float: 840px;
+  --nav-gap: 24px;
   position: absolute; /* no JS / failed init: the loose bar stays in the page */
   z-index: 50;
   top: 16px;
@@ -31,7 +42,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--nav-gap);
   width: calc(100% - 32px);
   height: 72px;
   margin-inline: auto;
@@ -40,12 +51,13 @@
   border-radius: calc(12px * var(--p));
   color: var(--ink);
   font: 500 14.5px/1 var(--font-sans);
+  anchor-name: --v5-bar;
 }
 
 [data-nav][data-nav-mode="live"] {
   position: fixed;
   top: calc(16px - 4px * var(--p));
-  width: calc((100% - 32px) * (1 - var(--p)) + min(720px, 100% - 32px) * var(--p));
+  width: calc((100% - 32px) * (1 - var(--p)) + min(var(--nav-float), 100% - 32px) * var(--p));
   height: calc(72px - 16px * var(--p));
   padding-inline: calc(32px - 16px * var(--p)) calc(32px - 24px * var(--p));
 }
@@ -95,26 +107,316 @@
   aspect-ratio: 161.167 / 34.704;
 }
 
-.v5-nav-end,
-.v5-nav-links {
+.v5-nav-end {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--nav-gap);
 }
 
-/* padding-block makes a 44px tap target without changing the look. */
-.v5-nav-links a {
+/* The <nav> is a popover only for the phone sheet: here it is the bar's row, so the browser's popover box (fixed,
+   centred, framed, Canvas colours) is undone and it always shows. */
+.v5-nav-links {
+  position: static;
+  inset: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--nav-gap);
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+/* Links and the two triggers: one look. padding-block makes a 44px tap target without changing it; the radius only
+   rounds the focus ring. */
+.v5-nav-a,
+.v5-nav-tg {
+  display: inline-flex;
+  align-items: center;
   padding-block: 15px;
+  border-radius: 6px;
   color: var(--ink-2);
   text-decoration: none;
   white-space: nowrap;
   transition: color 0.15s var(--ease-theme);
 }
 
-.v5-nav-links a:hover {
+.v5-nav-a:hover,
+.v5-nav-tg:hover {
   color: var(--ink);
 }
 
+/* GitHub is its mark in the bar (the name stays its accessible name, and shows in the phone sheet). */
+.v5-nav-ghm {
+  display: block;
+  flex: none;
+}
+
+.v5-nav-gh-t {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------------------- the two dropdowns */
+.v5-nav-dd {
+  display: flex;
+  align-items: center;
+}
+
+.v5-nav-tg {
+  gap: 6px;
+  margin: 0;
+  padding-inline: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.v5-nav-dd--products > .v5-nav-tg {
+  anchor-name: --v5-products;
+}
+
+.v5-nav-dd--lang > .v5-nav-tg {
+  anchor-name: --v5-lang;
+}
+
+.v5-nav-chev {
+  display: block;
+  flex: none;
+  margin-top: 1px;
+  transition: rotate 0.2s var(--ease-cta);
+}
+
+.v5-nav-globe {
+  display: block;
+  flex: none;
+}
+
+/* While a panel is open its trigger reads ink and its chevron turns over. */
+.v5-nav-dd:has(> .v5-nav-pop:popover-open) > .v5-nav-tg {
+  color: var(--ink);
+}
+
+.v5-nav-dd:has(> .v5-nav-pop:popover-open) .v5-nav-chev {
+  rotate: 180deg;
+}
+
+/* The panels: a paper card (opaque, so its text reads the same over the hero, the plates or the lime screen), the
+   bar's 1px edge and shadow family, r12. Hidden unless open (see the head comment). */
+.v5-nav-pop {
+  display: none;
+  position: fixed;
+  inset: auto;
+  top: calc(96px - 20px * var(--p)); /* no anchor positioning: 8px under the bar (16 + 72 -> 12 + 56) */
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 8px;
+  overflow: visible;
+  border: 1px solid rgb(22 24 21 / 0.12);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow:
+    0 1px 2px rgb(22 24 21 / 0.06),
+    0 18px 40px -18px rgb(22 24 21 / 0.3);
+  font: 400 15px/1.4 var(--font-sans);
+  text-align: left;
+}
+
+.v5-nav-pop:popover-open {
+  display: block;
+}
+
+/* 464 wide: every product line stays on one line (widest, ja mosoo: 378 of the 390 text column; en 334). */
+.v5-nav-pop--products {
+  left: calc(50% - 232px);
+  width: 464px;
+  max-width: calc(100% - 32px);
+}
+
+.v5-nav-pop--lang {
+  right: calc((100% - min(var(--nav-float), 100% - 32px)) / 2 * var(--p) + 16px * (1 - var(--p)) + 8px);
+  width: 216px;
+}
+
+/* With anchor positioning (Chrome 125+, Safari 26+): under the bar, from the trigger. The products panel starts 20px
+   left of "Products", so its tiles (8 + 12px in) sit right under the word; the language list ends 20px right of its
+   chevron. Neither leaves the viewport. */
+@supports (anchor-name: --v5-a) {
+  .v5-nav-pop {
+    top: calc(anchor(--v5-bar bottom) + 8px);
+  }
+
+  .v5-nav-pop--products {
+    left: clamp(16px, anchor(--v5-products left) - 20px, 100% - 480px);
+  }
+
+  .v5-nav-pop--lang {
+    right: max(16px, anchor(--v5-lang right) - 20px);
+  }
+}
+
+/* The list headings are for the phone sheet (and name the lists for screen readers everywhere). */
+.v5-nav-pop-h {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Product rows (Dub's resource list): the 20px lime tile with a 12px ink glyph (as the footer's Harnesses rows),
+   the name (and the New chip), the host in Fragment Mono at the right, one line under the name. */
+.v5-nav-prods,
+.v5-nav-langs {
+  display: grid;
+  gap: 2px;
+}
+
+.v5-nav-prod {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "tile name host"
+    ". line line";
+  column-gap: 12px;
+  row-gap: 4px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 0.15s var(--ease-theme);
+}
+
+.v5-nav-prod:hover {
+  background: var(--frame);
+}
+
+.v5-nav-prod:focus-visible {
+  outline-offset: -2px;
+}
+
+.v5-nav-tile {
+  grid-area: tile;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  background: var(--accent);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.05);
+  color: var(--ink);
+}
+
+.v5-nav-tile-g {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+.v5-nav-prod-name {
+  grid-area: name;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font: 500 15px/20px var(--font-sans);
+  white-space: nowrap;
+}
+
+.v5-nav-prod-host {
+  grid-area: host;
+  color: var(--ink-2);
+  font: 400 12px/20px var(--font-mono);
+  letter-spacing: 0;
+}
+
+.v5-nav-prod-line {
+  grid-area: line;
+  color: var(--ink-2);
+  font: 400 14px/20px var(--font-sans);
+  text-wrap: pretty; /* a line that wraps (the sheet) leaves no lone word: 「… Agent / runtime。」 at 820 ja */
+}
+
+/* ja running text breaks at phrases (system.css), so a line that wraps in the phone sheet keeps クラウドコンピューター
+   whole instead of leaving 「ター。」 on a line of its own. */
+:lang(ja) .v5-nav-prod-line {
+  word-break: auto-phrase;
+}
+
+/* The New chip (the owner's screenshot; production's hero chip): lime, ink, caps. The hero has its own (hero.css). */
+.v5-nav-new {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--ink);
+  font: 600 10px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The language list: the three home pages, the current one in ink with a check. */
+.v5-nav-langs a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  font: 500 15px/20px var(--font-sans);
+  text-decoration: none;
+  transition:
+    background-color 0.15s var(--ease-theme),
+    color 0.15s var(--ease-theme);
+}
+
+.v5-nav-langs a:hover {
+  background: var(--frame);
+  color: var(--ink);
+}
+
+.v5-nav-langs a:focus-visible {
+  outline-offset: -2px;
+}
+
+.v5-nav-langs a[aria-current="true"] {
+  color: var(--ink);
+}
+
+.v5-nav-check {
+  flex: none;
+  visibility: hidden;
+}
+
+.v5-nav-langs a[aria-current="true"] .v5-nav-check {
+  visibility: visible;
+}
+
+/* The phone menu button: only on phones. */
+.v5-nav-menu {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------------------------- the CTA */
 /* The CTA slot (savee.com): max-width 0 -> 200px and opacity in 180 ms once the hero CTA is behind the bar. A closed
    slot is inert (the engine). The slot clips, so the button's focus ring sits inside its edge. */
 [data-nav-cta] {
@@ -131,7 +433,7 @@
 
 .js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
   max-width: 0;
-  margin-left: -24px; /* cancels the row's gap while closed */
+  margin-left: calc(-1 * var(--nav-gap)); /* cancels the row's gap while closed */
   opacity: 0;
 }
 
@@ -168,69 +470,298 @@
   outline-color: var(--paper);
 }
 
-@media (max-width: 600px) {
-  .v5-nav-wide {
-    display: none;
-  }
-
-  [data-nav],
-  [data-nav][data-nav-mode="live"] {
-    gap: 16px;
-    padding-inline: 16px calc(16px - 8px * var(--p));
-  }
-
-  .v5-nav-end,
-  .v5-nav-links {
-    gap: 16px;
-  }
-
-  .js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
-    margin-left: -16px;
+/* Small desktops (861-1023px): the bar is the viewport less 32px, so the row tightens to 20px gaps (ja, CTA in: 800
+   of the 829 at 861). */
+@media (max-width: 1023px) {
+  [data-nav] {
+    --nav-gap: 20px;
   }
 }
 
-/* Phones and small tablets: the links and the CTA do not fit one bar in every language (/ja at 390 needs 434px of
-   the bar's 358: ドキュメント, ログイン, mosoo を試す; /en at 375 needs 352 of 343). So the bar's end is one grid cell
-   that holds either: once the CTA is in, the links fade out (120 ms) and the CTA grows in their place (180 ms, from
-   80 ms), and the floating bar keeps the logo and the CTA; going back, the CTA goes first and the links fade in after
-   it. Sharing the cell, the two never sit side by side, so nothing overflows mid-swap whatever the labels' lengths.
-   Both CTAs open the console; Docs is the hero's second button and the footer's. Hidden links leave the tab order.
-   Without JS the bar stays at the top, right above the hero's own lime CTA, so it shows the links only. */
-@media (max-width: 720px) {
-  .v5-nav-end {
-    display: grid;
-    justify-items: end;
+/* ------------------------------------------------------------------------------------ phones and tablets */
+/* Up to 860px the row does not fit the bar in every language (ja, CTA in: 800px at 20px gaps; the bar is the
+   viewport less 32px, 788 at an 820px iPad). So the bar keeps the logo, the CTA (once the hero's is behind it) and
+   the menu button (dub, vercel, resend, cursor at 390: staging v5/polish/nav/mobbin/sheet-live-390*.jpg); the button
+   opens the sheet, the <nav> as a popover under the bar: Products (the two rows), Docs, Use cases, GitHub, the
+   language (three segments) and Sign in. Every link is one tap away at any scroll position (the v5 lock hid Docs and
+   GitHub after the first screen on phones, REVIEW-v5 §6 no. 11). Without JS: logo and menu button (the hero's own CTA
+   is right under the bar). */
+@media (max-width: 860px) {
+  [data-nav],
+  [data-nav][data-nav-mode="live"] {
+    --nav-gap: 8px;
+    padding-inline: 16px calc(6px - 2px * var(--p));
   }
 
-  .v5-nav-links,
-  [data-nav-cta] {
-    grid-area: 1 / 1;
-  }
-
-  .js [data-nav]:not([data-nav-cta-state="on"]) [data-nav-cta] {
-    margin-left: 0; /* one cell: no row gap to cancel */
-  }
-
-  .js [data-nav][data-nav-cta-state="on"] [data-nav-cta] {
-    transition-delay: 0.08s;
-  }
-
-  .v5-nav-links {
-    transition:
-      opacity 0.18s var(--ease-cta) 0.12s,
-      visibility 0s;
-  }
-
-  .js [data-nav][data-nav-cta-state="on"] .v5-nav-links {
-    opacity: 0;
-    visibility: hidden;
-    transition:
-      opacity 0.12s var(--ease-cta),
-      visibility 0s linear 0.12s;
+  .js [data-nav]:not([data-nav-cta-state="on"]) .v5-nav-end {
+    padding-right: 0;
   }
 
   html:not(.js) [data-nav-cta] {
     display: none;
+  }
+
+  .v5-nav-menu {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .v5-nav-burger path {
+    transform-origin: 9px 9px;
+    transition: transform 0.2s var(--ease-cta);
+  }
+
+  .v5-nav-end:has(.v5-nav-links:popover-open) .v5-nav-burger-a {
+    transform: translateY(2.75px) rotate(45deg);
+  }
+
+  .v5-nav-end:has(.v5-nav-links:popover-open) .v5-nav-burger-b {
+    transform: translateY(-2.75px) rotate(-45deg);
+  }
+
+  /* The sheet hangs from the bar's right end, at most 420px wide: the bar's full width on phones, a menu-sized card
+     on tablets (at 820px a full-width sheet stretched the language segments to 760px). Its place and look are set
+     whether it is open or not, and only display follows the open state: closing, the browser keeps it on screen
+     through the 150ms fade (display and overlay held, see the motion block), and it must fade where it stood. Scoped
+     to :popover-open, it fell back to the bar's row for those 150ms, a ghost row over the bar that hid the menu
+     button (staging v5/polish/nav/NOTES.md §8, 22:16). */
+  .v5-nav-links {
+    position: fixed;
+    top: calc(96px - 20px * var(--p));
+    left: max(16px, 100% - 436px);
+    right: 16px;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    max-height: calc(100dvh - 112px + 20px * var(--p));
+    padding: 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: 1px solid rgb(22 24 21 / 0.12);
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow:
+      0 1px 2px rgb(22 24 21 / 0.06),
+      0 18px 40px -18px rgb(22 24 21 / 0.3);
+  }
+
+  .v5-nav-links:popover-open {
+    display: flex;
+  }
+
+  @supports (anchor-name: --v5-a) {
+    .v5-nav-links {
+      top: calc(anchor(--v5-bar bottom) + 8px);
+      left: max(anchor(--v5-bar left), anchor(--v5-bar right) - 420px);
+      right: anchor(--v5-bar right);
+      max-height: calc(100dvh - anchor(--v5-bar bottom) - 24px);
+    }
+  }
+
+  /* In the sheet: the triggers give way to the panels' own headings, and the panels sit in the flow. */
+  .v5-nav-dd {
+    display: block;
+  }
+
+  .v5-nav-tg {
+    display: none;
+  }
+
+  .v5-nav-links .v5-nav-pop {
+    position: static;
+    display: block;
+    width: auto;
+    max-width: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .v5-nav-pop-h {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 10px 12px 6px;
+    overflow: visible;
+    clip-path: none;
+    color: var(--ink);
+    font: 500 14px/20px var(--font-sans);
+  }
+
+  /* Hairlines between the three groups (products, links, language), on the square group boxes so they run
+     straight (the rows are rounded for their hover). */
+  .v5-nav-dd--products {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .v5-nav-dd--lang {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .v5-nav-prod {
+    grid-template-columns: 20px minmax(0, 1fr);
+    grid-template-areas:
+      "tile name"
+      ". line"
+      ". host";
+    row-gap: 2px;
+  }
+
+  .v5-nav-prod-line {
+    margin-top: 2px;
+  }
+
+  .v5-nav-a {
+    min-height: 44px;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--ink);
+    font: 500 15px/20px var(--font-sans);
+  }
+
+  .v5-nav-a:hover {
+    background: var(--frame);
+  }
+
+  .v5-nav-a:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .v5-nav-gh {
+    gap: 10px;
+  }
+
+  .v5-nav-gh-t {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+  }
+
+  /* The language as three segments in one 1px frame, the current one raised on paper (all three in sight). */
+  .v5-nav-langs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0 12px 4px;
+    padding: 3px;
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    background: var(--frame);
+  }
+
+  .v5-nav-langs a {
+    justify-content: center;
+    min-height: 38px;
+    padding: 0 6px;
+    gap: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+
+  .v5-nav-langs a[aria-current="true"] {
+    background: var(--paper);
+    box-shadow:
+      0 0 0 1px rgb(22 24 21 / 0.08),
+      0 1px 2px rgb(22 24 21 / 0.08);
+  }
+
+  .v5-nav-check {
+    display: none;
+  }
+
+  /* Sign in closes the sheet as a 1px ink line button (the page's secondary), lined up with the segments. */
+  .v5-nav-signin {
+    justify-content: center;
+    margin: 12px 12px 4px;
+    border: 1px solid var(--ink);
+  }
+}
+
+/* Small phones (below 360px): at 320 the floating bar holds 268px of content; the logo (93), ja's CTA (129.5) and
+   the menu button (44) with 8px gaps needed 282, so the button stood 10px outside the glass (measured on the built
+   page; f5cb2ef fitted, its links shared the CTA's cell). A tighter CTA (10px sides, 13.5px) and 4px gaps leave
+   the logo at least 16px of air in en, zh and ja; the button keeps its 44px. */
+@media (max-width: 359px) {
+  [data-nav],
+  [data-nav][data-nav-mode="live"] {
+    --nav-gap: 4px;
+  }
+
+  .v5-nav-cta .v5-btn {
+    padding: 0 10px;
+    font-size: 13.5px;
+  }
+}
+
+/* ----------------------------------------------------------------------------------------------- motion */
+/* The panels drop in 4px and fade, 150 ms in and out (production's products menu: duration-150, translate-y-1); the
+   phone sheet the same. Only with motion allowed: reduced motion opens and closes them at once. The closed state
+   is scoped to where each is a popover: on phones the panels are open blocks inside the sheet. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 861px) {
+  .v5-nav-pop {
+    transition:
+      opacity 0.15s var(--ease-cta),
+      translate 0.15s var(--ease-cta),
+      display 0.15s allow-discrete,
+      overlay 0.15s allow-discrete;
+  }
+
+  .v5-nav-pop:not(:popover-open) {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+
+  @starting-style {
+    .v5-nav-pop:popover-open {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (max-width: 860px) {
+  .v5-nav-links {
+    transition:
+      opacity 0.15s var(--ease-cta),
+      translate 0.15s var(--ease-cta),
+      display 0.15s allow-discrete,
+      overlay 0.15s allow-discrete;
+  }
+
+  .v5-nav-links:not(:popover-open) {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+
+  @starting-style {
+    .v5-nav-links:popover-open {
+      opacity: 0;
+      translate: 0 -4px;
+    }
   }
 }
 
@@ -239,7 +770,12 @@
   [data-nav-cta],
   [data-nav-cta] *,
   .v5-nav-end,
-  .v5-nav-links {
+  .v5-nav-a,
+  .v5-nav-tg,
+  .v5-nav-chev,
+  .v5-nav-burger path,
+  .v5-nav-prod,
+  .v5-nav-langs a {
     transition: none;
   }
 }

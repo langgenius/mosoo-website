@@ -29,7 +29,7 @@ side-by-side images, one regenerating command) lives in staging
 | --- | --- | --- | --- | --- |
 | `damp-scroll.ts` | `<html data-damp>` | `scrollTo` per frame | Frame (Lenis 1.0.29, `lerp .1`, `wheelMultiplier .7`) | staging `refs/frame/v5/motion/STUDY.md` §1 |
 | `rise.ts` | `data-rise="block \| title \| line \| card"` | inline hidden state, WAAPI, `data-rise-state` | Frame IX2 a-15 / a-13 / a-14; Intent feature carousel | Frame §2; `refs/intent/v5/STUDY.md` §2.6 |
-| `nav.ts` | `[data-nav]`, `[data-nav-cta]`, `[data-nav-cta-watch]`, `[data-theme-zone]` | `--nav-p`, `data-nav-mode/state/cta-state/theme`, `inert` | ramp.design progress morph, Save.design float bar, savee.com CTA, Ramp theme switch | `refs/ramp-design/v5/STUDY.md` §1, §3.1, §4.1, §5.5 |
+| `nav.ts` | `[data-nav]`, `[data-nav-cta]`, `[data-nav-cta-watch]`, `[data-theme-zone]`; `[popover]` panels inside the bar; same-origin `a[hreflang]` to `/en`, `/zh`, `/ja` | `--nav-p`, `data-nav-mode/state/cta-state/theme`, `inert`; `hidePopover()`; the `mosoo_locale` cookie | ramp.design progress morph, Save.design float bar, savee.com CTA, Ramp theme switch; production's language menu (cookie) | `refs/ramp-design/v5/STUDY.md` §1, §3.1, §4.1, §5.5; staging `v5/polish/nav/DESIGN.md` |
 | `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready`, `data-step`, `--stage-p`, `data-stage-state`, `--step-p` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
 | `footer.ts` | `[data-footer]`, `[data-footer-links/link/brand/rise]`, `[data-draw]` | inline hidden state, WAAPI, `data-footer-state` | Intent footer (`Footer.astro`, GSAP + Lottie) | `refs/intent/v5/STUDY.md` §1 |
 | `play-for.ts` | `[data-play-for="ms"]` | `data-playing` for at most `ms` (≤ 5000) each time the element comes into view | WCAG 2.2.2 (motion that starts by itself stops within 5 s) | staging `v5/review/motion-a11y-perf.md` P1-2 |
@@ -119,6 +119,8 @@ on each step switch of a pinned stage), easing to a stop over its last 1.5 s; th
 | Morph | `[data-nav]`, `data-nav-range="400"` | `--nav-p` = clamp(scrollY / range), `data-nav-state="top \| morph \| float"`, `data-nav-mode="live"` | linear in scroll; p = 1 is the float bar (centred, top 12 px, rounded, glass) | ramp.design (p = scrollTop / 504, linear); Save.design end state |
 | CTA | `[data-nav-cta]` slot in the bar; `[data-nav-cta-watch]` on the hero CTA; `data-nav-clear="68"` | `data-nav-cta-state="on \| off"`, `inert` on a closed slot | on once the hero CTA's bottom has passed the float bar's bottom edge (12 + 56 px); no watch element: `scrollY > 80` | savee.com (`max-width 0 → 200px`, 180 ms) |
 | Theme | `[data-theme-zone="accent"]` on sections | `data-nav-theme="accent"` while a zone is under the bar's centre line (`data-nav-line="40"`) | glass colour in 0.1 s `cubic-bezier(.4, 0, .2, 1)` | Ramp's footer switch |
+| Popovers | `popover` elements inside `[data-nav]`, each opened by a `popovertarget` button in the bar | `hidePopover()` when focus lands outside the panel and its button (`focusin`: focus has already moved, so it is never sent back to the button), and on resize when its button is no longer shown | the browser still opens them, and closes them on Esc and a click outside, with or without the engine | WCAG 2.4.11: Tab past the phone sheet's last link must not land under the open sheet |
+| Language | same-origin `a[hreflang]` whose path starts with `/en`, `/zh` or `/ja`, anywhere on the page | the `mosoo_locale` cookie on click (`shared/locale.ts` `rememberLocale`) | the worker's `/` redirect reads it before Accept-Language | production's language menu; the subpages' footer |
 
 Measured on the sandbox: the painted bar follows the frame's own scroll
 offset within 1.6 px over 140 morph frames (one frame of lag would be
@@ -250,7 +252,7 @@ wordmark +198–200 ms). Focus inside the footer reveals everything at once.
 | --- | --- | --- |
 | Damped scroll | not mounted: native scrolling (Frame ignores the setting) | native |
 | Rise | nothing hidden; `data-rise-load` animations off | everything visible; the hero's CSS float still plays |
-| Nav | held at p = 1 (the float bar) with no transitions; CTA and theme still switch, instantly | the bar stays in the page at the top (`position: absolute`), CTA shown |
+| Nav | held at p = 1 (the float bar) with no transitions; CTA and theme still switch, instantly; panels open and close at once | the bar stays in the page at the top (`position: absolute`), CTA shown; the popovers open and close (HTML); a language link leads to its page without the cookie |
 | Stage | not pinned: the CSS default, all steps stacked | stacked |
 | Footer | nothing hidden; mark fully drawn | composed |
 | Portal | not live: no clip, no frame, the content in the flow | the same |
@@ -264,7 +266,7 @@ unpinned; damping and the pinned stage also return when it flips back.
 | Section | Declarations |
 | --- | --- |
 | `<html>` | `data-damp`; head: the `js` class line above |
-| 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」 |
+| 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」; `<nav id="v5-nav-menu" popover>` (the row; the sheet up to 860px) with the Products and language `popover` panels |
 | 1 Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; sub line and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` |
 | 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: label, component state and sentence each `data-stage-step="k"` |
 | 2b Spec table | `<section data-portal data-switch-run>` (range `-0.25,0.1`, `data-portal-room="86"`, 110vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` + `data-portal-frame`, `data-portal-focus` on the Harness cell (its `dd`: the big name and the four names); the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |

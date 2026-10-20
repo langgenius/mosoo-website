@@ -77,6 +77,9 @@ export const LINKS = {
   site: "https://mosoo.ai",
   console: "https://cloud.mosoo.ai",
   signIn: "https://cloud.mosoo.ai/login",
+  // The second product (owner 2026-10-20 17:15; production origin/main shared/config/external-links.ts L30): the bar's
+  // Products panel, the hero's announcement and the footer's Product column. Same tab, like the rest of the chrome.
+  computer: "https://computer.mosoo.ai",
   github: GITHUB,
   releases: `${GITHUB}/releases`,
   spec: `${GITHUB}/blob/main/docs/SPEC.md`,

@@ -69,11 +69,19 @@
   color: var(--ink-3-text);
 }
 
+/* Harnesses are names, not links (motion-a11y-perf P2-8: the rows looked like the links beside them): ink, in
+   Fragment Mono at 13px (the face the hero sets the same four names in, as keycaps), no hover. */
 .v5-ft-rt {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--ink-2);
+  color: var(--ink);
+  cursor: default;
+}
+
+.v5-ft-rt-name {
+  font: 400 13px/20px var(--font-mono);
+  letter-spacing: -0.01em;
 }
 
 .v5-ft-tile {
@@ -131,36 +139,69 @@
   overflow: visible;
 }
 
+/* The legal row: 14px in ink-2 (was 13px in ink-3-text: small grey reads light in Hanken, graft-yc P2-2). */
 .v5-ft-legal {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--gap);
-  align-items: baseline;
+  align-items: center;
   margin-top: 28px;
-  color: var(--ink-3-text);
-  font: 400 13px/20px var(--font-sans);
+  color: var(--ink-2);
+  font: 400 14px/20px var(--font-sans);
+}
+
+/* The language control (owner 2026-10-20 17:15 「多语言切换不明显」; Notion's and Cursor's footers frame theirs): a
+   globe, then the three languages in one 1px frame, the current one raised on paper. Three choices, so all stay in
+   sight instead of behind a menu. Each segment is a real link with hreflang; 32px tall (WCAG 2.5.8). */
+.v5-ft-lang {
+  grid-column: 1 / span 4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.v5-ft-globe {
+  display: block;
+  flex: none;
 }
 
 .v5-ft-langs {
-  grid-column: 1 / span 4;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 20px;
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: rgb(22 24 21 / 0.03);
 }
 
-/* 24px tall targets (WCAG 2.5.8). */
 .v5-ft-langs a {
-  display: inline-block;
-  padding-block: 2px;
-  color: var(--ink-3-text);
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 7px;
+  color: var(--ink-2);
+  font: 500 14px/20px var(--font-sans);
   text-decoration: none;
+  white-space: nowrap;
   transition: color 0.15s var(--ease-theme);
 }
 
-.v5-ft-langs a:hover,
-.v5-ft-langs a[aria-current="true"] {
+.v5-ft-langs a:hover {
   color: var(--ink);
+}
+
+.v5-ft-langs a:focus-visible {
+  outline-offset: -2px;
+}
+
+.v5-ft-langs a[aria-current="true"] {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 1px rgb(22 24 21 / 0.08),
+    0 1px 2px rgb(22 24 21 / 0.08);
 }
 
 .v5-ft-copy {
@@ -218,10 +259,10 @@
 
   .v5-ft-legal {
     grid-template-columns: minmax(0, 1fr);
-    row-gap: 8px;
+    row-gap: 16px;
   }
 
-  .v5-ft-langs,
+  .v5-ft-lang,
   .v5-ft-copy {
     grid-column: 1;
   }

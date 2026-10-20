@@ -7,7 +7,9 @@
 //   brand row   the T5 mark (variant A: the outline draws, then fills with ink) in columns 1-3 and the letters-only
 //               wordmark from column 5, aligned to the first link column; both rise out of the row's overflow:clip
 //               seam. A link home.
-//   legal row   the language list and the copyright.
+//   legal row   the language control (all three languages in one framed row, the current one raised: the bar's
+//               switch is a menu, here every choice is in sight; owner 2026-10-20 17:15 「多语言切换不明显」) and the
+//               copyright.
 // Motion: src/effects/v5/footer.ts (links, then the brand, from the seam; replays) and src/home/footer-mark.ts
 // (the draw, the ink fill, the desktop hover redraw). Reduced motion and no JS: the composed end state.
 
@@ -50,6 +52,10 @@ function lettersSvg(): string {
   return `<svg class="v5-ft-word-svg" viewBox="${x} ${y} ${w} ${h}" fill="currentColor" aria-hidden="true" focusable="false">${paths}</svg>`;
 }
 
+/** The globe before the language control (the bar's switch draws the same, sections/nav.ts). */
+const GLOBE =
+  '<svg class="v5-ft-globe" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.4"/><path d="M1.6 8h12.8M8 1.6c1.7 1.8 2.6 4 2.6 6.4S9.7 12.6 8 14.4C6.3 12.6 5.4 10.4 5.4 8S6.3 3.4 8 1.6z"/></svg>';
+
 /** The external-link arrow, drawn in the page's line (1px-equivalent stroke, currentColor), not a Unicode glyph that
  *  each font draws its own way (design review P2-10). */
 const OUT_ARROW =
@@ -75,11 +81,13 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
     .map((name, i) => {
       const id = HARNESS_IDS[i];
       if (!id) throw new Error(`footer harness ${name} has no runtime id`);
-      return `<li class="v5-ft-rt"><span class="v5-ft-tile" aria-hidden="true">${runtimeGlyph(id)}</span><span translate="no">${esc(name)}</span></li>`;
+      // A name, not a link (motion-a11y-perf P2-8): set as the hero's keycaps set it, in Fragment Mono (footer.css).
+      return `<li class="v5-ft-rt"><span class="v5-ft-tile" aria-hidden="true">${runtimeGlyph(id)}</span><span class="v5-ft-rt-name" translate="no">${esc(name)}</span></li>`;
     })
     .join("");
   const product = [
     item(LINKS.console, c.product.links.console),
+    item(LINKS.computer, c.product.links.computer, ' translate="no"'),
     item(links.useCases, c.product.links.useCases),
     item(links.blog, c.product.links.blog),
     item(links.status, c.product.links.status),
@@ -116,7 +124,7 @@ ${column(c.openSource.title, openSource)}
 <span class="v5-ft-word" data-footer-rise>${lettersSvg()}</span>
 </a>
 <div class="v5-ft-legal">
-<ul class="v5-ft-langs" aria-label="${esc(f.languages)}">${languages}</ul>
+<div class="v5-ft-lang">${GLOBE}<ul class="v5-ft-langs" aria-label="${esc(f.languages)}">${languages}</ul></div>
 <p class="v5-ft-copy">${esc(f.copyright)}</p>
 </div>
 </footer>`;

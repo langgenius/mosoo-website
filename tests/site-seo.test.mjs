@@ -91,18 +91,20 @@ const HOME_LINKS = {
   },
 };
 
-// Crawlable links in the static home page: the primary nav, the footer's link
-// columns (v5: Product, Developers, Open source; TOOLS-REVIEW T5), every
-// language, llms.txt, the source and the console. The v5 footer has no Pricing
-// (#138), Blog, Mosoo Computer or OpenAPI link; llms.txt links those
+// Crawlable links in the static home page: the primary nav (with the Products
+// panel and the language list since the owner's 2026-10-20 17:15 note), the
+// footer's link columns (v5: Product, Developers, Open source; TOOLS-REVIEW T5),
+// every language, llms.txt, the source, the console and mosoo computer. The v5
+// footer has no Pricing (#138) or OpenAPI link; llms.txt links those
 // (tests/worker.test.mjs) and the worker's Link header advertises both OpenAPI
-// contracts.
+// contracts. tests/home-nav-products.test.mjs checks the panels themselves.
 const assertHomeSiteLinks = (html, locale) => {
   const links = HOME_LINKS[locale];
   const hrefs = hrefsOf(html);
 
-  assert.match(html, /<nav class="v5-nav-links" aria-label="[^"]+">/);
+  assert.match(html, /<nav class="v5-nav-links" id="v5-nav-menu" aria-label="[^"]+" popover>/);
   for (const href of [
+    "https://computer.mosoo.ai",
     "/en",
     "/zh",
     "/ja",
@@ -477,7 +479,10 @@ test("the static home page carries the whole page for readers without JavaScript
     assert.doesNotMatch(html, /mosoo:home-/, "no build marker is left");
     assert.doesNotMatch(html, RETIRED_NARRATIVE);
     assert.doesNotMatch(html, /[—–]/, "no em or en dashes");
-    assert.doesNotMatch(html, /\bMosoo\b(?! Computer)/, "the brand is lowercase mosoo");
+    // The brand is lowercase, the second product's name too (owner 2026-10-20 21:57: 「mosoo computer 一律小写」):
+    // no capital Mosoo anywhere in the page, head and JSON-LD included. Hosts and URLs are lowercase already.
+    assert.doesNotMatch(html, /Mosoo/, "the brand is lowercase mosoo, mosoo computer included");
+    assert.match(html, />mosoo computer</, "the footer names the computer in lowercase");
     assert.doesNotMatch(html, /bamboo/i, "no bamboo motif");
   }
 
@@ -496,7 +501,8 @@ test("the static home page carries the whole page for readers without JavaScript
 
 // One source for the home: the build writes apps/landing/src/home/markup.ts into /en, /zh and /ja, and
 // src/main.tsx renders the same markup in dev, so there is no React home to drift from it. The primary nav links
-// docs, use cases, GitHub and the console login, never pricing (copy deck D12).
+// the two products (its Products panel), docs, use cases, GitHub, the three languages (its language list) and the
+// console login, in that order, never pricing (copy deck D12).
 test("the home has one source, the static markup, and its primary navigation", () => {
   const main = read("apps/landing/src/main.tsx");
   assert.match(main, /import "\.\/home\/v5\.css";/);
@@ -514,9 +520,14 @@ test("the home has one source, the static markup, and its primary navigation", (
 
     const staticNav = /<nav class="v5-nav-links"[\s\S]*?<\/nav>/.exec(home(locale))?.[0] ?? "";
     assert.deepEqual(hrefsOf(staticNav), [
+      "https://cloud.mosoo.ai",
+      "https://computer.mosoo.ai",
       HOME_LINKS[locale].docs,
       `/${locale}/use-cases`,
       "https://github.com/langgenius/mosoo",
+      "/en",
+      "/zh",
+      "/ja",
       "https://cloud.mosoo.ai/login",
     ]);
     assert.doesNotMatch(staticNav, /\/pricing/, "the home page does not link pricing (copy deck D12)");
