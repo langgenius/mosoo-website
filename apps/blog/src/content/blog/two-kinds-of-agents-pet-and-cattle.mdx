@@ -5,6 +5,7 @@ cardTitle: "Someone, or something."
 description: "People are forming two very different expectations of agents: one has an identity and memory and is cultivated over time; the other is stateless and replaceable, using a freer reasoning pipeline to replace fixed workflows."
 descriptionEmphasis: "two very different expectations"
 date: 2026-08-11
+updated: 2026-10-20
 category: "Product"
 author: "Evanchen"
 authorAvatar: "/blog/blog/authors/evanchen.jpg"
@@ -16,6 +17,8 @@ heroAlt: "Hand-drawn illustration: on the left a potted plant with lime-hatched 
 heroCover: "pet-and-cattle"
 draft: false
 ---
+
+**Update, 2026-10-20.** mosoo has since removed the Pet and Cattle Agent types. Every Session now gets its own sandbox, workspace, native conversation and checkpoint lineage ([SPEC §3 and §8](https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md)). The section below on mosoo's two Agent Types describes the product as it was in August 2026.
 
 I increasingly believe that agents will split into two camps.
 
@@ -86,7 +89,7 @@ The FAQ agent above is a Pet if it needs to remember its long-running work acros
 
 mosoo currently implements them as two Agent Types: **Assistant Agent (Pet)** and **Task Agent (Cattle)**.
 
-Pet keeps a stable working environment so that state can accumulate across sessions. Cattle creates a clean working environment for every run and releases it when the job ends. The current boundary is documented in the [mosoo Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md).
+Pet keeps a stable working environment so that state can accumulate across sessions. Cattle creates a clean working environment for every run and releases it when the job ends. The boundary at the time was documented in the [mosoo Agent Type PRD](https://github.com/langgenius/mosoo/blob/b1e9adc6e0b37799de40fa601ce6321e6f5423f2/docs/prd/agent-type.md).
 
 I also know that putting both choices in a single Agent Type selector will not be the final, correct product design. They serve two different kinds of users, with different buying, authorization, deployment, and cost models. mosoo has implemented the runtime boundary first. We will keep clarifying the product boundary over time.
 

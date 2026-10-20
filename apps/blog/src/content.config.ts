@@ -25,6 +25,8 @@ const blog = defineCollection({
     // `description` plain.
     descriptionEmphasis: z.string().optional(),
     date: z.coerce.date(),
+    // Optional date of a later correction or update note in the body; JSON-LD dateModified (defaults to date).
+    updated: z.coerce.date().optional(),
     category: z.enum(CATEGORIES),
     author: z.string().default("mosoo team"),
     // Optional byline avatar, root-absolute like heroImage. Convention:
