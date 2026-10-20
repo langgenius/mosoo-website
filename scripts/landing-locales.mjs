@@ -3,21 +3,23 @@ import { join } from "node:path";
 
 import { renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
-// Home page head copy (copy deck section 14). The meta description leads with
-// the README positioning line (langgenius/mosoo README.md:8-9). The static v5
+// Home page head copy. The title is the README positioning (langgenius/mosoo
+// README.md:8); the description says what the hero says: one API call from the
+// backend starts a sandboxed Session on the four harnesses (README.md:9, 32),
+// continued days later (docs/SPEC.md:53). The static v5
 // home (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
 // landing-home.mjs and are written into the markers in index.html.
 // imageAlt describes the social card that ships today
 // (public/brand/social-card-v5-20261020.png, apps/landing/scripts/assets/
-// social-card-v5.mjs): the text on the card, which is English in every locale
-// and temporary (v4d's hero line until the v5 content phase writes the hero);
-// change it together with the og:image when the card is regenerated.
+// social-card-v5.mjs): the text on the card, which is English in every locale:
+// the en hero H1 (copy/hero.json, kept from v4d in the content phase); change
+// it together with the og:image when the card is regenerated.
 const HOME_SEO = {
   en: {
     lang: "en",
     title: "Open-source Agent runtime for application backends | mosoo",
     description:
-      "An open-source, API-first managed Agent runtime for application backends. Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox.",
+      "Run agents from your backend: one API call starts a sandboxed Session on OpenAI Codex, Claude Agent SDK, OpenCode or Pi. Continue it days later.",
     socialTitle: "An open-source, API-first managed Agent runtime for application backends",
     socialDescription:
       "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
@@ -27,7 +29,7 @@ const HOME_SEO = {
     lang: "zh-CN",
     title: "面向应用后端的开源 Agent runtime | mosoo",
     description:
-      "开源、API 优先的托管 Agent runtime，面向应用后端。用一个 API 运行 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，每个 Session 都在独立的 sandbox 中执行。",
+      "从后端运行 Agent：一次 API 调用，就能在独立 sandbox 的 Session 中运行 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi。几天后接着跑。",
     socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
       "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
@@ -37,7 +39,7 @@ const HOME_SEO = {
     lang: "ja",
     title: "アプリのバックエンド向けオープンソース Agent runtime | mosoo",
     description:
-      "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime。OpenAI Codex、Claude Agent SDK、OpenCode、Pi を 1 つの API で実行し、Session ごとに専用の sandbox を使います。",
+      "バックエンドから Agent を。API 1 回で、OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Session が専用 sandbox で動き出し、数日後もその続きから再開できます。",
     socialTitle:
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:

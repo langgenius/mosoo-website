@@ -282,9 +282,10 @@ test("landing and blog metadata never point at a missing default image", () => {
     existsSync(new URL("../apps/landing/public/brand/social-card-v5-20261020.png", import.meta.url)),
     true,
   );
-  // The v5 card shows the hero line (temporary: apps/landing/scripts/assets/social-card-v5.mjs COPY); the alt text
-  // of the home and the blog says what is on it.
+  // The v5 card shows the en hero H1 (apps/landing/scripts/assets/social-card-v5.mjs COPY, the strings of
+  // copy/hero.json); the alt text of the home and the blog says what is on it.
   const cardAlt = "mosoo: Run agents from your backend. Continue them days later.";
+  assert.equal(cardAlt, `mosoo: ${homeHeadline("en")}`, "the card says the hero H1");
   assert.ok(landing.includes(`<meta property="og:image:alt" content="${cardAlt}" />`));
   assert.ok(landing.includes(`<meta name="twitter:image:alt" content="${cardAlt}" />`));
   assert.ok(blogLayout.includes(`ogImageAlt = "${cardAlt}"`));

@@ -26,10 +26,11 @@ const CHROME = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/M
 const W = 1200;
 const H = 630;
 
-// TEMPORARY copy: the v4d hero H1 and CTA (home-copy.json en.hero, 2026-10-19), standing in until the v5
-// content phase writes the hero line. When it lands, change these three strings, regenerate, and give the file
-// a new date (and update with it the og:image of index.html, status.html, use-cases.html and pricing.html, the
-// blog's BaseLayout.astro default, the home's imageAlt in scripts/landing-locales.mjs and the blog's ogImageAlt).
+// The home's H1 and lime CTA (apps/landing/src/home/copy/hero.json en: h1a, h1b, primary). The v5 content phase
+// kept v4d's H1, so the card already says it. If the hero line changes, change these three strings, regenerate,
+// and give the file a new date (and update with it the og:image of index.html, status.html, use-cases.html and
+// pricing.html, the blog's BaseLayout.astro default, the home's imageAlt in scripts/landing-locales.mjs and the
+// blog's ogImageAlt).
 const COPY = {
   line1: "Run agents from your backend.",
   line2: "Continue them days later.",
