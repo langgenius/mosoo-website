@@ -62,19 +62,23 @@ side-by-side images, one regenerating command) lives in staging
 
 | Value | From → to | Timing | Source |
 | --- | --- | --- | --- |
-| `block` (wrapper: tab label + heading) | `translate 0 100px`, `scale .95`, opacity 0 | move 1000 ms, opacity 1500 ms, `cubic-bezier(1/3, 2/3, 2/3, 1)` (IX2 outQuad, exact) | Frame a-15 |
+| `block` (wrapper: tab label + heading) | `translate 0 100px`, `scale .95`, opacity 0 | move 1000 ms, opacity 500 ms, `cubic-bezier(1/3, 2/3, 2/3, 1)` (IX2 outQuad, exact) | Frame a-15 (opacity was 1500 ms) |
 | `title` (the H1 / H2) | `translate 0 150px`, `scale .9`, opacity 0 | same | Frame a-13 |
-| `line` (heading's second line, inline span) | opacity 0 | 1500 ms, 300 ms delay | Frame a-14 |
-| `card` | `translate 0 120px`, opacity 0 | 700 ms `cubic-bezier(.25, 1, .5, 1)` (power3.out, max err .006); cards entering in one frame start 100 ms apart in document order | Intent `ScrollTrigger.batch` |
+| `line` (heading's second line, inline span) | opacity 0 | 500 ms, 150 ms delay | Frame a-14 (1500 ms, 300 ms) |
+| `card` | `translate 0 120px`, opacity 0 | move 700 ms, opacity 400 ms, `cubic-bezier(.25, 1, .5, 1)` (power3.out, max err .006); cards entering in one frame start 100 ms apart in document order | Intent `ScrollTrigger.batch` |
 
 - `data-rise-delay="ms"` adds a delay. Below 992 px, `block` and `title` only
   fade (Frame runs a-15 at ≥ 992 px; BRIEF: 手机只做透明度).
-- Trigger: IntersectionObserver threshold 0 on the transformed box, i.e. the
-  pushed-down top edge touching the viewport bottom (IX2's and
-  ScrollTrigger's point). Plays once. Measured against Frame with the same
-  12-tick input: the wrapper starts 495–504 ms into it over runs (Frame 506),
-  transform done at 1000 ms, opacity at 1500 ms, line 2 starts 350 ms after
-  its heading on both, every curve within .002 of outQuad.
+- Trigger: the untransformed top edge at 90% of the viewport (an
+  IntersectionObserver whose bottom margin is the push-down minus 10% of the
+  viewport height). IX2 and ScrollTrigger fire on the pushed-down edge
+  touching the viewport bottom, 100–250 px later, which left headings
+  invisible after they had come into view (staging v5 design review P2-7, YC
+  review P1-4); the fades are shorter for the same reason. An element that
+  plays takes its waiting `data-rise` descendants with it (block → heading →
+  second line start on one frame). Plays once. The move still matches Frame
+  (measured with the same 12-tick input before this change: transform done at
+  1000 ms, every curve within .002 of outQuad).
 - Only elements that start below the fold are hidden (inline style); anything
   on screen or above at load stays as authored. Focus entering a hidden
   element reveals it at once. `data-rise-state` is `wait`, then `in`.
@@ -93,11 +97,11 @@ side-by-side images, one regenerating command) lives in staging
   --rise-title-y: 0px;
   --rise-title-s: 1;
   animation: rise-title-move 1s cubic-bezier(.3333, .6667, .6667, 1) both,
-             rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) both;
+             rise-fade .6s cubic-bezier(.3333, .6667, .6667, 1) both;
 }
 @media (min-width: 992px) { [data-rise-load="title"] { --rise-title-y: 150px; --rise-title-s: .9; } }
-[data-rise-load="line"] { animation: rise-fade 1.5s cubic-bezier(.3333, .6667, .6667, 1) .3s both; }
-[data-rise-load="fade"] { animation: rise-fade 1s cubic-bezier(.25, 1, .5, 1) both; }
+[data-rise-load="line"] { animation: rise-fade .6s cubic-bezier(.3333, .6667, .6667, 1) .15s both; }
+[data-rise-load="fade"] { animation: rise-fade .6s cubic-bezier(.25, 1, .5, 1) both; }
 @media (prefers-reduced-motion: reduce) { [data-rise-load] { animation: none; } }
 ```
 

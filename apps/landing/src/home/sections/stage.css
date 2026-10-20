@@ -293,7 +293,7 @@
 /* The plate fades in with the hero's lead and CTA row (system.css v5-rise-fade), a beat later. */
 @media (prefers-reduced-motion: no-preference) {
   .v5-stage .v5-stage-plate {
-    animation: v5-rise-fade 1s var(--ease-quart) 0.2s both;
+    animation: v5-rise-fade 0.6s var(--ease-quart) 0.1s both;
   }
 }
 

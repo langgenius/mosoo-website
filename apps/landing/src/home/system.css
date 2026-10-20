@@ -423,7 +423,8 @@ main:focus {
 /* Hero rise on first paint, CSS only (rise.ts never waits on the hero): data-rise-load="title | line | fade".
    The title moves only from 992px (phones fade). The breakpoint sets the distance, not the animation list: a list
    that changed at 992px would replay the move whenever the width crossed it (an iPad turning to landscape, a
-   window resize), with the title jumping 150px down first. */
+   window resize), with the title jumping 150px down first. Frame's 1 s float stays; the fades take 0.6 s, so the
+   first screen reads within 0.6 s (YC review P1-4: the H1 took 1.23 s, its second line 1.53 s, to reach 95%). */
 @keyframes v5-rise-title-move {
   from {
     translate: 0 var(--rise-title-y);
@@ -442,7 +443,7 @@ main:focus {
   --rise-title-s: 1;
   animation:
     v5-rise-title-move 1s var(--ease-quad) both,
-    v5-rise-fade 1.5s var(--ease-quad) both;
+    v5-rise-fade 0.6s var(--ease-quad) both;
 }
 
 @media (min-width: 992px) {
@@ -453,11 +454,11 @@ main:focus {
 }
 
 [data-rise-load="line"] {
-  animation: v5-rise-fade 1.5s var(--ease-quad) 0.3s both;
+  animation: v5-rise-fade 0.6s var(--ease-quad) 0.15s both;
 }
 
 [data-rise-load="fade"] {
-  animation: v5-rise-fade 1s var(--ease-quart) both;
+  animation: v5-rise-fade 0.6s var(--ease-quart) both;
 }
 
 /* Stage (stage.ts): unpinned is the CSS default (phones, reduced motion, no JS: every step stacked). Pinned: the
