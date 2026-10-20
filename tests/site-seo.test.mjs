@@ -481,7 +481,7 @@ test("the static home page carries the whole page for readers without JavaScript
   // The hero lead names the four harnesses as keycaps (drawn objects: data-product-ui), and its lime CTA is the
   // console.
   assert.equal(en.match(/<span class="v5-kc" data-product-ui translate="no">/g)?.length, 4);
-  for (const name of ["Codex", "Claude Agent SDK", "OpenCode", "Pi"]) {
+  for (const name of ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"]) {
     assert.match(en, new RegExp(`<span class="v5-kc" data-product-ui translate="no">${name}</span>`));
   }
   assert.match(en, /<a class="v5-btn v5-btn--lime" href="https:\/\/cloud\.mosoo\.ai" data-nav-cta-watch>/);

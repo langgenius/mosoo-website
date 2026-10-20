@@ -1,119 +1,122 @@
 {
-  "$comment": "Slots of sections/stage.ts (one plate, three states of the Session object; staging v5/sections/hero-stage/NOTES.md has the slot table with lines at 1440 / 390). steps[k].tag: the step tag at the plate's top-left (Inter 500 15px; pinned, the past tags shrink to 13px in one row). steps[k].title + steps[k].line: the caption at the plate's bottom-left (Inter 500 22px + Inter 16px, max 560 wide: one line each at 1440; phones 18 / 15px, title 1-2 lines, line 2 lines). kit: the props of the kit Session (src/home/kit renderSession) per state. kit.call.instruction is the first screen's sentence: at most 6 words (first-screen object words = 6 keycap words + Call's words <= 16); it sits on one line and runs off the plate's edge from about 58 characters at 1440. X placeholders of realistic length; CJK as fullwidth X with the punctuation real copy carries. Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state).",
-  "$temporary": {
-    "kit.harness": "Product name (README L9); not translated."
+  "$comment": "Slots of sections/stage.ts (one plate, three states of the Session object; staging v5/sections/hero-stage/NOTES.md has the slot table with lines at 1440 / 390). steps[k].tag: the step tag at the plate's top-left (Inter 500 15px; pinned, the past tags shrink to 13px in one row). steps[k].title + steps[k].line: the caption at the plate's bottom-left (Inter 500 22px + Inter 16px, max 560 wide: one line each at 1440; phones 18 / 15px, title 1-2 lines, line 2 lines). kit: the props of the kit Session (src/home/kit renderSession) per state. kit.call.instruction is the first screen's sentence: at most 6 words (first-screen object words = keycap words + Call's words <= 16); it sits on one line and runs off the plate's edge from about 58 characters at 1440. Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state; zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$source": {
+    "story": "One CSV Session, values only from MAIN scripts/public-api-session-workflow.ts: the attached input.csv (L24, L85), outputs/report.md (L24), the follow-up that appends south,20 to the same CSV without recreating it (L33). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; OpenAPI v2 path + servers https://cloud.mosoo.ai/api/v2; the script posts to /projects/{id}/threads on an /api/v2 base, L60, L97). Events: SSE and saved history (SPEC §6 L73).",
+    "kit.harness": "Product name (README L9 'OpenAI Codex'; the chip draws the OpenAI mark before it); not translated.",
+    "kit.watch.events": "Plain words for three public event types, newest first: file.changed, tool.use.completed, run.started (MAIN pkgs/contracts/src/session/session.contract.ts L141, L148, L144; stage.ts EVENTS keeps the wire names as data).",
+    "kit.return": "Turn 2 = the follow-up turn; +7 days is SPEC's own example of a later reply (SPEC §4 L53: one minute or seven days, same semantics), not a measured duration; restored from the last committed checkpoint (SPEC §4 L46, L53)."
   },
   "en": {
     "steps": [
       {
-        "tag": "Xxxx",
-        "title": "Xxx xxxxxxx xxxxx x Xxxxxxx.",
-        "line": "Xxx xxxx xxxxxxx xx xxx xxxxxxx xxx xxx xxxxxx xxxx xxx xxxx."
+        "tag": "Call",
+        "title": "Your backend sends the task.",
+        "line": "POST /api/v2/projects/{id}/threads, with input.csv attached."
       },
       {
-        "tag": "Xxxxx",
-        "title": "Xxxxx xxx xxxxxx xx xxxx xxxxxx.",
-        "line": "Xxxxxx xxxxxx xxxx xx xxxx xxxxxxx; xxxxx xxxx xx xxxxxxxx."
+        "tag": "Watch",
+        "title": "Events stream back as it works.",
+        "line": "Follow them live over SSE, or read the saved history any time."
       },
       {
-        "tag": "Xxxxxx",
-        "title": "Xxx xxxx Xxxxxxx, x xxxx xxxxx.",
-        "line": "Xxxx x xxxxx xxxx xxxx xxx xxxx Xxxxxxx xxxxxx xxxxx xx xxxx."
+        "tag": "Resume",
+        "title": "The same Session, a week later.",
+        "line": "Ask it to append south,20. No need to send input.csv again."
       }
     ],
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "Xxxxxxxxx xxxxx.xxx xxx xxxx xxxxxxx/xxxxxx.xx",
-        "attachment": "xxxxx.xxx"
+        "instruction": "Analyze input.csv and save outputs/report.md",
+        "attachment": "input.csv"
       },
       "watch": {
-        "status": "Xxxxxxx",
-        "action": "Xxxxxxx {file} xxxx xxxxx.xxx",
-        "file": "xxxxxxx/xxxxxx.xx",
-        "stream": "Xxxx xxxxxxx",
-        "events": ["Xxxx xxxxxxx", "Xxxx xxxxxxxx", "Xxx xxxxxxx"]
+        "status": "Running",
+        "action": "Writing {file} from input.csv",
+        "file": "outputs/report.md",
+        "stream": "Your backend",
+        "events": ["File changed", "Tool use completed", "Run started"]
       },
       "return": {
-        "turn": "Xxxx 0",
-        "after": "+0 xxxx",
-        "restored": "Xxxxxxxx xxxx xxx xxxx xxxx"
+        "turn": "Turn 2",
+        "after": "+7 days",
+        "restored": "Restored from the last checkpoint"
       }
     }
   },
   "zh": {
     "steps": [
       {
-        "tag": "ＸＸ",
-        "title": "ＸＸＸＸ，ＸＸＸＸＸＸ。",
-        "line": "ＸＸＸＸＸＸ Session，ＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "发起",
+        "title": "你的后端发出任务。",
+        "line": "附上 input.csv，POST 到 /api/v2/projects/{id}/threads。"
       },
       {
-        "tag": "ＸＸ",
-        "title": "ＸＸＸＸＸＸＸ，ＸＸＸＸ。",
-        "line": "ＸＸＸＸＸＸＸＸＸ；ＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "观察",
+        "title": "事件实时流回你的后端。",
+        "line": "用 SSE 实时跟进，也可随时读取历史记录。"
       },
       {
-        "tag": "ＸＸ",
-        "title": "ＸＸＸ，ＸＸＸＸＸＸＸ。",
-        "line": "ＸＸＸＸ，ＸＸ Session ＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "续接",
+        "title": "一周后，还是同一个 Session。",
+        "line": "让它追加 south,20，input.csv 不用再传。"
       }
     ],
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "ＸＸ xxxxx.xxx，ＸＸＸ xxxxxxx/xxxxxx.xx",
-        "attachment": "xxxxx.xxx"
+        "instruction": "分析 input.csv，保存为 outputs/report.md",
+        "attachment": "input.csv"
       },
       "watch": {
-        "status": "ＸＸＸ",
-        "action": "ＸＸＸＸ xxxxx.xxx ＸＸ {file}，ＸＸＸＸＸＸＸＸ",
-        "file": "xxxxxxx/xxxxxx.xx",
-        "stream": "ＸＸＸＸ",
-        "events": ["ＸＸＸＸＸ", "ＸＸＸＸＸＸ", "ＸＸＸＸ"]
+        "status": "运行中",
+        "action": "正在根据 input.csv 写入 {file}",
+        "file": "outputs/report.md",
+        "stream": "你的后端",
+        "events": ["文件已变更", "工具调用完成", "运行开始"]
       },
       "return": {
-        "turn": "Ｘ 0 Ｘ",
-        "after": "+0 Ｘ",
-        "restored": "ＸＸＸＸＸＸＸ"
+        "turn": "第 2 轮",
+        "after": "+7 天",
+        "restored": "已从上个检查点恢复"
       }
     }
   },
   "ja": {
     "steps": [
       {
-        "tag": "ＸＸＸ",
-        "title": "ＸＸＸＸＸ、ＸＸＸＸＸＸ。",
-        "line": "ＸＸＸＸＸＸ Session ＸＸＸ、ＸＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "呼ぶ",
+        "title": "バックエンドからタスクを送る。",
+        "line": "POST /api/v2/projects/{id}/threads に input.csv を添えて。"
       },
       {
-        "tag": "ＸＸＸ",
-        "title": "ＸＸＸＸＸＸＸ、ＸＸＸＸＸ。",
-        "line": "ＸＸＸＸＸＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "見る",
+        "title": "動くそばからイベントが届く。",
+        "line": "SSE でリアルタイムに追え、履歴もいつでも読めます。"
       },
       {
-        "tag": "ＸＸＸ",
-        "title": "ＸＸＸＸ、ＸＸＸＸＸＸＸ。",
-        "line": "ＸＸＸＸＸ、ＸＸ Session ＸＸＸＸＸＸＸＸＸＸＸ。"
+        "tag": "再開",
+        "title": "1 週間後も、同じ Session。",
+        "line": "south,20 の追記を頼むだけ。input.csv を送り直す必要はありません。"
       }
     ],
     "kit": {
       "harness": "Codex",
       "call": {
-        "instruction": "xxxxx.xxx ＸＸＸＸ、xxxxxxx/xxxxxx.xx ＸＸＸＸ",
-        "attachment": "xxxxx.xxx"
+        "instruction": "input.csv を分析、outputs/report.md に保存",
+        "attachment": "input.csv"
       },
       "watch": {
-        "status": "ＸＸＸ",
-        "action": "xxxxx.xxx ＸＸ {file} ＸＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸＸＸＸＸＸ",
-        "file": "xxxxxxx/xxxxxx.xx",
-        "stream": "ＸＸＸＸＸＸＸＸＸＸ",
-        "events": ["ＸＸＸＸＸＸ", "ＸＸＸＸＸ", "ＸＸＸＸ"]
+        "status": "実行中",
+        "action": "input.csv から {file} を書き込み中",
+        "file": "outputs/report.md",
+        "stream": "あなたのバックエンド",
+        "events": ["ファイル変更", "ツール実行完了", "実行開始"]
       },
       "return": {
-        "turn": "ＸＸＸ 0",
-        "after": "+0 Ｘ",
-        "restored": "ＸＸＸＸＸＸＸＸＸＸ"
+        "turn": "ターン 2",
+        "after": "+7 日",
+        "restored": "チェックポイントから復元"
       }
     }
   }
