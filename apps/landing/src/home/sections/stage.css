@@ -157,10 +157,10 @@
   width: min(31em, 100%);
 }
 
-/* The grey sentence: ink-3 where it sets at 24px (the kit at 20px, the media query above); kit.css keeps it ink-2
-   everywhere else (contrast under 24px). */
+/* Watch's grey sentence: ink-3 where it sets at 24px (the kit at 20px, the media query above); kit.css keeps it ink-2
+   everywhere else (contrast under 24px). Call's instruction is ink everywhere (kit.css .kit-line--input). */
 @media (min-width: 1280px) and (min-height: 840px) {
-  .v5-stage .kit-line {
+  .v5-stage .kit-line:not(.kit-line--input) {
     color: var(--kit-ink-3);
   }
 }
@@ -361,6 +361,14 @@
   .v5-stage .v5-step-obj > .kit[data-kit-state="call"],
   .v5-stage .v5-step-obj > .kit-flow {
     width: calc(100% + 64px);
+  }
+
+  /* The card bleeds, its words do not: the instruction wraps inside the plate. The card runs 44px past the plate's
+     edge (64 - the plate's 20px padding) and pads its text 1.6k (24px) in, so 40px more keeps the line 16px clear of
+     the cut at every phone width (YC review P1-5: at 360-414 the sentence was cut at "outputs/r"). */
+  .v5-stage .kit-session--bleed .kit-line {
+    padding-right: 40px;
+    white-space: normal;
   }
 
   .v5-stage .v5-step-obj > .kit-flow > .kit-stream {

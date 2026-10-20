@@ -179,6 +179,22 @@
   text-wrap: pretty;
 }
 
+/* Call's instruction is the request's input string, not a prompt someone is typing: ink, Fragment Mono, in straight
+   quotes (the composer's grey placeholder look read as a chat box to 5 of 5 personas, staging v5/FIXES.md). Mono for
+   a string sent by code, as BRIEF §3.2 keeps mono for files, events and commands. The quotes are drawn, not copy. */
+.kit-line--input {
+  color: var(--kit-ink);
+  font-family: var(--kit-mono);
+  font-size: 1.05em;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+.kit-line--input::before,
+.kit-line--input::after {
+  content: '"';
+}
+
 /* v4b: one line, cut by the container (the plate clips the card). */
 .kit-session--bleed .kit-line {
   overflow: hidden;
@@ -190,32 +206,6 @@
   align-items: center;
   gap: calc(var(--k) * 0.5);
   margin-top: calc(var(--k) * 1.55);
-}
-
-.kit-btn {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: calc(var(--k) * 2.2);
-  height: calc(var(--k) * 2.2);
-  border-radius: 50%;
-}
-
-.kit-btn .kit-g {
-  width: calc(var(--k) * 1.1);
-  height: calc(var(--k) * 1.1);
-}
-
-.kit-btn--line {
-  box-shadow: inset 0 0 0 1px var(--kit-line-2);
-  color: var(--kit-ink-2);
-}
-
-/* The one action: the console's send key, ink here (solid lime is kept for the CTA). */
-.kit-btn--ink {
-  margin-left: auto;
-  background: var(--kit-ink);
-  color: var(--kit-paper);
 }
 
 .kit-file {

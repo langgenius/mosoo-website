@@ -1,27 +1,25 @@
 // The Session object in its three stage states (BRIEF §4 row 2). One card, three fillings, so the stage
 // reads as the same object changing: chip -> sentence -> body.
-//   Call    harness chip, the instruction, + / attached file / send     (lit: the ink send key)
+//   Call    harness chip, the instruction as the request's string, the attached file  (lit: none; the request
+//           has no keys to press: v5's first 5-second test read the console composer's + and send as a chat box)
 //   Watch   Running chip, the current action with the file being written as a keycap; a connector down to
 //           the card the events stream into, rows fading 1 / .6 / .2     (lit: the lime dot)
 //   Return  Turn 2 on two earlier turns, "+7 days", the restore track, restored  (lit: T1 underlay above)
 // Sources: v4b fragment (renderPaperHero / .pp-frag*, owner: "传达是清晰的"), v4d F19 stack (.d-stack*),
-// Apollo gtm-system / source-of-truth (connector between two parts) and busywork (faded rows), STUDY §2.4;
-// the console composer's attach and send keys (staging refs/devices/elements.md §1.G).
+// Apollo gtm-system / source-of-truth (connector between two parts) and busywork (faded rows), STUDY §2.4.
+// The composer's attach and send keys are gone from Call (staging v5/FIXES.md: 5 of 5 personas read them as a chat
+// input, not an API call).
 
 import { chip, esc, eventRows, fileChip, glyph, LIVE_DOT, root, runtimeGlyph, sentenceWithFile, underlay, wire } from "./parts.ts";
 import type { SessionCallProps, SessionProps, SessionReturnProps, SessionWatchProps } from "./types.ts";
 
 export function renderSessionCall(props: SessionCallProps): string {
-  const cls = props.bleed === true ? "kit-session kit-session--bleed" : "kit-session";
+  const cls = props.bleed === true ? "kit-session kit-session--call kit-session--bleed" : "kit-session kit-session--call";
   return (
     `<div ${root(props, "session", cls)} data-kit-state="call">` +
     `<div class="kit-head" data-kit-part="head">${chip(runtimeGlyph(props.harness.runtime), props.harness.name)}</div>` +
-    `<p class="kit-line" data-kit-part="line">${esc(props.instruction)}</p>` +
-    `<div class="kit-ctl" data-kit-part="ctl">` +
-    `<span class="kit-btn kit-btn--line">${glyph("plus")}</span>` +
-    fileChip(props.attachment) +
-    `<span class="kit-btn kit-btn--ink" data-kit-part="send">${glyph("arrow-up")}</span>` +
-    `</div></div>`
+    `<p class="kit-line kit-line--input" data-kit-part="line">${esc(props.instruction)}</p>` +
+    `<div class="kit-ctl" data-kit-part="ctl">${fileChip(props.attachment)}</div></div>`
   );
 }
 

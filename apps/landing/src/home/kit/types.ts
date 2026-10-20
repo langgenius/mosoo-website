@@ -45,7 +45,7 @@ export interface EventRow {
 /** Call: the request going in. */
 export interface SessionCallProps extends KitBase {
   harness: HarnessRef;
-  /** The grey sentence (the instruction). */
+  /** The instruction, set as the request's input string (ink, Fragment Mono, in quotes). */
   instruction: string;
   /** The attached file (the object's one mono token). */
   attachment: string;
