@@ -1,0 +1,63 @@
+{
+  "$comment": "Slots of sections/spec.ts, the spec table's screen between the stage and the white gap before the lime screen (graft 2026-10-20: v4c's spec table, opened by the portal, its Harness value rolling; staging v5/graft/INTEGRATION.md, the spec screen). h2a + h2b: the two-tone H2 on the field over the card (display 48 / 34px, one line each at 1440; two each at 390). labels: the five row labels (sans 14, one line). values: Model and Sandbox follow a 20px glyph, Files is one mono token drawn as a keycap, Resume is plain text (sans 17, one line at 1440, at most two at 390, balanced: en joins the part after the first break with no-break spaces, \\u00a0, so a wrap falls between the two phrases; zh breaks only at its comma, ja at phrases). The Harness row has no slot here: its four names are copy/hero.json harnesses (product names, the same in every locale), rolling one at a time in the display face with the four listed small under them. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). zh / ja are v4c's audited strings with the v5 page's words (Resume 续接, provider key 供应商密钥); ja joins a numeral to its counter with a no-break space (\\u00a0), as v4c did, so a line never splits them.",
+  "$source": {
+    "h2a": "v4c's act-1 title (redesign/v4c apps/landing/src/home/copy.ts L126): the five rows below are the parts.",
+    "h2b": "v4c's act-1 title, second part (copy.ts L127, the review round 9b80705). Four harnesses: README L9; docs/prd/runtime-catalog.md L7 (four runtimes are selectable). Pick, not swap: harness and model are independent choices, frozen at creation, and a Session never changes harness (SPEC §3 L31), so the rolling value reads as one of four (staging v5/graft/switch/NOTES.md §5.4).",
+    "labels": "v4c's row labels (copy.ts L128; zh L223, ja L317). zh 续接 is the v5 page's word for Resume (stage.json steps[2].tag, accent.json cards[2].label), where v4c had 续跑.",
+    "values.model": "v4c (copy.ts L130). Bring your own key: model credentials belong to the Project and the provider bills that account (SPEC §2 L25); harness and model are independent choices (SPEC §3 L31); a model is offered when the runtime supports it and the Project has a matching provider key (runtime-catalog.md L8). zh 服务商 -> 供应商, the v5 page's word (faq.json, scripts/landing-home.mjs META).",
+    "values.sandbox": "v4c (copy.ts L131). Every Session gets its own sandbox (SPEC §3 L32, README L9); provider keys and MCP credentials never enter it, it receives only expiring grants (SPEC §5 L65).",
+    "values.files": "v4c (copy.ts L132). The CSV workflow saves outputs/report.md (MAIN scripts/public-api-session-workflow.ts L24); files the Agent writes under outputs/ become downloadable artifacts (docs/prd/session-files.md L9). The stage's Call and Watch name the same file. A machine token: the same in every locale.",
+    "values.resume": "v4c (copy.ts L133). A reply one minute or seven days after a completed turn has the same semantics, also after the sandbox was reclaimed (SPEC §4 L53)."
+  },
+  "en": {
+    "h2a": "One Session, five parts.",
+    "h2b": "Pick one of four harnesses.",
+    "labels": {
+      "harness": "Harness",
+      "model": "Model",
+      "sandbox": "Sandbox",
+      "files": "Files",
+      "resume": "Resume"
+    },
+    "values": {
+      "model": "Your pick, your own provider key",
+      "sandbox": "Isolated. Provider\u00a0keys\u00a0stay\u00a0outside.",
+      "files": "outputs/report.md",
+      "resume": "A minute or seven days later"
+    }
+  },
+  "zh": {
+    "h2a": "一个 Session，五个部分。",
+    "h2b": "四种 harness 任选其一。",
+    "labels": {
+      "harness": "Harness",
+      "model": "模型",
+      "sandbox": "Sandbox",
+      "files": "文件",
+      "resume": "续接"
+    },
+    "values": {
+      "model": "自选模型，用你自己的供应商密钥",
+      "sandbox": "隔离运行，供应商密钥留在外面",
+      "files": "outputs/report.md",
+      "resume": "一分钟后或七天后都可以"
+    }
+  },
+  "ja": {
+    "h2a": "1 つの Session、5 つの要素。",
+    "h2b": "harness は 4 種から選べます。",
+    "labels": {
+      "harness": "Harness",
+      "model": "モデル",
+      "sandbox": "Sandbox",
+      "files": "ファイル",
+      "resume": "再開"
+    },
+    "values": {
+      "model": "選んだモデルを自分のプロバイダーキーで",
+      "sandbox": "隔離環境。プロバイダーキーは外に置く",
+      "files": "outputs/report.md",
+      "resume": "1 分後でも 7 日後でも"
+    }
+  }
+}

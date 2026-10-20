@@ -12,7 +12,7 @@ import test from "node:test";
 // slot declares its budget in its own file: "$slots": { "<path without the file name>": { "chars": n } }; a path
 // budgeted here cannot be re-budgeted there.
 
-const SECTIONS = ["nav", "hero", "stage", "accent", "faq", "closing", "footer"];
+const SECTIONS = ["nav", "hero", "stage", "spec", "accent", "faq", "closing", "footer"];
 const LOCALES = ["en", "zh", "ja"];
 const COPY = Object.fromEntries(
   SECTIONS.map((name) => [
@@ -46,6 +46,14 @@ const BUDGETS = {
   "stage.steps.*.title": 34,
   "stage.steps.*.line": 70,
   "stage.kit.harness": 16, // system: a product name
+  // the spec table (graft 2026-10-20, staging v5/graft/INTEGRATION.md, the spec screen): the two-tone H2 over the
+  // card (48px, one line each at 1440), five row labels (sans 14), the values (sans 17 after a 20px glyph: one line at
+  // 1440, at most two at 390); Files is one mono token in a keycap. The Harness row's names are hero.harnesses.
+  "spec.h2a": 28,
+  "spec.h2b": 30,
+  "spec.labels.*": 12,
+  "spec.values.files": 24,
+  "spec.values.*": 40,
   // the full lime screen; three cards in one row (staging v5/graft/lime/NOTES.md: a 24-character label stays on one
   // line and a 48-character line takes at most two, 360-1440)
   "accent.tab": 22,
@@ -158,6 +166,21 @@ test("every en slot has a budget and fits it", () => {
 // sandbox, files, resume); the five parts themselves are the spec table's. zh and ja follow en's shape (below).
 test("the lime screen has three cards (en)", () => {
   assert.equal(COPY.accent.en.cards.length, 3, "accent.cards: Sandbox, Files and conversation, Resume");
+});
+
+// The spec table (sections/spec.ts): one row per part, in this order, and the Harness row's four names are the hero's
+// (the switch rolls them in HARNESS_IDS order). The title reads as a pick of one of four, never as a Session changing
+// harness: harness and model are frozen at creation and a Session never changes harness (MAIN docs/SPEC.md §3 L31;
+// staging v5/graft/switch/NOTES.md §5.4: v4c's earlier "Swap the harness, keep the rest." is out).
+test("the spec table has five parts, picks one harness of four, and keeps its token (en, zh, ja)", () => {
+  for (const locale of LOCALES) {
+    const spec = COPY.spec[locale];
+    assert.deepEqual(Object.keys(spec.labels), ["harness", "model", "sandbox", "files", "resume"], `${locale} rows`);
+    assert.deepEqual(Object.keys(spec.values), ["model", "sandbox", "files", "resume"], `${locale} values`);
+    assert.equal(spec.values.files, COPY.spec.en.values.files, `${locale} file token`);
+  }
+  assert.equal(COPY.hero.en.harnesses.length, 4, "four harness names to roll");
+  assert.doesNotMatch(`${COPY.spec.en.h2a} ${COPY.spec.en.h2b}`, /\b(swap|switch|change)/i, "a pick, not a swap");
 });
 
 test("each state of the Session object shows at most 14 words (en)", () => {

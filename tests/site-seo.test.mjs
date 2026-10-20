@@ -440,9 +440,10 @@ test("the static home page carries the whole page for readers without JavaScript
   for (const locale of LOCALES) {
     const html = home(locale);
 
-    // The five content sections in page order (staging production/v5/BRIEF.md §4), each a module of
-    // apps/landing/src/home/sections/, inside the paper, with the nav before and the footer after.
-    assert.deepEqual(sectionsOf(html), ["hero", "stage", "accent", "faq", "closing"]);
+    // The six content sections in page order (staging production/v5/BRIEF.md §4, plus the spec table of the
+    // 2026-10-20 graft), each a module of apps/landing/src/home/sections/, inside the paper, with the nav before and
+    // the footer after.
+    assert.deepEqual(sectionsOf(html), ["hero", "stage", "spec", "accent", "faq", "closing"]);
     assert.deepEqual(headingsOf(html, 1), [homeHeadline(locale)], `${locale} has one h1, the two-tone headline`);
     assert.match(html, /<div id="root"><div class="v5" data-v5-home>/);
     // The skip link comes first and lands on main.

@@ -1,0 +1,320 @@
+/* 2b The spec table (sections/spec.ts), graft 2026-10-20. Every rule is scoped to .v5-spec; tokens, type and the
+   keycap come from ../system.css, the field's bitmap and grain from ../v5-fields.css (.v5-field--hero, T1).
+   Sources: v4c's U10 spec table (redesign/v4c apps/landing/src/home/home.css .spec*: 1px ink top rule, label and
+   value columns, the 86px Harness row, the big display value with its glyph, the other names small), a13n's spec
+   sheet (staging refs/devices/crops/a13n-spec-table.jpg), v4a's type use (two-tone H2, labels and values, inline
+   glyphs), v4b's clean card on a field, and the two engine contracts of src/effects/v5/README.md ("Portal": the
+   system.css block, with the section's own host height here; "Harness switch": copied below, scoped). Measured:
+   staging v5/graft/INTEGRATION.md, the spec screen.
+
+   Two layouts from one DOM:
+   - default (no JS, reduced motion, below 901px wide or 680px tall): a plate like the stage's (the field, 1120 wide,
+     radius 16) with the card in its middle; the Harness row shows the first harness large and the other three small;
+   - live ([data-portal-mode="live"], src/effects/v5/portal.ts): the section is 200vh, its layer sticks for one
+     screen, the window layer fills it (the field under the nav, the card centred below the bar) and the portal clips
+     it to the mark's block until the door is open; the Harness value rolls (src/effects/v5/harness-switch.ts). */
+
+/* ----------------------------------------------------------------------------------- default: card on a plate */
+.v5-spec .v5-spec-window {
+  display: grid;
+  justify-items: center;
+  width: var(--w);
+  margin-inline: auto;
+  padding: 96px 24px;
+  border-radius: 16px; /* the stage's plates */
+}
+
+/* Title over table, as in v4c and a13n, in one column as wide as the card. */
+.v5-spec .v5-spec-in {
+  width: min(880px, 100%);
+}
+
+/* The system H2 (Hedvig 48, two tones, one line each here), on the field: its second line in ink-3-text, which keeps
+   3:1 on the field under it (3.86-4.63:1 measured, darkest 5% to lightest; ink-3 measures 2.90 at the darkest, so the
+   closing plate's choice). The gap under it is where the portal's closed window starts: the window, centred on the
+   first Harness value, reaches 63px above the card, so a wider gap keeps the title's glyphs out of its top edge, and
+   the closed window shows the field over the card's top (staging v5/graft/INTEGRATION.md, the spec screen). */
+.v5-spec .v5-spec-title {
+  --tone-b: var(--ink-3-text);
+  margin-bottom: 72px;
+}
+
+/* One clean card (v4b) that is the table: the paper's white, radius 12, a soft shadow that reads on the field, a
+   transparent 1px border that shows as a frame where forced colours drop the background. */
+.v5-spec .v5-spec-card {
+  padding: 32px 44px 20px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow:
+    0 1px 2px rgb(22 24 21 / 0.06),
+    0 24px 60px -24px rgb(22 24 21 / 0.28);
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------------------------------------ the table */
+/* a13n / v4c: a 1px ink rule on top, light rules between rows, labels in a narrow column, values in the rest. */
+.v5-spec .v5-spec-row:first-child {
+  border-top: 1px solid var(--ink);
+}
+
+.v5-spec .v5-spec-row {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: center;
+  min-height: 60px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.v5-spec .v5-spec-row--harness {
+  padding: 18px 0 16px;
+}
+
+.v5-spec .v5-spec-label {
+  color: var(--ink-3-text);
+  font: 400 14px/20px var(--font-sans);
+}
+
+.v5-spec .v5-spec-value {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  color: var(--ink);
+  font: 400 17px/1.4 var(--font-sans);
+  letter-spacing: -0.005em;
+  text-wrap: balance; /* a value that wraps (390) breaks into two even lines, not a lone word */
+}
+
+/* CJK values wrap between phrases: zh at its comma (keep-all), ja at phrase boundaries. */
+:lang(zh) .v5-spec .v5-spec-value {
+  word-break: keep-all;
+}
+
+:lang(ja) .v5-spec .v5-spec-value {
+  word-break: auto-phrase;
+}
+
+/* The console's glyphs (kit.css .kit-g: 1em boxes in currentColor, the one plane at 12%), centred on the first line. */
+.v5-spec .v5-spec-ic {
+  display: block;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: calc((1.4em - 20px) / 2);
+}
+
+.v5-spec .v5-spec-ic > .kit-g {
+  width: 100%;
+  height: 100%;
+}
+
+/* Files: the page's keycap (system .v5-kc: Fragment Mono .84em, 1px ink, r8, white), as a code element. */
+.v5-spec .v5-spec-tok {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------------------------------- the Harness row */
+/* The value large in the display face with its runtime glyph (v4c .spec-face, 38px; a13n's first row), and under
+   it the four names small (v4c .spec-others). Still (no JS, reduced motion): the first harness, then the other
+   three. */
+.v5-spec .v5-spec-harness {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.v5-spec .v5-spec-slot {
+  display: flex;
+}
+
+.v5-spec .v5-spec-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  font: 400 40px/1.15 var(--font-display);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.v5-spec .v5-spec-val + .v5-spec-val {
+  display: none;
+}
+
+.v5-spec .v5-spec-glyph {
+  width: 28px;
+  height: 28px;
+}
+
+.v5-spec .v5-spec-idx {
+  color: var(--ink-3-text);
+  font: 400 14px/20px var(--font-sans);
+  text-wrap: balance;
+}
+
+.v5-spec .v5-spec-idx > span {
+  white-space: nowrap; /* a product name never splits; the list wraps between names */
+}
+
+/* "A · B · C": a no-break space and the dot end every name but the last, so a wrap leaves the dot at a line's end. */
+.v5-spec .v5-spec-idx > :not(:last-child)::after {
+  content: "\00a0\00b7";
+}
+
+.v5-spec .v5-spec-idx > :first-child {
+  display: none;
+}
+
+/* Harness switch (README "Harness switch", the contract, scoped): live, the four values share one grid cell as wide
+   as the widest name (the row never changes width), left-aligned, so the first value's box is its own (the portal
+   frames it); a13n's roll: out to -55%, blurred, in 460 ms; in from 70%, 640 ms, 80 ms later; expo.out both ways.
+   Inside no-preference, so turning reduced motion on shows the still row at the very next style recalc. The small
+   list names all four while the slot rolls, the current one in ink. */
+@media (prefers-reduced-motion: no-preference) {
+  .v5-spec [data-switch-mode="live"] .v5-spec-slot {
+    display: inline-grid;
+    justify-items: start;
+    overflow: clip;
+    overflow-clip-margin: 8px;
+  }
+
+  .v5-spec [data-switch-mode="live"] .v5-spec-val {
+    display: inline-flex;
+    grid-area: 1 / 1;
+  }
+
+  .v5-spec [data-switch-mode="live"] [data-switch-state="past"] {
+    translate: 0 -55%;
+    opacity: 0;
+    filter: blur(5px);
+    visibility: hidden;
+  }
+
+  .v5-spec [data-switch-mode="live"] [data-switch-state="next"] {
+    translate: 0 70%;
+    opacity: 0;
+    filter: blur(5px);
+    visibility: hidden;
+  }
+
+  .v5-spec [data-switch-ready] [data-switch-state="active"] {
+    transition:
+      translate 0.64s var(--ease-expo) 0.08s,
+      opacity 0.64s var(--ease-expo) 0.08s,
+      filter 0.64s var(--ease-expo) 0.08s;
+  }
+
+  .v5-spec [data-switch-ready] :is([data-switch-state="past"], [data-switch-state="next"]) {
+    transition:
+      translate 0.46s var(--ease-expo),
+      opacity 0.46s var(--ease-expo),
+      filter 0.46s var(--ease-expo),
+      visibility 0s linear 0.46s; /* a leaving value stays visible until it is gone */
+  }
+
+  .v5-spec [data-switch-mode="live"] .v5-spec-idx > :first-child {
+    display: inline;
+  }
+
+  .v5-spec [data-switch-ready] .v5-spec-idx > span {
+    transition: color 0.46s var(--ease-expo);
+  }
+
+  .v5-spec [data-switch-at="0"] .v5-spec-idx > :nth-child(1),
+  .v5-spec [data-switch-at="1"] .v5-spec-idx > :nth-child(2),
+  .v5-spec [data-switch-at="2"] .v5-spec-idx > :nth-child(3),
+  .v5-spec [data-switch-at="3"] .v5-spec-idx > :nth-child(4) {
+    color: var(--ink);
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------- live: the door */
+/* The portal contract is system.css's (README "Portal": the sticky pin, the window layer at inset 0, the 1px frame,
+   the print end state); this section sets its own height, the pinned screen plus one screen of run, 200vh (the graft
+   brief's ceiling at 1440 x 900; the contract's default is 250vh), and lays the window out: the field under the
+   floating nav, the card centred below the bar (12 + 56px). */
+.v5-spec[data-portal-mode="live"] {
+  height: 200vh;
+}
+
+.v5-spec[data-portal-mode="live"] .v5-spec-window {
+  align-content: center;
+  width: auto;
+  margin: 0;
+  padding: 68px 24px 0;
+  border-radius: 12px; /* the paper's, as the lime panel's: the band's corners show when it leaves */
+}
+
+/* Short screens (680-800px tall) still pin: the rows under the Harness row give up some air, so title and card fit
+   under the bar at 680 (measured). The title's gap, the card's top padding and the Harness row keep their values:
+   they set where the closed window's top falls, and with less of them it cut the title's second line (901 x 680). */
+@media (max-height: 800px) {
+  .v5-spec[data-portal-mode="live"] .v5-spec-card {
+    padding-bottom: 12px;
+  }
+
+  .v5-spec[data-portal-mode="live"] .v5-spec-row:not(.v5-spec-row--harness) {
+    min-height: 52px;
+    padding: 6px 0;
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------ phones */
+@media (max-width: 720px) {
+  .v5-spec .v5-spec-window {
+    padding: 12px;
+    border-radius: 14px; /* the stage's phone plates */
+  }
+
+  .v5-spec .v5-spec-card {
+    padding: 16px 18px 6px;
+    border-radius: 10px;
+  }
+
+  .v5-spec .v5-spec-title {
+    margin: 12px 6px 24px;
+  }
+
+  /* One column: the label over its value (v4c's phone table). */
+  .v5-spec .v5-spec-row,
+  .v5-spec .v5-spec-row--harness {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+    min-height: 0;
+    padding: 14px 0;
+  }
+
+  .v5-spec .v5-spec-value {
+    font-size: 16px;
+  }
+
+  .v5-spec .v5-spec-val {
+    gap: 10px;
+    font-size: 28px;
+  }
+
+  .v5-spec .v5-spec-glyph {
+    width: 22px;
+    height: 22px;
+  }
+
+  .v5-spec .v5-spec-idx {
+    font-size: 13px;
+    line-height: 18px;
+  }
+}
+
+/* --------------------------------------------------------------------------------------------- forced colours */
+@media (forced-colors: active) {
+  .v5-spec .v5-spec-card {
+    border-color: CanvasText;
+  }
+
+  /* As specific as the contract's live frame rule (system.css), which would otherwise keep the ink stroke. */
+  .v5-spec[data-portal-mode] .v5-spec-frame {
+    stroke: CanvasText;
+  }
+}

@@ -13,6 +13,7 @@ import faq from "./copy/faq.json" with { type: "json" };
 import footer from "./copy/footer.json" with { type: "json" };
 import hero from "./copy/hero.json" with { type: "json" };
 import nav from "./copy/nav.json" with { type: "json" };
+import spec from "./copy/spec.json" with { type: "json" };
 import stage from "./copy/stage.json" with { type: "json" };
 
 export const HOME_LOCALES = ["en", "zh", "ja"] as const;
@@ -21,6 +22,7 @@ export type HomeLocale = (typeof HOME_LOCALES)[number];
 export type NavCopy = (typeof nav)["en"];
 export type HeroCopy = (typeof hero)["en"];
 export type StageCopy = (typeof stage)["en"];
+export type SpecCopy = (typeof spec)["en"];
 export type AccentCopy = (typeof accent)["en"];
 export type FaqCopy = (typeof faq)["en"];
 export type ClosingCopy = (typeof closing)["en"];
@@ -31,6 +33,7 @@ export interface HomeCopy {
   readonly nav: NavCopy;
   readonly hero: HeroCopy;
   readonly stage: StageCopy;
+  readonly spec: SpecCopy;
   readonly accent: AccentCopy;
   readonly faq: FaqCopy;
   readonly closing: ClosingCopy;
@@ -40,6 +43,7 @@ export interface HomeCopy {
 const NAV: Record<HomeLocale, NavCopy> = nav;
 const HERO: Record<HomeLocale, HeroCopy> = hero;
 const STAGE: Record<HomeLocale, StageCopy> = stage;
+const SPEC: Record<HomeLocale, SpecCopy> = spec;
 const ACCENT: Record<HomeLocale, AccentCopy> = accent;
 const FAQ: Record<HomeLocale, FaqCopy> = faq;
 const CLOSING: Record<HomeLocale, ClosingCopy> = closing;
@@ -50,6 +54,7 @@ function copyFor(locale: HomeLocale): HomeCopy {
     nav: NAV[locale],
     hero: HERO[locale],
     stage: STAGE[locale],
+    spec: SPEC[locale],
     accent: ACCENT[locale],
     faq: FAQ[locale],
     closing: CLOSING[locale],

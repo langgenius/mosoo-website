@@ -15,14 +15,16 @@ import * as faq from "./sections/faq.ts";
 import * as footer from "./sections/footer.ts";
 import * as hero from "./sections/hero.ts";
 import * as nav from "./sections/nav.ts";
+import * as spec from "./sections/spec.ts";
 import * as stage from "./sections/stage.ts";
 
-/** The content sections in page order (BRIEF §4): hero, stage, the full lime screen, FAQ, closing. */
-export const SECTIONS = ["hero", "stage", "accent", "faq", "closing"] as const;
+/** The content sections in page order (BRIEF §4; the spec table since the 2026-10-20 graft): hero, stage, the spec
+ *  table, the full lime screen, FAQ, closing. */
+export const SECTIONS = ["hero", "stage", "spec", "accent", "faq", "closing"] as const;
 
-const MAIN = [hero, stage, accent, faq, closing];
+const MAIN = [hero, stage, spec, accent, faq, closing];
 
-/** The whole home body (inside #root): skip link, nav, the paper with the five sections, the footer. */
+/** The whole home body (inside #root): skip link, nav, the paper with the six sections, the footer. */
 export function renderHome(locale: HomeLocale): string {
   const copy = HOME_COPY[locale];
   return `<div class="v5" data-v5-home>
