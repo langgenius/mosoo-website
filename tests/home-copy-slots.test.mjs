@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import { renderLandingLocale } from "../scripts/landing-locales.mjs";
+
 // The v5 home copy: one file per section in apps/landing/src/home/copy/, each with en, zh and ja in the same
 // shape (keys starting with "$" are notes for writers). en is checked against the slot budgets below, in
 // characters; the Session object's states (stage.kit) in object words. zh and ja must fill every en slot, no more
@@ -231,6 +233,49 @@ test("the harness names and the Call card fit the first screen's object words (e
   const call = kitStates(COPY.stage.en.kit).call.reduce((sum, value) => sum + words(value), 0);
   assert.ok(names + call <= 16, `first-screen object words: harness names ${names} + Call card ${call} > 16`);
 });
+
+// The closing's Copy (#130, committee 2026-10-21): the copy engine (src/home/copy-prompt.ts) finds the sentence and
+// the live region through button.closest("[data-product-ui]"), so the button, the [data-prompt] sentence and the
+// [data-copy-status] region must share that nearest wrapper (without it Copy writes an empty string and still says
+// "Copied"; with the region outside it, readers hear nothing). Checked in the static home of every locale.
+const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'" }; // ui.ts esc()
+
+test("the closing's Copy, its sentence and its status region share one [data-product-ui] (en, zh, ja)", () => {
+  for (const locale of LOCALES) {
+    const html = renderLandingLocale(
+      readFileSync(new URL("../apps/landing/index.html", import.meta.url), "utf8"),
+      locale,
+    );
+    const closing = /<section id="start"[\s\S]*?<\/section>/.exec(html)?.[0] ?? "";
+    assert.ok(closing, `${locale}: the closing section`);
+    assert.equal(closing.match(/\bdata-copy\b(?!-)/g)?.length, 1, `${locale}: one Copy button`);
+    const wrapper = nearestProductUi(closing, closing.search(/\bdata-copy\b(?!-)/));
+    assert.ok(wrapper, `${locale}: Copy has a [data-product-ui] ancestor`);
+    for (const marker of ["data-prompt", "data-copy-status", "data-copy-label"]) {
+      assert.match(wrapper, new RegExp(`\\b${marker}\\b`), `${locale}: [${marker}] is inside Copy's [data-product-ui]`);
+    }
+    const prompt = /<p [^>]*data-prompt[^>]*>([^<]+)<\/p>/.exec(wrapper)?.[1] ?? "";
+    const text = prompt.replace(/&(amp|lt|gt|quot|#39);/g, (_, entity) => ENTITIES[entity]);
+    assert.equal(text, COPY.closing[locale].prompt, `${locale}: the sentence Copy copies is closing.prompt`);
+  }
+});
+
+/** The innermost <div …data-product-ui…> element of html that contains index, as html (div elements only). */
+function nearestProductUi(html, index) {
+  const stack = [];
+  let inner = null;
+  for (const tag of html.matchAll(/<(\/?)div\b[^>]*>/g)) {
+    if (tag[1]) {
+      const open = stack.pop();
+      if (open && open.ui && open.at < index && tag.index > index && (!inner || open.at > inner.at)) {
+        inner = { at: open.at, end: tag.index + tag[0].length };
+      }
+    } else {
+      stack.push({ at: tag.index, ui: /\bdata-product-ui\b/.test(tag[0]) });
+    }
+  }
+  return inner ? html.slice(inner.at, inner.end) : null;
+}
 
 test("zh and ja fill the same slots as en, no more and no fewer", () => {
   const shape = (node) =>

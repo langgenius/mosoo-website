@@ -1,35 +1,34 @@
 /* 5 Closing (sections/closing.ts). Scoped to .v5-closing; tokens, type, buttons and the focus ring come from
    ../system.css, the plate's bitmap and grain from ../v5-fields.css (.v5-field--closing, T1).
-   Sources (staging): v4d's closing (d-object.css .d-plate-field / .d-close-h / .d-ccard* at 9e92312: 20px plate,
-   centred 48px title, a 568px card); GitBook's glass bezel (refs/elevenlabs/v5/STUDY.md §3.3-3.4, measured in
-   refs/gitbook/v5/glass/gb-glass.json: padding 0 8 8 under a top bar, rgba(28,25,23,.06), blur(5px), r16,
-   0 4px 12px rgba(0,0,0,.15); the white card opaque, r16 as well); Frame's lime CTA glow (system .v5-btn--lime).
-   The plate keeps T1's 1120x480 bitmap at 1:1 on desktop (sizes in NOTES.md). */
+   Sources (staging): v4d's closing (d-object.css .d-plate-field / .d-close-h / .d-ccard* at 9e92312: centred 48px
+   title, a 568px card); Frame's lime CTA glow (system .v5-btn--lime). Two layers, plate > card (#130, committee
+   2026-10-21, committee/challenge/130.md, version B): the legend and the white card sit on the plate; GitBook's glass
+   bezel that held them (6% stone, blur 5px, 0 4px 12px .15, r16: a redrawn window frame, hallmark gate 47, and a
+   third layer) is gone, and with it the page's heaviest shadow. The plate keeps T1's 1120x480 bitmap at 1:1 on
+   desktop (sizes in NOTES.md). */
 
 .v5-closing-plate {
   /* The title's second line: ink-3 on this plate measured 3.05:1 at the median and 2.57:1 on the darkest 5% of
      the grain under it; ink-3-text keeps the two tones and clears 3:1 (NOTES.md, contrast). */
   --tone-b: var(--ink-3-text);
-  border-radius: 20px; /* v4d .d-plate-field */
-  padding: 64px 24px 60px; /* 64 + title 100 + 32 + bezel 112 + 32 + CTA 48 + 12 + caption 20 + 60 = 480 */
+  border-radius: 16px; /* the stage plate's radius (#130; v4d's was 20) */
+  /* 73 + title 100 + 32 + legend 30 + card 64 + 32 + CTA 48 + 12 + caption 20 + 69 = 480: the bezel's 18px (its 40px
+     bar and 8px foot, less the legend's 30) went to the plate's padding, so the bitmap stays 1:1 */
+  padding: 73px 24px 69px;
   text-align: center;
 }
 
-/* GitBook's window, our way: the glass is only the 8px edge and the top bar (here the legend, not window dots). */
-.v5-closing-bezel {
-  width: min(584px, 100%); /* v4d's 568px card plus the 8px edge each side */
+/* The [data-product-ui] wrapper of the legend, the card and the status region (the copy engine's anchor, closing.ts):
+   no look of its own, only v4d's 584px measure, centred, its text left-aligned. */
+.v5-closing-setup {
+  width: min(584px, 100%);
   margin: 32px auto 0;
-  padding: 0 8px 8px;
-  border-radius: 16px;
-  background: rgb(28 25 23 / 0.06);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
   text-align: left;
 }
 
+/* The card's label, on the plate over the card's left edge (4px in, as the card's corner rounds). */
 .v5-closing-legend {
-  padding: 10px 12px; /* a 40px bar: GitBook's is 44 with three dots; ours carries the label */
+  padding: 0 4px 10px;
   color: var(--ink);
   font: 500 13px/20px var(--font-sans);
 }
@@ -55,33 +54,16 @@
   user-select: all; /* one click selects the whole sentence, for a reader copying by hand (no JS, no clipboard) */
 }
 
-/* Copy: a 1px ink line button inside the card (8px in from its edge, r8), the system's .v5-btn--line look: the
-   lime "Try mosoo" below is the closing's one solid button (YC review P1-2). Its two faces share one cell: the hidden
-   one is the done state's footprint (check + copied label), so the width never changes; the check on the live face
-   shows while the engine's data-done is set. */
+/* Copy: the system's grey button (.v5-btn .v5-btn--grey: frame fill, no line, no shadow, 48 high, r8, Hanken
+   16 / 500, hover --frame-2, the 2px ink focus ring) inside the card, 8px in from its edge; the lime "Try mosoo" below
+   stays the closing's one solid colour (YC review P1-2). Copy is an action, so it keeps a filled target even if the
+   hero's secondary ever becomes a text link. Its two faces share one cell: the hidden one is the done state's
+   footprint (check + copied label), so the width never changes; the check on the live face shows while the engine's
+   data-done is set. */
 .v5-closing-copy {
   display: inline-grid;
   flex: none;
   place-items: center;
-  height: 48px;
-  padding: 0 18px;
-  border: 1px solid var(--ink);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  font: 500 15px/1 var(--font-sans);
-  cursor: pointer;
-  transition:
-    background-color 0.15s var(--ease-theme),
-    transform 0.15s var(--ease-expo);
-}
-
-.v5-closing-copy:hover {
-  background: var(--frame); /* system .v5-btn--line:hover */
-}
-
-.v5-closing-copy:active {
-  transform: scale(0.97);
 }
 
 .v5-closing-face {
@@ -126,11 +108,12 @@
 }
 
 @media (max-width: 720px) {
+  /* 57 / 53: the bezel's 18px again, so the 390 plate keeps its 468 */
   .v5-closing-plate {
-    padding: 48px 16px 44px;
+    padding: 57px 16px 53px;
   }
 
-  .v5-closing-bezel {
+  .v5-closing-setup {
     margin-top: 28px;
   }
 
@@ -149,20 +132,13 @@
     line-height: 22px;
   }
 
+  /* The grey button at its phone height (44, PLAN §3 1-2 item 2), under the sentence at the right. */
   .v5-closing-copy {
     height: 44px;
     margin-left: auto;
-    padding: 0 14px;
-    font-size: 14px;
   }
 
   .v5-closing-actions {
     margin-top: 28px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .v5-closing-copy {
-    transition: none;
   }
 }
