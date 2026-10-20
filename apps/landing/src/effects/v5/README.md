@@ -30,7 +30,7 @@ side-by-side images, one regenerating command) lives in staging
 | `damp-scroll.ts` | `<html data-damp>` | `scrollTo` per frame | Frame (Lenis 1.0.29, `lerp .1`, `wheelMultiplier .7`) | staging `refs/frame/v5/motion/STUDY.md` §1 |
 | `rise.ts` | `data-rise="block \| title \| line \| card"` | inline hidden state, WAAPI, `data-rise-state` | Frame IX2 a-15 / a-13 / a-14; Intent feature carousel | Frame §2; `refs/intent/v5/STUDY.md` §2.6 |
 | `nav.ts` | `[data-nav]`, `[data-nav-cta]`, `[data-nav-cta-watch]`, `[data-theme-zone]`; `[popover]` panels inside the bar; same-origin `a[hreflang]` to `/en`, `/zh`, `/ja` | `--nav-p`, `data-nav-mode/state/cta-state/theme`, `inert`; `hidePopover()`; the `mosoo_locale` cookie | ramp.design progress morph, Save.design float bar, savee.com CTA, Ramp theme switch; production's language menu (cookie) | `refs/ramp-design/v5/STUDY.md` §1, §3.1, §4.1, §5.5; staging `v5/polish/nav/DESIGN.md` |
-| `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready`, `data-step`, `--stage-p`, `data-stage-state`, `--step-p` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
+| `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready/started`, `data-step`, `--stage-p`, `--stage-fill`, `data-stage-state`, `--step-p`, `aria-current="step"` on the lit `<li>` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
 | `footer.ts` | `[data-footer]`, `[data-footer-links/link/brand/rise]`, `[data-draw]` | inline hidden state, WAAPI, `data-footer-state` | Intent footer (`Footer.astro`, GSAP + Lottie) | `refs/intent/v5/STUDY.md` §1 |
 | `play-for.ts` | `[data-play-for="ms"]` | `data-playing` for at most `ms` (≤ 5000) each time the element comes into view | WCAG 2.2.2 (motion that starts by itself stops within 5 s) | staging `v5/review/motion-a11y-perf.md` P1-2 |
 | `portal.ts` | `[data-portal]`, `[data-portal-pin]`, `[data-portal-window]`, `[data-portal-frame]`, `[data-portal-door]`, `[data-portal-reveal]` | `data-portal-mode/state`, `--portal-p`, inline `clip-path`, the frame's `d` and opacity, `data-portal-shown` | Enter Pro's door mask; v4c `effects/stage.ts` | "Portal" below; staging `v5/graft/portal/NOTES.md`, `v5/round3/door/NOTES.md` |
@@ -189,6 +189,16 @@ Per frame the engine writes `--stage-p` (0–1 over the pinned run) and
 a step index (label, screen, sentence): discrete parts transition on
 `data-stage-state`, scrubbed parts read `--step-p`.
 
+Since O1 (committee 2026-10-21) it also writes, on the section,
+`data-stage-started` while `--stage-p` is above 0 (the run has begun: the v5
+page keeps its step row out of sight until then, so the first screen shows no
+step word) and `--stage-fill` = (k + the lit step's `--step-p`) / n, the run
+told by steps (a progress line filled by it reaches step k's share as step k
+lights; filled by `--stage-p`, Resume was lit for 87% of its stretch before the
+line got under it, staging `committee/challenge/128.md` §3); and
+`aria-current="step"` on the lit step when that element is an `<li>` (the step
+row is a list of the three names). Leaving the pin clears all three.
+
 No empty frame, by construction: the incoming layer is stacked over the
 outgoing one, which stays opaque and visible for the whole 0.9 s; layers
 bleed 8 px past the clip so the blurred edges stay outside. Measured with a
@@ -268,7 +278,7 @@ unpinned; damping and the pinned stage also return when it flips back.
 | `<html>` | `data-damp`; head: the `js` class line above |
 | 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」; `<nav id="v5-nav-menu" popover>` (the row; the sheet up to 860px) with the Products and language `popover` panels |
 | 1 Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; sub line and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` |
-| 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: label, component state and sentence each `data-stage-step="k"` |
+| 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: its name in the step row (an `<li>`), component state and sentence each `data-stage-step="k"`; the row shows only while pinned and once `data-stage-started` is set, its 132px line filled by `--stage-fill` |
 | 2b Spec table | `<section data-portal data-switch-run>` (range `-0.4,0`, 120vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` (the field alone) + `data-portal-frame` + the content: the H2, `<span data-portal-door>` (the closed mark's box, under the H2) and the card `<dl data-portal-reveal>`; the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |
 | 3 Full lime screen | the section `data-theme-zone="accent"`; its title wrapper `data-rise="block"`, H2 `data-rise="title"`, second line `data-rise="line"`; the three cards `data-rise="card"` |
 | Section titles elsewhere (FAQ, closing) | `data-rise="block"` / `"title"` / `"line"` |
@@ -424,7 +434,7 @@ the time driver ends: a13n's loop is the motion review's P1-2 (motion that never
 once, then the row is still.
 
 Markup. The four names reach a screen reader once, from a visually hidden list; the animated slot is `aria-hidden`.
-Glyphs are `../home/runtime-glyphs.ts`, rendered as the hero's keycaps render them; values in `HARNESS_IDS` order (the
+Glyphs are `../home/runtime-glyphs.ts`, as in the footer's Harnesses column; values in `HARNESS_IDS` order (the
 first value is where the time driver rests: OpenAI Codex, the harness the stage's Call names):
 
 ```html
