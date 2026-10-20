@@ -33,8 +33,8 @@ side-by-side images, one regenerating command) lives in staging
 | `stage.ts` | `[data-stage]`, `[data-stage-pin]`, `[data-stage-step="k"]` | `data-stage-mode/ready`, `data-step`, `--stage-p`, `data-stage-state`, `--step-p` | CTRL product-frame narrative; v4c `effects/stage.ts` | `refs/ctrl/v5/STUDY.md` §1.6 |
 | `footer.ts` | `[data-footer]`, `[data-footer-links/link/brand/rise]`, `[data-draw]` | inline hidden state, WAAPI, `data-footer-state` | Intent footer (`Footer.astro`, GSAP + Lottie) | `refs/intent/v5/STUDY.md` §1 |
 | `play-for.ts` | `[data-play-for="ms"]` | `data-playing` for at most `ms` (≤ 5000) each time the element comes into view | WCAG 2.2.2 (motion that starts by itself stops within 5 s) | staging `v5/review/motion-a11y-perf.md` P1-2 |
-| `portal.ts` | `[data-portal]`, `[data-portal-pin]`, `[data-portal-window]`, `[data-portal-frame]`, `[data-portal-focus]` | `data-portal-mode/state`, `--portal-p`, inline `clip-path`, the frame's `d` | Enter Pro's door mask; v4c `effects/stage.ts` | "Portal" below; staging `v5/graft/portal/NOTES.md` |
-| `harness-switch.ts` | `[data-switch="scroll \| time"]`, `[data-switch-item]`, `[data-switch-run]` | `data-switch-mode/driver/at/ready/pass`, `data-switch-state` | a13n's spec-sheet slot; v4a `flip-slot.ts`; v4c act 1 | "Harness switch" below; staging `v5/graft/switch/NOTES.md` |
+| `portal.ts` | `[data-portal]`, `[data-portal-pin]`, `[data-portal-window]`, `[data-portal-frame]`, `[data-portal-door]`, `[data-portal-reveal]` | `data-portal-mode/state`, `--portal-p`, inline `clip-path`, the frame's `d` and opacity, `data-portal-shown` | Enter Pro's door mask; v4c `effects/stage.ts` | "Portal" below; staging `v5/graft/portal/NOTES.md`, `v5/round3/door/NOTES.md` |
+| `harness-switch.ts` | `[data-switch="scroll \| time"]`, `[data-switch-item]`, `[data-switch-run]` | `data-switch-mode/driver/at/ready/pass`, `data-switch-state` | a13n's spec-sheet slot; v4a `flip-slot.ts`; v4c act 1 | "Harness switch" below; staging `v5/graft/switch/NOTES.md`, `v5/round3/door/NOTES.md` |
 
 Decorative loops stop within 5 s: the line field (`linefield.ts`) runs 4.5 s per start (on entering the view, and
 on each step switch of a pinned stage), easing to a stop over its last 1.5 s; the Resume comet runs under
@@ -255,8 +255,8 @@ wordmark +198–200 ms). Focus inside the footer reveals everything at once.
 | Nav | held at p = 1 (the float bar) with no transitions; CTA and theme still switch, instantly; panels open and close at once | the bar stays in the page at the top (`position: absolute`), CTA shown; the popovers open and close (HTML); a language link leads to its page without the cookie |
 | Stage | not pinned: the CSS default, all steps stacked | stacked |
 | Footer | nothing hidden; mark fully drawn | composed |
-| Portal | not live: no clip, no frame, the content in the flow | the same |
-| Harness switch | not mounted: the section's still row | the same |
+| Portal | not live: no clip, no frame, nothing hidden, the content in the flow | the same |
+| Harness switch | not mounted: the section's still row, the first value | the same |
 
 A media-query change at runtime is followed: reduce → everything revealed and
 unpinned; damping and the pinned stage also return when it flips back.
@@ -269,7 +269,7 @@ unpinned; damping and the pinned stage also return when it flips back.
 | 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」; `<nav id="v5-nav-menu" popover>` (the row; the sheet up to 860px) with the Products and language `popover` panels |
 | 1 Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; sub line and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` |
 | 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: label, component state and sentence each `data-stage-step="k"` |
-| 2b Spec table | `<section data-portal data-switch-run>` (range `-0.25,0.1`, `data-portal-room="86"`, 110vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` + `data-portal-frame`, `data-portal-focus` on the Harness cell (its `dd`: the big name and the four names); the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |
+| 2b Spec table | `<section data-portal data-switch-run>` (range `-0.4,0`, 120vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` (the field alone) + `data-portal-frame` + the content: the H2, `<span data-portal-door>` (the closed mark's box, under the H2) and the card `<dl data-portal-reveal>`; the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |
 | 3 Full lime screen | the section `data-theme-zone="accent"`; its title wrapper `data-rise="block"`, H2 `data-rise="title"`, second line `data-rise="line"`; the three cards `data-rise="card"` |
 | Section titles elsewhere (FAQ, closing) | `data-rise="block"` / `"title"` / `"line"` |
 | 6 Footer | `<footer data-footer>`; link columns `data-footer-link` inside `data-footer-links`; brand row `data-footer-brand` with the mark and the letters-only wordmark `data-footer-rise` (mark first); the mark's outline path `data-draw`, its line `data-draw="grow-x"` |
@@ -281,40 +281,60 @@ CSS, and the line field is T2's `linefield.ts`.
 ## Portal — `[data-portal]`
 
 `portal.ts`, the v5 graft of v4c's scroll motion (owner 10-20: 「滚动的动效我觉得是有说法的」): a sticky host whose
-content is seen through the mosoo mark's block, the concave-sided window of the logo outline. The window starts
-small, grows with the scroll until it covers the host, and is then taken away. Wire it with
-`initPortal(root)` from `./portal.ts`. Proof (sandbox, recordings, checks, one command): staging
-`v5/graft/portal/` (`NOTES.md` there).
+ground is seen through the mosoo mark. Closed, the window is the whole mark, its block (the concave-sided window of
+the logo outline) with the bar's line under it and a calm surface inside; with the scroll it grows down and out from
+its top edge, shows the host's content once it holds it whole, rises behind the heading to cover the host, and is
+taken away. Wire it with `initPortal(root)` from `./portal.ts`. Proof: staging `v5/graft/portal/` (the first engine)
+and `v5/round3/door/` (this one; `NOTES.md` there).
+
+Round 3a (staging `v5/round3/door/NOTES.md`): the first engine showed live content through a narrow window from the
+first frame; five of five readers took the half-open door for a distortion (a phone mock-up, an hourglass, macOS's
+genie), four of five for a rendering bug, because its concave edges cropped the heading ("ne Session") and the rows,
+and the mark's bar never reached the screen (staging `v5/polish/personas/spec-A-answers.json`). Now nothing is ever
+seen through part of the window: the content sits above the ground, and what the window must hold is shown only
+once it holds all of it.
 
 | Piece | Value | Source |
 | --- | --- | --- |
-| Shape | the v5 lockup mark's block, `BRAND_MARK.fill` (`brand-v5.generated.ts`), redrawn in px as `clip-path: path()` every frame; sides concave by 2.87 % of the width at mid-height | Enter Pro door mask (staging `refs/enter-pro/notes.md` §3, a masked full-size scene); v4c `stage.ts` (the block redrawn per size, not scaled) |
-| Frame (optional) | 1 px ink outline of the same path, plus the mark's bar as a 1 px line under it (the mark's gap kept); hidden once open | v4c `.portal-frame`; BRIEF §3.3 line language |
-| Closed window | on the host's vertical axis (the page's, as the mark it is); level with `[data-portal-focus]`, or hanging from it with `data-portal-room="px"` (its top edge that far above the focus's top, so it falls in a gap and cuts no line); as wide as needed to show the focus whole with 16 px to spare on both sides of the axis, and at least `data-portal-width` (default 240 px). No focus: centred in the host | brief: about 240 px, centred; v5 fix round (staging `v5/review/graft-design.md` P2-1: a window centred on an off-axis focus sat 55 px off the axis and cut the line under it) |
-| Open window | centred, covers the host with 2 px to spare (its narrowest width, at mid-height, spans the host); the clip is then removed | — |
-| Motion | one zoom about the fixed point that maps the closed window onto the open one; scale geometric in the progress, `w = w0 · (w1 / w0)^p` | ours: what the closed window shows stays put; a smoothstep left 1–35 px slivers along the screen edges over the last tenth |
+| Shape | the v5 lockup mark's block, `BRAND_MARK.fill` (`brand-v5.generated.ts`), redrawn in px as `clip-path: path()` on the ground every frame; sides concave by 2.87 % of the width at mid-height | Enter Pro door mask (staging `refs/enter-pro/notes.md` §3); v4c `stage.ts` (the block redrawn per size, not scaled) |
+| Frame (optional) | 1 px ink outline of the same path, plus the mark's bar as a 1 px line at the mark's own gap under it, as `public/brand/outline/outline-*.svg` draw the mark; fades out (over 6 % of the zoom) from where the window starts to hold the content, and always before the top edge rises; hidden once open | v4c `.portal-frame`; BRIEF §3.3 line language |
+| Closed window | the box of `[data-portal-door]`: its width, its top edge and its centre (the block's height follows the mark); without one, `data-portal-width` px (default 240) centred in the host | round 3a: the whole mark on screen, on the page's axis |
+| Start | the range's start, but never before the whole closed mark, bar line included, is 24 px above the viewport's bottom | round 3a: the bar was 56 px below the fold when the door started |
+| Motion | the size is geometric in the squared progress, `w = w0 · (w1 / w0)^(p²)`: small steps while the mark is small (halfway through, the bar's line is still on screen), a brisk end; the top edge stays put (the window grows down and out) until the zoom's last 15 %, when it rises to the host's top (an ease-in: no sliver) | round 3a: the closed mark reads as the mark before it grows; the top edge passes the heading only at the end, and with no line |
+| Reveal | every `[data-portal-reveal]` gets `data-portal-shown` while the window holds them all with 24 px to spare on every side (the sides' deepest point counted on every row), and once open; the section's CSS fades them in on time, not with the scroll | round 3a: no content is ever seen through part of the window |
+| Open window | covers the host with 2 px to spare (its narrowest width, at mid-height, spans the host), its top edge just above the host's; the clip is then removed | — |
 | Range | `data-portal-range="-0.5,0.5"`: in screens of scroll from the moment the host's top reaches the viewport's top (negative: while the host is still coming in) | ours |
 | Gate | `data-portal-media`, default `(min-width: 901px) and (min-height: 680px)` (where the stage pins), and no reduced motion | stage.ts |
 
 Per frame it writes `data-portal-mode="live"`, `data-portal-state="closed | opening | open"` and `--portal-p` (0–1 over
-the range) on the host, the inline `clip-path` on `[data-portal-window]` (none once open), and `d` on
-`[data-portal-outline]` / `[data-portal-line]` inside `[data-portal-frame]`.
+the range, from the guarded start) on the host, the inline `clip-path` on `[data-portal-window]` (none once open), the
+frame's `opacity` and the `d` of `[data-portal-outline]` / `[data-portal-line]`, and `data-portal-shown` on every
+`[data-portal-reveal]`.
 
-No empty frame, by construction: the window always shows the content behind it, and the engine hides nothing in the
-host (no veil, no opacity, no leave-then-enter; v4c's empty frames at p = .05–.06 and .37, REVIEW-v4 §3.3, came
-from those). Measured with `tools/motion.ts --step 30` on the sandbox, the host's ground outside the window painted
-magenta: 770 frames, 0 with the window on screen but no ink in it, 0 with no ink on screen; the least ink in the
-window while it opens is 1,075 px at 0.5 scale. The same check with v4c's veil put back (positive control): 225 and
-86 such frames of 767. Recorded the same way, v4c's own build has 13 of 191 frames with under 100 ink pixels on
-screen outside the nav, 7 of them with none (p ≈ .11 and .37–.39). Frame cost (headless Chrome, 1440 × 900): 456
-rAF intervals through the door, p95 16.7 ms, none over 20 ms, no long animation frame; 0.2–0.4 ms of main-thread
-work per frame over the same page without the engine (four runs).
+No cropped line and no empty screen, by construction: the content is never under the clip (only the ground is), a
+reveal shows only whole, and the host's heading stays on the page above the closed mark (v4c's empty frames, REVIEW-v4
+§3.3, were a lone window and nothing else on screen). Between the bar's line leaving the screen and the reveal, the
+window shows the ground alone, 72–80 px of scroll at every size measured.
+
+Measured on the v5 page (round 3a; scroll in px from the section's top at the viewport's top; staging
+`v5/round3/door/data/phases-*.json`):
+
+| Viewport | Door starts | Bar's line off screen | Card shown | Top edge rises | Open | H2 under the bar |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1920 × 1080 | −396 | −156 | −76 | −28 | 0 | 420 |
+| 1440 × 900 | −316 | −120 | −40 | −20 | 0 | 290 |
+| 1280 × 800 | −272 | −104 | −24 | −20 | 0 | 240 |
+| 1024 × 768 | −264 | −84 | −4 | −20 | 0 | 220 |
+| 901 × 680 | −244 | −72 | 0 | −16 | 0 | 160 |
+
+Where the card is nearly as wide as the screen (1024 and below), the window holds it only at the end, so the frame
+fades and the top edge rises before the card shows.
 
 ```css
 /* Not live (no JS, reduced motion, outside data-portal-media): the CSS default, the content in the flow. */
 [data-portal-frame] { display: none; }
 [data-portal][data-portal-mode="live"] {
-  height: 250vh; /* the pin's screen + the range's end (0.5) + one screen with the door open */
+  height: 250vh; /* the pin's screen + the range's end + the time the open content stays pinned; a section sets its own */
 }
 [data-portal][data-portal-mode="live"] [data-portal-pin] { position: sticky; top: 0; height: 100vh; overflow: clip; }
 [data-portal][data-portal-mode="live"] [data-portal-window] { position: absolute; inset: 0; }
@@ -329,40 +349,38 @@ work per frame over the same page without the engine (four runs).
   [data-portal-window] { position: relative !important; inset: auto !important; clip-path: none !important; }
   [data-portal-frame] { display: none !important; }
 }
+/* The section's own (sections/spec.css): the content over the ground, and a reveal hidden until shown. */
+[data-portal][data-portal-mode="live"] [data-portal-reveal] { transition: opacity .32s var(--ease-expo); }
+[data-portal][data-portal-mode="live"] [data-portal-reveal]:not([data-portal-shown]) { opacity: 0; pointer-events: none; }
 ```
 
-- Markup: `[data-portal]` > `[data-portal-pin]` (first, at the host's top) > the window layer `[data-portal-window]`
-  (the real content, with an opaque ground: it covers the host once open) and, after it,
-  `<svg data-portal-frame aria-hidden="true"><path data-portal-outline/><path data-portal-line/></svg>`.
-- The window owns its `clip-path`; do not style one on it. No `data-rise` inside the window: the rise engine hides
-  what starts below the fold, and the window must show its content from the first frame.
-- Sizes are re-measured when the page, the host or the focus resizes and when web fonts finish loading (without the
-  last two, the closed window was framed on the fallback face's box in 3 of 4 sandbox loads).
-- The focus is measured from layout offsets (`offsetLeft` / `offsetTop` up to the window layer), not from
-  `getBoundingClientRect()`: on the v5 page it is a Harness value the switch rolls away with `translate`, and a
-  re-measure while it was rolled away (a FAQ item opening resizes the body) framed the closed window 24 px off it.
+- Markup: `[data-portal]` > `[data-portal-pin]` (first, at the host's top) > the ground `[data-portal-window]` (an
+  opaque ground, empty or decorative: it covers the host once open), then
+  `<svg data-portal-frame aria-hidden="true"><path data-portal-outline/><path data-portal-line/></svg>`, then the
+  content, painted over both (the v5 page: `.v5-spec-in`, `position: relative`). In the content, an empty
+  `<span data-portal-door aria-hidden="true">` laid out where the closed mark goes (the v5 page: on the axis, 40 px
+  under the H2, `clamp(200px, 30vh, 280px)` wide), and `data-portal-reveal` on what the window must hold before it
+  shows (the v5 page: the card). Measured on the v5 page: the closed block is 270 × 214 at 1440 × 900, 240 × 190 at
+  1280 × 800, 230 × 182 at 1024 × 768, 204 × 162 at 901 × 680 and 280 × 222 at 1920 × 1080.
+- The ground owns its `clip-path`; do not style one on it. No `data-rise` in the pin: the rise engine hides what
+  starts below the fold, and the heading must be on the page from its first frame.
+- Hidden reveals keep their place and stay in the accessibility tree (opacity, not `visibility`), and take no pointer.
+- Sizes are re-measured when the page, the host, the door or a reveal resizes and when web fonts finish loading.
+  Boxes come from layout offsets (`offsetLeft` / `offsetTop` up to the pin), not `getBoundingClientRect()`, so a
+  `translate` on the way (the harness switch rolls its values with it) does not move them.
 - The host's live height is the pin's screen, plus the range's end, plus the time the open content stays pinned.
-- A wide focus makes a wide window: on the v5 page the focus is the whole Harness cell (big name and the four names),
-  464 × 368 px closed at 1440 × 900 with the names two by two, 692 × 547 with them on one line (staging
-  `v5/polish/spec/NOTES.md` §4). With `data-portal-range` starting at -0.25, the space between the spec title and
-  the fold when the door starts is 398 px at 1440 × 900, and the window that stands on the axis and shows the whole
-  cell is 416 px tall with the mark's bar under it: even hung right under the title, the bar starts below the fold
-  (measured: 56 px below with the window's top in the title's gap) and the zoom carries it further down.
-- Focus inside the window opens it while focus stays inside (measured with Tab: `open`, the focused link
-  `:focus-visible`, on screen and topmost), unless the focus came from a pointer press: `clip-path` also clips
-  hit-testing, so a press can only land on the visible part (a `mask-image` would still take the click; measured).
-  Screen readers get the whole content either way: with the window small, Chrome's accessibility tree still holds
-  every string of the sandbox's table, none ignored (measured).
+- Keyboard focus inside the pin opens the door at once (`open`: everything shown), while focus stays inside; focus that
+  comes from a pointer press does not, since a press lands on what is shown.
 - With the harness switch (`harness-switch.ts`) on the same screen, two ways (REVIEW-v5 §6-4):
-  - time driver (`data-switch="time"`, the v5 page's default, A): the pass waits for the door, starting once
-    `data-portal-state` is `open` and the slot is in view, so no value rolls while the window still clips. The host
-    needs no pinned time for it: 110vh with the range `-0.25,0.1` opens the door just as the pin ends;
-  - scroll driver (`data-switch="scroll"`, B): put `data-switch-run` on the portal host; its run starts at the pin,
-    so the door is open at `b × 100vh / (host height − 100vh)` of it (1/3 with the defaults above, 0.1 with a 200vh
-    host and the range above), and `data-switch-span` should start after that.
+  - time driver (`data-switch="time"`, the v5 page's default, A): the pass waits until the door is open or the card
+    that holds the slot is shown, so nothing rolls unseen; the host needs no pinned time for it (A: 120vh, range
+    `-0.4,0`: open as the pin starts, pinned for a fifth of a screen);
+  - scroll driver (`data-switch="scroll"`, B): put `data-switch-run` on the portal host; its run starts at the pin, so
+    the door is open at `b × 100vh / (host height − 100vh)` of it (0 with the range above), and `data-switch-span`
+    should start after that.
 - Reduced motion, no JS, phones and 1024 × 600, a pin a capture tool sets to `position: static`
-  (`tools/capture-v4.ts` UNSTICK): not live, no mask, the content in the flow. A runtime change of the media query
-  or of reduced motion is followed both ways.
+  (`tools/capture-v4.ts` UNSTICK): not live, no clip, nothing hidden, the content in the flow. A runtime change of the
+  media query or of reduced motion is followed both ways.
 
 ## Harness switch — `[data-switch]`
 
@@ -380,7 +398,7 @@ the spec table's Harness value (runtime glyph and name in the display serif). `i
 | `data-switch="scroll"` | the run's progress picks the value; `data-switch-span="a,b"` (default `0,1`) spreads the values evenly over that share of the run; crossing a threshold starts the roll in the scroll's direction; going back, a value holds until 32 px above its threshold | v4c design review P2-4 (the timed flip and the scroll were two clocks); `stage.ts` hysteresis |
 | Run | the closest `[data-switch-run]`, else the closest `[data-stage]`: a tall section around a sticky layer | `stage.ts` |
 | Scroll driver when | `data-switch-media`, default the run's `data-stage-media`, else `(min-width: 901px) and (min-height: 680px)`; outside it, and without a run, the time driver runs | `sections/stage.ts` `STAGE_MEDIA` |
-| `data-switch="time"` | while in view, one pass: second value → … → first value, one roll every `data-switch-hold` ms (default 2100, clamped 1000–6000). Four values take three rolls: 4.9 s of motion, inside WCAG 2.2.2's 5 s like `play-for.ts` and `linefield.ts`. Pauses while the slot is outside the middle 70 % of the viewport, under a mouse, focused within, in a hidden tab, or, inside a live `[data-portal]`, while that door is not `open` (the pass starts once the window no longer clips). Rests on the first value; plays again after the slot has left the viewport entirely | a13n rolls every 2.4 s forever (not kept); v4a turned once; the door gate: staging `v5/review/graft-yc.md` P1-1 (prototype A rolled while the window was small and cut "Claude Agent SD") |
+| `data-switch="time"` | one pass per page view, while in view: the first value shows for `data-switch-lead` ms (default 2100), then every other value in turn and the first again, one roll every `data-switch-hold` ms (default 1400; both clamped 1000–6000). Four values take four rolls: 3 × 1.4 s + 0.72 s = 4.92 s of motion, inside WCAG 2.2.2's 5 s like `play-for.ts` and `linefield.ts` (the lead is still). Pauses while the slot is outside the middle 70 % of the viewport, under a mouse, focused within, in a hidden tab, or, inside a live `[data-portal]`, while that door is neither `open` nor shows the slot's `[data-portal-reveal]`. Rests on the first value for good: leaving and coming back does not play it again, nor does a driver restart (reduced motion off and on) | a13n rolls every 2.4 s forever (not kept); v4a turned once; the door gate: staging `v5/review/graft-yc.md` P1-1; first value first and no replay: round 3a (staging `v5/polish/verify-metrics.md` §15-3: it replayed on every return; owner-notes 21:57 「门开后 Harness 按时间转一轮」; the door showed Claude Agent SDK first) |
 
 Writes: on `[data-switch]` `data-switch-mode="live"`, `data-switch-driver="scroll | time"`, `data-switch-at="k"`,
 `data-switch-ready` (two frames after going live), and for the time driver `data-switch-pass="play | hold | done"`;
@@ -388,12 +406,13 @@ on every `[data-switch-item]` `data-switch-state="past | active | next"`.
 
 With the portal on the same screen (see "Portal" above), either driver:
 
-- time (the v5 page, A; REVIEW-v5 §6-4): the pass waits for the open door, so the host needs no pinned time for it
-  (110vh). Measured on the v5 page, 1440 × 900, the door opened by a jump to its end: the rolls come 2,103 / 4,205 /
-  6,311 ms after `data-portal-state` turns `open`, the last ends 4.93 s after the first starts, the pass rests on
-  OpenAI Codex; nothing rolls while the door is closed or opening (`data-switch-pass="hold"`); a 3 s hover pushes the
-  next roll back by 3 s (staging `v5/polish/spec/data/time-A-1440*.json`). The four names stay readable while the slot
-  shows one: on the v5 page a list under the slot names all four (`sections/spec.ts`).
+- time (the v5 page, A; REVIEW-v5 §6-4): the pass waits until the door is open or the card that holds the slot is
+  shown, so the host needs no pinned time for it (120vh). Measured on the v5 page (round 3a, staging
+  `v5/round3/door/data/pass-*.json`), 1440 × 900: OpenAI Codex, then rolls 1,400–1,420 ms apart to Claude Agent SDK,
+  OpenCode, Pi and OpenAI Codex (`pass=done`), the last ending about 4.9 s after the first starts; scrolled 2,500 px
+  away and back, it stays on OpenAI Codex, `done`. 390 × 844 (no door): the same pass once the cell is in the band,
+  and no replay. The four names stay readable while the slot shows one: on the v5 page a list under the slot names
+  all four and marks the current one (`sections/spec.ts`).
 - scroll (B, the integrator's `redesign/v5-pin`): `data-switch-run` on the portal host; the door is open at 1/3 of
   its run with the portal's defaults, so start the span after that (`0.4,0.95` there). Give each value about
   300–400 px of scroll (the sandbox: a 300vh run, span `0.1,0.9`, 360 px per value at 900 px tall); with the
@@ -444,10 +463,11 @@ static row at the very next style recalc, a frame before the engine hears the ch
 
 Measured on the sandbox (1440×900 and 390×844, headless Chrome; `data/` there):
 
-- Time driver: rolls 2102 / 4203 / 6304 ms after the slot entered the band; the last value is whole at 7029 ms, so
-  the motion lasts 4927 ms. Hover (3004 ms), focus (2503 ms) and a hidden tab (simulated, 2002 ms) push the next roll
-  back by exactly that long; leaving the view keeps the remaining time (1591 ms); after a whole pass, leaving the
-  viewport resets it unseen and coming back plays a whole pass again.
+- Time driver (the 2026-10-20 sandbox: three rolls of 2.1 s from the second value; the v5 page now runs four rolls of
+  1.4 s after a 2.1 s lead, measured above): rolls 2102 / 4203 / 6304 ms after the slot entered the band; the last
+  value is whole at 7029 ms, so the motion lasts 4927 ms. Hover (3004 ms), focus (2503 ms) and a hidden tab
+  (simulated, 2002 ms) push the next roll back by exactly that long; leaving the view keeps the remaining time
+  (1591 ms). (The sandbox also replayed a whole pass after the slot had left the viewport; the engine no longer does.)
 - Scroll driver, keyboard: switches at y 721 / 1086 / 1444 going down (thresholds 720 / 1080 / 1440) and
   1407 / 1041 / 683 going back (688 / 1048 / 1408); all 86 rests after ArrowDown, ArrowUp, PageDown and PageUp show
   exactly one whole value. A jump over three values rolls once.

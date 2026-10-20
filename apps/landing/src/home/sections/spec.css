@@ -1,46 +1,62 @@
-/* 2b The spec table (sections/spec.ts), graft 2026-10-20, fix round (staging v5/polish/spec/NOTES.md). Every rule is
-   scoped to .v5-spec; tokens, type and the keycap come from ../system.css, the field's bitmap and grain from
-   ../v5-fields.css (.v5-field--spec, T1: the stage's light and grain, no chroma).
+/* 2b The spec table (sections/spec.ts), graft 2026-10-20, fix round (staging v5/polish/spec/NOTES.md), round 3a, the
+   door (staging v5/round3/door/NOTES.md). Every rule is scoped to .v5-spec; tokens and type come from ../system.css,
+   the field's bitmap and grain from ../v5-fields.css (.v5-field--spec, T1: the stage's light and grain, no chroma).
    Sources: v4c's U10 spec table (redesign/v4c apps/landing/src/home/home.css .spec*: 1px ink top rule, label and
    value columns, the 86px Harness row, the big display value with its glyph, the other names small), a13n's spec
    sheet (staging refs/devices/crops/a13n-spec-table.jpg), v4a's type use (two-tone H2, labels and values, inline
-   glyphs), v4b's clean card on a field, the footer's harness tiles (Dub's list icons, ./footer.css .v5-ft-tile), and
-   the two engine contracts of src/effects/v5/README.md ("Portal": the system.css block, with the section's own host
-   height here; "Harness switch": copied below, scoped). Measured: staging v5/graft/INTEGRATION.md, the spec screen,
-   and v5/polish/spec/NOTES.md.
+   glyphs), v4b's clean card on a field, Dub's list tiles (BRIEF T7, variant B: neutral tile, ink glyph), and the two
+   engine contracts of src/effects/v5/README.md ("Portal": the system.css block, with the section's own host height
+   and layers here; "Harness switch": copied below, scoped). Measured: staging v5/graft/INTEGRATION.md, the spec
+   screen, v5/polish/spec/NOTES.md and v5/round3/door/NOTES.md.
 
-   Two layouts from one DOM:
+   Three layers in the pin, from one DOM: the ground (.v5-spec-window: the field alone), the door's frame (an svg)
+   and the content (.v5-spec-in: the H2, the door's placeholder, the card), painted in that order.
    - default (no JS, reduced motion, below 901px wide or 680px tall): a plate like the stage's (the field, 1120 wide,
-     radius 16) with the card in its middle; the Harness row shows the first harness large and the four listed under
-     it, the first in ink;
-   - live ([data-portal-mode="live"], src/effects/v5/portal.ts): the section is 110vh (A; B is 200vh), its layer
-     sticks for a tenth of a screen (B: one screen), the window layer fills it (the field under the nav, the card
-     centred below the bar) and the portal clips it to the mark's block until the door is open; the Harness value
-     rolls (src/effects/v5/harness-switch.ts) and the list marks the current one in ink. */
+     radius 16) with the H2 and the card in its middle; the Harness row shows the first harness large and the four
+     listed under it, the first marked;
+   - live ([data-portal-mode="live"], src/effects/v5/portal.ts): the section is 120vh (A; B is 200vh), its pin sticks
+     for a fifth of a screen (B: one screen), the ground fills it and the content is centred below the bar. The
+     portal clips the ground to the mosoo mark, closed under the H2 (.v5-spec-door), until the door is open; the card
+     shows only once the window holds it (data-portal-shown); the H2 is never clipped. The Harness value rolls
+     (src/effects/v5/harness-switch.ts) and the list marks the current one. */
 
 /* ----------------------------------------------------------------------------------- default: card on a plate */
-.v5-spec .v5-spec-window {
+.v5-spec .v5-spec-pin {
   display: grid;
-  justify-items: center;
   width: var(--w);
   margin-inline: auto;
-  padding: 96px 24px;
-  border-radius: 16px; /* the stage's plates */
 }
 
-/* Title over table, as in v4c and a13n, in one column as wide as the card. */
+/* The ground: the stage's plates (radius 16), as tall as the content it sits under. */
+.v5-spec .v5-spec-window {
+  grid-area: 1 / 1;
+  border-radius: 16px;
+}
+
+/* Title over table, as in v4c and a13n, in one column as wide as the card, painted over the ground (both are
+   positioned: the field is position: relative, ../v5-fields.css). */
 .v5-spec .v5-spec-in {
-  width: min(880px, 100%);
+  position: relative;
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-self: center;
+  width: min(880px, 100% - 48px);
+  padding-block: 96px;
 }
 
-/* The system H2 (Hedvig 48, two tones, one line each here), on the field: its second line in ink-3-text (4.5:1 on the
-   darkest 5% of the field behind it, 4.7:1 median, open at 1440; 4.6-4.7 on the still plates; 24px and up needs 3:1;
-   staging v5/polish/spec/data/contrast-h2b.jsonl). The gap under it is where the portal's closed
-   window starts: the window hangs from the Harness cell with room for half this gap above the card (spec.ts
-   PORTAL_ROOM), so its top edge falls between title and card and cuts no glyph. */
+/* The system H2 (display 48, two tones, one line each here), on the field: its second line in ink-3-text (4.5:1 on
+   the darkest 5% of the field behind it, 4.7:1 median, open at 1440; 4.6-4.7 on the still plates; 24px and up needs
+   3:1; staging v5/polish/spec/data/contrast-h2b.jsonl; on the white paper before the door opens, 5.2:1). */
 .v5-spec .v5-spec-title {
   --tone-b: var(--ink-3-text);
+  grid-row: 1;
   margin-bottom: 72px;
+}
+
+/* The closed door's box (portal.ts reads it): only in the live layout, below. */
+.v5-spec .v5-spec-door {
+  display: none;
 }
 
 /* One clean card (v4b) that is the table: the paper's white, radius 12, the stage kit's top shadow (kit/kit.css
@@ -49,6 +65,8 @@
    fallback. A transparent 1px border shows as a frame where forced colours drop the background. */
 .v5-spec .v5-spec-card {
   --k: clamp(15px, 0.9vw + 8px, 20px);
+  grid-row: 2;
+  grid-column: 1;
   padding: 32px 44px 20px;
   border: 1px solid transparent;
   border-radius: 12px;
@@ -126,16 +144,20 @@
   height: 100%;
 }
 
-/* Files: the page's keycap (system .v5-kc: Fragment Mono .84em, 1px ink, r8, white), as a code element. */
-.v5-spec .v5-spec-tok {
-  margin: 0;
+/* Files: the file glyph (the kit's File02, as the Watch card's file events) and the path in mono, no box: a path is
+   mono, a name is not boxed (committee O1, PLAN 1-2 item 4; the lab's column a, committee/labs/frame/sheets/
+   detail-1440-rest.jpg). 15px mono on the row's 24px line, as the lab set it. */
+.v5-spec .v5-spec-path {
+  color: var(--ink);
+  font: 400 15px/1.6 var(--font-mono);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere; /* a path breaks at any character before it overflows a phone card */
 }
 
 /* ------------------------------------------------------------------------------------------- the Harness row */
 /* The value large in the display face with its runtime glyph (v4c .spec-face, 38px; a13n's first row), and under it
-   the four names (graft-yc P1-2: which four is answered by this list in every state, not by the rolling slot). The
-   cell is as wide as its content (start), so the portal's closed window, which shows this cell whole, is as narrow
-   as it can be. Still (no JS, reduced motion): the first harness, and the list with the first in ink. */
+   the four names (graft-yc P1-2: which four is answered by this list in every state, not by the rolling slot). Still
+   (no JS, reduced motion): the first harness, and the list with the first marked. */
 .v5-spec .v5-spec-harness {
   flex-direction: column;
   align-items: flex-start;
@@ -168,13 +190,10 @@
   height: 28px;
 }
 
-/* The list: 17px, the values' size, in ink-2, the current name in ink; each name after the footer's glyph tile (a
-   20px lime square, radius 5, a 5% inset ring, the glyph 12px in ink: footer.css .v5-ft-tile / .v5-ft-glyph, copied).
-   Two by two at every width (graft-design P2-5 asked it for phones, where one name then three read as a split): on
-   one line the cell is 513px wide at 1440 and the closed door, which must show the whole cell on the page's axis,
-   grows from 464 x 368 to 692 x 547 at 1440 x 900, and from 409 x 323 to 755 x 597 at 901 x 680 (measured; staging
-   v5/polish/spec/NOTES.md §4). Down the columns, in HARNESS_IDS order: the two long names share the first column,
-   which is what lets the grid fit a 390 card. */
+/* The list: 17px, the values' size, in ink-2; each name after a neutral glyph tile (BRIEF T7 variant B: 20px, radius
+   5, ink 6%, the glyph 12px in ink; committee O1: the four lime tiles of UI-LOCK §15 exception 4 go neutral, lime
+   stays the page's one large colour and the CTA's). Two by two at every width (graft-design P2-5), down the columns
+   in HARNESS_IDS order: the two long names share the first column, which is what lets the grid fit a 390 card. */
 .v5-spec .v5-spec-idx {
   display: grid;
   grid-template-rows: repeat(2, auto);
@@ -200,8 +219,7 @@
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  background: var(--accent);
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.05);
+  background: rgb(22 24 21 / 0.06);
   color: var(--ink);
 }
 
@@ -210,13 +228,22 @@
   height: 12px;
 }
 
-/* The current name: the first while still, then the switch's (data-switch-at). */
+/* The current name (the first while still, then the switch's data-switch-at): ink, and its tile inverted, ink with a
+   white glyph, so the mark is a shape and not only a colour (WCAG 1.4.1; five of five readers asked which name was
+   the selected one, staging v5/polish/personas/spec-A-answers.json). The big value above names it too. */
 .v5-spec .v5-spec-harness:not([data-switch-at]) .v5-spec-name:first-child,
 .v5-spec [data-switch-at="0"] .v5-spec-name:nth-child(1),
 .v5-spec [data-switch-at="1"] .v5-spec-name:nth-child(2),
 .v5-spec [data-switch-at="2"] .v5-spec-name:nth-child(3),
 .v5-spec [data-switch-at="3"] .v5-spec-name:nth-child(4) {
+  --tile-bg: var(--ink);
+  --tile-fg: var(--paper);
   color: var(--ink);
+}
+
+.v5-spec .v5-spec-name .v5-spec-tile {
+  background: var(--tile-bg, rgb(22 24 21 / 0.06));
+  color: var(--tile-fg, var(--ink));
 }
 
 /* Harness switch (README "Harness switch", the contract, scoped): live, the four values share one grid cell as wide
@@ -265,34 +292,86 @@
       visibility 0s linear 0.46s; /* a leaving value stays visible until it is gone */
   }
 
-  .v5-spec [data-switch-ready] .v5-spec-name {
-    transition: color 0.46s var(--ease-expo);
+  .v5-spec [data-switch-ready] .v5-spec-name,
+  .v5-spec [data-switch-ready] .v5-spec-tile {
+    transition:
+      color 0.46s var(--ease-expo),
+      background-color 0.46s var(--ease-expo);
   }
 }
 
 /* ---------------------------------------------------------------------------------------------- live: the door */
-/* The portal contract is system.css's (README "Portal": the sticky pin, the window layer at inset 0, the 1px frame,
-   the print end state); this section sets its own height and lays the window out: the field under the floating nav,
-   the card centred below the bar (12 + 56px).
-   Height, A (REVIEW-v5 §6-4, the default): the pinned screen plus a tenth of one, so the door (-0.25..0.1 screens,
-   spec.ts) is open just as the pin ends and the table then scrolls on with the page; the switch runs on time.
-   B (the scroll driver, redesign/v5-pin): 200vh, the open table pinned for one screen while the value rolls. */
-.v5-spec[data-portal-mode="live"] {
-  height: 110vh;
-}
+/* The portal contract is system.css's (README "Portal": the sticky pin, the ground at inset 0, the 1px frame, the
+   print end state); this section sets its own height and lays the pin out. Screen only: printed, the system.css
+   print block unsticks the pin and the still layout above comes back.
+   Height, A (REVIEW-v5 §6-4, the default): the pinned screen plus a fifth of one; the door (spec.ts PORTAL_RANGE)
+   opens while the section comes in and is open as the pin starts, so the open table holds for the pin and then the
+   H2's way up to the bar (about 290px of scroll at 1440 x 900; it was about 100, staging v5/polish/verify-visual.md
+   §0-2); the switch runs on time. The gap above the section gives back the tenth of a screen this adds (144 -> 54px:
+   the H2 is on the page before the door, so the stage's last plate needs less white under it), and the page is as
+   long as before at 900px tall. B (the scroll driver, redesign/v5-pin): 200vh, the open table pinned for one screen
+   while the value rolls. */
+@media screen {
+  .v5-spec[data-portal-mode="live"] {
+    height: 120vh;
+    margin-top: 54px;
+  }
 
-.v5-spec[data-portal-mode="live"] .v5-spec-window {
-  align-content: center;
-  width: auto;
-  margin: 0;
-  padding: 68px 24px 0;
-  border-radius: 12px; /* the paper's, as the lime panel's: the band's corners show when it leaves */
+  /* The content centred below the floating bar (12 + 56px), in the card's column; the ground and the frame are the
+     contract's absolute layers over the whole pin. */
+  .v5-spec[data-portal-mode="live"] .v5-spec-pin {
+    grid-template-columns: min(880px, 100% - 48px);
+    align-content: center;
+    justify-content: center;
+    width: auto;
+    margin: 0;
+    padding-top: 68px;
+  }
+
+  /* Out of the grid cell, so the pin (not the content's cell) is its containing block; the paper's radius, as the
+     lime panel's: the band's corners show when it leaves. */
+  .v5-spec[data-portal-mode="live"] .v5-spec-window {
+    grid-area: auto;
+    border-radius: 12px;
+  }
+
+  .v5-spec[data-portal-mode="live"] .v5-spec-in {
+    grid-area: auto;
+    justify-self: stretch; /* the card's column, 880 at 1440 (centred, an auto width would shrink to its content) */
+    width: auto;
+    padding: 0;
+  }
+
+  /* The closed door: the mark's block (BRAND_MARK: 34.872 x 27.577), on the axis, its top 40px under the H2 (32px
+     above the card, in the 72px gap), a little under a third of the screen's height wide. Only its box is used. */
+  .v5-spec[data-portal-mode="live"] .v5-spec-door {
+    display: block;
+    grid-row: 2;
+    grid-column: 1;
+    align-self: start;
+    justify-self: center;
+    width: clamp(200px, 30vh, 280px);
+    aspect-ratio: 34.8718 / 27.5767;
+    margin-top: -32px;
+    visibility: hidden;
+  }
+
+  /* The card shows once the window holds it (portal.ts): on time, not scrubbed, so a reader who stops never sees half
+     a table; hidden, it is still read by screen readers (opacity keeps it in the accessibility tree) and takes no
+     pointer. */
+  .v5-spec[data-portal-mode="live"] [data-portal-reveal] {
+    transition: opacity 0.32s var(--ease-expo);
+  }
+
+  .v5-spec[data-portal-mode="live"] [data-portal-reveal]:not([data-portal-shown]) {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
 /* Short screens (680-800px tall) still pin: the rows under the Harness row give up some air, so title and card fit
-   under the bar at 680 (measured). The title's gap, the card's top padding and the Harness row keep their values:
-   they set where the closed window's top falls (spec.ts PORTAL_ROOM). */
-@media (max-height: 800px) {
+   under the bar at 680 (measured). */
+@media screen and (max-height: 800px) {
   .v5-spec[data-portal-mode="live"] .v5-spec-card {
     padding-bottom: 12px;
   }
@@ -306,8 +385,12 @@
 /* ------------------------------------------------------------------------------------------------ phones */
 @media (max-width: 720px) {
   .v5-spec .v5-spec-window {
-    padding: 12px;
     border-radius: 14px; /* the stage's phone plates */
+  }
+
+  .v5-spec .v5-spec-in {
+    width: min(880px, 100% - 24px);
+    padding-block: 12px;
   }
 
   .v5-spec .v5-spec-card {
@@ -372,5 +455,21 @@
   /* As specific as the contract's live frame rule (system.css), which would otherwise keep the ink stroke. */
   .v5-spec[data-portal-mode] .v5-spec-frame {
     stroke: CanvasText;
+  }
+
+  /* Forced colours drop tile grounds: the current name keeps its inverted tile in system colours. */
+  .v5-spec .v5-spec-name .v5-spec-tile {
+    forced-color-adjust: none;
+    background: var(--tile-bg, Canvas);
+    color: var(--tile-fg, CanvasText);
+  }
+
+  .v5-spec .v5-spec-harness:not([data-switch-at]) .v5-spec-name:first-child,
+  .v5-spec [data-switch-at="0"] .v5-spec-name:nth-child(1),
+  .v5-spec [data-switch-at="1"] .v5-spec-name:nth-child(2),
+  .v5-spec [data-switch-at="2"] .v5-spec-name:nth-child(3),
+  .v5-spec [data-switch-at="3"] .v5-spec-name:nth-child(4) {
+    --tile-bg: CanvasText;
+    --tile-fg: Canvas;
   }
 }

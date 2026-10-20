@@ -21,16 +21,17 @@
 //                         back, a value holds until the scroll is 32 px above its threshold (as stage.ts). Runs while
 //                         data-switch-media matches (default: the run's data-stage-media, else where the v5 stage
 //                         pins); elsewhere, and when there is no run, the time driver runs.
-//   data-switch="time"    While the slot is in view: one pass, from the second value round to the first, one roll
-//                         every data-switch-hold ms (default 2100). Four values take three rolls: 2 × 2.1 s + the
-//                         0.72 s roll = 4.92 s of motion, inside the 5 s of WCAG 2.2.2 that every self-starting motion
-//                         on the page keeps (play-for.ts, linefield.ts), where a13n loops forever. It pauses while
-//                         the slot is outside the middle 70 % of the viewport, under a mouse, focused within, in a
-//                         hidden tab, or, inside a live [data-portal] (portal.ts), while that door is not open: the
-//                         pass starts once the window is open, so it never rolls while the window still clips (v5 fix
-//                         round; staging v5/review/graft-yc.md P1-1: without that wait a value wider than the closed
-//                         window was cut). It rests on the first value (the first in the markup, the harness the
-//                         stage's Call names) and plays again once the slot has left the viewport entirely.
+//   data-switch="time"    One pass per page view: the first value (the first in the markup, the harness the stage's
+//                         Call names) shows for data-switch-lead ms (default 2100), then every other value in turn and
+//                         the first again, one roll every data-switch-hold ms (default 1400). Four values take four
+//                         rolls: 3 × 1.4 s + the 0.72 s roll = 4.92 s of motion, inside the 5 s of WCAG 2.2.2 that
+//                         every self-starting motion on the page keeps (play-for.ts, linefield.ts), where a13n loops
+//                         forever. It pauses while the slot is outside the middle 70 % of the viewport, under a mouse,
+//                         focused within, in a hidden tab, or, inside a live [data-portal] (portal.ts), while that door
+//                         neither is open nor shows the slot's [data-portal-reveal] (the pass never starts while the
+//                         slot is hidden). It rests on the first value for good: leaving and coming back does not play
+//                         it again (round 3a; staging v5/polish/verify-metrics.md §15-3: the replay on every return was
+//                         not the owner's one pass, owner-notes 21:57 「门开后 Harness 按时间转一轮」).
 //
 // Writes on [data-switch]: data-switch-mode="live", data-switch-driver="scroll | time", data-switch-at="k", and, two
 // frames after going live, data-switch-ready (the CSS hangs its transitions on it, so the first live paint never
@@ -40,7 +41,7 @@
 // No JS, prefers-reduced-motion and a failed init write nothing: the CSS default lays every value out in the row, and a
 // visually hidden list next to the aria-hidden slot gives a screen reader each name once (README). A media change at
 // runtime is followed: reduce → the static row (a roll in flight is cancelled); scroll ↔ time when data-switch-media
-// flips.
+// flips. A finished pass stays finished across those changes.
 
 type Driver = "scroll" | "time";
 /** "line": values before the current one wait above, values after it below (scroll). "ring": only the previous value
@@ -51,8 +52,10 @@ type Order = "line" | "ring";
 /** sections/stage.ts STAGE_MEDIA: where the v5 stage pins. */
 const PIN_MEDIA = "(min-width: 901px) and (min-height: 680px)";
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
-/** Time driver: from one roll's start to the next. a13n's period is 2400 ms; 2100 fits three rolls in 5 s. */
-const HOLD_MS = 2100;
+/** Time driver: how long the first value shows before the pass rolls (it is still, so it is not motion). */
+const LEAD_MS = 2100;
+/** Time driver: from one roll's start to the next. a13n's period is 2400 ms; 1400 fits four rolls in 5 s. */
+const HOLD_MS = 1400;
 /** Scroll driver, going back: a value holds until the scroll is this far above its threshold. */
 const BACK_PX = 32;
 /** Time driver: the slot counts as in view when it is whole inside the middle 70 % of the viewport. */
@@ -65,9 +68,9 @@ function parseSpan(raw: string | undefined): readonly [number, number] {
   return a !== undefined && b !== undefined && a >= 0 && b <= 1 && a < b ? [a, b] : [0, 1];
 }
 
-function parseHold(raw: string | undefined): number {
+function parseMs(raw: string | undefined, fallback: number): number {
   const ms = Number.parseFloat(raw ?? "");
-  return Number.isFinite(ms) ? Math.min(6000, Math.max(1000, ms)) : HOLD_MS;
+  return Number.isFinite(ms) ? Math.min(6000, Math.max(1000, ms)) : fallback;
 }
 
 function mountSwitch(root: HTMLElement): () => void {
@@ -85,6 +88,7 @@ function mountSwitch(root: HTMLElement): () => void {
   let stopDriver = (): void => {};
   let readyFrame = 0;
   let at = -1;
+  let played = false; // the time driver's one pass is over (for the page view, across driver restarts)
 
   const show = (k: number, order: Order): void => {
     at = k;
@@ -144,16 +148,21 @@ function mountSwitch(root: HTMLElement): () => void {
   };
 
   const timeDriver = (): (() => void) => {
-    const hold = parseHold(root.dataset["switchHold"]);
-    const first = 1 % n; // the pass starts here and ends on value 0
-    // A door around the slot (portal.ts): live, it writes data-portal-state; the pass waits for "open".
+    const lead = parseMs(root.dataset["switchLead"], LEAD_MS);
+    const hold = parseMs(root.dataset["switchHold"], HOLD_MS);
+    // A door around the slot (portal.ts): live, it writes data-portal-state on itself and data-portal-shown on the
+    // part it reveals; the pass waits until the door is open or the slot's part is shown.
     const door = root.closest<HTMLElement>("[data-portal]");
+    const part = root.closest<HTMLElement>("[data-portal-reveal]");
     const doorOpen = (): boolean =>
-      !door || door.dataset["portalMode"] !== "live" || door.dataset["portalState"] === "open";
+      !door ||
+      door.dataset["portalMode"] !== "live" ||
+      door.dataset["portalState"] === "open" ||
+      (part?.hasAttribute("data-portal-shown") ?? false);
     let rolls = 0;
     let timer = 0;
     let due = 0;
-    let left = hold;
+    let left = lead;
     let inBand = false;
     let hovered = false;
     let focused = false;
@@ -171,7 +180,7 @@ function mountSwitch(root: HTMLElement): () => void {
       }
     };
     const update = (): void => {
-      if (rolls >= n - 1) {
+      if (played) {
         halt();
         setPass("done");
         return;
@@ -189,6 +198,7 @@ function mountSwitch(root: HTMLElement): () => void {
       timer = 0;
       rolls += 1;
       left = hold;
+      played = rolls >= n; // every other value once, then the first again
       show((at + 1) % n, "ring");
       update();
     }
@@ -207,19 +217,6 @@ function mountSwitch(root: HTMLElement): () => void {
       },
       { rootMargin: BAND, threshold: [0, 0.5, 0.99, 1] },
     );
-    const view = new IntersectionObserver((entries) => {
-      const entry = entries[entries.length - 1];
-      if (entry && !entry.isIntersecting) {
-        inBand = false; // whichever observer reports first, a slot off the screen is not in the band
-        if (rolls >= n - 1) {
-          // Off the screen after a whole pass: set up the next one unseen.
-          rolls = 0;
-          left = hold;
-          show(first, "ring");
-        }
-        update();
-      }
-    });
     const onPointer = (event: PointerEvent): void => {
       if (event.pointerType !== "touch") {
         hovered = event.type === "pointerenter";
@@ -235,25 +232,28 @@ function mountSwitch(root: HTMLElement): () => void {
       update();
     };
 
-    // The door's state changes a few times per pass through it (closed, opening, open): follow it.
+    // The door changes a few times per pass through it (closed, opening, shown, open): follow it.
     const doorWatch = new MutationObserver(update);
     if (door) {
       doorWatch.observe(door, { attributes: true, attributeFilter: ["data-portal-mode", "data-portal-state"] });
     }
+    if (part) {
+      doorWatch.observe(part, { attributes: true, attributeFilter: ["data-portal-shown"] });
+    }
 
-    show(first, "ring");
+    // The first value, at rest: where the pass starts, and where a finished one stays.
+    show(0, "ring");
     band.observe(root);
-    view.observe(root);
     root.addEventListener("pointerenter", onPointer);
     root.addEventListener("pointerleave", onPointer);
     root.addEventListener("focusin", onFocusIn);
     root.addEventListener("focusout", onFocusOut);
     document.addEventListener("visibilitychange", update);
+    update();
     return () => {
       window.clearTimeout(timer);
       doorWatch.disconnect();
       band.disconnect();
-      view.disconnect();
       root.removeEventListener("pointerenter", onPointer);
       root.removeEventListener("pointerleave", onPointer);
       root.removeEventListener("focusin", onFocusIn);
