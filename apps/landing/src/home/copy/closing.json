@@ -1,33 +1,38 @@
 {
-  "$comment": "Slots of sections/closing.ts, on the T1 closing plate (1120x480 at 1440). h2a + h2b: the two-line serif H2 (48px; 34px at 390), centred, <= 30 characters together; each line one line at 1440 up to 20 characters. Then the setup-prompt card in its glass bezel: legend = the card's label in the glass bar (Inter 13px, one line up to 40); prompt = the sentence the Copy button puts on the clipboard (Inter 16px; one line up to about 50 characters at 1440, two lines at 390); copy / copied = the button's two states (the button is as wide as the longer one; the live region announces copied). Then primary = the lime CTA, and caption = the one line under it (what happens when you click; one line at 1440, two at 390 when it reaches 50). X placeholders of realistic length; measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs.",
+  "$comment": "Slots of sections/closing.ts, on the T1 closing plate (1120x480 at 1440). h2a + h2b: the two-line serif H2 (48px; 34px at 390), centred, <= 30 characters together; each line one line at 1440 up to 20 characters. Then the setup-prompt card in its glass bezel: legend = the card's label in the glass bar (Inter 13px, one line up to 40); prompt = the sentence the Copy button puts on the clipboard (Inter 16px; one line up to about 50 characters at 1440, two lines at 390); copy / copied = the button's two states (the button is as wide as the longer one; the live region announces copied). Then primary = the lime CTA, and caption = the one line under it (what happens when you click; one line at 1440, two at 390 when it reaches 50). Measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$source": {
+    "h2 + prompt": "v4d's closing, owner-approved (9e92312 home-copy.json close). llms.txt (src/worker.js) is the page the prompt points at: it says how to start a Session over the v2 API and how to set up with a coding agent.",
+    "legend": "Coding agents the console's setup prompt is written for (MAIN apps/web/src/routes/project-overview/onboarding-setup-prompt.ts L6-L7: Codex, Claude Code, OpenCode, Cursor, Cline).",
+    "caption": "What the click does: Try mosoo opens the console (README L18, L43); the first sign-in creates a Default Project (SPEC §2 L22), and a run needs a model provider key first (onboarding prompt step 2, MAIN apps/web/src/shared/i18n/translations/en.json L859; llms.txt 'Before the first run')."
+  },
   "en": {
-    "h2a": "Xxxxx xxxx xxxxx",
-    "h2b": "Xxxxxxx.",
-    "legend": "Xxxxx xxxxxx",
-    "prompt": "Xxxx xxxxx.xx/xxxx.xxx xxx xxxxx xx xxxxx Xxxxxxx.",
-    "copy": "Xxxx",
-    "copied": "Xxxxxx",
-    "primary": "Xxx xxxxx",
-    "caption": "Xx Xxxxx. Xxxx xx xxxxx, xx xxxxxx xxxx."
+    "h2a": "Start your first",
+    "h2b": "Session.",
+    "legend": "Paste into Codex, Claude Code or Cursor",
+    "prompt": "Read mosoo.ai/llms.txt and start my first Session.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "primary": "Try mosoo",
+    "caption": "Opens the console: sign in, add a model key."
   },
   "zh": {
-    "h2a": "ＸＸＸ",
-    "h2b": "ＸＸＸ Session。",
-    "legend": "ＸＸＸＸＸ",
-    "prompt": "Ｘ xxxxx.xx/xxxx.xxx，ＸＸＸＸＸＸ Session。",
-    "copy": "ＸＸ",
-    "copied": "ＸＸＸ",
-    "primary": "ＸＸＸＸＸ",
-    "caption": "ＸＸＸＸ，ＸＸＸＸＸ，ＸＸＸＸＸＸ。"
+    "h2a": "开始你的",
+    "h2b": "第一个 Session。",
+    "legend": "粘贴到 Codex、Claude Code 或 Cursor",
+    "prompt": "读取 mosoo.ai/llms.txt，启动我的首个 Session。",
+    "copy": "复制",
+    "copied": "已复制",
+    "primary": "试用 mosoo",
+    "caption": "打开控制台：登录，再添加你的模型密钥。"
   },
   "ja": {
-    "h2a": "ＸＸＸ",
-    "h2b": "Session ＸＸＸ。",
-    "legend": "ＸＸＸＸＸＸＸＸ",
-    "prompt": "xxxxx.xx/xxxx.xxx ＸＸＸ、ＸＸＸ Session ＸＸＸ。",
-    "copy": "ＸＸＸ",
-    "copied": "ＸＸＸＸ",
-    "primary": "ＸＸＸＸＸＸ",
-    "caption": "ＸＸＸＸＸ。ＸＸＸＸＸＸＸＸＸＸ。"
+    "h2a": "最初の",
+    "h2b": "Session を始めよう。",
+    "legend": "Codex、Claude Code、Cursor に貼り付け",
+    "prompt": "mosoo.ai/llms.txt を読み、最初の Session を始めて。",
+    "copy": "コピー",
+    "copied": "コピー済",
+    "primary": "mosoo を試す",
+    "caption": "コンソールでログインし、モデルキーを追加。"
   }
 }
