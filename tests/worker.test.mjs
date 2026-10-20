@@ -253,7 +253,7 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   assert.match(markdown, /https:\/\/mosoo\.ai\/docs\/llms\.txt/);
   assert.match(markdown, /https:\/\/github\.com\/langgenius\/mosoo/);
   assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
-  assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+  assert.doesNotMatch(markdown, /\bMosoo\b/);
   assert.doesNotMatch(markdown, /<html/i);
 
   const declined = await worker.fetch(
@@ -298,7 +298,7 @@ test("worker answers localized homepages with Markdown in their language", async
     assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json/);
     if (entry.docs) assert.ok(markdown.includes(entry.docs), `${entry.pathname} links ${entry.docs}`);
     assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
-    assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+    assert.doesNotMatch(markdown, /\bMosoo\b/);
   }
 });
 
@@ -350,7 +350,9 @@ test("worker serves a product-wide llms.txt index", async () => {
     assert.ok(markdown.includes(`(${url})`), `llms.txt links ${url}`);
   }
   assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
-  assert.doesNotMatch(markdown, /\bMosoo\b(?! Computer)/);
+  // The brand is lowercase, the second product's name too (owner 2026-10-20 21:57: 「mosoo computer 一律小写」).
+  assert.doesNotMatch(markdown, /\bMosoo\b/);
+  assert.match(markdown, /\[mosoo computer\]\(https:\/\/computer\.mosoo\.ai\)/);
   assert.doesNotMatch(markdown, /<html/i);
 
   const head = await worker.fetch(
@@ -445,7 +447,7 @@ test("worker publishes the Public Thread API catalog and self-contained auth gui
   assert.match(auth, /API base \(v1, wire-compatible\): https:\/\/cloud\.mosoo\.ai\/api\/v1/);
   assert.doesNotMatch(auth, RETIRED_NARRATIVE);
   assert.doesNotMatch(auth, /settings\/access-tokens/);
-  assert.doesNotMatch(auth, /\bMosoo\b(?! Computer)/);
+  assert.doesNotMatch(auth, /\bMosoo\b/);
   assert.doesNotMatch(auth, /[—–]/);
 });
 

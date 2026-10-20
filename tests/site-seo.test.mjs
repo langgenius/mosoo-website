@@ -140,7 +140,9 @@ const sitemapEntries = (xml) =>
 const assertInitialSiteLinks = (html, locale = "en") => {
   assert.match(html, /aria-label="Primary site links"/);
   assert.match(html, /href="https:\/\/cloud\.mosoo\.ai">mosoo<\/a>/);
-  assert.match(html, /href="https:\/\/computer\.mosoo\.ai">Mosoo Computer<\/a>/);
+  // the second product's name in lowercase too (owner 2026-10-20 21:57: 「mosoo computer 一律小写」)
+  assert.match(html, /href="https:\/\/computer\.mosoo\.ai">mosoo computer<\/a>/);
+  assert.doesNotMatch(html, /\bMosoo\b/, "the brand is lowercase mosoo, mosoo computer included");
   // Pricing is unlinked until it is rewritten (staging REVIEW-v4 G9, #138).
   assert.doesNotMatch(html, /href="\/(?:en|zh|ja)\/pricing"/);
   assert.match(html, new RegExp(`href="/${locale}/use-cases"`));
@@ -647,7 +649,7 @@ test("use-case pages describe Sessions with the spec's words, a lowercase brand 
       .filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line))
       .join("\n");
     assert.doesNotMatch(text, /\b[Cc]attle\b|Pet Agent/, `${path} names no removed Agent type (SPEC section 8)`);
-    assert.doesNotMatch(text, /\bMosoo\b(?! Computer)/, `${path} writes the brand in lowercase`);
+    assert.doesNotMatch(text, /\bMosoo\b/, `${path} writes the brand in lowercase, mosoo computer included`);
     assert.doesNotMatch(text, /[—–]/, `${path} has no em or en dashes`);
   }
 });

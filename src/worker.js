@@ -144,7 +144,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 - [Status](https://mosoo.ai/health): Built from production Worker outcomes and Run completions.
 - [Machine-readable status](https://mosoo.ai/status.json): The same data as JSON.
 - [Use cases](https://mosoo.ai/en/use-cases): Projects built on mosoo.
-- [Mosoo Computer](https://computer.mosoo.ai): A separate product, a persistent cloud computer for agents.
+- [mosoo computer](https://computer.mosoo.ai): A separate product, a persistent cloud computer for agents.
 
 ## Build and integrate
 

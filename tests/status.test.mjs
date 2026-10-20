@@ -119,7 +119,7 @@ test("Pi failures and expiry trigger the same incident policy as other runtimes"
   assert.equal(status.releasePolicyTriggered, true);
 });
 
-test("Cloudflare Tail events reuse Mosoo terminal logs without synthetic traffic", () => {
+test("Cloudflare Tail events reuse mosoo terminal logs without synthetic traffic", () => {
   const events = statusEventsFromTailItems(
     [
       {

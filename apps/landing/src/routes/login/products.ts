@@ -11,8 +11,9 @@ export type Product = {
 };
 
 // The two top-level product entry points shown under "Products" in the site
-// chrome: the topbar menu, the mobile menu and the footer. The brand is
-// lowercase "mosoo"; Mosoo Computer is a separate product and keeps its capital.
+// chrome: the topbar menu, the mobile menu and the footer. Both names are
+// lowercase, even at the start of a sentence: "mosoo", and the separate product
+// "mosoo computer" (owner, 2026-10-20 21:57). The URLs keep their spelling.
 export const PRODUCTS: readonly Product[] = [
   {
     id: "mosoo",
@@ -22,7 +23,7 @@ export const PRODUCTS: readonly Product[] = [
   },
   {
     id: "computer",
-    name: "Mosoo Computer",
+    name: "mosoo computer",
     description: t("A persistent cloud computer for agents."),
     href: MOSOO_COMPUTER_URL,
   },

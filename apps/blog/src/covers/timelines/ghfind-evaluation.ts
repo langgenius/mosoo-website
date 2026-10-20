@@ -1,4 +1,4 @@
-// Timeline for "How ghfind turns a Mosoo Agent into a project evaluation feature".
+// Timeline for "How ghfind turns a mosoo Agent into a project evaluation feature".
 // One moment: a repository is submitted and a four-sided judgment unfolds.
 import type { CoverTimeline } from "../runtime";
 

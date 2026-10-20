@@ -26,7 +26,7 @@ test("a published post that references a draft-only folder protects it", () => {
   assert.deepEqual(draftOnlyPermalinks([post("shared-assets", true), published]), []);
 });
 
-test("Introducing Mosoo Computer is published in every locale and keeps its assets", () => {
+test("Introducing mosoo computer is published in every locale and keeps its assets", () => {
   const entries = posts().filter(([name]) => name.startsWith("introducing-mosoo-computer"));
   assert.deepEqual(entries.map(([name]) => name).sort(), ["introducing-mosoo-computer-ja.mdx", "introducing-mosoo-computer-zh.mdx", "introducing-mosoo-computer.mdx"]);
   for (const [name, source] of entries) {
