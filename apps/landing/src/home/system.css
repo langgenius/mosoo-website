@@ -121,8 +121,7 @@
 :root {
   /* Ground (BRIEF §3.1) */
   --frame: #f4f4f4; /* Frame --white-smoke: the desk around the one sheet; chroma 0 */
-  --paper: #ffffff;
-  --dot: rgb(22 24 21 / 0.1); /* v4d's faint 1px dot grid on the paper */
+  --paper: #ffffff; /* plain: the owner had v4d's 1px dot grid removed on 2026-10-20 (「背景灰色点阵太slop了」) */
   /* Ink (v4d UI-LOCK §1.1). ink-3 only for text of 24px and up (4.0:1 on white); small muted text uses ink-3-text,
      from 15px (.v5-small below); 14px text that cannot grow uses ink-2. */
   --ink: #161815;
@@ -283,9 +282,6 @@ main:focus {
   position: relative;
   border-radius: 12px;
   background-color: var(--paper);
-  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
   box-shadow: 0 0 30px rgb(0 0 0 / 0.05); /* Frame's paper: the edge reads on #f4f4f4 (1.10:1) */
   padding: 72px 0 96px; /* top: the strip the loose nav bar (72px) sits in */
 }

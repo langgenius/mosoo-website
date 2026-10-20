@@ -12,7 +12,6 @@
   --d-ink-3: #7f817e;
   --d-line: rgb(22 24 21 / 0.08);
   --d-line-2: rgb(22 24 21 / 0.16);
-  --d-dot: rgb(22 24 21 / 0.1);
   --d-accent: #6fd305;
   --d-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --d-shadow-card: 0 0 0 1px rgb(22 24 21 / 0.05), 0 2px 8px rgb(22 24 21 / 0.07);
@@ -55,14 +54,11 @@ html:has(.d-shell) {
   color: #f4f4f2;
 }
 
-/* The white sheet with the 1px dot grid (Apollo sheet + Ramp dot field). */
+/* The white sheet (Apollo sheet). Plain: the owner had the 1px dot grid removed on 2026-10-20. */
 .d-paper {
   position: relative;
   border-radius: 12px;
   background-color: var(--d-paper);
-  background-image: radial-gradient(var(--d-dot) 1px, transparent 1.2px);
-  background-size: 16px 16px;
-  background-position: 8px 8px;
   padding-bottom: 96px;
 }
 
