@@ -4,8 +4,8 @@
 // the motion. Node imports those TypeScript and JSON modules as they are (type stripping, import attributes).
 //
 // One source for the FAQ: copy/faq.json. The page shows it in native <details name="faq">, the FAQPage JSON-LD
-// carries the same strings, and llms.txt (src/worker.js, "Direct answers") repeats the en ones; the tests keep the
-// three equal. The metadata below (positioning, description, featureList) is not a page slot: it comes from the
+// carries the same strings, and llms.txt (src/worker.js, "Direct answers") starts with the en ones, then adds
+// answers the page leaves out; the tests keep them in step. The metadata below (positioning, description, featureList) is not a page slot: it comes from the
 // main repo (README L8-L9, docs/SPEC.md) through the v1 copy deck. Do not add facts the main repo does not state.
 
 import { HOME_COPY, HOME_LOCALES as LOCALES, LANGUAGES } from "../apps/landing/src/home/copy.ts";

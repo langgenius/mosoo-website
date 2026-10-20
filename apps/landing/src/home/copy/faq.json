@@ -1,11 +1,11 @@
 {
-  "$comment": "Slots of sections/faq.ts. a + b = the two-tone title alone in the left column (serif 48px; 34px at 390; each line one line up to 20 characters at both widths); items = six questions in native <details name=\"faq\"> (first open): q one line at 1440 (Inter 500 18px, up to 48 characters), one or two lines at 390 (17px); a up to four lines at 1440 (16px, 560px measure), six at 390. The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) repeats the en items: tests/worker.test.mjs keeps the three equal. Measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs.",
-  "$temporary": {
-    "items": "The v4d FAQ (routes/login/landing/home-copy.json at 9e92312), kept verbatim in all three locales: llms.txt Direct answers must equal the en items, and the FAQPage JSON-LD needs real answers. Every en item fits the v5 budgets (question <= 48, answer <= 220 characters). When the content phase rewrites them, update src/worker.js in the same change."
+  "$comment": "Slots of sections/faq.ts. a + b = the two-tone title alone in the left column (serif 48px; 34px at 390; each line one line up to 20 characters at both widths); items = six questions in native <details name=\"faq\"> (first open): q one line at 1440 (Inter 500 18px, up to 48 characters), one or two lines at 390 (17px); a up to four lines at 1440 (16px, 560px measure), six at 390. The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) starts with the en items, in order, then adds answers the page leaves out: tests/worker.test.mjs keeps them in step. Measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$source": {
+    "items": "Items 1, 2, 4 and 6 are v4d's fact-checked answers (9e92312 home-copy.json faq): README L39, L43, L78; apps/web en.json L51 + SPEC §2 L25; README L9 + SPEC §3 L29-L31; SPEC §5 L65. Item 3 widens v4d's 'Why not call a model API directly?' to the sandbox services every v4 persona compared mosoo with (REVIEW-v4 §6.7): README L26, SPEC §4 L53. Item 5 rewrites 'What happens when I reply days later?' so the reader is the one who continues (REVIEW-v4 G6): SPEC §4 L53, L56; session-lifecycle.md L8."
   },
   "en": {
-    "a": "Xxxxxxxxx xxxxxx",
-    "b": "xxxxxx xxx xxxx xx.",
+    "a": "Questions",
+    "b": "before you commit.",
     "items": [
       {
         "q": "Is it hosted, or do I run it?",
@@ -16,16 +16,16 @@
         "a": "Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
       },
       {
-        "q": "Why not call a model API directly?",
-        "a": "A model API returns a reply. mosoo runs the Agent around it: an isolated sandbox, files in and out, streamed events, recorded usage, and a working directory kept between turns."
+        "q": "Why not a model API or a plain sandbox?",
+        "a": "A model API returns a reply, and a sandbox is a machine. mosoo runs the Agent: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox."
       },
       {
         "q": "Which harnesses and models can I use?",
         "a": "Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key."
       },
       {
-        "q": "What happens when I reply days later?",
-        "a": "The reply continues the same Session, even after the sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer."
+        "q": "Can I continue a Session days later?",
+        "a": "Yes. Send the next turn to the same Session, even after its sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer."
       },
       {
         "q": "Do my keys enter the sandbox?",
@@ -34,8 +34,8 @@
     ]
   },
   "zh": {
-    "a": "ＸＸＸＸ，",
-    "b": "ＸＸＸＸＸＸＸ。",
+    "a": "接入之前，",
+    "b": "值得先问的问题。",
     "items": [
       {
         "q": "是托管服务，还是要自己运行？",
@@ -46,16 +46,16 @@
         "a": "免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不提供模型。"
       },
       {
-        "q": "为什么不直接调用模型 API？",
-        "a": "模型 API 只返回一条回复。mosoo 运行的是围绕它的 Agent：隔离的 sandbox、文件进出、流式事件、用量记录，以及在 turn 之间保留的工作目录。"
+        "q": "为什么不直接用模型 API 或普通 sandbox？",
+        "a": "模型 API 只返回一条回复，sandbox 只是一台机器。mosoo 运行的是整个 Agent：harness 在自己的 sandbox 里工作，文件进出、事件流式返回、用量有记录，Session 也比 sandbox 活得更久。"
       },
       {
         "q": "可以用哪些 harness 和模型？",
         "a": "四种 harness：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。每个 Session 指定自己的 harness、模型供应商和模型，并使用你自己的供应商密钥。"
       },
       {
-        "q": "几天后再回复，会怎样？",
-        "a": "回复会在同一个 Session 里继续，即使 sandbox 已被回收。mosoo 会从最近一次提交的检查点恢复工作目录和原生对话。冷启动可能更慢。"
+        "q": "几天后还能接着同一个 Session 吗？",
+        "a": "可以。把下一轮发给同一个 Session 即可，即使它的 sandbox 已被回收。mosoo 会从最近一次提交的检查点恢复工作目录和原生对话。冷启动可能更慢。"
       },
       {
         "q": "我的密钥会进入 sandbox 吗？",
@@ -64,8 +64,8 @@
     ]
   },
   "ja": {
-    "a": "ＸＸＸＸＸ",
-    "b": "ＸＸＸＸＸＸＸ。",
+    "a": "導入の前に、",
+    "b": "確かめたいこと。",
     "items": [
       {
         "q": "ホスト版？それとも自分で動かす？",
@@ -76,16 +76,16 @@
         "a": "無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーが請求します。mosoo はモデルを提供しません。"
       },
       {
-        "q": "モデル API を直接呼ぶのと何が違いますか？",
-        "a": "モデル API は返答を返すだけです。mosoo はその周りの Agent を動かします。隔離された sandbox、ファイルの入出力、イベントのストリーム、使用量の記録、turn をまたいで残る作業ディレクトリ。"
+        "q": "モデル API や普通の sandbox との違いは？",
+        "a": "モデル API は返答を返すだけ、sandbox はただのマシンです。mosoo は Agent を動かします。専用 sandbox の harness、ファイルの入出力、イベント配信、使用量の記録、sandbox より長く続く Session。"
       },
       {
         "q": "どの harness とモデルを使えますか？",
         "a": "harness は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。Session ごとに harness、プロバイダー、モデルを指定し、ご自身のプロバイダーキーで動きます。"
       },
       {
-        "q": "数日後に返信するとどうなりますか？",
-        "a": "sandbox が回収された後でも、同じ Session で続きます。mosoo は最後にコミットしたチェックポイントから、作業ディレクトリとネイティブな会話を復元します。コールドスタートは遅くなりえます。"
+        "q": "数日後に同じ Session を続けられますか？",
+        "a": "はい。同じ Session に次のターンを送るだけです。sandbox の回収後も、最後にコミットしたチェックポイントから作業ディレクトリと会話を復元します。コールドスタートは遅くなりえます。"
       },
       {
         "q": "キーは sandbox に入りますか？",

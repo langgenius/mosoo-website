@@ -361,16 +361,28 @@ test("worker serves a product-wide llms.txt index", async () => {
   assert.equal(await head.text(), "");
 });
 
-test("llms.txt direct answers repeat the FAQ on the English home page", async () => {
+// llms.txt is a superset of the page FAQ (staging REVIEW-v4 §6.11): the six answers the English home shows come
+// first, verbatim and in order; after them stay the answers the page has no room for, each one stated in MAIN
+// docs/SPEC.md (§4 L39-L42 turn limits, §6 L73-L75 events and files, §6 L74 retries, §6 L70 + README L39 / L78).
+test("llms.txt direct answers start with the English home FAQ, then keep the answers the page leaves out", async () => {
   const response = await worker.fetch(new Request("https://mosoo.ai/llms.txt"), envFor({}));
   const markdown = await response.text();
   const section = markdown.split("\n## Direct answers\n\n")[1]?.split("\n\n## ")[0] ?? "";
-
+  const lines = section.split("\n");
   // llms.txt keeps ASCII apostrophes for plain-text readers; the page uses curly ones.
-  assert.deepEqual(
-    section.split("\n"),
-    homeFaq("en").map(({ q, a }) => `- ${q} ${a}`.replaceAll("’", "'")),
-  );
+  const faq = homeFaq("en").map(({ q, a }) => `- ${q} ${a}`.replaceAll("’", "'"));
+
+  assert.deepEqual(lines.slice(0, faq.length), faq, "the page FAQ, verbatim and in order");
+  const extra = lines.slice(faq.length);
+  assert.ok(extra.every((line) => /^- .+\? .+/.test(line)), "every further line is a question and its answer");
+  for (const [topic, pattern] of [
+    ["the two-hour turn limit", /Up to two hours\..*run\.time_limit_exceeded.*runtime\.capacity_exhausted/],
+    ["retries with Idempotency-Key", /Idempotency-Key header\. For 24 hours, .*exactly-once\./],
+    ["SSE and outputs/", /SSE stream .*outputs\/ become downloadable artifacts\. There are no Webhooks\./],
+    ["Alpha and /api/v1 compatibility", /It is in Alpha.*\/api\/v1 stays wire-compatible/],
+  ]) {
+    assert.ok(extra.some((line) => pattern.test(line)), `llms.txt still answers ${topic}`);
+  }
 });
 
 test("worker publishes the Public Thread API catalog and self-contained auth guide", async () => {

@@ -50,8 +50,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
   fails on an unbudgeted slot and refuses to re-budget a path it already budgets.
 - Visual first: slots hold X placeholders of realistic length (en: X/x, zh/ja: fullwidth Ｘ with the punctuation
   real copy would carry, so CJK lines can break). The content phase writes the words.
-- The FAQ items are real (v4d) and must stay equal to llms.txt "Direct answers" in `src/worker.js`
-  (`tests/worker.test.mjs`); change both together.
+- The FAQ items must stay equal to the first llms.txt "Direct answers" in `src/worker.js`, which then adds answers
+  the page leaves out (`tests/worker.test.mjs`); change both together.
 
 ## Styles
 

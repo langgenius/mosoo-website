@@ -110,10 +110,14 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 
 - Is it hosted, or do I run it? Use the hosted console at cloud.mosoo.ai. The source is on GitHub under Apache 2.0, and the README shows how to run it locally. mosoo is in Alpha, so public APIs may still change.
 - What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models.
-- Why not call a model API directly? A model API returns a reply. mosoo runs the Agent around it: an isolated sandbox, files in and out, streamed events, recorded usage, and a working directory kept between turns.
+- Why not a model API or a plain sandbox? A model API returns a reply, and a sandbox is a machine. mosoo runs the Agent: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox.
 - Which harnesses and models can I use? Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key.
-- What happens when I reply days later? The reply continues the same Session, even after the sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer.
+- Can I continue a Session days later? Yes. Send the next turn to the same Session, even after its sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer.
 - Do my keys enter the sandbox? No. Provider keys and MCP credentials stay outside; the sandbox only receives expiring grants for them. Environment variables are the exception: code in the sandbox can read them.
+- How do I follow progress and get results? Read the Thread's status and saved event history, or open an SSE stream that starts with the latest saved events. Stable event IDs let a reconnecting client skip what it already has. Files the Agent writes under outputs/ become downloadable artifacts. There are no Webhooks.
+- How long can a turn run? Up to two hours. At the limit mosoo cancels the turn, and it ends cancelled with run.time_limit_exceeded. A Session runs one turn at a time: input sent to a busy Session is rejected, and there is no input queue. A turn that needs a new sandbox while mosoo or your account is at its sandbox limit fails at once with the retryable runtime.capacity_exhausted error, and mosoo does not queue it.
+- Can I retry a request without running the work twice? Yes, for creation and follow-ups. Send an Idempotency-Key header. For 24 hours, the same key and body return the original result without new work, and a changed body is rejected. Idempotency does not make side effects in external tools exactly-once.
+- Is mosoo open source, and is it ready for production? mosoo is licensed under Apache 2.0, and the source is on GitHub. It is in Alpha, so public APIs and product behavior may still change. /api/v1 stays wire-compatible, and a change that can't stay compatible ships as a new API version.
 
 ## Call mosoo from a backend (v2)
 

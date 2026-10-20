@@ -8,7 +8,8 @@
 // - one native <details name="faq"> per item, the first one open, so the browser keeps one open at a time, with
 //   keyboard, find-in-page and no-JS behaviour built in; the question is the <summary>'s text, the answer the rest
 //   of the <details> (in the DOM even when closed); the dot is aria-hidden and has no text;
-// - the items are copy/faq.json verbatim, the same strings as the FAQPage JSON-LD and llms.txt "Direct answers".
+// - the items are copy/faq.json verbatim, the same strings as the FAQPage JSON-LD and the first llms.txt "Direct
+//   answers" (which go on with answers the page leaves out).
 
 import type { HomeCopy, HomeLocale } from "../copy.ts";
 import { esc, twoTone } from "../ui.ts";
