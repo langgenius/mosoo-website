@@ -32,10 +32,10 @@ test("Introducing mosoo computer is published in every locale and keeps its asse
   for (const [name, source] of entries) {
     assert.equal(readDraftInfo(source)?.draft, false, `${name} must not be a draft`);
     assert.match(source, /^heroImage: "\/blog\/blog\/introducing-mosoo-computer\/cover\.jpg"$/m);
-    assert.match(source, /\]\(\/blog\/blog\/introducing-mosoo-computer\/architecture-en\.png\)/);
+    assert.match(source, /\]\(\/blog\/blog\/introducing-mosoo-computer\/architecture-en\.svg\)/);
   }
   assert.ok(!draftOnlyPermalinks(posts().map(([, source]) => source)).includes("introducing-mosoo-computer"));
-  for (const asset of ["cover.jpg", "cover-material.webp", "architecture-en.png"]) {
+  for (const asset of ["cover.jpg", "cover-material.webp", "architecture-en.svg"]) {
     assert.ok(existsSync(new URL(`../apps/blog/public/blog/introducing-mosoo-computer/${asset}`, import.meta.url)), `${asset} must ship`);
   }
 });

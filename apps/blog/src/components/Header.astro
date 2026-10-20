@@ -1,6 +1,7 @@
 ---
-import { getIndexHref, getLocaleOptions, localeNames, navCopyByLocale, type Locale } from "../lib/i18n";
+import { getIndexHref, getLocaleOptions, navCopyByLocale, type Locale } from "../lib/i18n";
 import { headerCopyByLocale } from "../lib/copy.mjs";
+import LanguageSwitch from "./LanguageSwitch.astro";
 // The mark on the mosoo tile: the v5 mark's own geometry, generated for the landing (as the home's panel draws it).
 import { BRAND_MARK } from "../../../landing/src/shared/ui/brand-v5.generated.ts";
 
@@ -13,13 +14,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const localeOptions = getLocaleOptions(Astro.url.pathname, base).filter(
   ({ locale }) => !availableLocales || availableLocales.includes(locale),
 );
-const currentOption = localeOptions.find(({ active }) => active);
-const currentLocale = currentOption?.locale ?? "en";
+const currentLocale = localeOptions.find(({ active }) => active)?.locale ?? "en";
 const blogHref = getIndexHref(currentLocale, base);
 const landingHref = `/${currentLocale}`;
 const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
 const nav = navCopyByLocale[currentLocale];
-const langTags: Record<Locale, string> = { en: "en", zh: "zh-CN", ja: "ja" };
 // A post without translations has nothing to switch to, so the switch only shows with two or more languages.
 const showLanguages = localeOptions.length > 1;
 const products = [
@@ -29,10 +28,13 @@ const products = [
 // The home's chrome (staging v5 design review P1-4): the ink lockup of the v5 nav (the landing's generated
 // public/brand/v5/logo-nav.svg, served from the site root next to the blog) and its one lime CTA, "Try mosoo".
 // The right side is the home bar's (owner 2026-10-20 17:15; staging v5/polish/nav/DESIGN.md §2, §7;
-// apps/landing/src/home/sections/nav.ts): Products ▾ and the language ▾ are buttons with native popovers (popover +
-// popovertarget: they open, close on a click outside and on Esc with no script) holding real links, the two products
-// and this page in each language it has. Up to 860px the whole <nav> is itself the popover the menu button opens, a
-// sheet under the bar with the panels inline and the CTA last, so every link is in the HTML once.
+// apps/landing/src/home/sections/nav.ts): Products ▾ is a button with a native popover (popover + popovertarget: it
+// opens, closes on a click outside and on Esc with no script) holding the two products. Up to 860px the whole <nav>
+// is itself the popover the menu button opens, a sheet under the bar with the panel inline and the CTA last.
+// The language is not behind a menu (owner 17:12 「多语言切换不明显」; staging v5/polish/verify-visual.md §0 no. 1):
+// the three segments of ./LanguageSwitch.astro stand on the bar at every width, in the <nav> before the CTA on wide
+// screens (where the home bar has its language) and beside the menu button up to 860px, where the <nav> is the
+// closed sheet. Two copies in the HTML, one shown at any width; the footer has the third.
 ---
 
 <header
@@ -126,98 +128,20 @@ const products = [
         <a href={`${base}/rss.xml`} class="bn-a" title={copy.rssTitle}>RSS</a>
         {
           showLanguages && (
-            <div class="bn-dd bn-dd--lang">
-              <button
-                type="button"
-                class="bn-tg"
-                popovertarget="bn-lang"
-                aria-label={nav.languageButton.replace("{lang}", currentOption?.label ?? "")}
-              >
-                <svg
-                  class="bn-globe"
-                  viewBox="0 0 16 16"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <circle cx="8" cy="8" r="6.4" />
-                  <path d="M1.6 8h12.8M8 1.6c1.7 1.8 2.6 4 2.6 6.4S9.7 12.6 8 14.4C6.3 12.6 5.4 10.4 5.4 8S6.3 3.4 8 1.6z" />
-                </svg>
-                <span>{currentOption?.label}</span>
-                <svg
-                  class="bn-chev"
-                  viewBox="0 0 10 6"
-                  width="10"
-                  height="6"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M1 1l4 4 4-4" />
-                </svg>
-              </button>
-              <div class="bn-pop bn-pop--lang" id="bn-lang" popover>
-                <p class="bn-pop-h" id="bn-lang-h">
-                  <svg
-                    class="bn-globe"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.2"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <circle cx="8" cy="8" r="6.4" />
-                    <path d="M1.6 8h12.8M8 1.6c1.7 1.8 2.6 4 2.6 6.4S9.7 12.6 8 14.4C6.3 12.6 5.4 10.4 5.4 8S6.3 3.4 8 1.6z" />
-                  </svg>
-                  <span>{nav.language}</span>
-                </p>
-                <ul class="bn-langs" aria-labelledby="bn-lang-h">
-                  {localeOptions.map((option) => (
-                    <li>
-                      <a
-                        href={option.href}
-                        hreflang={langTags[option.locale]}
-                        lang={langTags[option.locale]}
-                        data-locale={option.locale}
-                        aria-current={option.active ? "true" : undefined}
-                      >
-                        <svg
-                          class="bn-check"
-                          viewBox="0 0 12 12"
-                          width="12"
-                          height="12"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="1.4"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          aria-hidden="true"
-                          focusable="false"
-                        >
-                          <path d="M2.5 6.2l2.3 2.3 4.7-5" />
-                        </svg>
-                        <span>{localeNames[option.locale]}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div class="bn-lang bn-lang--row">
+              <LanguageSwitch availableLocales={availableLocales} names="short" />
             </div>
           )
         }
         <a href="https://cloud.mosoo.ai" class="bn-cta">{copy.tryMosoo}</a>
       </nav>
+      {
+        showLanguages && (
+          <div class="bn-lang bn-lang--bar">
+            <LanguageSwitch availableLocales={availableLocales} names="short" compact />
+          </div>
+        )
+      }
       <button type="button" class="bn-menu" popovertarget="bn-menu" aria-label={nav.menu}>
         <svg
           class="bn-burger"
@@ -243,8 +167,8 @@ const products = [
   // What the browser does not do for the popovers, as the home's nav engine does it (apps/landing/src/effects/v5/
   // nav.ts): close an open panel, or the phone sheet, once focus lands outside it and its button (WCAG 2.4.11), and
   // once its button is no longer shown (a tablet turned to landscape with the sheet open); focusin, not focusout, so
-  // closing never sends focus back to the button. And remember the language a reader picks, as the landing does (the
-  // worker's "/" redirect reads mosoo_locale before Accept-Language). Without JS the menus still open, close and link.
+  // closing never sends focus back to the button. Without JS the menus still open, close and link. (The language
+  // links remember a pick themselves: ./LanguageSwitch.astro.)
   const bar = document.querySelector<HTMLElement>("[data-blog-nav]");
   if (bar) {
     const popovers = [...bar.querySelectorAll<HTMLElement>("[popover]")].map((panel) => ({
@@ -267,13 +191,6 @@ const products = [
       },
       { passive: true },
     );
-    bar.addEventListener("click", (event) => {
-      const link = event.target instanceof Element ? event.target.closest("[data-locale]") : null;
-      const code = link?.getAttribute("data-locale");
-      if (code === "en" || code === "zh" || code === "ja") {
-        document.cookie = `mosoo_locale=${code}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-      }
-    });
   }
 </script>
 
@@ -386,8 +303,15 @@ const products = [
     anchor-name: --bn-products;
   }
 
-  .bn-dd--lang > .bn-tg {
-    anchor-name: --bn-lang;
+  /* The language segments (./LanguageSwitch.astro) at the CTA's 36px: 30px segments in the 3px slot. On wide screens
+     the copy in the <nav>, up to 860px the one beside the menu button (below). */
+  .bn-lang {
+    --ls-h: 30px;
+    --ls-pad: 11px;
+  }
+
+  .bn-lang--bar {
+    display: none;
   }
 
   .bn-chev {
@@ -395,11 +319,6 @@ const products = [
     flex: none;
     margin-top: 1px;
     transition: rotate 0.2s var(--bn-ease);
-  }
-
-  .bn-globe {
-    display: block;
-    flex: none;
   }
 
   .bn-dd:has(> .bn-pop:popover-open) > .bn-tg {
@@ -464,10 +383,6 @@ const products = [
     max-width: calc(100% - 32px);
   }
 
-  .bn-pop--lang {
-    width: 216px;
-  }
-
   @supports (anchor-name: --bn-a) {
     .bn-pop {
       top: calc(anchor(--bn-bar bottom) + 8px);
@@ -477,13 +392,9 @@ const products = [
       right: auto;
       left: clamp(16px, anchor(--bn-products left) - 20px, 100% - 480px);
     }
-
-    .bn-pop--lang {
-      right: max(16px, anchor(--bn-lang right) - 20px);
-    }
   }
 
-  /* The list headings show in the phone sheet; elsewhere they only name the lists. */
+  /* The list heading shows in the phone sheet; elsewhere it only names the list. */
   .bn-pop-h {
     position: absolute;
     width: 1px;
@@ -494,8 +405,7 @@ const products = [
     white-space: nowrap;
   }
 
-  .bn-prods,
-  .bn-langs {
+  .bn-prods {
     display: grid;
     gap: 2px;
     margin: 0;
@@ -588,44 +498,6 @@ const products = [
     text-transform: uppercase;
   }
 
-  .bn-langs a {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 40px;
-    padding: 0 12px;
-    border-radius: 8px;
-    color: var(--v5-ink-2);
-    font: 500 15px/20px var(--font-sans);
-    text-decoration: none;
-    transition:
-      background-color 0.15s var(--bn-ease-theme),
-      color 0.15s var(--bn-ease-theme);
-  }
-
-  .bn-langs a:hover {
-    background: var(--v5-frame);
-    color: var(--v5-ink);
-  }
-
-  .bn-langs a:focus-visible {
-    outline-offset: -2px;
-  }
-
-  .bn-langs a[aria-current="true"] {
-    color: var(--v5-ink);
-  }
-
-  .bn-check {
-    display: block;
-    flex: none;
-    visibility: hidden;
-  }
-
-  .bn-langs a[aria-current="true"] .bn-check {
-    visibility: visible;
-  }
-
   .bn-menu {
     display: none;
   }
@@ -636,15 +508,28 @@ const products = [
     }
   }
 
-  /* Up to 860px, as on the home: logo / Blog and the menu button; the button opens the sheet under the bar: Products,
-     Back to mosoo and RSS, the language (three segments) and the CTA. */
+  /* Up to 860px, as on the home: logo / Blog, then the language segments and the menu button; the button opens the
+     sheet under the bar: Products, Back to mosoo and RSS, and the CTA. The segments drop the globe and pad 8 (ja
+     needs 392px for logo / ブログ, the three names and the button); under 400px they show initials (EN / 中 / 日),
+     and under 360px the "/ Blog" crumb gives way (the posts keep "← All posts", the index its own masthead). */
   @media (max-width: 860px) {
     .bn {
+      --bn-gap: 12px;
       --bn-h: 56px;
     }
 
     .bn-end {
       gap: 8px;
+    }
+
+    .bn-lang--row {
+      display: none;
+    }
+
+    .bn-lang--bar {
+      --ls-globe: none;
+      --ls-pad: 8px;
+      display: block;
     }
 
     .bn-menu {
@@ -751,12 +636,6 @@ const products = [
       border-bottom: 1px solid var(--v5-line);
     }
 
-    .bn-dd--lang {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--v5-line);
-    }
-
     .bn-prod {
       grid-template-columns: 20px minmax(0, 1fr);
       grid-template-areas:
@@ -786,41 +665,18 @@ const products = [
       outline-offset: -2px;
     }
 
-    .bn-langs {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-      margin: 0 12px 4px;
-      padding: 3px;
-      border: 1px solid var(--v5-line-2);
-      border-radius: 10px;
-      background: var(--v5-frame);
-    }
-
-    .bn-langs a {
-      justify-content: center;
-      min-height: 38px;
-      padding: 0 6px;
-      gap: 0;
-      font-size: 14px;
-      color: var(--v5-ink-2);
-    }
-
-    .bn-langs a[aria-current="true"] {
-      background: var(--v5-paper);
-      box-shadow:
-        0 0 0 1px rgb(22 24 21 / 0.08),
-        0 1px 2px rgb(22 24 21 / 0.08);
-    }
-
-    .bn-check {
-      display: none;
-    }
-
-    /* The CTA closes the sheet, full width and lined up with the segments. */
+    /* The CTA closes the sheet, full width and lined up with the rows' text. */
     .bn-cta {
       height: 44px;
       margin: 12px 12px 4px;
       font-size: 15px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .bn-sep,
+    .bn-blog {
+      display: none;
     }
   }
 
@@ -875,8 +731,7 @@ const products = [
     .bn-chev,
     .bn-cta,
     .bn-burger path,
-    .bn-prod,
-    .bn-langs a {
+    .bn-prod {
       transition: none;
     }
   }

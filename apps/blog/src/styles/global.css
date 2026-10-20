@@ -356,17 +356,19 @@ p {
 .prose-mosoo p {
   margin: 0;
 }
+/* Links, list dots and the quote rule in v5 ink (design review #143 no. 3, staging committee/PLAN.md 2-4: the
+   second green #3a6e0e and --green-500 retired): ink text on a 1px ink-3 underline (3.8:1 on the article paper; the
+   line, not a colour, marks the link, WCAG 1.4.1) that turns ink on hover. */
 .prose-mosoo a {
-  color: var(--accent-text);
+  color: var(--v5-ink);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: rgba(58, 110, 14, 0.35);
-  transition: color var(--dur) var(--ease-out);
+  text-decoration-color: var(--v5-ink-3);
+  transition: text-decoration-color var(--dur) var(--ease-out);
 }
 .prose-mosoo a:hover {
-  color: var(--accent-press);
-  text-decoration-color: var(--accent-press);
+  text-decoration-color: currentColor;
 }
 .prose-mosoo strong {
   font-weight: var(--fw-semibold);
@@ -406,7 +408,7 @@ p {
   font-size: inherit;
 }
 .prose-mosoo blockquote {
-  border-left: 2px solid var(--green-500);
+  border-left: 2px solid var(--v5-ink);
   padding: 0 0 0 var(--space-5);
   margin: var(--space-8) 0;
   color: var(--fg-secondary);
@@ -436,7 +438,7 @@ p {
   width: 5px;
   height: 5px;
   border-radius: 1px;
-  background: var(--green-500);
+  background: var(--v5-ink);
 }
 .prose-mosoo ol {
   list-style: decimal;

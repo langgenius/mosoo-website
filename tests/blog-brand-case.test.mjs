@@ -21,6 +21,20 @@ test("blog posts write the brand in lowercase, mosoo computer included", () => {
   }
 });
 
+test("the mosoo computer architecture figure is the generator's drawing, the brand in lowercase", async () => {
+  // The bitmap architecture-en.png said "Mosoo Computer" and "Mosoo Agent Driver" (staging v5/polish/verify-visual.md
+  // §0 no. 3); apps/blog/scripts/architecture-figure.mjs redraws it as text the tests can read.
+  const { architectureFigure } = await import("../apps/blog/scripts/architecture-figure.mjs");
+  const figure = new URL("../apps/blog/public/blog/introducing-mosoo-computer/", import.meta.url);
+  const svg = readFileSync(new URL("architecture-en.svg", figure), "utf8");
+  assert.equal(svg, architectureFigure(), "run node apps/blog/scripts/architecture-figure.mjs again");
+  const words = [...svg.matchAll(/<(?:text|title)[^>]*>([^<]*)</g)].map(([, s]) => s).join(" ");
+  assert.doesNotMatch(words, /\bMosoo\b/);
+  assert.match(words, /\bmosoo computer\b/);
+  assert.match(words, /\bmosoo Agent Driver\b/);
+  assert.ok(!readdirSync(figure).some((name) => /^architecture-en\.(png|jpe?g|webp)$/.test(name)), "no bitmap left");
+});
+
 test("the mosoo computer post names the product in lowercase in its title, card and description", () => {
   const entries = posts().filter(([name]) => name.startsWith("introducing-mosoo-computer"));
   assert.equal(entries.length, 3, "en, zh and ja");

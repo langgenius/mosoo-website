@@ -1,22 +1,32 @@
 ---
 import { footerCopyByLocale, localeFromLang } from "../lib/copy.mjs";
+import type { Locale } from "../lib/i18n";
+import LanguageSwitch from "./LanguageSwitch.astro";
 
 interface Props {
   lang?: "en" | "zh-CN" | "ja";
+  /** The languages this page exists in, as the header gets them; every language when not given. */
+  availableLocales?: Locale[];
 }
 
-const { lang = "en" } = Astro.props;
+const { lang = "en", availableLocales } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const locale = localeFromLang(lang);
 const copy = footerCopyByLocale[locale] ?? footerCopyByLocale.en;
 const landingHref = `/${locale}`;
+// The home footer's legal row (apps/landing/src/home/sections/footer.{ts,css}): the language switch first, every
+// language in sight (owner 2026-10-20 17:15 「多语言切换不明显」), then the credit in 14px ink-2 (13px grey read light
+// in Hanken, graft-yc P2-2); the links stay on the right.
 ---
 
 <footer class="mt-24 border-t border-[color:var(--border)] bg-[color:var(--blog-bg)]">
-  <div class="blog-wrap flex flex-col gap-4 py-10 md:flex-row md:items-center md:justify-between">
-    <p class="text-[13px] text-[color:var(--fg-muted)]">
-      {copy}
-    </p>
+  <div class="blog-wrap flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
+    <div class="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-8">
+      <LanguageSwitch availableLocales={availableLocales} names="native" />
+      <p class="text-[14px] leading-5 text-[color:var(--v5-ink-2)]">
+        {copy}
+      </p>
+    </div>
     <div class="flex items-center gap-6 text-[14px] text-[color:var(--fg-secondary)]">
       <a href={landingHref} class="transition-colors duration-150 hover:text-[color:var(--fg)]">mosoo.ai</a>
       <a href="/docs/changelog/" class="transition-colors duration-150 hover:text-[color:var(--fg)]">Changelog</a>

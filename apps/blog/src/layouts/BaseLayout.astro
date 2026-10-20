@@ -125,7 +125,7 @@ const alternateOgLocales = [
   <body class="min-h-screen bg-[color:var(--blog-bg)] text-[color:var(--ink-900)]" data-surface={surface}>
     <Header availableLocales={availableLocales} />
     <slot />
-    <Footer lang={lang} />
+    <Footer lang={lang} availableLocales={availableLocales} />
     <script>
       // "rise" variant: reveal [data-reveal] blocks as they enter the
       // viewport. Everything above the fold reveals immediately (with the

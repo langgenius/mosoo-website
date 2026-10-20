@@ -6,7 +6,7 @@ export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
 
-// The current language on the header's switch: each language names itself, as on the home's bar
+// The language switch on the header's bar: each language names itself, as on the home's bar
 // (apps/landing/src/home/copy/nav.json langShort).
 const localeLabels: Record<Locale, string> = {
   zh: "中文",
@@ -14,19 +14,27 @@ const localeLabels: Record<Locale, string> = {
   ja: "日本語",
 };
 
-/** The languages in the switch's list and the phone menu's segments, as the home lists them (English, 简体中文, 日本語). */
+/** The language switch in the footer, as the home's footer lists them (English, 简体中文, 日本語). */
 export const localeNames: Record<Locale, string> = {
   en: "English",
   zh: "简体中文",
   ja: "日本語",
 };
 
-// The header's Products panel, language switch and phone menu (owner 2026-10-20 17:15: 「多语言切换不明显，原先product
-// 入口没了」; staging v5/polish/nav/DESIGN.md), worded as the home's bar (apps/landing/src/home/copy/nav.json): the
-// two products in lowercase (owner 2026-10-20 21:57: 「mosoo computer 一律小写」), production's lines and labels
-// (origin/main apps/landing/src/shared/i18n.ts L4-L8 / L32-L36) except the mosoo line, which is MAIN README L8 in
-// the home title's short form; "New" untranslated, as production's chip. languageButton names the switch with the
-// short name it shows in place of {lang} (WCAG 2.5.3).
+/** The bar's switch on the narrowest phones, where three names do not fit beside the menu button: the landing's
+ *  own short labels (apps/landing/src/shared/locale.ts LOCALE_LABELS.short; 中 / 日 as in 中/EN and 日/英 toggles). */
+export const localeInitials: Record<Locale, string> = {
+  en: "EN",
+  zh: "中",
+  ja: "日",
+};
+
+// The header's Products panel and phone menu, and the language switch's name (owner 2026-10-20 17:15: 「多语言切换不明
+// 显，原先product 入口没了」; staging v5/polish/nav/DESIGN.md), worded as the home (apps/landing/src/home/copy/nav.json;
+// changeLanguage is footer.json languages, the name of the home footer's list): the two products in lowercase (owner
+// 2026-10-20 21:57: 「mosoo computer 一律小写」), production's lines and labels (origin/main apps/landing/src/shared/
+// i18n.ts L4-L8 / L32-L36) except the mosoo line, which is MAIN README L8 in the home title's short form; "New"
+// untranslated, as production's chip.
 export const navCopyByLocale = {
   en: {
     home: "mosoo home",
@@ -35,8 +43,7 @@ export const navCopyByLocale = {
     new: "New",
     mosoo: { name: "mosoo", line: "Open-source Agent runtime for application backends." },
     computer: { name: "mosoo computer", line: "A persistent cloud computer for agents." },
-    language: "Language",
-    languageButton: "Language ({lang})",
+    changeLanguage: "Change language",
     menu: "Menu",
   },
   zh: {
@@ -46,8 +53,7 @@ export const navCopyByLocale = {
     new: "New",
     mosoo: { name: "mosoo", line: "面向应用后端的开源 Agent runtime。" },
     computer: { name: "mosoo computer", line: "为 Agent 准备的持久云端计算机。" },
-    language: "语言",
-    languageButton: "语言（{lang}）",
+    changeLanguage: "切换语言",
     menu: "菜单",
   },
   ja: {
@@ -57,8 +63,7 @@ export const navCopyByLocale = {
     new: "New",
     mosoo: { name: "mosoo", line: "アプリのバックエンド向けオープンソース Agent runtime。" },
     computer: { name: "mosoo computer", line: "Agent のための永続的なクラウドコンピューター。" },
-    language: "言語",
-    languageButton: "言語（{lang}）",
+    changeLanguage: "言語を切り替える",
     menu: "メニュー",
   },
 } as const satisfies Record<Locale, unknown>;

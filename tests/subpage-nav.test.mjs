@@ -33,6 +33,8 @@ const SHARED_I18N = read("apps/landing/src/shared/i18n.ts");
 const PRODUCTS = read("apps/landing/src/routes/login/products.ts");
 const HEADER = read("apps/blog/src/components/Header.astro");
 const BLOG_I18N = read("apps/blog/src/lib/i18n.ts");
+const BLOG_LANGS = read("apps/blog/src/components/LanguageSwitch.astro");
+const BLOG_FOOTER = read("apps/blog/src/components/Footer.astro");
 
 const MESSAGES = {
   zh: objectAfter(SHARED_I18N, "const ZH_MESSAGES ="),
@@ -132,7 +134,7 @@ test("the subpages' footer language switcher is the home footer's: a globe and t
   assert.match(SITE_FOOTER, /\{LOCALE_LABELS\[code\]\.native\}/, "English, 简体中文, 日本語, each in its own words");
 });
 
-test("the blog header carries the same Products panel and language switch, its words the home's", () => {
+test("the blog header carries the same Products panel as the home bar, its words the home's", () => {
   // Products: a button and its panel with both products, same tab, the computer marked New.
   assert.match(HEADER, /<nav class="bn-row" id="bn-menu" aria-label=\{nav\.label\} popover>/);
   assert.match(HEADER, /<button type="button" class="bn-menu" popovertarget="bn-menu" aria-label=\{nav\.menu\}>/);
@@ -142,22 +144,6 @@ test("the blog header carries the same Products panel and language switch, its w
   assert.match(HEADER, /\{ id: "mosoo", href: "https:\/\/cloud\.mosoo\.ai", \.\.\.nav\.mosoo, fresh: false \}/);
   assert.match(HEADER, /\{ id: "computer", href: "https:\/\/computer\.mosoo\.ai", \.\.\.nav\.computer, fresh: true \}/);
   assert.doesNotMatch(HEADER, /\btarget=/, "same tab");
-  // The language: shown only when the page has another language; this page in each, the current one marked; named
-  // with what it shows; a pick is remembered for the worker's "/" redirect.
-  assert.match(HEADER, /const showLanguages = localeOptions\.length > 1;/);
-  assert.match(
-    HEADER,
-    /popovertarget="bn-lang"\s*aria-label=\{nav\.languageButton\.replace\("\{lang\}", currentOption\?\.label \?\? ""\)\}/,
-  );
-  assert.match(HEADER, /<ul class="bn-langs" aria-labelledby="bn-lang-h">/);
-  assert.match(
-    HEADER,
-    /href=\{option\.href\}\s*hreflang=\{langTags\[option\.locale\]\}\s*lang=\{langTags\[option\.locale\]\}\s*data-locale=\{option\.locale\}\s*aria-current=\{option\.active \? "true" : undefined\}/,
-  );
-  assert.match(
-    HEADER,
-    /document\.cookie = `mosoo_locale=\$\{code\}; Path=\/; Max-Age=31536000; SameSite=Lax; Secure`;/,
-  );
   assert.match(HEADER, /document\.addEventListener\("focusin",/);
   assert.match(HEADER, /button\.getClientRects\(\)\.length === 0/);
   assert.match(HEADER, /\.bn-row:popover-open \{\s*display: flex;\s*\}/);
@@ -166,7 +152,6 @@ test("the blog header carries the same Products panel and language switch, its w
   assert.match(HEADER, /<a href="https:\/\/cloud\.mosoo\.ai" class="bn-cta">\{copy\.tryMosoo\}<\/a>\s*<\/nav>/);
 
   const copy = objectAfter(BLOG_I18N, "export const navCopyByLocale =");
-  const names = objectAfter(BLOG_I18N, "export const localeNames");
   for (const locale of LOCALES) {
     const nav = NAV[locale];
     assert.equal(copy[locale].home, nav.home, `${locale}: the logo link's name`);
@@ -175,9 +160,53 @@ test("the blog header carries the same Products panel and language switch, its w
     assert.equal(copy[locale].new, nav.products.new, `${locale}: New`);
     assert.deepEqual(copy[locale].mosoo, nav.products.items.mosoo, `${locale}: mosoo`);
     assert.deepEqual(copy[locale].computer, nav.products.items.computer, `${locale}: mosoo computer`);
-    assert.equal(copy[locale].language, nav.language, `${locale}: Language`);
-    assert.equal(copy[locale].languageButton, nav.languageButton, `${locale}: the switch's name`);
     assert.equal(copy[locale].menu, nav.menu, `${locale}: Menu`);
   }
-  assert.deepEqual(names, { en: "English", zh: "简体中文", ja: "日本語" });
+});
+
+test("the blog's language switch is in sight on the bar at every width and in the footer, never behind a menu", () => {
+  // Owner 2026-10-20 17:15 「多语言切换不明显」; staging v5/polish/verify-visual.md §0 no. 1 (a menu on wide screens and
+  // only inside the phone sheet was a step back). One component, ./LanguageSwitch.astro: this page in each language it
+  // has, as real links with hreflang and lang, the current one marked; the list named as the home footer's.
+  assert.match(
+    BLOG_LANGS,
+    /href=\{option\.href\}\s*hreflang=\{langTags\[option\.locale\]\}\s*lang=\{langTags\[option\.locale\]\}\s*data-locale=\{option\.locale\}\s*aria-current=\{option\.active \? "true" : undefined\}/,
+  );
+  assert.match(BLOG_LANGS, /<ul class="ls-list" aria-label=\{navCopyByLocale\[current\]\.changeLanguage\}>/);
+  assert.match(BLOG_LANGS, /const show = options\.length > 1;/, "a page in one language shows no switch");
+  // A pick is remembered as the home remembers it (the worker's "/" redirect reads mosoo_locale).
+  assert.match(BLOG_LANGS, /import \{ isLocale, rememberLocale \} from "\.\.\/\.\.\/\.\.\/landing\/src\/shared\/locale\.ts";/);
+  assert.match(BLOG_LANGS, /if \(isLocale\(code\)\) rememberLocale\(code\);/);
+  // No 1px frame (design review, committee MINUTES §2.4 no. 7): the slot and the raised current segment carry it.
+  assert.doesNotMatch(BLOG_LANGS, /\.ls-list \{[^}]*border:/);
+  assert.match(BLOG_LANGS, /\.ls-list a\[aria-current="true"\] \{\s*background: var\(--v5-paper\);/);
+  // The bar: in the <nav> before the CTA on wide screens, beside the menu button up to 860px (the <nav> is then the
+  // closed sheet), initials under 400px; one of the two shows at any width.
+  assert.match(HEADER, /const showLanguages = localeOptions\.length > 1;/);
+  assert.match(
+    HEADER,
+    /<div class="bn-lang bn-lang--row">\s*<LanguageSwitch availableLocales=\{availableLocales\} names="short" \/>\s*<\/div>\s*\)\s*\}\s*<a href="https:\/\/cloud\.mosoo\.ai" class="bn-cta">/,
+  );
+  assert.match(
+    HEADER,
+    /<\/nav>\s*\{\s*showLanguages && \(\s*<div class="bn-lang bn-lang--bar">\s*<LanguageSwitch availableLocales=\{availableLocales\} names="short" compact \/>/,
+  );
+  assert.match(HEADER, /\.bn-lang--bar \{\s*display: none;\s*\}/);
+  assert.match(HEADER, /@media \(max-width: 860px\) \{[\s\S]*?\.bn-lang--row \{\s*display: none;\s*\}[\s\S]*?\.bn-lang--bar \{[^}]*display: block;/);
+  assert.doesNotMatch(HEADER, /popovertarget="bn-lang"|bn-pop--lang/, "no language menu");
+  // The footer: the same switch with the home footer's names.
+  assert.match(BLOG_FOOTER, /<LanguageSwitch availableLocales=\{availableLocales\} names="native" \/>/);
+
+  const FOOTER = JSON.parse(read("apps/landing/src/home/copy/footer.json"));
+  const copy = objectAfter(BLOG_I18N, "export const navCopyByLocale =");
+  for (const locale of LOCALES) {
+    assert.equal(copy[locale].changeLanguage, FOOTER[locale].languages, `${locale}: the switch's name`);
+  }
+  assert.deepEqual(objectAfter(BLOG_I18N, "export const localeNames"), { en: "English", zh: "简体中文", ja: "日本語" });
+  const labels = objectAfter(read("apps/landing/src/shared/locale.ts"), "export const LOCALE_LABELS");
+  assert.deepEqual(
+    objectAfter(BLOG_I18N, "export const localeInitials"),
+    Object.fromEntries(Object.entries(labels).map(([locale, label]) => [locale, label.short])),
+    "the narrow bar's initials are the landing's short labels",
+  );
 });
