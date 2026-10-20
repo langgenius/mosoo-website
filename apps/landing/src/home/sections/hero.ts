@@ -2,7 +2,7 @@
 //
 // v4d's centred first screen (9e92312 d-object.css .d-hero / .d-h1 / .d-lead / .d-actions): the two-tone serif H1
 // (v4a's use: second line in ink-3), one lead sentence with the four harnesses drawn as Frame keycaps on its
-// baseline, the lime primary CTA (Frame glow) and the ink secondary CTA. The plate under it is the stage's
+// baseline, the lime primary CTA (Frame glow) and the secondary CTA as a 1px ink line. The plate under it is the stage's
 // (./stage.ts): the first screen shows its first state (Call), and the same plate pins and changes state as the
 // reader scrolls, so the hero ends at the CTA row.
 //
@@ -42,7 +42,7 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
 <div class="v5-wrap v5-hero-in">
 <h1 id="hero-title" class="v5-h1 v5-hero-h1" data-rise-load="title">${twoTone(h.h1a, h.h1b, ' data-rise-load="line"')}</h1>
 <p class="v5-lead v5-keys v5-hero-lead" data-rise-load="fade">${lead}</p>
-<div class="v5-actions v5-hero-actions" data-rise-load="fade">${button(LINKS.console, h.primary, "lime", " data-nav-cta-watch")}${button(links.quickstart, h.secondary, "ink")}</div>
+<div class="v5-actions v5-hero-actions" data-rise-load="fade">${button(LINKS.console, h.primary, "lime", " data-nav-cta-watch")}${button(links.quickstart, h.secondary, "line")}</div>
 </div>
 </section>`;
 }

@@ -55,19 +55,20 @@
   user-select: all; /* one click selects the whole sentence, for a reader copying by hand (no JS, no clipboard) */
 }
 
-/* Copy: an ink button inside the card (8px in from its edge, r8). Its two faces share one cell: the hidden one is
-   the done state's footprint (check + copied label), so the width never changes; the check on the live face shows
-   while the engine's data-done is set. */
+/* Copy: a 1px ink line button inside the card (8px in from its edge, r8), the system's .v5-btn--line look: the
+   lime "Try mosoo" below is the closing's one solid button (YC review P1-2). Its two faces share one cell: the hidden
+   one is the done state's footprint (check + copied label), so the width never changes; the check on the live face
+   shows while the engine's data-done is set. */
 .v5-closing-copy {
   display: inline-grid;
   flex: none;
   place-items: center;
   height: 48px;
   padding: 0 18px;
-  border: 0;
+  border: 1px solid var(--ink);
   border-radius: 8px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font: 500 15px/1 var(--font-sans);
   cursor: pointer;
   transition:
@@ -76,7 +77,7 @@
 }
 
 .v5-closing-copy:hover {
-  background: #2a2c28; /* system .v5-btn--ink:hover */
+  background: var(--frame); /* system .v5-btn--line:hover */
 }
 
 .v5-closing-copy:active {

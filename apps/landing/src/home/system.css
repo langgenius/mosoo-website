@@ -287,7 +287,9 @@ main:focus {
 }
 
 /* -------------------------------------------------------------------------------------------------- buttons */
-/* Lime primary with Frame's glow (0 4px 24px #DEFFB5), hovering brighter (Ramp); ink secondary. Height 48. */
+/* Lime primary with Frame's glow (0 4px 24px #DEFFB5), hovering brighter (Ramp); the secondary is a 1px ink line
+   (one solid button per screen: YC review P1-2, the solid ink secondary outweighed the lime primary 17.9:1 to 1.25:1).
+   Height 48. The transparent border shows as a frame in forced-colors mode, where backgrounds are dropped. */
 .v5-btn {
   display: inline-flex;
   align-items: center;
@@ -295,7 +297,7 @@ main:focus {
   gap: 8px;
   height: 48px;
   padding: 0 22px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 8px;
   font: 500 16px/1 var(--font-sans);
   letter-spacing: -0.005em;
@@ -328,6 +330,16 @@ main:focus {
 
 .v5-btn--ink:hover {
   background: #2a2c28;
+}
+
+.v5-btn--line {
+  border-color: var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.v5-btn--line:hover {
+  background: var(--frame);
 }
 
 /* A row of buttons (hero, closing). */

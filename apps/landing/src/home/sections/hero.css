@@ -2,8 +2,8 @@
    d-object.css: .d-hero padding-top 64 (phones 40), .d-h1 72/1 (here .v5-h1 from ../system.css), .d-lead 22px below
    the H1, .d-actions 28px below the lead. Changed from v4d: the lead carries the four harness keycaps, so it is
    wider (760 instead of 600) and balanced, which breaks it after [Claude Agent SDK] at 1440 (two lines; the slot
-   table in staging v5/sections/hero-stage/NOTES.md); the secondary CTA is the system's ink button instead of
-   v4d's text link. The plate below the CTA row is the stage's (./stage.css sets the gap). Every rule is scoped
+   table in staging v5/sections/hero-stage/NOTES.md); the secondary CTA is the system's line button (1px ink), so
+   the lime primary is the only solid one (YC review P1-2). The plate below the CTA row is the stage's (./stage.css sets the gap). Every rule is scoped
    under .v5-hero (sections/README.md). */
 
 .v5-hero .v5-hero-in {

@@ -27,9 +27,12 @@ export function keycap(label: string): string {
   return `<span class="v5-kc" data-product-ui translate="no">${esc(label)}</span>`;
 }
 
-export type ButtonTone = "lime" | "ink";
+export type ButtonTone = "lime" | "ink" | "line";
 
-/** A link styled as a button: lime (the primary CTA, Frame's glow) or ink (secondary). */
+/**
+ * A link styled as a button: lime (the primary CTA, Frame's glow), line (the secondary: a 1px ink outline, the page's
+ * line language, lighter than the primary) or ink (solid; for a primary on lime, see .v5-on-lime).
+ */
 export function button(href: string, label: string, tone: ButtonTone, extra = ""): string {
   return `<a class="v5-btn v5-btn--${tone}" href="${esc(href)}"${extra}>${esc(label)}</a>`;
 }
