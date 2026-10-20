@@ -16,7 +16,7 @@
       "rotate": -12,
       "pin": { "x": 60, "y": 245, "at": 0.2, "pinch": 0.9, "width": 0.13 },
       "t0": 0, "stroke": 1, "opacity": 0.9,
-      "ramp": { "from": "#557F22", "to": "#BCF870", "ease": 1.4 },
+      "ramp": { "from": "#667757", "to": "#D3EBBA", "ease": 1.4 },
       "ground": "#cfdbe5",
       "objects": [{ "x": 20, "y": 68, "w": 700, "h": 177, "r": 21 }]
     },
