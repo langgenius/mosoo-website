@@ -17,10 +17,15 @@
    gradient), then one linear fade. The solid stretch follows the content: it ends 96px under the last card and the
    fade (--fade) takes only the panel's tail, padded in below the cards, so every card sits on solid lime (Frame's
    cards do; design review P1-1 measured the second row at .25 and the last 390 card at 0 lime). min-height keeps the
-   solid at least one screen + 40 px when the content is short (tall viewports). The fade ends transparent, not
-   white, so the paper's dot grid comes back as the lime goes (premultiplied interpolation). */
+   solid at least one screen + 40 px when the content is short (tall viewports), and then the content sits in the
+   middle of that screen, not at its top: three cards (graft 2026-10-20) left 203 px of bare lime under them at
+   1440 x 900 and more on taller screens (staging v5/graft/INTEGRATION.md). The fade ends transparent, not white, so
+   the paper's dot grid comes back as the lime goes (premultiplied interpolation). */
 .v5-accent .v5-acc-lime {
   --fade: 540px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
   min-height: calc(100vh + 40px + var(--fade));
   min-height: calc(100svh + 40px + var(--fade));

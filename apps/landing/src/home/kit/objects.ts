@@ -1,5 +1,7 @@
-// The five small objects for the white cards on the lime screen (BRIEF §4 row 3: Harness / Model key /
-// Sandbox / Files / Resume). One structural sentence each, Apollo's relation grammar only:
+// Five small objects, drawn (T4) for the white cards BRIEF §4 row 3 planned on the lime screen (Harness / Model key /
+// Sandbox / Files / Resume). No page renders them: those cards took T3's line figures (TOOLS-REVIEW), and since the
+// 2026-10-20 graft the five parts are the spec table's (sections/spec.ts). One structural sentence each, Apollo's
+// relation grammar only:
 //   harness strip   four tiles in a strip; the Session's pick lifted, with an offset underlay
 //                   (Apollo CONNECTED SOURCE strip + "Access email" underlay, STUDY §2.4)
 //   key row         the key card, a connector that stops at the dotted sandbox wall, a grant inside
