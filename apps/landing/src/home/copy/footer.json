@@ -1,7 +1,7 @@
 {
   "$comment": "Slots of sections/footer.ts: the Ask-AI column (title; prompt = the question sent to each assistant, in the link only), four link columns, the brand row's accessible name, the language list's label and the copyright. Hrefs live in sections/footer.ts. Budgets: tests/home-copy-slots.test.mjs.",
   "$source": {
-    "*": "The column titles and links are the ones the v5 brief lists (Harnesses, Product, Developers, Open source), worded as v4d's footer (scripts/landing-home.mjs SHELL.footer at 9e92312); ask.title / ask.prompt are v4c's (src/home/copy.ts footer at 69d1c01). Kept as written in the content phase.",
+    "*": "The column titles and links are the ones the v5 brief lists (Harnesses, Product, Developers, Open source), worded as v4d's footer (scripts/landing-home.mjs SHELL.footer at 9e92312); ask.title / ask.prompt are v4c's (src/home/copy.ts footer at 69d1c01). Kept as written in the content phase. Product's Blog link is v5 FIXES': the live home links the blog and the v5 home did not (v5 SEO review P1, design review P1-4); the blog's own locale labels (apps/blog/src/lib/copy.mjs).",
     "columns.harnesses.names": "Product names as README L9 writes them (OpenAI Codex, Claude Agent SDK, OpenCode, Pi); not translated."
   },
   "en": {
@@ -14,7 +14,7 @@
       "harnesses": { "title": "Harnesses", "names": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"] },
       "product": {
         "title": "Product",
-        "links": { "console": "mosoo console", "useCases": "Use cases", "status": "Status" }
+        "links": { "console": "mosoo console", "useCases": "Use cases", "blog": "Blog", "status": "Status" }
       },
       "developers": {
         "title": "Developers",
@@ -37,7 +37,7 @@
     },
     "columns": {
       "harnesses": { "title": "Harness", "names": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"] },
-      "product": { "title": "产品", "links": { "console": "mosoo 控制台", "useCases": "用例", "status": "状态" } },
+      "product": { "title": "产品", "links": { "console": "mosoo 控制台", "useCases": "用例", "blog": "博客", "status": "状态" } },
       "developers": {
         "title": "开发者",
         "links": { "docs": "文档", "quickstart": "快速开始", "apiReference": "API 参考", "llms": "llms.txt" }
@@ -61,7 +61,7 @@
       "harnesses": { "title": "Harness", "names": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"] },
       "product": {
         "title": "プロダクト",
-        "links": { "console": "mosoo コンソール", "useCases": "ユースケース", "status": "稼働状況" }
+        "links": { "console": "mosoo コンソール", "useCases": "ユースケース", "blog": "ブログ", "status": "稼働状況" }
       },
       "developers": {
         "title": "開発者向け",

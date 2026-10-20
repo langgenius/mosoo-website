@@ -107,6 +107,7 @@ const assertHomeSiteLinks = (html, locale) => {
     "/zh",
     "/ja",
     `/${locale}/use-cases`,
+    locale === "en" ? "/blog" : `/blog/${locale}`, // the live home links the blog (v5 SEO review P1)
     links.health,
     links.docs,
     links.quickstart,

@@ -76,6 +76,7 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
   const product = [
     item(LINKS.console, c.product.links.console),
     item(links.useCases, c.product.links.useCases),
+    item(links.blog, c.product.links.blog),
     item(links.status, c.product.links.status),
   ].join("");
   const developers = [

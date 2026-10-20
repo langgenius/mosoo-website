@@ -94,6 +94,7 @@ export function localeLinks(locale: HomeLocale) {
     quickstart: `${docs}quickstart/`,
     apiReference: `${docs}api-reference-v2/`,
     useCases: `/${locale}/use-cases`,
+    blog: locale === "en" ? "/blog" : `/blog/${locale}`,
     status: locale === "en" ? "/health" : `/${locale}/health`,
   } as const;
 }
