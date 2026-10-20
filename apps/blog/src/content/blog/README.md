@@ -12,7 +12,7 @@ Validated by `src/content.config.ts`.
 title: "Post title"
 description: "One- or two-sentence dek shown on the index card and metadata."
 date: 2026-05-28
-category: "Engineering" # Engineering | Product | Research | Customer Stories
+category: "Engineering" # Engineering | Product | Research | Built on mosoo
 author: "mosoo team" # optional, defaults to "mosoo team"
 locale: "en" # en | zh | ja, defaults to en
 permalink: "post-title" # optional shared slug for localized posts

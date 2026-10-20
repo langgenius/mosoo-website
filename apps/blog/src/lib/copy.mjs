@@ -9,19 +9,19 @@ export const categoryLabelsByLocale = {
     Engineering: "Engineering",
     Product: "Product",
     Research: "Research",
-    "Customer Stories": "Customer Stories",
+    "Built on mosoo": "Built on mosoo",
   },
   zh: {
     Engineering: "工程",
     Product: "产品",
     Research: "研究",
-    "Customer Stories": "客户故事",
+    "Built on mosoo": "用 mosoo 构建",
   },
   ja: {
     Engineering: "エンジニアリング",
     Product: "プロダクト",
     Research: "リサーチ",
-    "Customer Stories": "導入事例",
+    "Built on mosoo": "mosoo で構築",
   },
 };
 

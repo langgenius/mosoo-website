@@ -3,7 +3,9 @@ import { defineCollection, z } from "astro:content";
 
 // Categories shown as tab pills on the index. Add new ones here and they show
 // up automatically — frontmatter is validated against this list.
-export const CATEGORIES = ["Engineering", "Product", "Research", "Customer Stories"] as const;
+// "Built on mosoo", not "Customer Stories": the cases are demos by the team and the community, not customers
+// (staging production/briefs/content-truth.md §5.3 #18; v5 truth review P2-7).
+export const CATEGORIES = ["Engineering", "Product", "Research", "Built on mosoo"] as const;
 export const LOCALES = ["zh", "en", "ja"] as const;
 
 const blog = defineCollection({
