@@ -15,18 +15,20 @@ const currentLocale = localeOptions.find(({ active }) => active)?.locale ?? "en"
 const blogHref = getIndexHref(currentLocale, base);
 const landingHref = `/${currentLocale}`;
 const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
+// The home's chrome (staging v5 design review P1-4): the ink lockup of the v5 nav (the landing's generated
+// public/brand/v5/logo-nav.svg, served from the site root next to the blog) and its one lime CTA, "Try mosoo".
 ---
 
 <header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--blog-bg)]/85 backdrop-blur-md">
   <div class="blog-wrap flex flex-wrap items-center justify-between gap-3 py-3.5 sm:flex-nowrap sm:gap-6">
     <div class="flex shrink-0 items-center gap-3 whitespace-nowrap text-[color:var(--fg)]">
       <a href={landingHref} aria-label="mosoo home">
-        <img src={`${base}/brand-wordmark.svg`} alt="mosoo" class="h-5 w-auto" />
+        <img src="/brand/v5/logo-nav.svg" alt="mosoo" width="93" height="20" class="h-5 w-auto" />
       </a>
       <span class="text-[color:var(--ink-300)]">/</span>
       <a
         href={blogHref}
-        class="text-[14.5px] font-medium tracking-[-0.01em] text-[color:var(--ink-900)] transition-colors duration-150 hover:text-[color:var(--accent-text)]"
+        class="text-[14.5px] font-medium tracking-[-0.01em] text-[color:var(--v5-ink-2)] transition-colors duration-150 hover:text-[color:var(--v5-ink)]"
       >
         {copy.blog}
       </a>
@@ -61,10 +63,10 @@ const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
         }
       </div>
       <a
-        href="https://github.com/langgenius/mosoo"
-        class="hidden items-center gap-2 whitespace-nowrap rounded-[var(--r-md)] bg-[color:var(--ink-900)] px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[color:var(--ink-800)] sm:inline-flex"
+        href="https://cloud.mosoo.ai"
+        class="hidden h-9 items-center whitespace-nowrap rounded-[8px] bg-[#bcf870] px-4 text-[14.5px] font-medium tracking-[-0.005em] text-[color:var(--v5-ink)] transition-colors duration-150 hover:bg-[#d6fba6] sm:inline-flex"
       >
-        {copy.learnMore}
+        {copy.tryMosoo}
       </a>
     </nav>
   </div>

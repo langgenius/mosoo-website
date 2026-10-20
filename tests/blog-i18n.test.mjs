@@ -82,7 +82,9 @@ test("localized blog chrome uses localized visible copy", () => {
   assert.equal(indexCopyByLocale.ja.allPosts, "すべての記事");
   assert.equal(categoryLabel("zh", "Engineering"), "工程");
   assert.equal(categoryLabel("ja", "Product"), "プロダクト");
-  assert.equal(headerCopyByLocale.zh.learnMore, "了解更多");
+  // The header CTA is the home's (v5 FIXES: "Learn More" named neither its target nor its action).
+  assert.equal(headerCopyByLocale.zh.tryMosoo, "试用 mosoo");
+  assert.equal(postCopyByLocale.ja.github, "GitHub の mosoo →");
   assert.equal(postCopyByLocale.ja.by, "著者");
   // The footer is the company credit in every language, as on the home.
   assert.equal(footerCopyByLocale.zh, "© 2026 LangGenius, Inc.");

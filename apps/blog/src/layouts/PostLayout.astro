@@ -109,7 +109,7 @@ const jsonLd = {
       </a>
 
       <div class="mb-4 flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
-        <span class="font-semibold text-[color:var(--accent-text)]">{displayCategory}</span>
+        <span class="font-semibold text-[color:var(--v5-ink)]">{displayCategory}</span>
         <span aria-hidden="true">·</span>
         <time datetime={date.toISOString()}>{dateLabel}</time>
       </div>
@@ -118,7 +118,7 @@ const jsonLd = {
         {
           hasTitleAccent && titleAccent ? (
             <>
-              {titleBefore}<span class="text-[color:var(--accent-text)]">{titleAccent}</span>{titleAfter}
+              {titleBefore}<span class="text-[color:var(--v5-ink-3)]">{titleAccent}</span>{titleAfter}
             </>
           ) : (
             title
@@ -192,8 +192,8 @@ const jsonLd = {
       >
       <a
         href="https://github.com/langgenius/mosoo"
-        class="inline-flex items-center gap-2 rounded-[var(--r-md)] bg-[color:var(--green-500)] px-3.5 py-2 font-semibold text-[color:var(--fg-on-accent)] transition-colors duration-150 hover:bg-[color:var(--green-600)]"
-        >{copy.learnMore}</a
+        class="inline-flex items-center gap-2 rounded-[8px] border border-[color:var(--v5-ink)] bg-white px-3.5 py-2 font-medium text-[color:var(--v5-ink)] transition-colors duration-150 hover:bg-[color:var(--v5-frame)]"
+        >{copy.github}</a
       >
     </div>
   </article>

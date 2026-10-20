@@ -30,21 +30,21 @@ export const headerCopyByLocale = {
     blog: "Blog",
     backToMosoo: "Back to mosoo",
     languageLabel: "Blog language",
-    learnMore: "Learn More",
+    tryMosoo: "Try mosoo",
     rssTitle: "Subscribe via RSS",
   },
   zh: {
     blog: "博客",
     backToMosoo: "返回 mosoo",
     languageLabel: "博客语言",
-    learnMore: "了解更多",
+    tryMosoo: "试用 mosoo",
     rssTitle: "订阅 RSS",
   },
   ja: {
     blog: "ブログ",
     backToMosoo: "mosoo に戻る",
     languageLabel: "ブログ言語",
-    learnMore: "詳しく見る",
+    tryMosoo: "mosoo を試す",
     rssTitle: "RSS を購読",
   },
 };
@@ -84,19 +84,19 @@ export const postCopyByLocale = {
     back: "← All posts",
     more: "← More posts",
     by: "By",
-    learnMore: "Learn More →",
+    github: "mosoo on GitHub →",
   },
   zh: {
     back: "← 返回全部文章",
     more: "← 更多文章",
     by: "作者",
-    learnMore: "了解更多 →",
+    github: "GitHub 上的 mosoo →",
   },
   ja: {
     back: "← 記事一覧に戻る",
     more: "← ほかの記事",
     by: "著者",
-    learnMore: "詳しく見る →",
+    github: "GitHub の mosoo →",
   },
 };
 
