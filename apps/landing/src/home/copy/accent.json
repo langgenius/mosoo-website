@@ -1,9 +1,9 @@
 {
-  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md, slot table with lines at 1440 and 390). Before the edge, on white: tab (a tab label, Inter 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (Inter 20 / 17, two lines at 1440, three at 390), and five cards in this order: Harness, Model key, Sandbox, Files, Resume (label Inter 16 w500, one line; line Inter 15, one line in the wide cards, at most two in the narrow ones and at 390). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md; the three cards: staging v5/graft/lime/NOTES.md, lines at 1440, 1024, 768 and 390). Before the edge, on white: tab (a tab label, sans 16, one line) and gap (a two-word line in the display face, 72px / 40px, one line). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440; at 390 one line up to about 20 characters, two at the budget), sub (sans 20 / 17, two lines at 1440, three at 390), and three cards in one row, a Session's life between turns in this order: Sandbox (what goes), Files and conversation (what stays), Resume (how it comes back). Label 16 w500, one line; line 15, at most two lines, balanced (accent.css): write each line as two phrases of about the same length, and join with a no-break space (\\u00a0) what must not be split across lines (Session ID, working directory, Live processes; ja: the particle after a Latin word). The five parts of a Session (harness, model, sandbox, files, resume) are the spec table's, so the cards do not list them again. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source below; the tab, gap, H2 and sub: staging v5/content/NOTES.md.",
   "$source": {
     "h2": "v4b's line. The sandbox is reclaimed once idle (docs/prd/session-lifecycle.md L8); the Session has no inactivity deadline (SPEC §4 L60) and continues after the sandbox was reclaimed (SPEC §4 L53).",
     "sub": "A turn succeeds only when a checkpoint of its workspace and native conversation commits with it, and failed or cancelled turns never replace the last one (SPEC §4 L46, L49); the next input restores it, on a fresh sandbox once the old one was reclaimed (session-lifecycle.md L8).",
-    "cards": "Harness: four (README L9), frozen for the Session (SPEC §3 L31). Model key: bring your own (SPEC §2 L25), never enters the sandbox (SPEC §5 L65). Sandbox: one per Session (SPEC §3 L32), full access inside (SPEC §5 L65). Files: what the Agent writes under outputs/ becomes downloadable artifacts (session-files.md L9). Resume: the Thread ID is the one handle (SPEC §4 L38); one minute or seven days later, same semantics (SPEC §4 L53)."
+    "cards": "Sandbox: a sandbox left idle is reclaimed automatically (session-lifecycle.md L8; SESSION_RUNTIME_IDLE_GRACE_MS = 5 min, apps/api/src/modules/runtime/domain/session-runtime-policy.ts L2), never before the turn's checkpoint commits (SPEC §4 L47); live processes, sockets and machine-wide temporary state are never carried over (SPEC §4 L54). Files and conversation: v4c's audited 'Files and conversation restored'; a later turn finds the working directory, files outside outputs/ included, and the harness's native conversation (SPEC §4 L53; README L26; session-files.md L9). Attachments never enter a checkpoint (SPEC §4 L54; session-files.md L16), so the line names the working directory, as the stage's Resume line does (v5 truth review P1-1). Resume: the Thread ID is the one handle (SPEC §4 L38) and the same Session ID continues (SPEC §7 L82); a reply days later has the same semantics after the sandbox was reclaimed, and the next input restores it on a fresh sandbox (SPEC §4 L53; session-lifecycle.md L8; 'fresh sandbox' is v4c's audited wording)."
   },
   "en": {
     "tab": "Between turns",
@@ -12,11 +12,9 @@
     "h2b": "The Session stays.",
     "sub": "Every successful turn ends in a checkpoint. The next turn resumes from there.",
     "cards": [
-      { "label": "Harness", "line": "One of four, fixed for the whole Session." },
-      { "label": "Model key", "line": "Your provider key, kept outside the sandbox." },
-      { "label": "Sandbox", "line": "One per Session, with full access inside." },
-      { "label": "Files", "line": "Written to outputs/, ready to download." },
-      { "label": "Resume", "line": "Same Session ID, a minute or a week later." }
+      { "label": "Sandbox", "line": "Reclaimed when idle. Live processes end with it." },
+      { "label": "Files and conversation", "line": "The whole working directory, not just outputs/." },
+      { "label": "Resume", "line": "Days later, same Session ID, on a fresh sandbox." }
     ]
   },
   "zh": {
@@ -26,11 +24,9 @@
     "h2b": "Session 还在。",
     "sub": "成功的一轮，留下检查点。下一轮，从那里继续。",
     "cards": [
-      { "label": "Harness", "line": "四选一，整个 Session 期间不会更换。" },
-      { "label": "模型密钥", "line": "用你自己的密钥，它不会进入 sandbox。" },
-      { "label": "Sandbox", "line": "每个 Session 一个，里面拥有完整权限。" },
-      { "label": "文件", "line": "写进 outputs/ 的文件，都能下载。" },
-      { "label": "续接", "line": "一分钟后或一周后，同一个 Session ID。" }
+      { "label": "Sandbox", "line": "闲置后自动回收，进程随之结束。" },
+      { "label": "文件和对话", "line": "整个工作目录，不只是 outputs/。" },
+      { "label": "续接", "line": "几天后，同一个 Session ID，sandbox 已换新。" }
     ]
   },
   "ja": {
@@ -40,11 +36,9 @@
     "h2b": "Session は残る。",
     "sub": "成功したターンはチェックポイントで終わり、次のターンはそこから再開します。",
     "cards": [
-      { "label": "Harness", "line": "4 つから選び、Session の間は変わりません。" },
-      { "label": "モデルキー", "line": "ご自身のキーは sandbox の外に置かれます。" },
-      { "label": "Sandbox", "line": "Session ごとに 1 つ。中ではフルアクセス。" },
-      { "label": "ファイル", "line": "outputs/ のファイルが手元に戻ります。" },
-      { "label": "再開", "line": "1 分後でも 1 週間後でも、同じ Session ID。" }
+      { "label": "Sandbox", "line": "アイドルが続くと回収。プロセスは残りません。" },
+      { "label": "ファイルと会話", "line": "outputs/ だけでなく、作業ディレクトリ全体。" },
+      { "label": "再開", "line": "数日後も、同じ Session ID を新しい sandbox で。" }
     ]
   }
 }

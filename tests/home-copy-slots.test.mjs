@@ -46,13 +46,14 @@ const BUDGETS = {
   "stage.steps.*.title": 34,
   "stage.steps.*.line": 70,
   "stage.kit.harness": 16, // system: a product name
-  // the full lime screen
+  // the full lime screen; three cards in one row (staging v5/graft/lime/NOTES.md: a 24-character label stays on one
+  // line and a 48-character line takes at most two, 360-1440)
   "accent.tab": 22,
   "accent.gap": 16,
   "accent.h2a": 24,
   "accent.h2b": 26,
   "accent.sub": 110,
-  "accent.cards.*.label": 14,
+  "accent.cards.*.label": 24,
   "accent.cards.*.line": 48,
   // FAQ
   "faq.a": 20,
@@ -151,6 +152,12 @@ test("every en slot has a budget and fits it", () => {
   const together = [...closing.h2a].length + [...closing.h2b].length;
   if (together > 30) overflow.push(`closing.h2a + h2b: ${together} > 30 characters together`);
   assert.deepEqual(overflow, []);
+});
+
+// The full lime screen tells a Session's life between turns in three cards, in this order (sections/accent.ts PARTS:
+// sandbox, files, resume); the five parts themselves are the spec table's. zh and ja follow en's shape (below).
+test("the lime screen has three cards (en)", () => {
+  assert.equal(COPY.accent.en.cards.length, 3, "accent.cards: Sandbox, Files and conversation, Resume");
 });
 
 test("each state of the Session object shows at most 14 words (en)", () => {

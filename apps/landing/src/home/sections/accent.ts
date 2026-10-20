@@ -5,17 +5,20 @@
 //    130 px of nothing before the edge (Frame: "Our Mission Statement" + "Be focused.").
 // 2. The lime panel: a hard edge (no shadow, no gradient at the top), as wide as the paper (full bleed on phones),
 //    solid for at least one screen and 40 px, then a long linear fade that ends transparent so the paper comes back
-//    without a seam. On it: the two-tone H2, a sub, and the five parts of a Session as white cards in a 2 + 3 grid
-//    (TOOLS-REVIEW T3: Harness, Model key / Sandbox, Files, Resume), each with its T3 line figure and, at the
-//    bottom-left, a label and one line (v4a's spec-row type; Mintlify's bento label).
+//    without a seam. On it: the two-tone H2, a sub, and three white cards in one row (Mintlify's 1 + 1 + 1 row) that
+//    tell a Session's life between turns: the sandbox goes, the files and the conversation stay, the Session comes
+//    back on a fresh sandbox. Each card has its T3 line figure and, at the bottom-left, a label and one line (v4a's
+//    spec-row type; Mintlify's bento label). The five parts themselves (harness, model, sandbox, files, resume) are
+//    the spec table's screen; here they would say the same thing twice (graft, staging v5/graft/lime/NOTES.md).
 //
 // Engines (src/effects/v5/README.md): the gap block and the title block rise (Frame a-15; the gap line, the H2's
-// second line and the sub fade in 300 ms later, a-14); the cards enter with the rise engine (Intent). The nav turns
-// lime while .v5-acc-zone is under its centre line: data-theme-zone sits on that box, which covers the solid
-// stretch and the first half of the fade, so the bar is white glass again over the pale end and never over the
-// white gap. The Resume comet is the group's only motion: ./accent.css runs it (T3's keyframes) only while its
-// figure carries data-playing, one 4.5 s burst each time it comes into view (src/effects/v5/play-for.ts; WCAG
-// 2.2.2), and stops it under reduced motion.
+// second line and the sub fade in 300 ms later, a-14); the cards enter with the rise engine (Intent): they come into
+// view in one frame, so they start 100 ms apart, left to right, in the order the life cycle reads. The nav turns
+// lime while .v5-acc-zone is under its centre line: data-theme-zone sits on that box, which covers the solid stretch
+// and the first half of the fade, so the bar is white glass again over the pale end and never over the white gap.
+// The Resume comet is the group's only motion: ./accent.css runs it (T3's keyframes) only while its figure carries
+// data-playing, one 4.5 s burst each time it comes into view (src/effects/v5/play-for.ts; WCAG 2.2.2), and stops it
+// under reduced motion.
 //
 // The gap line is a paragraph set as a display line, not a heading: the panel's H2 names the section
 // (aria-labelledby), so the outline does not get an empty heading before it. The card list keeps role="list":
@@ -24,8 +27,8 @@
 import type { HomeCopy, HomeLocale } from "../copy.ts";
 import { esc, tabLabel, twoTone } from "../ui.ts";
 
-/** The five parts in card order: the 2 + 3 grid reads row by row (TOOLS-REVIEW T3). */
-const PARTS = ["harness", "model-key", "sandbox", "files", "resume"] as const;
+/** The three cards in reading order, a Session between turns: what goes, what stays, how it comes back. */
+const PARTS = ["sandbox", "files", "resume"] as const;
 type Part = (typeof PARTS)[number];
 
 /** T3 renders every figure at two sizes, viewBox = CSS px; lines and dot pitch keep their width at both. */
@@ -38,36 +41,11 @@ type FigureSize = (typeof SIZES)[number];
  * it is off-screen (TOOLS-REVIEW T3); its class, keyframes and mask id are per size (lfc202 / lfc160), so both
  * sizes can sit in the page. render() drops the XML comment and the Resume figure's <style> (./accent.css carries
  * the same keyframes, so the page keeps its one stylesheet) and adds a class. After re-running linefig.mjs,
- * paste the files again (each between backticks, trailing newline dropped); staging v5/sections/accent/NOTES.md
- * has the one-line check that they still match.
+ * paste the files again (each between backticks, trailing newline dropped); tests/home-figures.test.mjs checks
+ * that they still match. The generator also draws harness and model-key figures, for the five-part grid this
+ * screen had before the spec table came back; they are not on the page.
  */
 const FIGURES: Readonly<Record<Part, Readonly<Record<FigureSize, string>>>> = {
-  "harness": {
-    202: `<svg xmlns="http://www.w3.org/2000/svg" width="202" height="202" viewBox="0 0 202 202" fill="none" stroke="#161815" stroke-linejoin="bevel">
-<!-- harness · one cone, four discs · node apps/landing/scripts/assets/linefig.mjs -->
-<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M12 140L201 140M12 140L201 82.21"/>
-<path stroke-width=".75" d="M64 97.6A6.89 26.5 0 0 1 69.97 137.35A6.89 26.5 0 0 1 58.03 137.35A6.89 26.5 0 0 1 64 97.6M87.4 78.52A9.99 38.42 0 0 1 96.05 136.16A9.99 38.42 0 0 1 78.75 136.16A9.99 38.42 0 0 1 87.4 78.52M121.33 50.85A14.49 55.72 0 0 1 133.88 134.43A14.49 55.72 0 0 1 108.78 134.43A14.49 55.72 0 0 1 121.33 50.85M170.53 10.74A21.01 80.79 0 0 1 188.72 131.92A21.01 80.79 0 0 1 152.34 131.92A21.01 80.79 0 0 1 170.53 10.74M12 140L169.41 172.2M12 140L166.11 12.54"/>
-</svg>`,
-    160: `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
-<!-- harness · one cone, four discs · node apps/landing/scripts/assets/linefig.mjs -->
-<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M9.5 110.89L159.21 110.89M9.5 110.89L159.21 65.12"/>
-<path stroke-width=".75" d="M50.69 77.31A5.46 20.99 0 0 1 55.42 108.79A5.46 20.99 0 0 1 45.97 108.79A5.46 20.99 0 0 1 50.69 77.31M69.23 62.19A7.91 30.44 0 0 1 76.08 107.85A7.91 30.44 0 0 1 62.37 107.85A7.91 30.44 0 0 1 69.23 62.19M96.1 40.28A11.47 44.13 0 0 1 106.04 106.48A11.47 44.13 0 0 1 86.17 106.48A11.47 44.13 0 0 1 96.1 40.28M135.07 8.51A16.64 63.99 0 0 1 149.48 104.49A16.64 63.99 0 0 1 120.66 104.49A16.64 63.99 0 0 1 135.07 8.51M9.5 110.89L134.19 136.4M9.5 110.89L131.57 9.94"/>
-</svg>`,
-  },
-  "model-key": {
-    202: `<svg xmlns="http://www.w3.org/2000/svg" width="202" height="202" viewBox="0 0 202 202" fill="none" stroke="#161815" stroke-linejoin="bevel">
-<!-- model key · touches, never enters · node apps/landing/scripts/assets/linefig.mjs -->
-<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M52 101L52 37M52 101L52 165M52 101L1 101M52 101L201 101"/>
-<path stroke-width="1.25" stroke-dasharray=".01 4.004" stroke-linecap="round" d="M52 101A23 23 0 0 1 86.5 81.08A23 23 0 0 1 86.5 120.92A23 23 0 0 1 52 101"/>
-<path stroke-width=".75" d="M52 101A74 74 0 0 1 163 36.91A74 74 0 0 1 163 165.09A74 74 0 0 1 52 101M52 101A23 23 0 0 1 17.5 120.92A23 23 0 0 1 17.5 81.08A23 23 0 0 1 52 101"/>
-</svg>`,
-    160: `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
-<!-- model key · touches, never enters · node apps/landing/scripts/assets/linefig.mjs -->
-<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M41.19 80L41.19 29.31M41.19 80L41.19 130.69M41.19 80L.79 80M41.19 80L159.21 80"/>
-<path stroke-width="1.25" stroke-dasharray=".01 3.937" stroke-linecap="round" d="M41.19 80A18.22 18.22 0 0 1 68.51 64.22A18.22 18.22 0 0 1 68.51 95.78A18.22 18.22 0 0 1 41.19 80"/>
-<path stroke-width=".75" d="M41.19 80A58.61 58.61 0 0 1 129.11 29.24A58.61 58.61 0 0 1 129.11 130.76A58.61 58.61 0 0 1 41.19 80M41.19 80A18.22 18.22 0 0 1 13.86 95.78A18.22 18.22 0 0 1 13.86 64.22A18.22 18.22 0 0 1 41.19 80"/>
-</svg>`,
-  },
   "sandbox": {
     202: `<svg xmlns="http://www.w3.org/2000/svg" width="202" height="202" viewBox="0 0 202 202" fill="none" stroke="#161815" stroke-linejoin="bevel">
 <!-- sandbox · a cube inside its own cube · node apps/landing/scripts/assets/linefig.mjs -->
@@ -160,10 +138,14 @@ function figure(part: Part): string {
 
 export function render(_locale: HomeLocale, copy: HomeCopy): string {
   const a = copy.accent;
+  // One card per part, no more: a card the copy adds would otherwise never reach the page.
+  if (a.cards.length !== PARTS.length) {
+    throw new Error(`accent.cards has ${a.cards.length} cards; the page draws ${PARTS.length}: ${PARTS.join(", ")}`);
+  }
   const cards = PARTS.map((part, i) => {
     const card = a.cards[i];
     if (!card) {
-      throw new Error(`accent.cards[${i}] (${part}) is missing: the copy lists the five parts in card order`);
+      throw new Error(`accent.cards[${i}] (${part}) is missing: the copy lists the three cards in order`);
     }
     return `<li class="v5-acc-card" data-part="${part}" data-rise="card">${figure(part)}<div class="v5-acc-text"><h3 class="v5-acc-label">${esc(card.label)}</h3><p class="v5-acc-line">${esc(card.line)}</p></div></li>`;
   }).join("\n");

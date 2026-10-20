@@ -267,7 +267,7 @@ unpinned; damping and the pinned stage also return when it flips back.
 | 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」 |
 | 1 Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; sub line and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` |
 | 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: label, component state and sentence each `data-stage-step="k"` |
-| 3 Full lime screen | the section `data-theme-zone="accent"`; its title wrapper `data-rise="block"`, H2 `data-rise="title"`, second line `data-rise="line"`; the five cards `data-rise="card"` |
+| 3 Full lime screen | the section `data-theme-zone="accent"`; its title wrapper `data-rise="block"`, H2 `data-rise="title"`, second line `data-rise="line"`; the three cards `data-rise="card"` |
 | Section titles elsewhere (FAQ, closing) | `data-rise="block"` / `"title"` / `"line"` |
 | 6 Footer | `<footer data-footer>`; link columns `data-footer-link` inside `data-footer-links`; brand row `data-footer-brand` with the mark and the letters-only wordmark `data-footer-rise` (mark first); the mark's outline path `data-draw`, its line `data-draw="grow-x"` |
 
