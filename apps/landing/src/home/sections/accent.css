@@ -52,7 +52,8 @@
   text-wrap: balance;
 }
 
-:lang(ja) .v5-accent .v5-acc-sub {
+/* ja running text breaks at phrases (system.css's rule for .v5-lead / .v5-body), the card lines included. */
+:lang(ja) .v5-accent :is(.v5-acc-sub, .v5-acc-line) {
   word-break: auto-phrase;
 }
 
