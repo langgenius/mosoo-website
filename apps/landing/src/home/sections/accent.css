@@ -14,17 +14,19 @@
 
 /* ------------------------------------------------------------------------------------------- the lime panel */
 /* Frame's .next-gen as CSS (motion §4): the paper's width, radius 12 like the paper, a hard top edge (no shadow, no
-   gradient), solid for at least one screen + 40 px, then one linear fade. The fade ends transparent, not white, so
-   the paper's dot grid comes back as the lime goes (premultiplied interpolation: the same colours as a fade to
-   white). min-height keeps the fade at least 60 % of a screen when the content is short (tall viewports). */
+   gradient), then one linear fade. The solid stretch follows the content: it ends 96px under the last card and the
+   fade (--fade) takes only the panel's tail, padded in below the cards, so every card sits on solid lime (Frame's
+   cards do; design review P1-1 measured the second row at .25 and the last 390 card at 0 lime). min-height keeps the
+   solid at least one screen + 40 px when the content is short (tall viewports). The fade ends transparent, not
+   white, so the paper's dot grid comes back as the lime goes (premultiplied interpolation). */
 .v5-accent .v5-acc-lime {
+  --fade: 540px;
   position: relative;
-  min-height: calc(160vh + 40px);
-  min-height: calc(160svh + 40px);
-  padding: 104px 0 200px;
+  min-height: calc(100vh + 40px + var(--fade));
+  min-height: calc(100svh + 40px + var(--fade));
+  padding: 104px 0 calc(96px + var(--fade));
   border-radius: 12px;
-  background: linear-gradient(var(--accent) 0 calc(100vh + 40px), rgb(255 255 255 / 0) 100%);
-  background: linear-gradient(var(--accent) 0 calc(100svh + 40px), rgb(255 255 255 / 0) 100%);
+  background: linear-gradient(var(--accent) 0 calc(100% - var(--fade)), rgb(255 255 255 / 0) 100%);
 }
 
 /* The nav's theme zone: the solid stretch and the first half of the fade. Past it the bar is white glass over the
@@ -32,8 +34,7 @@
 .v5-accent .v5-acc-zone {
   position: absolute;
   inset: 0 0 auto;
-  height: calc(50% + (100vh + 40px) / 2);
-  height: calc(50% + (100svh + 40px) / 2);
+  height: calc(100% - var(--fade) / 2);
   pointer-events: none;
 }
 
@@ -59,7 +60,8 @@
 
 /* ---------------------------------------------------------------------------------------- the five cards */
 /* 2 + 3 (TOOLS-REVIEW T3): two wide cards (Harness, Model key), three narrow (Sandbox, Files, Resume). Gap 16 and
-   radius 12 (Mintlify), Frame's white-card shadow on lime. One row height (Mintlify: 412) whatever the width. */
+   radius 12 (Mintlify), Frame's white-card shadow on lime. Cards are as tall as the 202 figure and the text need
+   (354 at 1440), not Mintlify's 412: two rows were taller than a screen with the H2 above them (design P1-1). */
 .v5-accent .v5-acc-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -71,7 +73,6 @@
   grid-column: span 2;
   display: flex;
   flex-direction: column;
-  min-height: 412px;
   padding: 28px;
   border-radius: 12px;
   background: var(--paper);
@@ -220,10 +221,12 @@
     padding-bottom: 100px;
   }
 
-  /* Top 96: the H2 clears the floating bar (12 + 56) by 28 px at the full-lime moment. */
+  /* Top 96: the H2 clears the floating bar (12 + 56) by 28 px at the full-lime moment. A shorter fade, under the
+     last card as on desktop. */
   .v5-accent .v5-acc-lime {
+    --fade: 360px;
     margin-inline: calc(-1 * var(--inset, 8px));
-    padding: 96px 0 120px;
+    padding: 96px 0 calc(48px + var(--fade));
     border-radius: 0;
   }
 
