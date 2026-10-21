@@ -5,6 +5,18 @@
 //                   which the 1.91.0 installed here lacks (openai / claudecode / opencode are byte-identical).
 //   mosoo glyphs    MAIN docs/design/assets/sidebar-icons: 24 grid, 1.5 stroke, one 12% plane (class kit-gp).
 //   console glyphs  @hugeicons/core-free-icons 4.2.3 (MIT), MAIN bun.lock L631, as apps/web/src/shared/ui/icons.tsx.
+// Hugeicons' notice (the MIT License of its free icons, hugeicons.com/license-agreement):
+//   MIT License. Copyright (c) 2025 Hugeicons
+//   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+//   documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+//   the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+//   permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//   The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+//   the Software.
+//   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+//   WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+//   OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+//   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 export interface KitGlyph {
   readonly viewBox: string;
@@ -61,6 +73,18 @@ export const KIT_GLYPHS = {
     attrs: "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
     body: "<path d=\"M10 8.75V15.25L15.75 12Z\" class=\"kit-gp\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M10 8.75V15.25L15.75 12Z\"/>",
   },
+  // MAIN docs/design/assets/sidebar-icons/skills.svg
+  "skills": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+    body: "<path d=\"M5.25 20.5H15.75A1.75 1.75 0 0 0 17.5 18.75V16.5A3 3 0 1 0 17.5 10.5V8.25A1.75 1.75 0 0 0 15.75 6.5H13.5A3 3 0 1 0 7.5 6.5H5.25A1.75 1.75 0 0 0 3.5 8.25V10.5A3 3 0 1 1 3.5 16.5V18.75A1.75 1.75 0 0 0 5.25 20.5Z\" class=\"kit-gp\" stroke=\"none\"/><path d=\"M5.25 20.5H15.75A1.75 1.75 0 0 0 17.5 18.75V16.5A3 3 0 1 0 17.5 10.5V8.25A1.75 1.75 0 0 0 15.75 6.5H13.5A3 3 0 1 0 7.5 6.5H5.25A1.75 1.75 0 0 0 3.5 8.25V10.5A3 3 0 1 1 3.5 16.5V18.75A1.75 1.75 0 0 0 5.25 20.5Z\"/>",
+  },
+  // MAIN docs/design/assets/sidebar-icons/mcp-servers.svg
+  "mcp": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"",
+    body: "<path d=\"M5 7H19V12A7 7 0 0 1 5 12Z\" class=\"kit-gp\" stroke=\"none\"/><path d=\"M8.5 2.5V7M15.5 2.5V7\"/><path d=\"M5 7H19V12A7 7 0 0 1 5 12Z\"/><path d=\"M12 19V21.5\"/>",
+  },
   // @hugeicons/core-free-icons 4.2.3 dist/esm/File02Icon.js
   "file": {
     viewBox: "0 0 24 24",
@@ -102,6 +126,30 @@ export const KIT_GLYPHS = {
     viewBox: "0 0 24 24",
     attrs: "fill=\"none\"",
     body: "<path d=\"M20.0092 2V5.13219C20.0092 5.42605 19.6418 5.55908 19.4537 5.33333C17.6226 3.2875 14.9617 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
+  },
+  // @hugeicons/core-free-icons 4.2.3 dist/esm/LaptopIcon.js
+  "laptop": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\"",
+    body: "<path d=\"M20.4999 16.5V8.5C20.4999 6.14298 20.4999 4.96447 19.7676 4.23223C19.0354 3.5 17.8569 3.5 15.4999 3.5H8.49988C6.14286 3.5 4.96434 3.5 4.23211 4.23223C3.49988 4.96447 3.49988 6.14298 3.49988 8.5V16.5\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M21.9841 20.5H2.01567C1.63273 20.5 1.38367 20.1088 1.55493 19.7764L3.49988 16.5H20.4999L22.4448 19.7764C22.6161 20.1088 22.367 20.5 21.9841 20.5Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
+  },
+  // @hugeicons/core-free-icons 4.2.3 dist/esm/UserIcon.js
+  "user": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\"",
+    body: "<path d=\"M17 8.5C17 5.73858 14.7614 3.5 12 3.5C9.23858 3.5 7 5.73858 7 8.5C7 11.2614 9.23858 13.5 12 13.5C14.7614 13.5 17 11.2614 17 8.5Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M19 20.5C19 16.634 15.866 13.5 12 13.5C8.13401 13.5 5 16.634 5 20.5\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
+  },
+  // @hugeicons/core-free-icons 4.2.3 dist/esm/ServerStack01Icon.js
+  "server": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\"",
+    body: "<path d=\"M19 4H5C4.06812 4 3.60218 4 3.23463 4.15224C2.74458 4.35523 2.35523 4.74458 2.15224 5.23463C2 5.60218 2 6.06812 2 7C2 7.93188 2 8.39782 2.15224 8.76537C2.35523 9.25542 2.74458 9.64477 3.23463 9.84776C3.60218 10 4.06812 10 5 10H19C19.9319 10 20.3978 10 20.7654 9.84776C21.2554 9.64477 21.6448 9.25542 21.8478 8.76537C22 8.39782 22 7.93188 22 7C22 6.06812 22 5.60218 21.8478 5.23463C21.6448 4.74458 21.2554 4.35523 20.7654 4.15224C20.3978 4 19.9319 4 19 4Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M19 14H5C4.06812 14 3.60218 14 3.23463 14.1522C2.74458 14.3552 2.35523 14.7446 2.15224 15.2346C2 15.6022 2 16.0681 2 17C2 17.9319 2 18.3978 2.15224 18.7654C2.35523 19.2554 2.74458 19.6448 3.23463 19.8478C3.60218 20 4.06812 20 5 20H19C19.9319 20 20.3978 20 20.7654 19.8478C21.2554 19.6448 21.6448 19.2554 21.8478 18.7654C22 18.3978 22 17.9319 22 17C22 16.0681 22 15.6022 21.8478 15.2346C21.6448 14.7446 21.2554 14.3552 20.7654 14.1522C20.3978 14 19.9319 14 19 14Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M6.125 7H6M6.25 7C6.25 7.13807 6.13807 7.25 6 7.25C5.86193 7.25 5.75 7.13807 5.75 7C5.75 6.86193 5.86193 6.75 6 6.75C6.13807 6.75 6.25 6.86193 6.25 7Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M10.125 7H10M10.25 7C10.25 7.13807 10.1381 7.25 10 7.25C9.86193 7.25 9.75 7.13807 9.75 7C9.75 6.86193 9.86193 6.75 10 6.75C10.1381 6.75 10.25 6.86193 10.25 7Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M6.125 17H6M6.25 17C6.25 17.1381 6.13807 17.25 6 17.25C5.86193 17.25 5.75 17.1381 5.75 17C5.75 16.8619 5.86193 16.75 6 16.75C6.13807 16.75 6.25 16.8619 6.25 17Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M10.125 17H10M10.25 17C10.25 17.1381 10.1381 17.25 10 17.25C9.86193 17.25 9.75 17.1381 9.75 17C9.75 16.8619 9.86193 16.75 10 16.75C10.1381 16.75 10.25 16.8619 10.25 17Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
+  },
+  // @hugeicons/core-free-icons 4.2.3 dist/esm/Note01Icon.js
+  "note": {
+    viewBox: "0 0 24 24",
+    attrs: "fill=\"none\"",
+    body: "<path d=\"M16.5 2V5M7.5 2V5M12 2V5\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M13 3.5H11C7.70017 3.5 6.05025 3.5 5.02513 4.52513C4 5.55025 4 7.20017 4 10.5V15C4 18.2998 4 19.9497 5.02513 20.9749C6.05025 22 7.70017 22 11 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9497 20 18.2998 20 15V10.5C20 7.20017 20 5.55025 18.9749 4.52512C17.9497 3.5 16.2998 3.5 13 3.5Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M8 15H12M8 11H16\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
   },
 } as const satisfies Record<string, KitGlyph>;
 

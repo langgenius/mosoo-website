@@ -11,6 +11,12 @@
 //                   which the 1.91.0 installed in this repo lacks (openai / claudecode / opencode are identical).
 //   mosoo glyphs    MAIN docs/design/assets/sidebar-icons: 24 grid, 1.5 stroke, one 12% plane (class kit-gp).
 //   console glyphs  @hugeicons/core-free-icons 4.2.3 (MIT), MAIN bun.lock L631, as apps/web/src/shared/ui/icons.tsx.
+// Licences, checked 2026-10-21 (round 3b): Hugeicons' free set is MIT ("The 6,000+ free Stroke Rounded icons,
+// including the @hugeicons/core-free-icons package ... are licensed under the MIT License", hugeicons.com/license-
+// agreement, effective 14 Sep 2026; the notice is the package's LICENSE.md, Copyright (c) 2025 Hugeicons, written into
+// glyphs.ts below). The 4.2.3 tarball itself ships no LICENSE file and its README ends "All rights reserved"; its
+// package.json says MIT, and the licence page settles it for this package. @lobehub/icons-static-svg: MIT
+// (package.json). The sidebar glyphs are mosoo's own (MAIN, Apache-2.0).
 // Paths outside this repo come from the environment:
 //   MOSOO_MAIN               a checkout of the mosoo main repo (required);
 //   BUN_INSTALL_CACHE_DIR    bun's package cache (default ~/.bun/install/cache); `bun install` in MAIN fills it
@@ -36,6 +42,22 @@ const HUGE = join(CACHE, "@hugeicons/core-free-icons@4.2.3@@@1/dist/esm");
 const SIDEBAR = join(env("MOSOO_MAIN"), "docs/design/assets/sidebar-icons");
 
 const LINE = 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+
+/** The MIT notice of Hugeicons' free icons (the package's LICENSE.md from 4.3.x on; 4.2.3 ships none), kept with the
+ *  copied paths as the licence asks. */
+const HUGEICONS_NOTICE = [
+  "MIT License. Copyright (c) 2025 Hugeicons",
+  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated",
+  'documentation files (the "Software"), to deal in the Software without restriction, including without limitation',
+  "the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to",
+  "permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+  "The above copyright notice and this permission notice shall be included in all copies or substantial portions of",
+  "the Software.",
+  'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE',
+  "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS",
+  "OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR",
+  "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+];
 const FILL = 'fill="currentColor" fill-rule="evenodd"';
 
 function fromLobe(id, file) {
@@ -94,13 +116,20 @@ const glyphs = [
   fromSidebar("cube", "environments.svg"),
   fromSidebar("key", "providers.svg"),
   fromSidebar("runs", "runs.svg"),
-  fromHuge("file", "File02Icon"), // console FileText
+  fromSidebar("skills", "skills.svg"), // the Session's Skills row, the spec table's Skills · MCP row
+  fromSidebar("mcp", "mcp-servers.svg"), // the Session's Remote MCP row
+  fromHuge("file", "File02Icon"), // console FileText: report.md
   fromHuge("check", "CheckIcon"),
   fromHuge("plus", "Add01Icon"),
   fromHuge("arrow-up", "ArrowUp01Icon"), // the composer's send key
   fromHuge("clock", "Clock03Icon"),
   fromHuge("terminal", "ComputerTerminal01Icon"), // console SquareTerminal: bash / exec_command / shell
   fromHuge("refresh", "RefreshIcon"), // console RefreshCw
+  // round 3b, the first plate's three states (staging narrative/CHANGES.md §2, §3, §10 A2):
+  fromHuge("laptop", "LaptopIcon"), // the laptop card's head
+  fromHuge("user", "UserIcon"), // console User (icons.tsx): You, Teammate, Customer
+  fromHuge("server", "ServerStack01Icon"), // Your backend, Your app
+  fromHuge("note", "Note01Icon"), // Instructions (the Session's row, the spec table's row)
 ];
 
 const out = [
@@ -111,6 +140,8 @@ const out = [
   "//                   which the 1.91.0 installed here lacks (openai / claudecode / opencode are byte-identical).",
   "//   mosoo glyphs    MAIN docs/design/assets/sidebar-icons: 24 grid, 1.5 stroke, one 12% plane (class kit-gp).",
   "//   console glyphs  @hugeicons/core-free-icons 4.2.3 (MIT), MAIN bun.lock L631, as apps/web/src/shared/ui/icons.tsx.",
+  "// Hugeicons' notice (the MIT License of its free icons, hugeicons.com/license-agreement):",
+  ...HUGEICONS_NOTICE.map((line) => `//   ${line}`.trimEnd()),
   "",
   "export interface KitGlyph {",
   "  readonly viewBox: string;",
