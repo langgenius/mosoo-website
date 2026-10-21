@@ -2,12 +2,16 @@
 // the words: narrative/DECK.md §2.3). One markup draws all three, so the stage moves the same object from state to
 // state in place (kit.css: every part reads --kit-cloud and --kit-app; no card ever travels from the laptop to the
 // Session, staging narrative/judge-truth:.md L32):
-//   laptop  the first plate. Two white cards side by side, row for row, no arrow and no line: Laptop (Codex,
-//           report.md done, You) and Session (Codex, report.md done, Your backend), two more Sessions stacked behind
-//           the second with their lower edges showing. The two rows that differ (where it runs, who drives it) are
-//           ink 500, the two it shares ink-2 400 (CHANGES §2.2: 5 of 10 readers had to hunt for the difference).
-//   cloud   the laptop card stays, at half strength; the Session card's rows turn, row by row, into the Agent
-//           preset's parts: Codex, Instructions, Skills, Remote MCP, Environment with a "pinned" chip.
+//   laptop  the first plate. Two white cards side by side, row for row, no arrow and no line: Laptop (You, Codex,
+//           report.md done) and Session (Your backend, Codex, report.md done), two more Sessions fanned behind the
+//           second, their top and right edges showing (phones: straight up, their tops; round 3c: 0 of 10 readers saw
+//           the 12px lower edges as more Sessions at first glance). The two rows that differ (where it runs, who
+//           drives it) come first and read as one block, ink 500; the two it shares follow under a hairline, ink-2 400
+//           and a step smaller (round 3c: 3 of 5 readers at 1440 still hunted for the difference when the driver row
+//           came last).
+//   cloud   the laptop card stays, at half strength; the Session card's driver row closes and its rows turn, row by
+//           row, into the Agent preset's parts: Codex, Instructions, Skills, Remote MCP, Environment with a "pinned"
+//           chip.
 //   app     the laptop card is gone; the stack spreads into a column of three Sessions (the front one keeps
 //           report.md); Your app calls them, and Teammate and Customer use your app. 1px ink lines say only who calls
 //           whom (committee O1: lines are structure); the line into the Sessions carries the request, POST …/threads,
@@ -44,28 +48,37 @@ export function renderSession(props: SessionProps): string {
   const { app, cloud, file, harness, laptop, session } = props;
   const codex = face(runtimeGlyph(harness.runtime), words(harness.name), "same");
   const result = (side = ""): string => face(glyph("file"), `${words(file, true)}${DONE}`, "same", side);
-  const rows = (cells: readonly string[]): string =>
-    `<ul class="kit-rows">${cells.map((cell) => `<li class="kit-slot">${cell}</li>`).join("")}</ul>`;
+  // A card's rows; each slot is named for what it holds in the first state (kit.css opens and closes them by name).
+  const rows = (cells: readonly (readonly [string, string])[]): string => {
+    const items = cells.map(([slot, cell]) => `<li class="kit-slot kit-slot--${slot}">${cell}</li>`);
+    return `<ul class="kit-rows">${items.join("")}</ul>`;
+  };
   const sessionHead = head("runs", session.place);
+  const pinned = `<span class="kit-pin">${esc(cloud.pinned)}</span>`;
   const laptopCard =
     `<div class="kit-card kit-laptop" data-kit-part="laptop">${head("laptop", laptop.place)}` +
-    rows([codex, result(), face(glyph("user"), words(laptop.driver), "key")]) +
+    rows([
+      ["driver", face(glyph("user"), words(laptop.driver), "key")],
+      ["harness", codex],
+      ["file", result()],
+    ]) +
     `</div>`;
-  // The front Session's five slots: what each shows in laptop | cloud | app (kit.css .kit-slot:nth-child).
-  //   1 Codex | Codex | -     2 report.md | Instructions | report.md     3 Your backend | Skills | -
-  //   4 - | Remote MCP | -    5 - | Environment pinned | -
+  // The front Session's six slots: what each shows in laptop | cloud | app (kit.css .kit-slot--*).
+  //   driver   Your backend | - | -          harness  Codex | Codex | -
+  //   file     report.md | Instructions | report.md
+  //   skills   - | Skills | -    mcp  - | Remote MCP | -    env  - | Environment pinned | -
   const front =
     `<div class="kit-card kit-front" data-kit-part="session">${sessionHead}` +
     rows([
-      codex,
-      result(" kit-row--a") + face(glyph("note"), words(cloud.rows[0] ?? ""), "key", " kit-row--b"),
-      face(glyph("server"), words(session.driver), "key", " kit-row--a") +
-        face(glyph("skills"), words(cloud.rows[1] ?? ""), "key", " kit-row--b"),
-      face(glyph("mcp"), words(cloud.rows[2] ?? ""), "key"),
-      face(glyph("cube"), `${words(cloud.rows[3] ?? "")}<span class="kit-pin">${esc(cloud.pinned)}</span>`, "key"),
+      ["driver", face(glyph("server"), words(session.driver), "key")],
+      ["harness", codex],
+      ["file", result(" kit-row--a") + face(glyph("note"), words(cloud.rows[0] ?? ""), "key", " kit-row--b")],
+      ["skills", face(glyph("skills"), words(cloud.rows[1] ?? ""), "key")],
+      ["mcp", face(glyph("mcp"), words(cloud.rows[2] ?? ""), "key")],
+      ["env", face(glyph("cube"), `${words(cloud.rows[3] ?? "")}${pinned}`, "key")],
     ]) +
     `</div>`;
-  // The two Sessions behind it: stacked (only their lower edges show), then spread under it with their heads.
+  // The two Sessions behind it: fanned (their top and right edges show), then spread under it with their heads.
   const backs = [2, 1].map((n) => `<div class="kit-card kit-back kit-back--${n}" data-kit-part="back">${sessionHead}</div>`);
   // Your app and who uses it, and the lines of who calls whom (drawn by kit.css from the layout's numbers).
   const sources = app.sources

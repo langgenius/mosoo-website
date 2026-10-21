@@ -5,11 +5,12 @@
    - pinned ([data-stage-mode="pinned"], src/effects/v5/stage.ts): the articles are layers of one plate that sticks
      88px from the top (under the 68px floating nav); the first article's object is moved through the three states in
      place (data-step -> the kit's --kit-cloud / --kit-app, transitioned), the captions and the step row switch with it.
-   Plate composition: the object at the top, centred, whole inside the plate (committee O3), 48px down, so the first
-   screen at 1440 x 900 holds both cards and the two stacked edges (CHANGES §2.2); the caption bottom-left (32, 32), at
-   most 560 wide; pinned, the step row over the caption. The kit's size follows the plate: up to 20px (17 under 840px
-   tall, 16 on tablets), never more than the plate's width allows (the wide object is 41em, the narrow one 21.2em, under
-   564px: phones), so no card is ever cut. Every rule is scoped under .v5-stage (sections/README.md). */
+   Plate composition: the object at the top, centred, whole inside the plate (committee O3), 48px down (24 on desktops
+   under 880px tall); the caption bottom-left (32, 32), at most 560 wide; pinned, the step row over the caption. The
+   kit's size follows the plate: up to 20px (17 under 1280px wide, 16 on tablets), never more than the plate's width
+   allows (the wide object is 42.6em, the narrow one 21.2em, under 564px: phones), so no card is ever cut; on desktops
+   it also follows the viewport's height, so the first screen holds the whole first plate, the stacked Sessions
+   included (round 3c, staging v5/round3/c-plate). Every rule is scoped under .v5-stage (sections/README.md). */
 
 .v5-stage {
   --pin-top: 88px; /* the floating nav ends at 68 (12 + 56) */
@@ -17,11 +18,35 @@
   --plate-r: 16px;
   --obj-top: 48px;
   --kit-max: 17px; /* the kit's root size where the plate is not full size */
+  --kit-w: 42.6; /* the object's width in em (kit.css: --sx + --sw + the fan, 2 * --dx) */
+  --kit-h: 13.7; /* the first state's height in em (kit.css: the stack over the cards + a card) */
+  --kit-fit: var(--kit-max); /* no height term under 901px wide (tablets, phones) */
   --cap-h: 62px; /* a caption at 1440: the 22px title (29) + 8 + the 16px line (25), one line each */
   margin-top: 48px;
 }
 
-@media (min-width: 1280px) and (min-height: 840px) {
+/* The first plate whole above the fold, 16px to spare, the stack included (round 3c: on 1280 x 800, 1366 x 768,
+   1440 x 800 and 1536 x 864 the fold cut the stacked Sessions, and on 1366 x 768 the You / Your backend row): the
+   kit's size also follows the viewport's height. The hero ends at 496 (en, zh, ja from 1200px wide; lower on
+   narrower screens, so the sum holds there too): 496 + 48 + 48 + 16 = 608. Never under 15px, so every word on the
+   cards stays at 14px or more (#125). */
+@media (min-width: 901px) {
+  .v5-stage {
+    --kit-fit: max(15px, (100vh - 608px) / var(--kit-h));
+  }
+}
+
+/* Shorter than 880px: the hero starts 16px higher (hero.css), the plate comes 24px under the CTA row and the object
+   24px into it: 480 + 24 + 24 + 16 = 544. */
+@media (min-width: 901px) and (max-height: 879px) {
+  .v5-stage {
+    --obj-top: 24px;
+    --kit-fit: max(15px, (100vh - 544px) / var(--kit-h));
+    margin-top: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
   .v5-stage {
     --kit-max: 20px;
   }
@@ -60,11 +85,15 @@
 }
 
 /* The "hero" line field: 1120 x 720, centred on the plate; a narrower plate crops both sides. Its knot sits behind the
-   Session stack at every plate width (public/landing/v5/lines/params.json, hero.pin: 860, 270), so the lines come in
-   from the right, pass behind the Sessions and leave under the laptop card, never through the gap between the two
-   cards at card height (CHANGES §2.3; checked at five plate sizes, staging v5/round3/b-objects). */
+   front Session (public/landing/v5/lines/params.json, hero.pin: 860, 270), so the lines come in from the right, pass
+   behind the Sessions and leave under the laptop card, never through the gap between the two cards at card height
+   (CHANGES §2.3; staging v5/round3/b-objects). A smaller kit or a higher object (short screens) lifts the field with
+   the card, the knot 11.1em under the object's top, but never so far that the field's box (the canvas clips to it)
+   stops short of the plate's foot; across, the field stays centred, so its lines run to both edges. */
 .v5-stage .v5-lf--wide {
-  inset: 0 auto auto calc(50% - 560px);
+  /* the kit's size, as .kit-scene works it out below (the plate is the viewport less 80px, at most 1120) */
+  --lk: min(var(--kit-max), (min(1120px, 100vw - 80px) - 64px) / var(--kit-w), var(--kit-fit));
+  inset: max(var(--plate-h) - 720px, var(--obj-top) + 11.1 * var(--lk) - 270px) auto auto calc(50% - 560px);
   width: 1120px;
   height: 720px;
 }
@@ -99,7 +128,7 @@
 
 .v5-stage .kit-scene {
   flex: none;
-  font-size: min(var(--kit-max), (100cqw - 64px) / 41);
+  font-size: min(var(--kit-max), (100cqw - 64px) / var(--kit-w), var(--kit-fit));
 }
 
 /* Under 564px the kit draws its narrow layout (kit.css), 21.2em wide: as large as the plate allows, 12 to 15px, set
@@ -417,9 +446,13 @@
     line-height: 1.5;
   }
 
-  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption. */
+  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption. Its
+     knot (262, 158 at the 390 phone's kit) stays behind the front Session on narrower phones too: the field moves up
+     and left with the smaller kit (17em right of the object's left edge, 9.6em under its top, 20px in from the plate's
+     corner), never right or down, so its box always covers the plate's top-left. */
   .v5-stage .v5-lf--phone {
-    inset: 0 auto auto 0;
+    --kn: clamp(12px, (100vw - 88px) / 21.2, 15px); /* the narrow kit's size (the plate's inside: viewport - 88) */
+    inset: min(0px, 9.6 * var(--kn) - 138px) auto auto min(0px, 17 * var(--kn) - 242px);
     width: 720px;
     height: 460px;
     mask-image: linear-gradient(#000 300px, transparent 352px);
@@ -430,5 +463,9 @@
 @media (max-width: 359px) {
   .v5-stage .v5-step {
     padding-inline: 16px;
+  }
+
+  .v5-stage .v5-lf--phone {
+    --kn: clamp(12px, (100vw - 80px) / 21.2, 15px);
   }
 }

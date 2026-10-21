@@ -3,10 +3,11 @@
 //
 // One plate, three states of one object (the kit's Session object, ../kit/session.ts). The plate is the hero's: it sits
 // right under the hero's CTA row, so the first screen shows its first state, laptop: the laptop card and the Session
-// card side by side, row for row, two more Sessions behind the second. On wide screens it pins (src/effects/v5/stage.ts)
-// and the object changes laptop -> cloud -> app at fixed points, in place: the engine writes data-step, stage.css turns
-// it into the kit's two state numbers and the object's parts move with them; no card travels from the laptop to the
-// Session (staging narrative/judge-truth:.md L32). Everywhere else the three states stack as three plates.
+// card side by side, row for row, two more Sessions fanned behind the second. On wide screens it pins
+// (src/effects/v5/stage.ts) and the object changes laptop -> cloud -> app at fixed points, in place: the engine writes
+// data-step, stage.css turns it into the kit's two state numbers and the object's parts move with them; no card
+// travels from the laptop to the Session (staging narrative/judge-truth:.md L32). Everywhere else the three states
+// stack as three plates.
 //   plate     T1 hero field (../v5-fields.css .v5-field--hero) with the T2 line field (src/effects/v5/linefield.ts,
 //             instances "hero" / "hero-mobile" in public/landing/v5/lines/params.json) threading behind the object; its
 //             knot sits behind the Session stack, never in the gap between the two cards (CHANGES §2.3)
@@ -60,14 +61,15 @@ function lineHost(id: keyof typeof LINES, cls: string): string {
 
 /**
  * The object's words for a screen reader, in reading order and in the copy's own words only (no new string to
- * translate): "Laptop: Codex, report.md, You. Session: …" and, for the app state, who calls whom with arrows.
+ * translate): "Laptop: You, Codex, report.md. Session: …" (each card's rows top to bottom: who drives it, then the
+ * agent and the file both cards share) and, for the app state, who calls whom with arrows.
  */
 function label(locale: HomeLocale, k: StageCopy["kit"], state: SessionState): string {
   const [colon, comma, stop, open, close] = locale === "en" ? [": ", ", ", ". ", " (", ")"] : ["：", "、", "。", "（", "）"];
   const card = (place: string, rows: readonly string[]): string => `${place}${colon}${rows.join(comma)}${stop}`;
-  const laptop = card(k.laptop.place, [k.harness, k.file, k.laptop.driver]);
+  const laptop = card(k.laptop.place, [k.laptop.driver, k.harness, k.file]);
   if (state === "laptop") {
-    return `${laptop}${card(k.session.place, [k.harness, k.file, k.session.driver])}`.trim();
+    return `${laptop}${card(k.session.place, [k.session.driver, k.harness, k.file])}`.trim();
   }
   if (state === "cloud") {
     const rows = k.cloud.rows.map((row, i) => (i === k.cloud.rows.length - 1 ? `${row}${open}${k.cloud.pinned}${close}` : row));

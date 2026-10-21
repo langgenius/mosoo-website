@@ -71,6 +71,14 @@
   margin-top: 28px;
 }
 
+/* Desktops shorter than 880px: the hero starts 16px higher, so the first plate (stage.css) fits above the fold with
+   its stack (round 3c). */
+@media (min-width: 901px) and (max-height: 879px) {
+  .v5-hero .v5-hero-in {
+    padding-top: 32px;
+  }
+}
+
 /* Tablets: 72px holds a 32-character first line only from about 1180px of measure; between the phone breakpoint
    and the desktop the H1 scales with the viewport so each line breaks at most once. */
 @media (min-width: 721px) and (max-width: 1199px) {
