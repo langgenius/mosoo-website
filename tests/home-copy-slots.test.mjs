@@ -14,6 +14,13 @@ import { renderLandingLocale } from "../scripts/landing-locales.mjs";
 // slots the table does not list (nav and footer chrome, button states, aria labels). A section agent that adds a
 // slot declares its budget in its own file: "$slots": { "<path without the file name>": { "chars": n } }; a path
 // budgeted here cannot be re-budgeted there.
+//
+// The narrative round's claim (staging narrative/CHANGES.md §11; narrative/deck/tests/home-copy-slots.test.mjs, merged
+// here with round 3a's changes in round 3b): the rules the new content needs are marked "NEW CLAIM": the Session
+// object's states are the first plate's laptop / cloud / app (were call / watch / return), the spec table's rows are
+// the Agent preset's parts (were sandbox / files / resume), the lime screen's cards say what holds with nobody at the
+// keyboard. Budgets are unchanged. zh and ja may carry the copy's line-break mark (markup.ts BREAK, #141): no budget
+// counts it, and the page writes each as <wbr> (checked at the end of this file).
 
 const SECTIONS = ["nav", "hero", "stage", "spec", "accent", "faq", "closing", "footer"];
 const LOCALES = ["en", "zh", "ja"];
@@ -210,13 +217,19 @@ test("every en slot has a budget and fits it", () => {
   assert.deepEqual(overflow, []);
 });
 
-// The full lime screen tells a Session between turns in three cards, in this order (sections/accent.ts PARTS: sandbox,
-// files, resume). Each label is a change of state, "<thing>: <state>", not a part's name: the five parts themselves
-// are the spec table's rows (staging v5/review/graft-yc.md P2-1). zh and ja follow en's shape (below).
-test("the lime screen has three cards, each label a change of state (en)", () => {
+// The full lime screen tells what holds with nobody at the keyboard in three cards, in this order (sections/accent.ts
+// PARTS keep their figures: the sandbox, the files, the Session ID). NEW CLAIM: approvals, jobs, follow-ups. Each label
+// is a state, "<thing>: <state>", not a part's name: the parts themselves are the spec table's rows (staging
+// v5/review/graft-yc.md P2-1). zh and ja follow en's shape (below).
+test("the lime screen has three cards, each label a state (en)", () => {
   const cards = COPY.accent.en.cards;
-  assert.equal(cards.length, 3, "accent.cards: the sandbox, the working directory, the Session ID");
+  assert.equal(cards.length, 3, "accent.cards: approvals (sandbox figure), jobs (files figure), follow-ups (Session ID figure)");
   for (const { label } of cards) assert.match(label, /^\S[^:]*: \S/, `"${label}" reads "<thing>: <state>"`);
+  // No soft 24/7 on the lime screen (staging narrative/judge-truth:.md L35): the one "nobody" line is answered by
+  // "your backend" (rule 3).
+  const screen = [COPY.accent.en.gap, COPY.accent.en.h2a, COPY.accent.en.h2b, COPY.accent.en.sub, ...cards.flatMap((c) => [c.label, c.line])].join(" ");
+  assert.doesNotMatch(screen, /day or night|any ?time|goes on|on its own|go home|24\/7|always on/i, "no soft 24/7");
+  assert.match(COPY.accent.en.h2b, /your backend/i, "the lime H2 says who sends the work");
 });
 
 // The spec table (sections/spec.ts): one row per part, in this order, and the Harness row's four names are the hero's
