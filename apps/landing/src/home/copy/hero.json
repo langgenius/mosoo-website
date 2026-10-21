@@ -24,12 +24,12 @@
   },
   "zh": {
     "news": { "tag": "New", "text": "mosoo computer 已上线" },
-    "h1a": "从后端运行 Agent。",
-    "h1b": "几天后，接着跑。",
+    "h1a": "你的 Agent，本地能跑。",
+    "h1b": "现在，不用你守着。",
     "lead": {
-      "pre": "一次 API 调用，",
+      "pre": "配一个同样的",
       "or": "或",
-      "post": "就在 Session 的 sandbox 中开工。"
+      "post": "Agent，放在一个 API 后面。"
     },
     "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     "primary": "试用 mosoo",
@@ -37,12 +37,12 @@
   },
   "ja": {
     "news": { "tag": "New", "text": "mosoo computer をリリースしました" },
-    "h1a": "バックエンドから Agent を。",
-    "h1b": "後日、その続きを。",
+    "h1a": "Agent は手元で動く。",
+    "h1b": "今度は、無人で。",
     "lead": {
-      "pre": "API 1 回で、",
+      "pre": "同じ",
       "or": "か",
-      "post": "の Session が動き出す。"
+      "post": "の Agent を用意し、API で呼び出す。"
     },
     "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     "primary": "mosoo を試す",

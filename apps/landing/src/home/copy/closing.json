@@ -17,9 +17,9 @@
     "caption": "Opens the console: free to start, no credit card."
   },
   "zh": {
-    "h2a": "开始你的",
-    "h2b": "第一个 Session。",
-    "legend": "粘贴到 Codex、Claude Code 或 Cursor",
+    "h2a": "从笔记本，",
+    "h2b": "到你的应用里。",
+    "legend": "粘贴给你电脑上的 Agent",
     "prompt": "读取 mosoo.ai/llms.txt，启动我的首个 Session。",
     "copy": "复制",
     "copied": "已复制",
@@ -27,9 +27,9 @@
     "caption": "打开控制台：免费开始，无需信用卡。"
   },
   "ja": {
-    "h2a": "最初の",
-    "h2b": "Session を始めよう。",
-    "legend": "Codex、Claude Code、Cursor に貼り付け",
+    "h2a": "PC を離れて、",
+    "h2b": "アプリの中へ。",
+    "legend": "手元の Agent に貼り付け",
     "prompt": "mosoo.ai/llms.txt を読み、最初の Session を始めて。",
     "copy": "コピー",
     "copied": "コピー済",

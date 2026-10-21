@@ -27,8 +27,8 @@
     }
   },
   "zh": {
-    "h2a": "一个 Session，五个部分。",
-    "h2b": "四种 harness 任选其一。",
+    "h2a": "带上你自己的 Agent。",
+    "h2b": "每个 Session 都冻结这五项。",
     "labels": {
       "harness": "Harness",
       "model": "模型",
@@ -44,8 +44,8 @@
     }
   },
   "ja": {
-    "h2a": "1 つの Session、5 つの要素。",
-    "h2b": "harness は 4 種から選べます。",
+    "h2a": "あなたの Agent を持ち込む。",
+    "h2b": "Session ごとに 5 つを凍結。",
     "labels": {
       "harness": "Harness",
       "model": "モデル",
