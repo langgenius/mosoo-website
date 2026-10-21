@@ -21,7 +21,9 @@ const LINKS = {
 };
 
 // README L8 (positioning; it leads the description) and L9 (the four runtimes), per locale; docs root per
-// locale; featureList from README L9 / L26 and docs/SPEC.md L25, L31, L53, L65. Same values as v4d (9e92312).
+// locale; featureList from README L9 / L26 and docs/SPEC.md L25, L31, L53, L65 (v4d's values, 9e92312), plus the
+// narrative round's two (staging narrative/deck/meta.json featureListAdd): the Agent preset's parts (README L37;
+// SPEC L32; docs/prd/mcp-interaction.md L7: remote MCP servers) and no interactive tool approvals (SPEC L65).
 const META = {
   en: {
     positioning: "An open-source, API-first managed Agent runtime for application backends.",
@@ -37,6 +39,8 @@ const META = {
       "Input attachments, downloadable artifacts, and SSE event streams",
       "Bring your own model provider keys",
       "Usage recorded for every model call",
+      "Save an Agent preset: harness, model, instructions, Skills, remote MCP servers and an Environment",
+      "No interactive tool approvals inside the Session sandbox",
     ],
   },
   zh: {
@@ -53,6 +57,8 @@ const META = {
       "输入附件、可下载的产出物和 SSE 事件流",
       "使用你自己的模型供应商密钥",
       "每次模型调用都记录用量",
+      "保存 Agent 预设：harness、模型、指令、技能、远程 MCP 服务器和环境",
+      "Session 的 sandbox 内没有交互式工具审批",
     ],
   },
   ja: {
@@ -69,6 +75,8 @@ const META = {
       "入力の添付ファイル、ダウンロードできる成果物、SSE イベントストリーム",
       "ご自身のモデルプロバイダーキーを使用",
       "モデル呼び出しごとに使用量を記録",
+      "Agent プリセットを保存：harness、モデル、指示、スキル、リモート MCP サーバー、環境",
+      "Session の sandbox 内では対話的なツール承認なし",
     ],
   },
 };

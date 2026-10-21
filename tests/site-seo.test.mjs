@@ -319,7 +319,10 @@ test("landing locale pages receive localized canonical metadata", () => {
     en,
     /property="og:title"\s+content="An open-source, API-first managed Agent runtime for application backends"/,
   );
-  assert.match(en, /name="twitter:description"\s+content="Start an agent task from your backend/);
+  // The share text tells the claim (staging narrative/deck/meta.json): the laptop's agent, set up in mosoo's cloud,
+  // run by your backend without you, one Session per job. The titles above stay the README positioning.
+  assert.match(en, /name="twitter:description"\s+content="Your agent works on your laptop\. Set up the same OpenAI Codex/);
+  assert.match(en, /name="twitter:description"\s+content="[^"]*your backend runs it without you, one Session per job\."/);
   assert.match(zh, /<html lang="zh-CN" data-damp>/);
   assert.match(zh, /<link rel="canonical" href="https:\/\/mosoo\.ai\/zh"/);
   assert.match(zh, /<meta property="og:url" content="https:\/\/mosoo\.ai\/zh" \/>/);
@@ -394,7 +397,7 @@ test("the home JSON-LD graph is valid and states only what the main repo states"
     assert.equal(app.license, "https://github.com/langgenius/mosoo/blob/main/LICENSE");
     assert.equal(app.codeRepository, "https://github.com/langgenius/mosoo");
     assert.equal(app.releaseNotes, "https://github.com/langgenius/mosoo/releases");
-    assert.equal(app.featureList.length, 8);
+    assert.equal(app.featureList.length, 10);
     for (const unsupported of ["offers", "aggregateRating", "review", "softwareVersion"]) {
       assert.equal(Object.hasOwn(app, unsupported), false, `no ${unsupported} without a source`);
     }

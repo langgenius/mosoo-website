@@ -5,11 +5,16 @@ import { HOME_COPY } from "../apps/landing/src/home/copy.ts";
 import { homeFaq, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
 // Home page head copy. The title is the README positioning (langgenius/mosoo
-// README.md:8); the description says what the hero says: one API call from the
-// backend starts a sandboxed Session on the four harnesses (README.md:9, 32),
-// continued days later (docs/SPEC.md:53). The static v5
-// home (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
-// landing-home.mjs and are written into the markers in index.html.
+// README.md:8), kept as the entity's name (staging narrative/DECK.md §3); the
+// description says what the hero says (the narrative round's deck, DECK.md §3,
+// narrative/deck/meta.json): the agent works on your laptop; set up the same
+// one of the four harnesses in mosoo's cloud (README.md:9, 37: a saved Agent,
+// nothing imported); your backend runs it without you (README.md:26; SPEC
+// L9, L65), one Session per job (SPEC L32). No uptime promise, no scale
+// number (narrative/TRUTH.md). The static v5 home
+// (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
+// landing-home.mjs and are written into the markers in index.html, whose
+// head carries the en strings below verbatim (localizeHomeHead swaps them).
 // imageAlt describes the social card that ships today
 // (public/brand/social-card-v5-20261021b.png, apps/landing/scripts/assets/
 // social-card-v5.mjs): the text on the card, which is English in every locale:
@@ -20,31 +25,31 @@ const HOME_SEO = {
     lang: "en",
     title: "Open-source Agent runtime for application backends | mosoo",
     description:
-      "Run agents from your backend: one API call starts a sandboxed Session on OpenAI Codex, Claude Agent SDK, OpenCode or Pi. Continue it days later.",
+      "Your agent works on your laptop. Set up the same OpenAI Codex, Claude Agent SDK, OpenCode or Pi agent in mosoo's cloud, and your backend runs it without you.",
     socialTitle: "An open-source, API-first managed Agent runtime for application backends",
     socialDescription:
-      "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
+      "Your agent works on your laptop. Set up the same OpenAI Codex, Claude Agent SDK, OpenCode or Pi agent once in mosoo's cloud, and your backend runs it without you, one Session per job.",
     imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
   zh: {
     lang: "zh-CN",
     title: "面向应用后端的开源 Agent runtime | mosoo",
     description:
-      "从后端运行 Agent：一次 API 调用，就能在独立 sandbox 的 Session 中运行 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi。几天后接着跑。",
+      "你的 Agent 在本地能跑。在 mosoo 的云端配一个同样的 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi Agent，交给你的后端调用，不用你守着。",
     socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
-      "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
+      "你的 Agent 在本地能跑。在 mosoo 的云端配一次同样的 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi Agent，由你的后端调用，每个任务一个 Session，不用你守着。",
     imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
   ja: {
     lang: "ja",
     title: "アプリのバックエンド向けオープンソース Agent runtime | mosoo",
     description:
-      "バックエンドから Agent を。API 1 回で、OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Session が専用 sandbox で動き出し、数日後もその続きから再開できます。",
+      "Agent は手元で動く。同じ OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Agent を mosoo のクラウドに用意すれば、あなたがいなくてもバックエンドから動かせます。",
     socialTitle:
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:
-      "バックエンドから 1 つのリクエストで Agent のタスクを始め、数日後も同じ Session で続けられます。OpenAI Codex、Claude Agent SDK、OpenCode、Pi をご自身のモデルキーで実行します。",
+      "手元で動いた Agent を、mosoo のクラウドへ。同じ OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Agent を一度用意すれば、バックエンドがジョブごとに Session を開き、あなたがいなくても動きます。",
     imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
 };
