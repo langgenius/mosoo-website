@@ -1,6 +1,7 @@
 /* 2b The spec table (sections/spec.ts), graft 2026-10-20, fix round (staging v5/polish/spec/NOTES.md), round 3a, the
-   door (staging v5/round3/door/NOTES.md). Every rule is scoped to .v5-spec; tokens and type come from ../system.css,
-   the field's bitmap and grain from ../v5-fields.css (.v5-field--spec, T1: the stage's light and grain, no chroma).
+   door (staging v5/round3/door/NOTES.md), round 3c, the card in the closed door (staging v5/round3/c-door/NOTES.md).
+   Every rule is scoped to .v5-spec; tokens and type come from ../system.css, the field's bitmap and grain from
+   ../v5-fields.css (.v5-field--spec, T1: the stage's light and grain, no chroma).
    Sources: v4c's U10 spec table (redesign/v4c apps/landing/src/home/home.css .spec*: 1px ink top rule, label and
    value columns, the 86px Harness row, the big display value with its glyph, the other names small), a13n's spec
    sheet (staging refs/devices/crops/a13n-spec-table.jpg), v4a's type use (two-tone H2, labels and values, inline
@@ -17,8 +18,9 @@
    - live ([data-portal-mode="live"], src/effects/v5/portal.ts): the section is 120vh (A; B is 200vh), its pin sticks
      for a fifth of a screen (B: one screen), the ground fills it and the content is centred below the bar. The
      portal clips the ground to the mosoo mark, closed under the H2 (.v5-spec-door), until the door is open; the card
-     shows only once the window holds it (data-portal-shown); the H2 is never clipped. The Harness value rolls
-     (src/effects/v5/harness-switch.ts) and the list marks the current one. */
+     is in the window from the closed mark on, whole and scaled to fit it, and at its own place and size once the
+     window holds it (data-portal-shown); the H2 is never clipped. The Harness value rolls
+     (src/effects/v5/harness-switch.ts) once the card is shown, and the list marks the current one. */
 
 /* ----------------------------------------------------------------------------------- default: card on a plate */
 .v5-spec .v5-spec-pin {
@@ -346,16 +348,21 @@
     visibility: hidden;
   }
 
-  /* The card shows once the window holds it (portal.ts): on time, not scrubbed, so a reader who stops never sees half
-     a table; hidden, it is still read by screen readers (opacity keeps it in the accessibility tree) and takes no
-     pointer. */
-  .v5-spec[data-portal-mode="live"] [data-portal-reveal] {
-    transition: opacity 0.32s var(--ease-expo);
-  }
-
+  /* The card is what the window holds (portal.ts [data-portal-hold], round 3c: the empty window read as an image
+     that did not load, five of five, staging REVIEW-v5-round3.md §2.4): from the closed mark on, whole, scaled to fit
+     the window (its inline translate and scale) and carried to its own place, where it is at full size as the window
+     comes to hold it (data-portal-shown). Until then it takes no pointer; it is never hidden, so a screen reader and
+     the browser's find always have it. */
   .v5-spec[data-portal-mode="live"] [data-portal-reveal]:not([data-portal-shown]) {
-    opacity: 0;
     pointer-events: none;
+  }
+}
+
+/* Printed while the door is opening: the card's inline transform gives way too (the still layout above). */
+@media print {
+  .v5-spec [data-portal-hold] {
+    translate: none !important;
+    scale: none !important;
   }
 }
 

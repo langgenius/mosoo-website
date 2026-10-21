@@ -1,6 +1,7 @@
 // 2b The spec table (graft 2026-10-20; staging v5/graft/INTEGRATION.md, the spec screen; fix round
 // v5/polish/spec/NOTES.md; round 3a, the door: staging v5/round3/door/NOTES.md; round 3b, the rows are the Agent
-// preset's parts: staging narrative/CHANGES.md §4). Styles: ./spec.css; copy: ../copy/spec.json.
+// preset's parts: staging narrative/CHANGES.md §4; round 3c, the card in the closed door: staging
+// v5/round3/c-door/NOTES.md). Styles: ./spec.css; copy: ../copy/spec.json.
 //
 // What the owner kept from v4c (staging production/briefs/owner-notes.md, 2026-10-20): its spec table as a screen of
 // its own (「这一页还是得留着吧？」: "One Session, five parts. / Pick one of four harnesses.", five typed rows after
@@ -19,14 +20,18 @@
 //
 // Layers, one DOM for every state: [data-portal-pin] holds the ground (data-portal-window: the field alone, a calm
 // surface), the door's 1 px frame (data-portal-frame), and the content (.v5-spec-in: the H2, the door's placeholder
-// and the card). The content is never inside the clipped ground, so no frame ever crops a line of it.
+// and the card). The content is never inside the clipped ground, so no frame ever crops a line of it, and the card is
+// kept whole inside the window at every frame.
 //
 // Engines (src/effects/v5/README.md "Portal" and "Harness switch"; wired in ../effects.ts):
 //   portal.ts          this section is the host (data-portal). Closed, the window is the whole mosoo mark, block and
 //                      bar, on the page's axis under the H2 (data-portal-door: its box is the block), with the field
-//                      inside; it starts to open only once the whole mark is on screen, grows down and out from its
-//                      top edge, shows the card (data-portal-reveal) once the window holds all of it, then rises
-//                      behind the H2 to cover the screen (PORTAL_RANGE). The H2 is readable throughout.
+//                      and the card inside: the card is what the window holds (data-portal-hold), whole and scaled to
+//                      fit it (an empty window read as an image that did not load, five of five; staging
+//                      REVIEW-v5-round3.md §2.4). It starts to open only once the whole mark is on screen, grows down
+//                      and out from its top edge with the card growing in it, has the card at its own place and size
+//                      as it comes to hold it (data-portal-reveal, then data-portal-shown), then rises behind the H2
+//                      to cover the screen (PORTAL_RANGE). The H2 is readable throughout.
 //   harness-switch.ts  the Harness value (SWITCH: the time driver): OpenAI Codex first; one pass through the other
 //                      three and back once the card is shown and in view, resting on OpenAI Codex for good.
 // The door runs where the section pins (SPEC_MEDIA, the stage's). Elsewhere (phones, tablets, short screens) there is
@@ -112,7 +117,7 @@ export function render(_locale: HomeLocale, copy: HomeCopy): string {
 <div class="v5-spec-in">
 <h2 id="spec-title" class="v5-h2 v5-spec-title">${twoTone(s.h2a, s.h2b)}</h2>
 <span class="v5-spec-door" data-portal-door aria-hidden="true"></span>
-<dl class="v5-spec-card" data-product-ui data-portal-reveal>
+<dl class="v5-spec-card" data-product-ui data-portal-reveal data-portal-hold>
 ${rows.join("\n")}
 </dl>
 </div>
