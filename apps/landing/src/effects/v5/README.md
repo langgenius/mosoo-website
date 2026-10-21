@@ -206,6 +206,17 @@ magenta backdrop: 0 uncovered pixels in 850 pinned frames, down and back up
 (a leave-before-enter control shows up to 100 %; CTRL itself shows one empty
 frame in its 540 pinned frames, at a switch).
 
+Since round 3b the v5 home's stage does not slide layers: it moves one object
+through its states in place (staging `narrative/CHANGES.md` §3: no card
+travels from the laptop to the Session). `sections/stage.css` reads the
+engine's `data-step` and sets the kit's two registered state numbers,
+`--kit-cloud` and `--kit-app`, which transition on the switch's 0.9 s curve;
+the captions still switch on `data-stage-state`. The engine is unchanged.
+No empty frame there either, measured frame by frame (0 in 379–407 frames at
+1440, 1280 and 1024, down through the three states and back; staging
+`v5/round3/b-objects/NOTES.md` §5.4). The layer contract below stays the
+engine's documented default.
+
 ```css
 /* .frame (the clipped product frame), .screen (one layer per step) and .say are the sandbox's class names */
 .stage[data-stage-mode="pinned"] { height: 350vh; }
@@ -435,7 +446,7 @@ once, then the row is still.
 
 Markup. The four names reach a screen reader once, from a visually hidden list; the animated slot is `aria-hidden`.
 Glyphs are `../home/runtime-glyphs.ts`, as in the footer's Harnesses column; values in `HARNESS_IDS` order (the
-first value is where the time driver rests: OpenAI Codex, the harness the stage's Call names):
+first value is where the time driver rests: OpenAI Codex, the harness the stage's cards name, Codex):
 
 ```html
 <dt>Harness</dt>

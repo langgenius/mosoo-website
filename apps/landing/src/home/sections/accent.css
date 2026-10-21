@@ -73,9 +73,9 @@
 /* --------------------------------------------------------------------------------------- the three cards */
 /* One row of three unequal cards, 1fr 2fr 1fr: 272 / 544 / 272 at 1440 and 1280. Frame's own lime bento is unequal
    (1.1fr 3fr, then 2fr 1.1fr: refs/frame/v5/layout/STUDY.md §3), and one row of three equal cards is the template
-   the playbook names (staging v5/review/graft-design.md P1-2). Left to right, a Session between turns: what goes
-   (the sandbox), what stays (the wide card: the working directory and the conversation, what the H2's second line
-   is made of), what does not change (the Session ID). Gap 16 and radius 12 (Mintlify), Frame's white-card shadow on
+   the playbook names (staging v5/review/graft-design.md P1-2). Left to right, what holds with nobody at the keyboard
+   (round 3b): approvals (the sandbox figure), jobs (the wide card: a Session each, its own files and conversation),
+   follow-ups (the Session ID pillar). Gap 16 and radius 12 (Mintlify), Frame's white-card shadow on
    lime. The row is as tall as a narrow card (the 202 figure and the text: 354 at 1440, Mintlify's is 412), so the
    H2, the sub and the row still share one 1280 x 800 screen (staging v5/polish/lime/NOTES.md). */
 .v5-accent .v5-acc-grid {

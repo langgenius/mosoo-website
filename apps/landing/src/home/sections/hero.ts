@@ -3,8 +3,8 @@
 // v4d's centred first screen (9e92312 d-object.css .d-hero / .d-h1 / .d-lead / .d-actions): the two-tone serif H1
 // (v4a's use: second line in ink-3), one lead sentence that names the four harnesses in its own words, the lime
 // primary CTA (Frame glow) and the grey secondary. The plate under it is the stage's (./stage.ts): the first screen
-// shows its first state (Call), and the same plate pins and changes state as the reader scrolls, so the hero ends at
-// the CTA row.
+// shows its first state (laptop: the laptop card and the Session card, row for row; round 3b), and the same plate
+// pins and changes state as the reader scrolls, so the hero ends at the CTA row.
 //
 // The names are plain text (ui.ts nameList: Hanken 500 ink, commas, "or"), not keycaps, and carry no glyph tile
 // (O1, committee 2026-10-21, staging committee/PLAN.md §3 1-2: the outlined keycaps, the outlined secondary and the
@@ -29,14 +29,15 @@ import { button, esc, nameList, twoTone } from "../ui.ts";
 const ARROW =
   '<svg class="v5-hero-news-arrow" viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5"/></svg>';
 
-/** zh / ja set no space after their own punctuation (「一次 API 调用，OpenAI Codex」); a Latin word keeps one. */
+/** zh / ja set no space after their own punctuation (a pre that ends in 「，」 runs into the first name); a Latin word
+ *  keeps one. */
 const CJK_STOP = /[，、。：；]$/;
 
 export function render(locale: HomeLocale, copy: HomeCopy): string {
   const h = copy.hero;
   const links = localeLinks(locale);
   const cjk = locale !== "en";
-  // "{pre} {names} {post}": "One API call starts OpenAI Codex, Claude Agent SDK, OpenCode or Pi in a sandboxed Session."
+  // "{pre} {names} {post}": "Set up the same OpenAI Codex, Claude Agent SDK, OpenCode or Pi agent behind one API."
   const pre = esc(h.lead.pre);
   const lead = `${pre}${cjk && CJK_STOP.test(h.lead.pre) ? "" : " "}${nameList(h.harnesses, h.lead.or, cjk)} ${esc(h.lead.post)}`;
   return `<section id="hero" data-section="hero" class="v5-sec v5-hero" aria-labelledby="hero-title">

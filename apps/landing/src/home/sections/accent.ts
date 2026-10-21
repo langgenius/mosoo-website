@@ -3,21 +3,25 @@
 // Frame's white-to-lime screen (staging refs/frame/v5/motion/STUDY.md §4, layout/STUDY.md §3), in two parts:
 // 1. The white gap: a stretch of near-empty paper with a short line in the display face, then 130 px of nothing
 //    before the edge (Frame: "Be focused."). No tab label over it: the outlined "Between turns" tab was an eyebrow and
-//    one of the outlined family (O1, committee 2026-10-21; playbook L195), so "Days pass." stands alone.
+//    one of the outlined family (O1, committee 2026-10-21; playbook L195), so the gap line ("Laptop closed." since
+//    round 3b) stands alone.
 // 2. The lime panel: a hard edge (no shadow, no gradient at the top), as wide as the paper (full bleed on phones),
 //    solid for at least one screen and 40 px, then a long linear fade that ends transparent so the paper comes back
 //    without a seam. On it: the two-tone H2, a sub, and one row of three unequal white cards, 1fr 2fr 1fr (Frame's
-//    own lime bento is unequal; three equal cards were the template, staging v5/review/graft-design.md P1-2). The
-//    cards are a Session between turns and each label is a change of state: the sandbox is reclaimed, the working
-//    directory is kept with the conversation (the wide middle card: what the H2's second line says stays), the
-//    Session ID does not change. Each card has its T3 line figure, a label and one line (v4a's spec-row type,
+//    own lime bento is unequal; three equal cards were the template, staging v5/review/graft-design.md P1-2). Since
+//    round 3b (the new claim, staging narrative/CHANGES.md §5) the cards say what holds with nobody at the keyboard,
+//    each label a state: approvals: none (the sandbox figure: full access inside it, model keys outside), jobs: a
+//    Session each (the wide middle card, the file stack: its own files and conversation), follow-ups: no deadline
+//    (the Session ID pillar: the same Session a minute or seven days later). The figures and their order did not
+//    change (committee MINUTES L380). Each card has its T3 line figure, a label and one line (v4a's spec-row type,
 //    Mintlify's bento label in the bottom-left corner); the wide card sets its text on the left and a larger figure
-//    on the right (Frame's Fast Nav card). The five parts themselves (harness, model, sandbox, files, resume) are the
-//    spec table's screen, so the labels do not repeat its row names (staging v5/review/graft-yc.md P2-1).
+//    on the right (Frame's Fast Nav card). The five parts themselves (harness, model, instructions, Skills · MCP,
+//    Environment) are the spec table's screen, so the labels do not repeat its row names (staging
+//    v5/review/graft-yc.md P2-1).
 //
 // Engines (src/effects/v5/README.md): the gap block and the title block rise (Frame a-15; the gap line, the H2's
 // second line and the sub fade in 300 ms later, a-14); the cards enter with the rise engine (Intent): they come into
-// view in one frame, so they start 100 ms apart, left to right, in the order the life cycle reads. The nav turns
+// view in one frame, so they start 100 ms apart, left to right, in reading order. The nav turns
 // lime while .v5-acc-zone is under its centre line: data-theme-zone sits on that box, which covers the solid stretch
 // and the first half of the fade, so the bar is white glass again over the pale end and never over the white gap.
 // The Resume comet is the group's only motion: ./accent.css runs it (T3's keyframes) only while its figure carries
@@ -31,11 +35,11 @@
 import type { HomeCopy, HomeLocale } from "../copy.ts";
 import { esc, twoTone } from "../ui.ts";
 
-/** The three cards in reading order, a Session between turns: what goes, what stays, what does not change. */
+/** The three cards' figures in reading order (copy/accent.json cards: approvals, jobs, follow-ups). */
 const PARTS = ["sandbox", "files", "resume"] as const;
 type Part = (typeof PARTS)[number];
 
-/** The wide middle card: the working directory and the conversation, what "The Session stays." is made of. */
+/** The wide middle card: jobs, a Session each, with its own files and conversation (the file stack). */
 const WIDE: Part = "files";
 
 /**
