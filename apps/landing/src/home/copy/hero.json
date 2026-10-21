@@ -1,5 +1,5 @@
 {
-  "$comment": "Slots of sections/hero.ts (staging v5/sections/hero-stage/NOTES.md has the slot table, measured at the budget maximum). H1 = h1a + h1b (display-face 72px two-tone: one line each at 1440; 42px at 390). Lead = '{lead.pre} {harness 1}, {harness 2}, {harness 3} {lead.or} {harness 4} {lead.post}' (zh / ja join the names with 、 and leave no space after a pre that ends in punctuation), the harness names as plain names in the sentence (ui.ts nameList: sans 500 in ink, no box, no glyph), sans 20px balanced in 760px: two lines at 1440; 17px at 390. primary: the lime CTA; secondary: the grey CTA. Words: H1 + lead + CTAs stay within 24 so the first screen keeps <= 25 marketing words (it shows no step word since O1; tools/budget.ts measures en / zh / ja 23 / 23 / 24). Copy: the narrative round's deck (staging narrative/DECK.md §2.2, 2026-10-21), the owner's claim of 02:40 (it works on your laptop; it needs your laptop and you; set up the same agent in mosoo; your backend runs it without you), hero V2 of that round's five-second test (problem named 5/5; 'why not my laptop' partly clear 4/5, hinted 1/5, unclear 0/5; narrative/NARRATIVE.md §8). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
+  "$comment": "Slots of sections/hero.ts (staging v5/sections/hero-stage/NOTES.md has the slot table, measured at the budget maximum). H1 = h1a + h1b (display-face 72px two-tone: one line each at 1440; 42px at 390). Lead = '{lead.pre} {harness 1}, {harness 2}, {harness 3} {lead.or} {harness 4} {lead.post}' (zh / ja join the names with 、 and leave no space after a pre that ends in punctuation), the harness names as plain names in the sentence (ui.ts nameList: sans 500 in ink, no box, no glyph), sans 20px balanced in 760px: two lines at 1440; 17px at 390. primary: the lime CTA; secondary: the grey CTA. Words: H1 + lead + CTAs stay within 24 so the first screen keeps <= 25 marketing words (it shows no step word since O1; tools/budget.ts measures en / zh / ja 23 / 23 / 24). Copy: the narrative round's deck (staging narrative/DECK.md §2.2, 2026-10-21), the owner's claim of 02:40 (it works on your laptop; it needs your laptop and you; set up the same agent in mosoo; your backend runs it without you), hero V2 of that round's five-second test (problem named 5/5; 'why not my laptop' partly clear 4/5, hinted 1/5, unclear 0/5; narrative/NARRATIVE.md §8). Break marks (#141, committee PLAN 2-1): in zh and ja a '|' is a line-break opportunity, rendered as <wbr> (markup.ts renderHome); the CJK headings and labels are keep-all, so such a line breaks only at a space or a '|' (in WebKit, which has no auto-phrase, not even after its comma). Put one after the comma or between the phrases where the line may break, never inside a word; en carries none. The slot budgets do not count them (tests/home-copy-slots.test.mjs). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
   "$source": {
     "h1a": "The reader's own situation, not a product promise (owner-notes L224 step 1; TRUTH A1, A3). Tested as V2 h1a.",
     "h1b": "No interactive tool approvals (MAIN docs/SPEC.md L65); one admitted input starts one turn with many model and tool calls (SPEC L18); each turn runs in an isolated sandbox on Cloudflare Containers (README.md L26). Not an uptime promise (README.md L39). The plate's 'Your backend' row says who sends the work (truth rule 3, narrative/judge-truth:.md L34). Tested as V2 h1b.",
@@ -24,8 +24,8 @@
   },
   "zh": {
     "news": { "tag": "New", "text": "mosoo computer 已上线" },
-    "h1a": "你的 Agent，本地能跑。",
-    "h1b": "现在，不用你守着。",
+    "h1a": "你的 Agent，|本地能跑。",
+    "h1b": "现在，|不用你守着。",
     "lead": {
       "pre": "配一个同样的",
       "or": "或",
@@ -37,8 +37,8 @@
   },
   "ja": {
     "news": { "tag": "New", "text": "mosoo computer をリリースしました" },
-    "h1a": "Agent は手元で動く。",
-    "h1b": "今度は、無人で。",
+    "h1a": "Agent は|手元で動く。",
+    "h1b": "今度は、|無人で。",
     "lead": {
       "pre": "同じ",
       "or": "か",

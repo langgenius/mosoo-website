@@ -107,6 +107,18 @@
   word-break: auto-phrase;
 }
 
+/* #141 (staging committee/PLAN.md 2-1, item 1): the legend is a label, so zh and ja keep their words whole: keep-all
+   breaks it only at its spaces (「粘贴给你电脑上的 Agent」, 「手元の Agent に貼り付け」: one line from 320 in Chrome
+   and WebKit), and ja breaks at phrases where auto-phrase exists (Chrome); WebKit, without it, keeps keep-all. */
+:lang(zh) .v5-closing-legend,
+:lang(ja) .v5-closing-legend {
+  word-break: keep-all;
+}
+
+:lang(ja) .v5-closing-legend {
+  word-break: auto-phrase;
+}
+
 @media (max-width: 720px) {
   /* 57 / 53: the bezel's 18px again, so the 390 plate keeps its 468 */
   .v5-closing-plate {

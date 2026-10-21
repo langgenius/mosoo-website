@@ -24,6 +24,22 @@ export const SECTIONS = ["hero", "stage", "spec", "accent", "faq", "closing"] as
 
 const MAIN = [hero, stage, spec, accent, faq, closing];
 
+/**
+ * The copy's line-break mark (#141, staging committee/PLAN.md 2-1 as amended by challenge/141.md): zh and ja
+ * headings and labels are keep-all, and WebKit's keep-all breaks a CJK line only at a space, not even after its
+ * comma, so the copy marks where such a line may break and renderHome writes each mark as <wbr>. A mark is never a
+ * visible character on the page, and not U+200B, which a reader copying the line would take along. esc() leaves it
+ * alone, so it reaches the page's HTML as written; every other character of the page is free of it
+ * (tests/home-copy-slots.test.mjs counts the <wbr> against the marks). en carries none; strings that are also
+ * JSON-LD or meta text (the FAQ, the head copy) carry none either.
+ */
+export const BREAK = "|";
+
+/** A copy string as a reader or a machine reads it: without its break marks (landing-home.mjs, the tests). */
+export function plain(text: string): string {
+  return text.replaceAll(BREAK, "");
+}
+
 /** The whole home body (inside #root): skip link, nav, the paper with the six sections, the footer. */
 export function renderHome(locale: HomeLocale): string {
   const copy = HOME_COPY[locale];
@@ -35,5 +51,5 @@ ${MAIN.map((section) => section.render(locale, copy)).join("\n")}
 </main>
 </div>
 ${footer.render(locale, copy)}
-</div>`;
+</div>`.replaceAll(BREAK, "<wbr>");
 }

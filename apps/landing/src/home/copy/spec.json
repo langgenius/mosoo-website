@@ -1,5 +1,5 @@
 {
-  "$comment": "Slots of sections/spec.ts, the spec table's screen between the stage and the white gap before the lime screen (graft 2026-10-20: v4c's spec table, opened by the portal, its Harness value rolling; staging v5/graft/INTEGRATION.md, the spec screen; round 3a, the door). h2a + h2b: the two-tone H2 on the field over the card (display 48 / 34px, one line each at 1440; two each at 390). The five rows are the Agent preset's parts (README.md L37; narrative/DECK.md §2.4): Harness / Model / Instructions / Skills · MCP / Environment, in place of Sandbox / Files / Resume (the sandbox went to lime card 1, Resume to lime card 3, the files to the stage's last state). labels: the five row labels (sans 15, one line). values: Model, Instructions, Skills · MCP and Environment, each after a glyph of the console (sections/spec.ts), sans 17, one line at 1440, at most two at 390, balanced: en joins the part after the first break with no-break spaces (\\u00a0), so a wrap falls between the two phrases; zh breaks only at its comma, ja at phrases. The Harness row has no slot here: its four names are copy/hero.json harnesses (product names, the same in every locale), rolling one at a time in the display face, the four listed under them, so 'Bring your own agent.' has the four names on the same screen (TRUTH C1). ja joins a numeral to its counter with a no-break space (\\u00a0), so a line never splits them. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
+  "$comment": "Slots of sections/spec.ts, the spec table's screen between the stage and the white gap before the lime screen (graft 2026-10-20: v4c's spec table, opened by the portal, its Harness value rolling; staging v5/graft/INTEGRATION.md, the spec screen; round 3a, the door). h2a + h2b: the two-tone H2 on the field over the card (display 48 / 34px, one line each at 1440; two each at 390). The five rows are the Agent preset's parts (README.md L37; narrative/DECK.md §2.4): Harness / Model / Instructions / Skills · MCP / Environment, in place of Sandbox / Files / Resume (the sandbox went to lime card 1, Resume to lime card 3, the files to the stage's last state). labels: the five row labels (sans 15, one line). values: Model, Instructions, Skills · MCP and Environment, each after a glyph of the console (sections/spec.ts), sans 17, one line at 1440, at most two at 390, balanced: en joins the part after the first break with no-break spaces (\\u00a0), so a wrap falls between the two phrases; zh breaks only at its comma or a break mark, ja at phrases. The Harness row has no slot here: its four names are copy/hero.json harnesses (product names, the same in every locale), rolling one at a time in the display face, the four listed under them, so 'Bring your own agent.' has the four names on the same screen (TRUTH C1). ja joins a numeral to its counter with a no-break space (\\u00a0), so a line never splits them. Break marks (#141, committee PLAN 2-1): in zh and ja a '|' is a line-break opportunity, rendered as <wbr> (markup.ts renderHome); the CJK headings and labels are keep-all, so such a line breaks only at a space or a '|' (in WebKit, which has no auto-phrase, not even after its comma). Put one after the comma or between the phrases where the line may break, never inside a word; en carries none. The slot budgets do not count them (tests/home-copy-slots.test.mjs). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
   "$source": {
     "h2a": "Owner 2026-10-21 02:40 'Bring Your Own Agent' (owner-notes L227); only the four harnesses (README.md L9; docs/SPEC.md L91: no developer-supplied runtimes), which the Harness row shows on the same screen.",
     "h2b": "SPEC L31: creation freezes harness, model, instructions, Skills, MCP references and the Environment revision; editing a preset affects only new Sessions. 'Freezes', SPEC's own verb, not 'pins' (narrative/judge-truth:.md L148). No swap / switch / change (test L200).",
@@ -28,7 +28,7 @@
   },
   "zh": {
     "h2a": "带上你自己的 Agent。",
-    "h2b": "每个 Session 都冻结这五项。",
+    "h2b": "每个 Session 都冻结|这五项。",
     "labels": {
       "harness": "Harness",
       "model": "模型",
@@ -37,8 +37,8 @@
       "environment": "环境"
     },
     "values": {
-      "model": "自选模型，用你自己的供应商密钥",
-      "instructions": "沿用你在本地用的指令",
+      "model": "自选模型，|用你自己的供应商密钥",
+      "instructions": "沿用|你在本地用的指令",
       "skills": "你的技能和远程 MCP 服务器",
       "environment": "精确版本的 npm/PyPI 包和设置脚本"
     }

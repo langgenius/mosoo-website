@@ -9,7 +9,7 @@
 // main repo (README L8-L9, docs/SPEC.md) through the v1 copy deck. Do not add facts the main repo does not state.
 
 import { HOME_COPY, HOME_LOCALES as LOCALES, LANGUAGES } from "../apps/landing/src/home/copy.ts";
-import { renderHome } from "../apps/landing/src/home/markup.ts";
+import { plain, renderHome } from "../apps/landing/src/home/markup.ts";
 
 const SITE = "https://mosoo.ai";
 const GITHUB = "https://github.com/langgenius/mosoo";
@@ -96,10 +96,10 @@ export function homeFaq(locale) {
   return copyFor(locale).faq.items.map(({ q, a }) => ({ q, a }));
 }
 
-/** The page's one h1: both lines of the two-tone headline. */
+/** The page's one h1 as plain text: both lines of the two-tone headline, without the copy's break marks. */
 export function homeHeadline(locale) {
   const { h1a, h1b } = copyFor(locale).hero;
-  return `${h1a} ${h1b}`;
+  return `${plain(h1a)} ${plain(h1b)}`;
 }
 
 /** The README positioning line (L8) that leads the JSON-LD description. */

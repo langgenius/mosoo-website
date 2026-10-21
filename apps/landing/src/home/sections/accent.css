@@ -63,6 +63,13 @@
   word-break: auto-phrase;
 }
 
+/* #141: a zh card line is a short display line, so it keeps its words whole and breaks only at its spaces and at the
+   break mark after its comma (copy/accent.json: 「…完全权限，|模型密钥…」), as the CJK headings do; without keep-all,
+   balance split 「权限」 and 「独立」 (round 3b, Chrome and WebKit). Every run between two breaks fits a phone card. */
+:lang(zh) .v5-accent .v5-acc-line {
+  word-break: keep-all;
+}
+
 /* --------------------------------------------------------------------------------------- the three cards */
 /* One row of three unequal cards, 1fr 2fr 1fr: 272 / 544 / 272 at 1440 and 1280. Frame's own lime bento is unequal
    (1.1fr 3fr, then 2fr 1.1fr: refs/frame/v5/layout/STUDY.md §3), and one row of three equal cards is the template

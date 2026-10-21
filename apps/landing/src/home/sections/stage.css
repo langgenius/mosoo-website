@@ -143,6 +143,18 @@
   word-break: auto-phrase;
 }
 
+/* #141 (staging committee/PLAN.md 2-1, item 2, as challenge/141.md amended it; round 3b b-copy): a step title is a
+   heading, so zh keeps its words whole (keep-all: the three titles break at their spaces or not at all, from 320 in
+   Chrome and WebKit) and ja breaks at phrases (auto-phrase only, no keep-all under it: WebKit has no auto-phrase and
+   keeps normal breaking there, so a title never runs past the plate). */
+.v5-stage .v5-step-title:lang(zh) {
+  word-break: keep-all;
+}
+
+.v5-stage .v5-step-title:lang(ja) {
+  word-break: auto-phrase;
+}
+
 /* ----------------------------------------------------------------------------------------------- pinned */
 .v5-stage[data-stage-mode="pinned"] {
   height: 220vh; /* the plate plus about 1.2 screens of run (design review P1-2; was 300vh, the contract's is 350vh) */

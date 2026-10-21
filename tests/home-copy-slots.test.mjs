@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import { BREAK, plain } from "../apps/landing/src/home/markup.ts";
 import { renderLandingLocale } from "../scripts/landing-locales.mjs";
 
 // The v5 home copy: one file per section in apps/landing/src/home/copy/, each with en, zh and ja in the same
@@ -189,6 +190,7 @@ test("every en slot has a budget and fits it", () => {
       const where = [section, ...path].join(".");
       assert.equal(typeof value, "string", `${where} is a string`);
       assert.ok(value.trim().length > 0, `${where} is not empty`);
+      assert.ok(!value.includes(BREAK), `${where}: en carries no break mark`);
       if (section === "stage" && path[0] === "kit" && path[1] !== "harness") continue; // object words, below
       const budget = budgetFor(section, path);
       assert.ok(budget, `${where} has a budget (add it here or in ${section}.json "$slots")`);
@@ -350,8 +352,9 @@ test("zh and ja fill the same slots as en, no more and no fewer", () => {
 // character or a space counting as half. The hero lead and the closing title are one run of text each, so their parts
 // share one budget (word order differs between the languages). The Session object's strings have no en character
 // budget (object words instead): their widths keep each on the line it takes in en (staging v5/content/NOTES.md).
-// Line breaks themselves are checked in the browser (staging v5/content/NOTES.md, the slot probe at 360-1440).
-const cjkWidth = (value) => [...value].reduce((sum, char) => sum + (char.charCodeAt(0) < 0x2e80 ? 0.5 : 1), 0);
+// Line breaks themselves are checked in the browser (staging v5/content/NOTES.md, the slot probe at 360-1440; round
+// 3b: v5/round3/b-copy, Chrome and WebKit). A break mark has no width (it is a <wbr> on the page).
+const cjkWidth = (value) => [...plain(value)].reduce((sum, char) => sum + (char.charCodeAt(0) < 0x2e80 ? 0.5 : 1), 0);
 const CJK_GROUPS = [
   { name: "hero.lead", paths: ["hero.lead.pre", "hero.lead.or", "hero.lead.post"] },
   { name: "closing.h2a + h2b", paths: ["closing.h2a", "closing.h2b"], width: 15 },
@@ -419,5 +422,34 @@ test("product names and machine tokens are spelled the same in every locale", ()
       COPY.footer.en.columns.harnesses.names,
       `${locale} footer harness names`,
     );
+  }
+});
+
+// #141 (staging committee/PLAN.md 2-1, as challenge/141.md amended it): zh and ja headings and labels are keep-all,
+// and WebKit's keep-all breaks a CJK line only at a space, so the copy marks where such a line may break (markup.ts
+// BREAK) and the page writes each mark as <wbr>, a break opportunity a reader never sees or copies. A mark sits only
+// in zh and ja, never inside a word (a judgement for the writer and the native review; the browser probes are in
+// staging v5/round3/b-copy), and never in a string that is also JSON-LD, meta or llms.txt text (the FAQ, whose items
+// the FAQPage carries verbatim) or an attribute. On the page every mark is a <wbr> and no "|" is left; nothing else on
+// the page writes a <wbr>, so the counts match.
+test("break marks are zh and ja only, out of the FAQ, and each is a <wbr> on the page (#141)", () => {
+  for (const locale of LOCALES) {
+    const marks = SECTIONS.flatMap((section) => leaves(COPY[section][locale]).map(([path, value]) => [section, path, value]))
+      .filter(([, , value]) => value.includes(BREAK));
+    if (locale === "en") assert.deepEqual(marks.map(([s, p]) => [s, ...p].join(".")), [], "en carries no break mark");
+    for (const [section, path, value] of marks) {
+      const where = [section, ...path].join(".");
+      assert.notEqual(section, "faq", `${locale} ${where}: the FAQ is JSON-LD text too`);
+      assert.doesNotMatch(value, /^\||\|$|\|\||\s\||\|\s/, `${locale} ${where}: a mark sits between two characters`);
+    }
+    const html = renderLandingLocale(readFileSync(new URL("../apps/landing/index.html", import.meta.url), "utf8"), locale);
+    const root = /<div id="root">([\s\S]*)<\/div>\s*<script/.exec(html)?.[1] ?? "";
+    assert.ok(root, `${locale}: the static home`);
+    assert.ok(!root.includes(BREAK), `${locale}: no "${BREAK}" is left on the page`);
+    const count = marks.reduce((sum, [, , value]) => sum + value.split(BREAK).length - 1, 0);
+    assert.equal(root.match(/<wbr>/g)?.length ?? 0, count, `${locale}: one <wbr> per mark`);
+    for (const [, , value] of marks) {
+      assert.ok(root.includes(value.replaceAll(BREAK, "<wbr>").replaceAll("&", "&amp;")), `${locale}: ${plain(value)} renders its marks`);
+    }
   }
 });
