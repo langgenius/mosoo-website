@@ -1,6 +1,6 @@
 // 2b The spec table (graft 2026-10-20; staging v5/graft/INTEGRATION.md, the spec screen; fix round
-// v5/polish/spec/NOTES.md; round 3a, the door: staging v5/round3/door/NOTES.md). Styles: ./spec.css; copy:
-// ../copy/spec.json.
+// v5/polish/spec/NOTES.md; round 3a, the door: staging v5/round3/door/NOTES.md; round 3b, the rows are the Agent
+// preset's parts: staging narrative/CHANGES.md §4). Styles: ./spec.css; copy: ../copy/spec.json.
 //
 // What the owner kept from v4c (staging production/briefs/owner-notes.md, 2026-10-20): its spec table as a screen of
 // its own (「这一页还是得留着吧？」: "One Session, five parts. / Pick one of four harnesses.", five typed rows after
@@ -10,10 +10,12 @@
 //
 // Composition: on a neutral T1 field (../v5-fields.css .v5-field--spec: the stage's light and grain without its
 // blue, so the lime screen stays the page's one large colour; REVIEW-v5 §6-5), the two-tone H2 (v4a's use) over one
-// white card (v4b's clean component on a background) that is the table, title over table as in v4c and a13n: Harness
+// white card (v4b's clean component on a background) that is the table, title over table as in v4c and a13n. The rows
+// are the Agent preset (MAIN README L37; Skills and MCP share a row), each value after the console's own glyph: Harness
 // (runtime glyph and name in the display face; under it the four names, each after a neutral glyph tile, the current
-// one in ink on an inverted tile), Model (the console's key glyph), Sandbox (its environment cube), Files (the file
-// glyph and the path in mono, no box: committee O1), Resume.
+// one in ink on an inverted tile), Model (the providers key), Instructions (Hugeicons Note01, CHANGES §4), Skills · MCP
+// (the console's skills glyph), Environment (the environments cube). Sandbox, Files and Resume left the table in
+// round 3b (the sandbox and the Session that stays are the lime screen's cards; the files, the stage's app state).
 //
 // Layers, one DOM for every state: [data-portal-pin] holds the ground (data-portal-window: the field alone, a calm
 // surface), the door's 1 px frame (data-portal-frame), and the content (.v5-spec-in: the H2, the door's placeholder
@@ -74,8 +76,8 @@ function row(part: string, label: string, value: string): string {
 }
 
 /** A value that follows a glyph of the console (kit glyphs: MAIN docs/design/assets/sidebar-icons, Hugeicons). */
-function glyphValue(id: "key" | "cube" | "file", value: string): string {
-  return `<dd class="v5-spec-value"><span class="v5-spec-ic">${glyph(id)}</span>${value}</dd>`;
+function glyphValue(id: "key" | "note" | "skills" | "cube", value: string): string {
+  return `<dd class="v5-spec-value"><span class="v5-spec-ic">${glyph(id)}</span><span>${esc(value)}</span></dd>`;
 }
 
 export function render(_locale: HomeLocale, copy: HomeCopy): string {
@@ -98,14 +100,10 @@ export function render(_locale: HomeLocale, copy: HomeCopy): string {
   const harness = `<dd class="v5-spec-value v5-spec-harness" data-switch="${SWITCH}" data-switch-span="${SWITCH_SPAN}" data-switch-media="${SPEC_MEDIA}" translate="no"><ul class="v5-sr" role="list">${list}</ul><span class="v5-spec-slot" aria-hidden="true">${values}</span><span class="v5-spec-idx" aria-hidden="true">${index}</span></dd>`;
   const rows = [
     row("harness", s.labels.harness, harness),
-    row("model", s.labels.model, glyphValue("key", `<span>${esc(s.values.model)}</span>`)),
-    row("sandbox", s.labels.sandbox, glyphValue("cube", `<span>${esc(s.values.sandbox)}</span>`)),
-    row(
-      "files",
-      s.labels.files,
-      glyphValue("file", `<code class="v5-spec-path" translate="no">${esc(s.values.files)}</code>`),
-    ),
-    row("resume", s.labels.resume, `<dd class="v5-spec-value"><span>${esc(s.values.resume)}</span></dd>`),
+    row("model", s.labels.model, glyphValue("key", s.values.model)),
+    row("instructions", s.labels.instructions, glyphValue("note", s.values.instructions)),
+    row("skills", s.labels.skills, glyphValue("skills", s.values.skills)),
+    row("environment", s.labels.environment, glyphValue("cube", s.values.environment)),
   ];
   return `<section id="parts" data-section="spec" class="v5-sec v5-spec" aria-labelledby="spec-title" data-portal data-portal-range="${PORTAL_RANGE}" data-portal-media="${SPEC_MEDIA}" data-switch-run>
 <div class="v5-spec-pin" data-portal-pin>

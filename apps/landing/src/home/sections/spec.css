@@ -144,16 +144,6 @@
   height: 100%;
 }
 
-/* Files: the file glyph (the kit's File02, as the Watch card's file events) and the path in mono, no box: a path is
-   mono, a name is not boxed (committee O1, PLAN 1-2 item 4; the lab's column a, committee/labs/frame/sheets/
-   detail-1440-rest.jpg). 15px mono on the row's 24px line, as the lab set it. */
-.v5-spec .v5-spec-path {
-  color: var(--ink);
-  font: 400 15px/1.6 var(--font-mono);
-  letter-spacing: -0.01em;
-  overflow-wrap: anywhere; /* a path breaks at any character before it overflows a phone card */
-}
-
 /* ------------------------------------------------------------------------------------------- the Harness row */
 /* The value large in the display face with its runtime glyph (v4c .spec-face, 38px; a13n's first row), and under it
    the four names (graft-yc P1-2: which four is answered by this list in every state, not by the rolling slot). Still

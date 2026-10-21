@@ -64,12 +64,11 @@ const BUDGETS = {
   "stage.kit.harness": 16, // system: a product name
   // the spec table (graft 2026-10-20, staging v5/graft/INTEGRATION.md, the spec screen): the two-tone H2 over the
   // card (48px, one line each at 1440), five row labels (sans 14), the values (sans 17 after a 20px glyph: one line at
-  // 1440, at most two at 390); Files is one mono path after the file glyph, no box. The Harness row's names are
-  // hero.harnesses.
+  // 1440, at most two at 390). NEW CLAIM: the rows are the Agent preset's parts, no mono token among them. The Harness
+  // row's names are hero.harnesses.
   "spec.h2a": 28,
   "spec.h2b": 30,
   "spec.labels.*": 12,
-  "spec.values.files": 24,
   "spec.values.*": 40,
   // the full lime screen; three unequal cards in one row, 1fr 2fr 1fr, rows on phones (staging v5/polish/lime/NOTES.md:
   // a 24-character label stays on one line and a 48-character line takes at most two from 1199 to 1440, in the tablet
@@ -222,15 +221,25 @@ test("the lime screen has three cards, each label a change of state (en)", () =>
 // (the switch rolls them in HARNESS_IDS order). The title reads as a pick of one of four, never as a Session changing
 // harness: harness and model are frozen at creation and a Session never changes harness (MAIN docs/SPEC.md §3 L31;
 // staging v5/graft/switch/NOTES.md §5.4: v4c's earlier "Swap the harness, keep the rest." is out).
-test("the spec table has five parts, picks one harness of four, and keeps its token (en, zh, ja)", () => {
+// NEW CLAIM: the five rows are the Agent preset's parts (MAIN README.md L37: harness, model, instructions, Skills, MCP
+// servers, Environment; Skills and MCP share a row). The title brings your own agent and freezes all five per Session
+// (SPEC L31); it never says the setup is identical to the laptop's or arrives by itself (staging narrative/TRUTH.md C9,
+// C10, §3).
+test("the spec table has the preset's five parts, picks one harness of four, and claims no copy of the laptop (en, zh, ja)", () => {
   for (const locale of LOCALES) {
     const spec = COPY.spec[locale];
-    assert.deepEqual(Object.keys(spec.labels), ["harness", "model", "sandbox", "files", "resume"], `${locale} rows`);
-    assert.deepEqual(Object.keys(spec.values), ["model", "sandbox", "files", "resume"], `${locale} values`);
-    assert.equal(spec.values.files, COPY.spec.en.values.files, `${locale} file token`);
+    assert.deepEqual(
+      Object.keys(spec.labels),
+      ["harness", "model", "instructions", "skills", "environment"],
+      `${locale} rows`,
+    );
+    assert.deepEqual(Object.keys(spec.values), ["model", "instructions", "skills", "environment"], `${locale} values`);
   }
   assert.equal(COPY.hero.en.harnesses.length, 4, "four harness names to roll");
-  assert.doesNotMatch(`${COPY.spec.en.h2a} ${COPY.spec.en.h2b}`, /\b(swap|switch|change)/i, "a pick, not a swap");
+  const title = `${COPY.spec.en.h2a} ${COPY.spec.en.h2b}`;
+  assert.doesNotMatch(title, /\b(swap|switch|change)/i, "a pick, not a swap");
+  assert.doesNotMatch(title, /\b(identical|exactly|sync|import|upload|migrate)/i, "set up the same agent, not a copy");
+  assert.match(COPY.spec.en.values.skills, /remote/i, "MCP servers are remote (docs/prd/mcp-interaction.md L17)");
 });
 
 test("each state of the Session object shows at most 14 words (en)", () => {

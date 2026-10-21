@@ -1,13 +1,13 @@
 {
-  "$comment": "Slots of sections/spec.ts, the spec table's screen between the stage and the white gap before the lime screen (graft 2026-10-20: v4c's spec table, opened by the portal, its Harness value rolling; staging v5/graft/INTEGRATION.md, the spec screen). h2a + h2b: the two-tone H2 on the field over the card (display 48 / 34px, one line each at 1440; two each at 390). labels: the five row labels (sans 15, one line). values: Model and Sandbox follow a 20px glyph, Files is one mono token, the path after the file glyph (no box: committee O1), Resume is plain text (sans 17, one line at 1440, at most two at 390, balanced: en joins the part after the first break with no-break spaces, \\u00a0, so a wrap falls between the two phrases; zh breaks only at its comma, ja at phrases). The Harness row has no slot here: its four names are copy/hero.json harnesses (product names, the same in every locale), rolling one at a time in the display face, the four listed under them (sans 17, 15 on phones, each after a neutral glyph tile, two by two, the current one marked). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). zh / ja are v4c's audited strings with the v5 page's words (Resume 续接, provider key 供应商密钥); ja joins a numeral to its counter with a no-break space (\\u00a0), as v4c did, so a line never splits them.",
+  "$comment": "Slots of sections/spec.ts, the spec table's screen between the stage and the white gap before the lime screen (graft 2026-10-20: v4c's spec table, opened by the portal, its Harness value rolling; staging v5/graft/INTEGRATION.md, the spec screen; round 3a, the door). h2a + h2b: the two-tone H2 on the field over the card (display 48 / 34px, one line each at 1440; two each at 390). The five rows are the Agent preset's parts (README.md L37; narrative/DECK.md §2.4): Harness / Model / Instructions / Skills · MCP / Environment, in place of Sandbox / Files / Resume (the sandbox went to lime card 1, Resume to lime card 3, the files to the stage's last state). labels: the five row labels (sans 15, one line). values: Model, Instructions, Skills · MCP and Environment, each after a glyph of the console (sections/spec.ts), sans 17, one line at 1440, at most two at 390, balanced: en joins the part after the first break with no-break spaces (\\u00a0), so a wrap falls between the two phrases; zh breaks only at its comma, ja at phrases. The Harness row has no slot here: its four names are copy/hero.json harnesses (product names, the same in every locale), rolling one at a time in the display face, the four listed under them. ja joins a numeral to its counter with a no-break space (\\u00a0), so a line never splits them. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
   "$source": {
     "h2a": "v4c's act-1 title (redesign/v4c apps/landing/src/home/copy.ts L126): the five rows below are the parts.",
     "h2b": "v4c's act-1 title, second part (copy.ts L127, the review round 9b80705). Four harnesses: README L9; docs/prd/runtime-catalog.md L7 (four runtimes are selectable). Pick, not swap: harness and model are independent choices, frozen at creation, and a Session never changes harness (SPEC §3 L31), so the rolling value reads as one of four (staging v5/graft/switch/NOTES.md §5.4).",
-    "labels": "v4c's row labels (copy.ts L128; zh L223, ja L317). zh 续接 is the v5 page's word for Resume (stage.json steps[2].tag, accent.json cards[2].label), where v4c had 续跑.",
-    "values.model": "v4c (copy.ts L130). Bring your own key: model credentials belong to the Project and the provider bills that account (SPEC §2 L25); harness and model are independent choices (SPEC §3 L31); a model is offered when the runtime supports it and the Project has a matching provider key (runtime-catalog.md L8). zh 服务商 -> 供应商, the v5 page's word (faq.json, scripts/landing-home.mjs META).",
-    "values.sandbox": "v4c (copy.ts L131). Every Session gets its own sandbox (SPEC §3 L32, README L9); provider keys and MCP credentials never enter it, it receives only expiring grants (SPEC §5 L65).",
-    "values.files": "v4c (copy.ts L132). The CSV workflow saves outputs/report.md (MAIN scripts/public-api-session-workflow.ts L24); files the Agent writes under outputs/ become downloadable artifacts (docs/prd/session-files.md L9). The stage's Call and Watch name the same file. A machine token: the same in every locale.",
-    "values.resume": "v4c (copy.ts L133). A reply one minute or seven days after a completed turn has the same semantics, also after the sandbox was reclaimed (SPEC §4 L53)."
+    "values.model": "Unchanged. Bring your own key: the provider bills that account (SPEC L25); harness and model are independent choices (SPEC L31).",
+    "values.instructions": "Instructions are part of the preset (README.md L37). The driver wraps them ('Agent profile prompt:', DRIVER src/runtimes/skill-bootstrap.ts L455-L460), so not 'exactly as you wrote them'. The console labels this field 'System prompt' (MAIN apps/web/src/shared/i18n/translations/en.json agent.systemPrompt).",
+    "values.skills": "Skills from an upload, GitHub or skills.sh (docs/prd/skill-interaction.md L7); MCP servers are remote HTTPS endpoints, no local-process servers (docs/prd/mcp-interaction.md L7, L17).",
+    "values.environment": "Exact-version public npm and PyPI packages, a setup script and variables (docs/prd/environment.md L7); a failed build, restore or setup blocks startup (L9); OS packages are not the Environment's (L16).",
+    "labels": "Harness, Model: v4c's row labels (copy.ts L128; zh L223, ja L317). Instructions, Skills · MCP, Environment: the Agent preset's parts (README.md L37; SPEC L32); zh / ja take the console's own words (MAIN apps/web/src/shared/i18n/translations/zh-CN.json, ja.json: nav.skills, nav.mcpServers, agent.environment), and say instructions as README and the API do (the console's field is 'System prompt', en.json agent.systemPrompt)."
   },
   "en": {
     "h2a": "One Session, five parts.",
@@ -15,15 +15,15 @@
     "labels": {
       "harness": "Harness",
       "model": "Model",
-      "sandbox": "Sandbox",
-      "files": "Files",
-      "resume": "Resume"
+      "instructions": "Instructions",
+      "skills": "Skills · MCP",
+      "environment": "Environment"
     },
     "values": {
       "model": "Your pick, your own provider key",
-      "sandbox": "Isolated. Provider\u00a0keys\u00a0stay\u00a0outside.",
-      "files": "outputs/report.md",
-      "resume": "A minute or seven days later"
+      "instructions": "The same instructions you use locally",
+      "skills": "Your Skills and remote MCP servers",
+      "environment": "Pinned npm/PyPI packages, a setup script"
     }
   },
   "zh": {
@@ -32,15 +32,15 @@
     "labels": {
       "harness": "Harness",
       "model": "模型",
-      "sandbox": "Sandbox",
-      "files": "文件",
-      "resume": "续接"
+      "instructions": "指令",
+      "skills": "技能 · MCP",
+      "environment": "环境"
     },
     "values": {
       "model": "自选模型，用你自己的供应商密钥",
-      "sandbox": "隔离运行，供应商密钥留在外面",
-      "files": "outputs/report.md",
-      "resume": "一分钟后或七天后都可以"
+      "instructions": "沿用你在本地用的指令",
+      "skills": "你的技能和远程 MCP 服务器",
+      "environment": "精确版本的 npm/PyPI 包和设置脚本"
     }
   },
   "ja": {
@@ -49,15 +49,15 @@
     "labels": {
       "harness": "Harness",
       "model": "モデル",
-      "sandbox": "Sandbox",
-      "files": "ファイル",
-      "resume": "再開"
+      "instructions": "指示",
+      "skills": "スキル · MCP",
+      "environment": "環境"
     },
     "values": {
       "model": "選んだモデルを自分のプロバイダーキーで",
-      "sandbox": "隔離環境。プロバイダーキーは外に置く",
-      "files": "outputs/report.md",
-      "resume": "1 分後でも 7 日後でも"
+      "instructions": "手元で使っているのと同じ指示",
+      "skills": "あなたのスキルとリモート MCP サーバー",
+      "environment": "npm/PyPI の版を固定、セットアップも"
     }
   }
 }
