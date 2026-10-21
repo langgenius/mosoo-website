@@ -424,8 +424,11 @@ test("the FAQPage JSON-LD matches the FAQ a reader sees on the page", () => {
     const visible = visibleFaqOf(html);
 
     assert.equal(visible.length, 6, `${locale} keeps all 6 answers in the DOM`);
+    // The reader's text collapses whitespace (textOf), a no-break space included: ja ties a numeral to its counter
+    // with one (copy/faq.json 「24 時間」「1 人」); the JSON-LD keeps the copy's own characters.
+    const spaced = (value) => value.replace(/\s+/g, " ").trim();
     assert.deepEqual(
-      faq.mainEntity.map((question) => [question.name, question.acceptedAnswer.text]),
+      faq.mainEntity.map((question) => [spaced(question.name), spaced(question.acceptedAnswer.text)]),
       visible,
     );
     // One exclusive accordion (native details sharing name="faq"), the first question open.
@@ -588,17 +591,18 @@ test("unlisted pricing pages are noindex and claim no plans", () => {
 });
 
 // #138 (staging committee/PLAN.md 2-3): pricing stays a page, in the subpage shell like status, linked from no nav.
-// It says one thing, the home FAQ's answer to "What does it cost to start?" (copy/faq.json item 2), in its
+// It says one thing, the home FAQ's answer to "What does it cost to start?" (copy/faq.json item 5 since the
+// narrative round put the FAQ in the story's order, staging narrative/DECK.md §2.6), in its
 // paragraph, description and share text alike, so the FAQ is the only copy; then one lime "Try mosoo" to the
 // console. The plan-based React page (tiers, quotas, self-hosting the spec does not have) is deleted.
 test("pricing is the home FAQ's cost answer in the subpage shell, with one lime button", () => {
-  assert.match(homeFaq("en")[1].q, /cost/, "copy/faq.json item 2 is still the cost question");
+  assert.match(homeFaq("en")[4].q, /cost/, "copy/faq.json item 5 is still the cost question");
   const source = read("apps/landing/pricing.html");
   assert.match(source, /<script type="module" src="\/src\/pricing-main\.tsx"><\/script>/, "the shell mounts");
   assert.match(read("apps/landing/src/pricing-main.tsx"), /<LandingShell>\s*<PricingPage \/>\s*<\/LandingShell>/);
   const page = read("apps/landing/src/routes/pricing/pricing-page.tsx");
   assert.match(page, /import faq from "@\/home\/copy\/faq\.json"/, "the page reads the FAQ");
-  assert.match(page, /const COST_QUESTION = 1;/);
+  assert.match(page, /const COST_QUESTION = 4;/);
   assert.match(page, /<h1 className="sp-title">/, "the title is the status page's, in the display token");
   assert.equal(page.match(/sub-btn--lime/g)?.length, 1, "one lime button");
   assert.match(page, /className="sub-btn sub-btn--lime" href=\{MOSOO_CLOUD_URL\}/, "to the console");
@@ -609,7 +613,7 @@ test("pricing is the home FAQ's cost answer in the subpage shell, with one lime 
 
   for (const locale of LOCALES) {
     const html = renderPricingLocale(source, locale);
-    const answer = homeFaq(locale)[1].a;
+    const answer = homeFaq(locale)[4].a;
     for (const slot of [
       /<meta\s+name="description"\s+content="([^"]*)"/,
       /<meta\s+property="og:description"\s+content="([^"]*)"/,

@@ -108,8 +108,12 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 
 ## Direct answers
 
-- What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. Use the hosted console at cloud.mosoo.ai; the source is on GitHub under Apache 2.0. It is in Alpha, so public APIs may still change.
-- What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models.
+- What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. Each job runs as a Session: its own sandbox, files and conversation, kept after the sandbox goes. Hosted at cloud.mosoo.ai, in Alpha.
+- Can I bring the agent from my laptop? Yes, if it runs on OpenAI Codex, Claude Code (Claude Agent SDK), OpenCode or the Pi coding agent. Save its instructions, Skills, remote MCP and pinned npm/PyPI packages as an Agent. Nothing syncs from your laptop.
+- Who can use it once it's in the cloud? Whoever your app serves: teammates on an internal tool, customers, or a feature in your product. Your backend signs them in and calls mosoo with a Project key. No seats: each Project has one owner.
+- Does it run 24/7? How far does it scale? It runs whenever your backend or cron sends a job, with no laptop or person on duty. mosoo has no timers. Sandboxes are capped per account and overall: past a cap, a job fails fast. No uptime promise in Alpha.
+- What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models and sets no spending cap.
+- How is this different from mosoo computer? mosoo computer is a persistent cloud computer you work in with your agents. mosoo puts an agent inside your own app or service: every job gets a fresh Session in its own sandbox.
 - Why not a model API or a plain sandbox? mosoo runs the Agent itself: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox.
 - Which harnesses and models can I use? Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key.
 - Can I continue a Session days later? Yes. Send the next turn to the same Session, even after its sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer.

@@ -82,18 +82,20 @@ const FALLBACK_LABELS = {
 
 // Pricing (#138, staging committee/PLAN.md 2-3) is kept as a page in the subpage shell, unlisted: noindex, out of
 // the sitemap (scripts/sitemap.mjs), linked from no nav. It says one thing, the home FAQ's answer to "What does it
-// cost to start?" (apps/landing/src/home/copy/faq.json item 2; sources in its $source: console en.json L51, SPEC §2
-// L25), and that answer is also its description and share text. So the FAQ is the only copy: the build writes the
-// answer into pricing.html's slots for every locale (fillPricingAnswer), and the React page reads the same item
-// (src/routes/pricing/pricing-page.tsx). The one button is the home's lime "Try mosoo" (copy/nav.json cta).
-const PRICING_QUESTION = 1;
+// cost to start?" (apps/landing/src/home/copy/faq.json item 5, since the narrative round put the FAQ in the story's
+// order, staging narrative/DECK.md §2.6; sources in its $source: console en.json L51, SPEC §2 L25), and that answer
+// is also its description and share text. So the FAQ is the only copy: the build writes the answer into
+// pricing.html's slots for every locale (fillPricingAnswer), and the React page reads the same item
+// (src/routes/pricing/pricing-page.tsx COST_QUESTION). The one button is the home's lime "Try mosoo" (copy/nav.json
+// cta).
+const PRICING_QUESTION = 4;
 
 const escapeHtml = (value) =>
   value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
 function pricingAnswer(locale) {
   const item = homeFaq(locale)[PRICING_QUESTION];
-  if (!item) throw new Error(`Landing locale build: copy/faq.json (${locale}) has no second question for pricing.`);
+  if (!item) throw new Error(`Landing locale build: copy/faq.json (${locale}) has no cost question (item 5) for pricing.`);
   return escapeHtml(item.a);
 }
 

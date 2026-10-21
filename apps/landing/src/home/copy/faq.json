@@ -1,7 +1,12 @@
 {
-  "$comment": "Slots of sections/faq.ts. a + b = the two-tone title alone in the left column (serif 48px; 34px at 390; each line one line up to 20 characters at both widths); items = six questions in native <details name=\"faq\"> (first open): q one line at 1440 (sans 500 18px, up to 48 characters), one or two lines at 390 (17px); a up to four lines at 1440 (16px, 560px measure), six at 390. The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) starts with the en items, in order, then adds answers the page leaves out: tests/worker.test.mjs keeps them in step. Measurements in staging v5/sections/faq-closing/NOTES.md. Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$comment": "Slots of sections/faq.ts. a + b = the two-tone title alone in the left column (serif 48px; 34px at 390; each line one line up to 20 characters at both widths); items = six questions in native <details name=\"faq\"> (first open), in the story's order (narrative/DECK.md §2.6: what it is, bringing the laptop's agent, who uses it, 24/7 and scale, cost, mosoo computer): q one line at 1440 (sans 500 18px, up to 48 characters), one or two lines at 390 (17px); a up to four lines at 1440 (16px, 560px measure), six at 390 (round 3b: en / zh / ja at most 4 / 3 / 4 and 5 / 5 / 7; ja item 2 takes 7 at 390 in Chrome, for the native review: staging v5/round3/b-copy/NOTES.md). The FAQPage JSON-LD (scripts/landing-home.mjs) carries items verbatim, and llms.txt \"Direct answers\" (src/worker.js) starts with the en items, in order and with ASCII apostrophes, then keeps the answers the page leaves out (the four questions this round took off the page among them): tests/worker.test.mjs keeps them in step. /pricing says the cost answer, item 5 (index 4: scripts/landing-locales.mjs PRICING_QUESTION, src/routes/pricing/pricing-page.tsx COST_QUESTION, checked by tests/site-seo.test.mjs). Curly apostrophes on the page. Budgets: q <= 48, a <= 220 characters (tests/home-copy-slots.test.mjs), a <= 40 words (staging tools/budget.ts). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
   "$source": {
-    "items": "Item 1 is the entity definition the visible page lacked (v5 SEO review P1): README L8 / SPEC §1 L7 verbatim, the hosted console README L43, Apache 2.0 README L78, Alpha README L39; it no longer pairs 'hosted' with 'run it yourself', because the README covers local development only (v5 truth review P2-2). Items 2, 4 and 6 are v4d's fact-checked answers (9e92312 home-copy.json faq): apps/web en.json L51 + SPEC §2 L25; README L9 + SPEC §3 L29-L31; SPEC §5 L65. Item 3 answers the sandbox services every persona compared mosoo with (REVIEW-v4 §6.7; v5 five-second test: E2B, Daytona, Modal) by what mosoo does only, with no claim about other products (v5 truth review P2-1): README L26, SPEC §4 L53. Item 5 rewrites 'What happens when I reply days later?' so the reader is the one who continues (REVIEW-v4 G6): SPEC §4 L53, L56; session-lifecycle.md L8."
+    "items.0": "README.md L8 (positioning, verbatim), L43 (hosted console cloud.mosoo.ai), L39 (Alpha). Session: own sandbox, workspace, conversation (docs/SPEC.md L32); kept after the sandbox is reclaimed, no inactivity deadline (SPEC L53, L60; docs/prd/session-lifecycle.md L8); files outlive the run (docs/prd/session-files.md L7).",
+    "items.1": "Four harnesses (README.md L9); SPEC calls claude-agent-sdk 'Claude Code' (SPEC L79); Pi is the pi-coding-agent package (DRIVER runtime-images.json L27, Containerfile L51). The preset's parts (README.md L37; SPEC L32); MCP remote only (docs/prd/mcp-interaction.md L7, L17); exact-version npm / PyPI (docs/prd/environment.md L7). Nothing syncs: no code reads local agent config (grep apps/api/src apps/web/src: exit 1).",
+    "items.2": "The app owns end-user login; mosoo does not authenticate end users (README.md L26; docs/prd/public-thread-api-surface.md L13); a Project key is a backend secret (public-thread-api-surface.md L22; SPEC L23); one owner, no members, roles or invitations (SPEC L22).",
+    "items.3": "One admitted input starts one turn (SPEC L18); no schedule, trigger or webhook in the 14 OpenAPI v2 paths (MAIN apps/api/openapi/public-api-v2.generated.json), no Webhooks (SPEC L73, L91); README, SPEC and docs/prd have 0 hits for schedul|cron|trigger. No approvals (SPEC L65). Caps: 'mosoo or the account', fails at once, not queued (SPEC L42); 5 per account and 50 per deployment (apps/api/src/modules/runtime/infrastructure/runtime-subject-lifecycle/runtime-subject-record-store.ts L73-L74; numbers not printed, TRUTH §6 Q1 default). Alpha, no uptime promise (README.md L39; 0 hits for uptime|SLA|24/7|always on in README, SPEC, architecture, prd).",
+    "items.4": "MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'; BYOK, the provider bills that account, no spending cap or per-turn budget (SPEC L25).",
+    "items.5": "SITE apps/blog/src/content/blog/introducing-mosoo-computer.mdx L2, L70; SITE copy/nav.json L19 ('A persistent cloud computer for agents.'); the personal-computer lifecycle belongs to mosoo computer (SPEC L89); every Session gets its own sandbox (SPEC L32)."
   },
   "en": {
     "a": "Questions",
@@ -9,27 +14,27 @@
     "items": [
       {
         "q": "What is mosoo?",
-        "a": "mosoo is an open-source, API-first managed Agent runtime for application backends. Use the hosted console at cloud.mosoo.ai; the source is on GitHub under Apache 2.0. It is in Alpha, so public APIs may still change."
+        "a": "mosoo is an open-source, API-first managed Agent runtime for application backends. Each job runs as a Session: its own sandbox, files and conversation, kept after the sandbox goes. Hosted at cloud.mosoo.ai, in Alpha."
+      },
+      {
+        "q": "Can I bring the agent from my laptop?",
+        "a": "Yes, if it runs on OpenAI Codex, Claude Code (Claude Agent SDK), OpenCode or the Pi coding agent. Save its instructions, Skills, remote MCP and pinned npm/PyPI packages as an Agent. Nothing syncs from your laptop."
+      },
+      {
+        "q": "Who can use it once it’s in the cloud?",
+        "a": "Whoever your app serves: teammates on an internal tool, customers, or a feature in your product. Your backend signs them in and calls mosoo with a Project key. No seats: each Project has one owner."
+      },
+      {
+        "q": "Does it run 24/7? How far does it scale?",
+        "a": "It runs whenever your backend or cron sends a job, with no laptop or person on duty. mosoo has no timers. Sandboxes are capped per account and overall: past a cap, a job fails fast. No uptime promise in Alpha."
       },
       {
         "q": "What does it cost to start?",
-        "a": "Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models."
+        "a": "Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models and sets no spending cap."
       },
       {
-        "q": "Why not a model API or a plain sandbox?",
-        "a": "mosoo runs the Agent itself: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox."
-      },
-      {
-        "q": "Which harnesses and models can I use?",
-        "a": "Four harnesses: OpenAI Codex, Claude Agent SDK, OpenCode and Pi. Each Session names its harness, provider and model, and runs on your own provider key."
-      },
-      {
-        "q": "Can I continue a Session days later?",
-        "a": "Yes. Send the next turn to the same Session, even after its sandbox was reclaimed. mosoo restores the working directory and the native conversation from the last committed checkpoint. A cold start can take longer."
-      },
-      {
-        "q": "Do my keys enter the sandbox?",
-        "a": "No. Provider keys and MCP credentials stay outside; the sandbox only receives expiring grants for them. Environment variables are the exception: code in the sandbox can read them."
+        "q": "How is this different from mosoo computer?",
+        "a": "mosoo computer is a persistent cloud computer you work in with your agents. mosoo puts an agent inside your own app or service: every job gets a fresh Session in its own sandbox."
       }
     ]
   },
@@ -39,27 +44,27 @@
     "items": [
       {
         "q": "mosoo 是什么？",
-        "a": "mosoo 是面向应用后端的开源托管 Agent 运行时。可直接用托管控制台 cloud.mosoo.ai；源码以 Apache 2.0 在 GitHub 开源。目前是 Alpha 版，公开 API 仍可能变化。"
+        "a": "mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。每个任务是一个 Session：有自己的 sandbox、文件和对话，sandbox 回收后仍然保留。托管在 cloud.mosoo.ai，目前是 Alpha 版。"
+      },
+      {
+        "q": "能把我电脑上的 Agent 带过来吗？",
+        "a": "可以，前提是它跑在 OpenAI Codex、Claude Code（Claude Agent SDK）、OpenCode 或 Pi 编程 Agent 上。把指令、技能、远程 MCP 和精确版本的 npm/PyPI 包存成 Agent。不会从电脑同步任何东西。"
+      },
+      {
+        "q": "上了云，谁能用它？",
+        "a": "你的应用服务谁，谁就能用：内部工具的同事、客户，或产品里的功能。登录由你的后端负责，再用 Project 密钥调用 mosoo。没有席位，每个 Project 只有一个所有者。"
+      },
+      {
+        "q": "能 7×24 小时运行吗？能扩展到多大？",
+        "a": "你的后端或 cron 发来任务，它就运行，不用电脑开着，也不用人守着。mosoo 没有定时器。sandbox 按账户和全局设上限，超出即失败。Alpha 阶段不承诺可用性。"
       },
       {
         "q": "开始使用要付费吗？",
-        "a": "免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不提供模型。"
+        "a": "免费开始，不需要信用卡。模型使用你自己的供应商密钥运行，费用由供应商向该账户收取；mosoo 不提供模型，也不设花费上限。"
       },
       {
-        "q": "为什么不直接用模型 API 或普通 sandbox？",
-        "a": "mosoo 运行的是整个 Agent：harness 在自己的 sandbox 里工作，文件进出、事件流式返回、用量有记录，Session 也比 sandbox 活得更久。"
-      },
-      {
-        "q": "可以用哪些 harness 和模型？",
-        "a": "四种 harness：OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi。每个 Session 指定自己的 harness、模型供应商和模型，并使用你自己的供应商密钥。"
-      },
-      {
-        "q": "几天后还能接着同一个 Session 吗？",
-        "a": "可以。把下一轮发给同一个 Session 即可，即使它的 sandbox 已被回收。mosoo 会从最近一次提交的检查点恢复工作目录和原生对话。冷启动可能更慢。"
-      },
-      {
-        "q": "我的密钥会进入 sandbox 吗？",
-        "a": "不会。模型供应商密钥和 MCP 凭据留在 sandbox 之外，sandbox 只拿到会过期的授权。环境变量是例外：sandbox 里的代码可以读取它们。"
+        "q": "它和 mosoo computer 有什么不同？",
+        "a": "mosoo computer 是一台常驻的云端电脑，你在里面和 Agent 一起工作。mosoo 则把 Agent 放进你自己的应用或服务：每个任务都有一个全新的 Session，在自己的 sandbox 里运行。"
       }
     ]
   },
@@ -69,27 +74,27 @@
     "items": [
       {
         "q": "mosoo とは？",
-        "a": "mosoo は、アプリのバックエンド向けのオープンソースのマネージド Agent ランタイムです。ホスト版 cloud.mosoo.ai が使え、ソースは Apache 2.0 で GitHub にあります。現在 Alpha 版です。"
+        "a": "mosoo は、バックエンド向けの OSS で API ファーストなマネージド Agent runtime。ジョブごとの Session が専用の sandbox、ファイル、会話を持ち、sandbox 回収後も残ります。ホストは cloud.mosoo.ai、Alpha 版。"
+      },
+      {
+        "q": "手元の Agent を持ち込めますか？",
+        "a": "OpenAI Codex、Claude Code（Claude Agent SDK）、OpenCode、Pi コーディングエージェントなら可能です。指示、スキル、リモート MCP、版を固定した npm/PyPI パッケージを Agent として保存します。PC からの同期はありません。"
+      },
+      {
+        "q": "クラウドに載せたら、誰が使える？",
+        "a": "アプリの利用者なら誰でも：社内ツールの同僚、顧客、プロダクトの機能の利用者。ログインはバックエンドが担い、Project キーで mosoo を呼びます。席はなく、オーナーは 1 人。"
+      },
+      {
+        "q": "24 時間動く？どこまでスケールする？",
+        "a": "バックエンドや cron が送れば動き、PC も見張りも不要。タイマーはなし。sandbox にはアカウント単位と全体の上限があり、超えると即失敗。Alpha 版で稼働率の保証なし。"
       },
       {
         "q": "始めるのに費用はかかりますか？",
-        "a": "無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーが請求します。mosoo はモデルを提供しません。"
+        "a": "無料で始められ、クレジットカードは不要です。モデルはご自身のプロバイダーキーで動き、料金はプロバイダーが請求します。mosoo はモデルを提供せず、利用額の上限も設けません。"
       },
       {
-        "q": "モデル API や普通の sandbox との違いは？",
-        "a": "mosoo は Agent そのものを動かします。専用 sandbox の harness、ファイルの入出力、イベント配信、使用量の記録、sandbox より長く続く Session。"
-      },
-      {
-        "q": "どの harness とモデルを使えますか？",
-        "a": "harness は OpenAI Codex、Claude Agent SDK、OpenCode、Pi の 4 つです。Session ごとに harness、プロバイダー、モデルを指定し、ご自身のプロバイダーキーで動きます。"
-      },
-      {
-        "q": "数日後に同じ Session を続けられますか？",
-        "a": "はい。同じ Session に次のターンを送るだけです。sandbox の回収後も、最後にコミットしたチェックポイントから作業ディレクトリと会話を復元します。コールドスタートは遅くなりえます。"
-      },
-      {
-        "q": "キーは sandbox に入りますか？",
-        "a": "入りません。プロバイダーキーと MCP の認証情報は sandbox の外にあり、sandbox には期限付きの許可だけが渡ります。環境変数は例外で、sandbox 内のコードが読めます。"
+        "q": "mosoo computer との違いは？",
+        "a": "mosoo computer は、Agent と一緒に作業する常設のクラウドコンピューターです。mosoo は Agent をあなたのアプリやサービスに組み込み、ジョブごとに新しい Session を専用の sandbox で動かします。"
       }
     ]
   }
