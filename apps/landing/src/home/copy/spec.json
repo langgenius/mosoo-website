@@ -20,7 +20,7 @@
       "environment": "Environment"
     },
     "values": {
-      "model": "Your pick, your own provider key",
+      "model": "Your pick, your own provider key",
       "instructions": "The same instructions you use locally",
       "skills": "Your Skills and remote MCP servers",
       "environment": "Pinned npm/PyPI packages, a setup script"
