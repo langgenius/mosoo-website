@@ -96,9 +96,10 @@ function footerGroups(): readonly FooterGroup[] {
  *
  * The language switcher is the home footer's (owner 2026-10-20 17:15
  * 「多语言切换不明显」; src/home/sections/footer.ts): a globe, then the three
- * languages in one 1px frame, the current one raised on paper, every choice in
- * sight. Each is a real link to this page in that language (shared/styles/
- * site-nav.css has the look).
+ * languages in one grey well with no line (O1), the current one raised on paper
+ * with a ring and a small shadow, so it differs by more than its colour, every
+ * choice in sight. Each is a real link to this page in that language
+ * (shared/styles/site-nav.css has the look).
  */
 export function SiteFooter(): ReactElement {
   return (

@@ -122,7 +122,7 @@ test("both products are lowercase in the subpages' bar and footer (owner 2026-10
   }
 });
 
-test("the subpages' footer language switcher is the home footer's: a globe and three framed links", () => {
+test("the subpages' footer language switcher is the home footer's: a globe and three links in a grey well", () => {
   assert.match(
     SITE_FOOTER,
     /<div className="d-ft-lang">\s*<Globe className="d-ft-globe" \/>\s*<ul aria-label=\{t\("Change language"\)\} className="d-ft-langs">/,
@@ -132,6 +132,40 @@ test("the subpages' footer language switcher is the home footer's: a globe and t
     /href=\{localeHref\(code\)\}\s*hrefLang=\{htmlLanguage\[code\]\}\s*lang=\{htmlLanguage\[code\]\}\s*aria-current=\{code === locale \? "true" : undefined\}\s*onClick=\{\(\) => rememberLocale\(code\)\}/,
   );
   assert.match(SITE_FOOTER, /\{LOCALE_LABELS\[code\]\.native\}/, "English, 简体中文, 日本語, each in its own words");
+});
+
+// O1 (committee 2026-10-21, staging committee/MINUTES.md §2.4 items 6-7), as on the home since round 3a
+// (tests/home-nav-products.test.mjs, "the New chip is one component …"): the subpages' and the blog's panels, phone
+// sheets, language wells and Sign in carry no 1px line, the panels keep the home's floating shadow, and the New chip is
+// the home's one size (src/home/system.css .v5-new). Round 3a had cleaned only the home (staging
+// v5/round3/review/ui-inventory.md §4.7).
+test("the subpages' and the blog's panels, sheets and language wells carry no outline, their New chip the home's", () => {
+  const rule = (source, selector) => new RegExp(`(?:^|\\n)${selector} \\{([^}]*)\\}`).exec(source)?.[1] ?? "";
+  const float = /box-shadow:\s*0 1px 2px rgb\(22 24 21 \/ 0\.06\),\s*0 10px 30px -14px rgb\(22 24 21 \/ 0\.22\);/;
+  const size = (body) => [/\bheight: \d+px;/, /padding: [^;]+;/, /font: [^;]+;/].map((re) => re.exec(body)?.[0]);
+  const homeNew = size(rule(read("apps/landing/src/home/system.css"), "\\.v5-new"));
+  assert.ok(homeNew.every(Boolean), "system.css draws the home's New chip (height, padding, font)");
+  for (const [name, source, panel, sheet, chip] of [
+    ["site-nav.css", SITE_CSS, "\\.d-nav-pop", "  \\.d-nav-row", "\\.d-nav-new"],
+    ["Header.astro", HEADER, "  \\.bn-pop", "    \\.bn-row", "  \\.bn-new"],
+  ]) {
+    assert.match(rule(source, panel), /border: 0;/, `${name}: the panels have no line`);
+    assert.match(rule(source, panel), float, `${name}: the panels keep the home's floating shadow`);
+    assert.match(rule(source, sheet), /border: 0;/, `${name}: the phone sheet has no line`);
+    assert.match(rule(source, sheet), float, `${name}: the phone sheet keeps the home's floating shadow`);
+    assert.deepEqual(size(rule(source, chip)), homeNew, `${name}: the New chip is the home's size`);
+    assert.doesNotMatch(source, /0 18px 40px -18px|rgb\(22 24 21 \/ 0\.12\)/, `${name}: no 12% edge, no old panel shadow`);
+  }
+  // The subpages' sheet: its language well has no line, and Sign in is a link like the others (no rule of its own).
+  assert.doesNotMatch(rule(SITE_CSS, "  \\.d-nav-langs"), /border(?:-\w+)?: 1px/, "the sheet's language well: no line");
+  assert.doesNotMatch(SITE_CSS, /\.d-nav-signin \{/, "the sheet's Sign in: a link, not a 1px ink line button");
+  // The footer's language well: no line; the current language raised on paper with a ring, more than its colour.
+  assert.doesNotMatch(rule(SITE_CSS, "\\.d-footer \\.d-ft-langs"), /border:/, "the footer's language well: no line");
+  assert.match(
+    rule(SITE_CSS, '\\.d-footer \\.d-ft-langs a\\[aria-current="true"\\]'),
+    /background: var\(--d-paper\);[\s\S]*box-shadow:\s*0 0 0 1px rgb\(22 24 21 \/ 0\.08\)/,
+    "the footer's current language: raised on paper with a ring",
+  );
 });
 
 test("the blog header carries the same Products panel as the home bar, its words the home's", () => {

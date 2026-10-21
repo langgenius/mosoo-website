@@ -351,7 +351,8 @@ const products = [
     background: #d6fba6;
   }
 
-  /* The panels: paper cards, the bar's 1px edge and shadow family, r12. Hidden unless open. */
+  /* The panels: paper cards, r12, with the home's floating bar's own shadow and no line around them (the home's
+     .v5-nav-pop; O1, committee 2026-10-21: a card is not outlined, the 12% ink edge is gone). Hidden unless open. */
   .bn-pop {
     display: none;
     position: fixed;
@@ -363,13 +364,13 @@ const products = [
     margin: 0;
     padding: 8px;
     overflow: visible;
-    border: 1px solid rgb(22 24 21 / 0.12);
+    border: 0;
     border-radius: 12px;
     background: var(--v5-paper);
     color: var(--v5-ink);
     box-shadow:
       0 1px 2px rgb(22 24 21 / 0.06),
-      0 18px 40px -18px rgb(22 24 21 / 0.3);
+      0 10px 30px -14px rgb(22 24 21 / 0.22);
     font: 400 15px/1.4 var(--font-sans);
     text-align: left;
   }
@@ -484,16 +485,18 @@ const products = [
     word-break: auto-phrase;
   }
 
+  /* The New chip at the home's one size (apps/landing/src/home/system.css .v5-new: 20px, 11px; O1: one component,
+     one size). */
   .bn-new {
     display: inline-flex;
     flex: none;
     align-items: center;
-    height: 18px;
-    padding: 0 6px;
+    height: 20px;
+    padding: 0 7px;
     border-radius: 999px;
     background: var(--bn-lime);
     color: var(--v5-ink);
-    font: 600 10px/1 var(--font-sans);
+    font: 600 11px/1 var(--font-sans);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -581,13 +584,13 @@ const products = [
       padding: 8px;
       overflow: auto;
       overscroll-behavior: contain;
-      border: 1px solid rgb(22 24 21 / 0.12);
+      border: 0; /* the panels' look: no line, the floating bar's shadow (O1; the home's .v5-nav-links sheet) */
       border-radius: 12px;
       background: var(--v5-paper);
       color: var(--v5-ink);
       box-shadow:
         0 1px 2px rgb(22 24 21 / 0.06),
-        0 18px 40px -18px rgb(22 24 21 / 0.3);
+        0 10px 30px -14px rgb(22 24 21 / 0.22);
     }
 
     .bn-row:popover-open {

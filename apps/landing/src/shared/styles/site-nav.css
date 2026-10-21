@@ -9,13 +9,17 @@
    under the bar, from their own trigger by CSS anchor positioning (a browser without it gets them under the bar's right
    end). They are absolutely positioned, so they scroll away with the bar. Up to 860px the <nav> itself is the popover
    the menu button opens: a sheet under the bar with the panels inline. A popover the author gives a display shows even
-   when closed, so the panels only get one when open (or inside the open sheet). */
+   when closed, so the panels only get one when open (or inside the open sheet).
+
+   Nothing here is outlined, as on the home since round 3a (O1, committee 2026-10-21, staging committee/MINUTES.md
+   §2.4 items 6-7: 1px ink lines draw structure, never around words): the panels and the sheet are paper cards with the
+   floating bar's shadow and no line, the New chip is the home's one size, Sign in in the sheet is a link like the
+   others, and the language wells have no line, the current language raised on paper. */
 
 .d-shell {
-  /* The home's values (src/home/system.css) where d-object's differ: lines at 10% / 18% ink, the v5 lime (d-object's
+  /* The home's values (src/home/system.css) where d-object's differ: lines at 10% ink, the v5 lime (d-object's
      --d-accent is the older green), the CTA and theme eases. */
   --d-nav-line: rgb(22 24 21 / 0.1);
-  --d-nav-line-2: rgb(22 24 21 / 0.18);
   --d-nav-lime: #bcf870;
   --d-nav-gap: 24px;
   --d-nav-ease: cubic-bezier(0, 0, 0.2, 1);
@@ -135,7 +139,8 @@
   rotate: 180deg;
 }
 
-/* The panels: a paper card, 1px 12% ink edge, the home bar's shadow family, r12. Hidden unless open. */
+/* The panels: a paper card, r12, with the home's floating bar's own shadow and no line around it (the home's
+   .v5-nav-pop, src/home/sections/nav.css; O1: a card is not outlined, the 12% ink edge is gone). Hidden unless open. */
 .d-nav-pop {
   display: none;
   position: absolute;
@@ -146,13 +151,13 @@
   margin: 0;
   padding: 8px;
   overflow: visible;
-  border: 1px solid rgb(22 24 21 / 0.12);
+  border: 0;
   border-radius: 12px;
   background: var(--d-paper);
   color: var(--d-ink);
   box-shadow:
     0 1px 2px rgb(22 24 21 / 0.06),
-    0 18px 40px -18px rgb(22 24 21 / 0.3);
+    0 10px 30px -14px rgb(22 24 21 / 0.22);
   font: 400 15px/1.4 var(--font-sans);
   text-align: left;
 }
@@ -274,17 +279,18 @@
   word-break: auto-phrase;
 }
 
-/* The New chip (the owner's screenshot; production's hero chip): lime, ink, caps. */
+/* The New chip (the owner's screenshot; production's hero chip): lime, ink, caps, at the home's one size (src/home/
+   system.css .v5-new, the hero pill's and the home panel's: 20px, 11px; O1: one component, one size). */
 .d-nav-new {
   display: inline-flex;
   flex: none;
   align-items: center;
-  height: 18px;
-  padding: 0 6px;
+  height: 20px;
+  padding: 0 7px;
   border-radius: 999px;
   background: var(--d-nav-lime);
   color: var(--d-ink);
-  font: 600 10px/1 var(--font-sans);
+  font: 600 11px/1 var(--font-sans);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -399,13 +405,13 @@
     padding: 8px;
     overflow: auto;
     overscroll-behavior: contain;
-    border: 1px solid rgb(22 24 21 / 0.12);
+    border: 0; /* the panels' look: no line, the floating bar's shadow (O1; the home's .v5-nav-links sheet) */
     border-radius: 12px;
     background: var(--d-paper);
     color: var(--d-ink);
     box-shadow:
       0 1px 2px rgb(22 24 21 / 0.06),
-      0 18px 40px -18px rgb(22 24 21 / 0.3);
+      0 10px 30px -14px rgb(22 24 21 / 0.22);
   }
 
   .d-nav-row:popover-open {
@@ -458,8 +464,8 @@
     font: 500 14px/20px var(--font-sans);
   }
 
-  /* Hairlines between the three groups (products, links, language), on the square group boxes so they run straight
-     (the rows are rounded for their hover). */
+  /* Hairlines between the four groups (products, links, language, Sign in), on the square group boxes so they run
+     straight (the rows are rounded for their hover). */
   .d-nav-dd--products {
     margin-bottom: 8px;
     padding-bottom: 8px;
@@ -467,9 +473,9 @@
   }
 
   .d-nav-dd--lang {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--d-nav-line);
+    margin-block: 8px;
+    padding-block: 8px;
+    border-block: 1px solid var(--d-nav-line);
   }
 
   .d-nav-prod {
@@ -514,13 +520,13 @@
     clip-path: none;
   }
 
-  /* The language as three segments in one 1px frame, the current one raised on paper (all three in sight). */
+  /* The language as three segments in one grey well, the current one raised on paper with its ring and small shadow
+     (all three in sight); no line around the well (O1, as the footer's control: committee/MINUTES.md §2.4 item 7). */
   .d-nav-langs {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     margin: 0 12px 4px;
     padding: 3px;
-    border: 1px solid var(--d-nav-line-2);
     border-radius: 10px;
     background: var(--d-frame);
   }
@@ -545,12 +551,8 @@
     display: none;
   }
 
-  /* Sign in closes the sheet as a 1px ink line button (the page's secondary), lined up with the segments. */
-  .d-nav-signin {
-    justify-content: center;
-    margin: 12px 12px 4px;
-    border: 1px solid var(--d-ink);
-  }
+  /* Sign in closes the sheet as a link like the others (Docs, Use cases, GitHub), as in the desktop row (O1: it was a
+     1px ink line button), in a group of its own under the language's hairline (.d-nav-dd--lang above). */
 }
 
 /* Phones without anchor positioning (d-object: the shell's padding is 8 up to 720px, so the bar ends at 72). */
@@ -629,7 +631,9 @@
 }
 
 /* ----------------------------------------------------------------------------------- the footer's languages */
-/* As the home's footer: a globe, then the three languages in one 1px frame, the current one raised on paper; each
+/* As the home's footer (src/home/sections/footer.css .v5-ft-langs): a globe, then the three languages in one grey
+   well (ink 3% on the frame), the current one raised on paper with an 8% ring and a small shadow, so it differs by more
+   than its colour (WCAG 1.4.1). No line around the well (O1, committee 2026-10-21: only the 1px border went). Each
    segment a real link with hreflang, 32px tall (WCAG 2.5.8). Scoped under .d-footer to outrank d-object's .d-footer a
    whichever stylesheet loads last. */
 .d-ft-lang {
@@ -649,7 +653,6 @@
   margin: 0;
   padding: 3px;
   list-style: none;
-  border: 1px solid var(--d-nav-line-2);
   border-radius: 10px;
   background: rgb(22 24 21 / 0.03);
 }
