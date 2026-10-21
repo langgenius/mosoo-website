@@ -85,9 +85,9 @@ export function UseCaseCodexPetPage(): ReactElement {
         <CaseSteps
           items={[
             {
-              title: t("Publish the Agent"),
+              title: t("Publish the Agent (v1 API)"),
               body: t(
-                "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential.",
+                "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential. On today's v2 API, a saved Agent preset runs without being published.",
               ),
             },
             {
@@ -133,7 +133,7 @@ export function UseCaseCodexPetPage(): ReactElement {
       <ClosingCta
         title={t("Build your own Agent as API.")}
         body={t(
-          "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.",
+          "Today one API call from your backend starts a Session, from a saved Agent preset (no publishing needed) or an inline configuration. Turn its events and files into the feature your users see.",
         )}
       />
     </CasePage>

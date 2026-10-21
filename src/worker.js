@@ -44,11 +44,13 @@ const HOMEPAGE_MARKDOWN = `# mosoo
 
 mosoo is an open-source, API-first managed Agent runtime for application backends. It runs OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API, each Session in its own sandbox. mosoo is in Alpha.
 
-- Start a Session: POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads with an inline configuration and a Project API key (msp_). No Agent is required.
+- Bring the agent from your laptop (OpenAI Codex, Claude Agent SDK, OpenCode or Pi): save its harness, model, instructions, Skills, remote MCP servers and pinned npm/PyPI packages as an Agent preset (https://mosoo.ai/docs/first-agent/). Nothing syncs from your laptop.
+- Start a Session per job: POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads with a Project API key (msp_) and the preset ({"type":"agent","agent_id":"..."}), or with an inline configuration, which needs no saved Agent but carries no Skills or MCP servers.
 - Continue it minutes or days later with POST /api/v2/threads/{threadId}/events.
 - Follow events over SSE. There are no Webhooks.
 - Bring your own model provider key. mosoo supplies no models.
 
+- Save an Agent preset: https://mosoo.ai/docs/first-agent/
 - API quickstart: https://mosoo.ai/docs/quickstart/
 - OpenAPI 3.1 (v2): https://cloud.mosoo.ai/api/v2/openapi.json
 - Product and content index: https://mosoo.ai/llms.txt
@@ -63,7 +65,8 @@ const HOMEPAGE_MARKDOWN_ZH = `# mosoo
 mosoo 目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。它以 Apache 2.0 许可证开源，由 LangGenius, Inc. 维护。
 
 - 鉴权：使用 Project API 密钥，\`Authorization: Bearer msp_...\`。密钥是绑定单个项目的后端密钥，只显示一次，只保存哈希，不要放进浏览器或移动端。
-- 启动 Session：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\`，使用 inline 配置（harness、provider、model、instructions），不会创建 Agent。保存返回的 \`thread.id\`。
+- 带上你电脑上的 Agent（OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi）：把它的 harness、模型、指令、技能、远程 MCP 服务器和精确版本的 npm/PyPI 包存成 Agent 预设（https://mosoo.ai/docs/zh-Hans/first-agent/）。不会从电脑同步任何东西。
+- 启动 Session：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\`，每个任务一个 Session。配置二选一：已保存的 Agent 预设（\`{"type":"agent","agent_id":"..."}\`），或 inline 配置（harness、provider、model、instructions）；inline 不会创建 Agent，也不带技能和 MCP 服务器。保存返回的 \`thread.id\`。
 - runtime：\`openai-runtime\`（OpenAI Codex）、\`claude-agent-sdk\`（Claude Agent SDK）、\`acp-fallback\`（OpenCode）、\`pi\`（Pi）。
 - 继续：\`POST /api/v2/threads/{threadId}/events\`，1 分钟后或 7 天后语义相同。
 - 跟踪：读取已保存的事件历史，或通过 SSE 接收事件。没有 Webhook。
@@ -71,6 +74,7 @@ mosoo 目前处于 Alpha 阶段，公开 API 和产品行为仍可能变化。�
 - 用量：\`GET /api/v2/threads/{threadId}/usage\`，每次模型调用一条记录，金额是估算，不是账单。
 - BYOK：首次运行前，项目里需要有模型供应商密钥。mosoo 不提供模型。
 
+- 保存 Agent 预设：https://mosoo.ai/docs/zh-Hans/first-agent/
 - API 快速开始：https://mosoo.ai/docs/zh-Hans/quickstart/
 - API 参考 v2：https://mosoo.ai/docs/zh-Hans/api-reference-v2/
 - OpenAPI 3.1（v2）：https://cloud.mosoo.ai/api/v2/openapi.json
@@ -83,7 +87,8 @@ const HOMEPAGE_MARKDOWN_JA = `# mosoo
 mosoo は現在 Alpha 版で、公開 API や製品の動作は変わる可能性があります。Apache 2.0 ライセンスのオープンソースで、LangGenius, Inc. が管理しています。
 
 - 認証：Project API キーを使います（\`Authorization: Bearer msp_...\`）。キーは 1 つのプロジェクトに紐づくバックエンド用のシークレットで、表示は一度だけ、保存されるのはハッシュのみです。ブラウザやモバイルアプリには置かないでください。
-- Session の開始：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\` に inline 設定（harness、provider、model、instructions）を送ります。Agent は作成されません。返ってきた \`thread.id\` を保存してください。
+- 手元の Agent を持ち込む（OpenAI Codex、Claude Agent SDK、OpenCode、Pi）：harness、モデル、指示、スキル、リモート MCP サーバー、版を固定した npm/PyPI パッケージを Agent プリセットとして保存します（https://mosoo.ai/docs/ja/first-agent/）。PC からの同期はありません。
+- Session の開始：\`POST https://cloud.mosoo.ai/api/v2/projects/{projectId}/threads\`。ジョブごとに 1 つの Session です。設定は、保存した Agent プリセット（\`{"type":"agent","agent_id":"..."}\`）か inline 設定（harness、provider、model、instructions）のどちらか一方です。inline では Agent は作成されず、スキルと MCP サーバーも使えません。返ってきた \`thread.id\` を保存してください。
 - runtime：\`openai-runtime\`（OpenAI Codex）、\`claude-agent-sdk\`（Claude Agent SDK）、\`acp-fallback\`（OpenCode）、\`pi\`（Pi）。
 - 続行：\`POST /api/v2/threads/{threadId}/events\`。1 分後でも 7 日後でも意味は同じです。
 - 追跡：保存済みのイベント履歴を読むか、SSE で受け取ります。Webhook はありません。
@@ -91,6 +96,7 @@ mosoo は現在 Alpha 版で、公開 API や製品の動作は変わる可能�
 - 使用量：\`GET /api/v2/threads/{threadId}/usage\`。モデル呼び出しごとに 1 件の記録で、金額は推定値であり請求書ではありません。
 - BYOK：最初の実行の前に、プロジェクトにプロバイダーキーが必要です。mosoo はモデルを提供しません。
 
+- Agent プリセットの保存：https://mosoo.ai/docs/ja/first-agent/
 - API クイックスタート：https://mosoo.ai/docs/ja/quickstart/
 - API リファレンス v2：https://mosoo.ai/docs/ja/api-reference-v2/
 - OpenAPI 3.1（v2）：https://cloud.mosoo.ai/api/v2/openapi.json
@@ -111,7 +117,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 - What is mosoo? mosoo is an open-source, API-first managed Agent runtime for application backends. Each job runs as a Session: its own sandbox, files and conversation, kept after the sandbox goes. Hosted at cloud.mosoo.ai, in Alpha.
 - Can I bring the agent from my laptop? Yes, if it runs on OpenAI Codex, Claude Code (Claude Agent SDK), OpenCode or the Pi coding agent. Save its instructions, Skills, remote MCP and pinned npm/PyPI packages as an Agent. Nothing syncs from your laptop.
 - Who can use it once it's in the cloud? Whoever your app serves: teammates on an internal tool, customers, or a feature in your product. Your backend signs them in and calls mosoo with a Project key. No seats: each Project has one owner.
-- Does it run 24/7? How far does it scale? It runs whenever your backend or cron sends a job, with no laptop or person on duty. mosoo has no timers. Sandboxes are capped per account and overall: past a cap, a job fails fast. No uptime promise in Alpha.
+- Does it run 24/7? How far does it scale? No uptime promise in Alpha. mosoo has no timers. It runs whenever your backend or cron sends a job, with no laptop or person on duty. Sandboxes are capped per account and overall: past a cap, a job fails fast.
 - What does it cost to start? Starting is free, with no credit card. Models run on your own provider key, and the provider bills that account; mosoo supplies no models and sets no spending cap.
 - How is this different from mosoo computer? mosoo computer is a persistent cloud computer you work in with your agents. mosoo puts an agent inside your own app or service: every job gets a fresh Session in its own sandbox.
 - Why not a model API or a plain sandbox? mosoo runs the Agent itself: a harness in its own sandbox, files in and out, streamed events, recorded usage, and a Session that outlives the sandbox.
@@ -140,6 +146,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 
 - Install: \`curl -fsSL https://install.mosoo.ai/install.sh | bash\` installs the mosoo CLI and the @mosoo skill, then opens a browser sign-in.
 - The user must add the model provider key at https://cloud.mosoo.ai/providers. An agent cannot create it.
+- To bring the user's local agent, save it as an Agent preset (https://mosoo.ai/docs/first-agent/), then start Sessions with \`{"type":"agent","agent_id":"..."}\`. A preset carries the harness, model, instructions, Skills, remote HTTPS MCP servers and exact-version npm/PyPI packages; an inline configuration carries no Skills or MCP servers. Nothing syncs from the laptop: local (stdio) MCP servers, system packages and subscription logins stay behind.
 
 ## Product
 
@@ -153,6 +160,7 @@ mosoo is in Alpha. Public APIs and product behavior may still change. It is lice
 ## Build and integrate
 
 - [API quickstart (v2)](https://mosoo.ai/docs/quickstart/): Start a Session with an inline configuration and continue it.
+- [Save an Agent preset](https://mosoo.ai/docs/first-agent/): Save the harness, model, instructions, Skills, MCP servers and Environment your agent uses, then start Sessions from it.
 - [Session continuity and API versions](https://mosoo.ai/docs/durable-sessions-v2/): How continuation works across turns and API versions.
 - [API reference v2](https://mosoo.ai/docs/api-reference-v2/): Request and response schemas.
 - [OpenAPI 3.1, v2](https://cloud.mosoo.ai/api/v2/openapi.json): Machine-readable contract for Project Sessions.

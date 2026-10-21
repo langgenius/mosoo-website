@@ -1,5 +1,11 @@
 import { locale } from "@/shared/locale";
 
+// The cases are history: they were built on the v1 API, which runs only published Agents (MAIN README.md L37;
+// docs/prd/public-thread-api-surface.md L10), before /api/v2 existed (MAIN b41ed37edd, 2026-09-28, #642). So a step
+// that publishes says "(v1 API)" and what v2 does instead: a saved Agent preset runs whether or not it is published
+// (public-thread-api-surface.md L8; OpenAPI v2 POST /agents/{agentId}/threads). The closers say today's two sources,
+// a saved preset or inline (docs/SPEC.md L29), as the home's FAQ does: bring your agent by saving it as an Agent
+// (staging v5/round3/review/seo-geo.md SG-18; round 3c, v5/round3/c-content/NOTES.md).
 const ZH_MESSAGES = {
   "Use cases": "用例",
   "Built on mosoo.": "用 mosoo 构建。",
@@ -28,9 +34,9 @@ const ZH_MESSAGES = {
   "Open the live app": "打开线上应用",
   "View the repository": "查看仓库",
   "How it works": "工作方式",
-  "Publish the Agent": "发布 Agent",
-  "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential.":
-    "在 mosoo 上发布一个带头像生成 skill 的 Agent。它的 environment 装有 openai 与 pillow 包，并配置了 OpenAI provider 凭证。",
+  "Publish the Agent (v1 API)": "发布 Agent（v1 API）",
+  "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential. On today's v2 API, a saved Agent preset runs without being published.":
+    "在 mosoo 上发布一个带头像生成 skill 的 Agent。它的 environment 装有 openai 与 pillow 包，并配置了 OpenAI provider 凭证。如今的 v2 API 里，已保存的 Agent 预设无需发布即可运行。",
   "Copy the Instruction for LLM": "复制 Instruction for LLM",
   "Publishing generates an Instruction for LLM: an API contract sized for a prompt. Paste it into Codex and the integration work moves to the coding agent.":
     "发布后会生成一份 Instruction for LLM，即一份提示词大小的 API 契约。把它粘贴进 Codex，集成工作就交给了 coding agent。",
@@ -48,8 +54,8 @@ const ZH_MESSAGES = {
     "一张 1536×1872 的 RGBA WebP 图集，包含九行动画，下载前已在 sandbox 内通过 QA 校验。",
   Stack: "技术栈",
   "Build your own Agent as API.": "构建你自己的 Agent as API。",
-  "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.":
-    "如今，后端一次 API 调用就能启动 Session，无需保存或发布 Agent。再把它的事件和文件做成用户看得到的功能。",
+  "Today one API call from your backend starts a Session, from a saved Agent preset (no publishing needed) or an inline configuration. Turn its events and files into the feature your users see.":
+    "如今，后端一次 API 调用就能启动 Session：用已保存的 Agent 预设（无需发布），或用 inline 配置。再把它的事件和文件做成用户看得到的功能。",
   "Read the docs": "阅读文档",
   "One Agent for every user. Their data stays isolated.": "一个 Agent 服务所有用户，数据彼此隔离。",
   "Go Gym is a production fitness tracker. Users describe meals, workouts, and body measurements in chat; the app turns them into structured records, durable dashboards, and progress summaries.":
@@ -113,8 +119,8 @@ const ZH_MESSAGES = {
   "From a brief to a live site. mosoo runs the Agent.": "从一句话到线上站点。mosoo 负责跑 Agent。",
   "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint in that Thread's own sandbox, and publishes validated artifacts. The mosoo token never reaches the browser.":
     "Blueprint 把对话式 brief 变成确定的页面。线上产品 trybp.page 把每个项目映射到一个 mosoo Thread，在这个 Thread 自己的 sandbox 里运行 Blueprint，并发布经校验的产物。mosoo token 从不进入浏览器。",
-  "One Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.":
-    "在 mosoo 上发布一个 Agent，配备 Blueprint skill 与 full 网络访问，生成过程可以访问任意参考 URL。",
+  "One Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs. On today's v2 API, a saved Agent preset runs without being published.":
+    "在 mosoo 上发布一个 Agent，配备 Blueprint skill 与 full 网络访问，生成过程可以访问任意参考 URL。如今的 v2 API 里，已保存的 Agent 预设无需发布即可运行。",
   "Drive generation from the Control Worker": "由 Control Worker 驱动生成",
   "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the mosoo token off the browser.":
     "Control Worker 为每个项目创建一个 Thread，为每次提示或修订创建一个 Run。它轮询 Run，下载 outputs/ 下已提交的产物，并把 mosoo token 留在浏览器之外。",
@@ -140,8 +146,8 @@ const ZH_MESSAGES = {
     "PitchPilot 读取 Public Thread API 的事件与已提交文件，再把 Agent 的 HTML artifact 作为 sandboxed 应用内预览呈现，并提供明确的下载入口。",
   "Return a product-native artifact": "返回产品原生的产物",
   "Keep the product UI. Put the managed Agent behind it.": "保留产品 UI，把托管 Agent 放在背后。",
-  "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent for long-running work, then turns the returned files and events into a normal product experience.":
-    "PitchPilot 是完整的演示文稿 Web 应用，而不是 Agent 控制台。后端调用一个已发布的 mosoo Agent 执行长任务，再把返回的文件和事件转化为普通用户可理解的产品体验。",
+  "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent through the v1 API for long-running work, then turns the returned files and events into a normal product experience.":
+    "PitchPilot 是完整的演示文稿 Web 应用，而不是 Agent 控制台。后端通过 v1 API 调用一个已发布的 mosoo Agent 执行长任务，再把返回的文件和事件转化为普通用户可理解的产品体验。",
   "The application owns the user experience. mosoo owns published Agent execution, Thread and Run lifecycle, event delivery, and Agent-produced files.":
     "应用负责用户体验；mosoo 负责已发布 Agent 的执行、Thread 与 Run 生命周期、事件交付和 Agent 产出文件。",
   "Verified delivery path": "已验证的交付链路",
@@ -194,9 +200,9 @@ const ZH_MESSAGES = {
     "ghfind 的一项功能运行在已发布的 mosoo Agent 上。",
   "ghfind has two distinct products: a deterministic 0 to 100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.":
     "ghfind 有两条独立能力：为 GitHub 账号计算确定性的 0 到 100 价值与信任分，以及深度评估公开仓库。mosoo 只驱动仓库评估：已发布的 Agent 在 sandbox 中检查项目并返回结构化 artifact；rubric、任务流程、校验、存储和结果页由 ghfind 负责。",
-  "Publish one project analyst": "发布一个项目分析 Agent",
-  "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle.":
-    "ghfind 发布一个配备项目评估 Skill 的 Agent。每次评估的 Thread 都在自己的 sandbox 中运行，mosoo 负责管理 harness、environment 与执行生命周期。",
+  "Publish one project analyst (v1 API)": "发布一个项目分析 Agent（v1 API）",
+  "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle. On today's v2 API, a saved Agent preset runs without being published.":
+    "ghfind 发布一个配备项目评估 Skill 的 Agent。每次评估的 Thread 都在自己的 sandbox 中运行，mosoo 负责管理 harness、environment 与执行生命周期。如今的 v2 API 里，已保存的 Agent 预设无需发布即可运行。",
   "Create one Thread per repository": "每个仓库创建一个 Thread",
   "For each repository, ghfind's Go worker creates a Thread with a stable idempotency key, persists the Thread and Run ids, and follows the Run to a terminal state. The mosoo token never reaches the browser.":
     "ghfind 的 Go worker 为每个仓库用稳定幂等键创建 Thread，保存 Thread 与 Run ID，并跟踪 Run 到终态。mosoo token 永远不会进入浏览器。",
@@ -244,9 +250,9 @@ const JA_MESSAGES = {
   "Open the live app": "ライブアプリを開く",
   "View the repository": "リポジトリを見る",
   "How it works": "しくみ",
-  "Publish the Agent": "Agent を公開する",
-  "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential.":
-    "アバター生成 skill を持つ Agent を mosoo で公開します。environment には openai と pillow のパッケージ、OpenAI provider の資格情報を設定します。",
+  "Publish the Agent (v1 API)": "Agent を公開する（v1 API）",
+  "An Agent with an avatar-generation skill is published on mosoo. Its environment carries the openai and pillow packages plus an OpenAI provider credential. On today's v2 API, a saved Agent preset runs without being published.":
+    "アバター生成 skill を持つ Agent を mosoo で公開します。environment には openai と pillow のパッケージ、OpenAI provider の資格情報を設定します。現在の v2 API では、保存した Agent プリセットは公開しなくても動きます。",
   "Copy the Instruction for LLM": "Instruction for LLM をコピーする",
   "Publishing generates an Instruction for LLM: an API contract sized for a prompt. Paste it into Codex and the integration work moves to the coding agent.":
     "公開すると Instruction for LLM が生成されます。プロンプトに収まるサイズの API 契約です。Codex に貼り付ければ、統合作業は coding agent の仕事になります。",
@@ -264,8 +270,8 @@ const JA_MESSAGES = {
     "9 行のアニメーションを収めた 1536×1872 の RGBA WebP アトラス。ダウンロード前に sandbox 内で QA 済みです。",
   Stack: "スタック",
   "Build your own Agent as API.": "あなたの Agent as API をつくる。",
-  "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.":
-    "今はバックエンドから API 1 回で Session を開始でき、Agent の保存も公開も不要です。そのイベントとファイルを、ユーザーに見える機能にしましょう。",
+  "Today one API call from your backend starts a Session, from a saved Agent preset (no publishing needed) or an inline configuration. Turn its events and files into the feature your users see.":
+    "今はバックエンドから API 1 回で Session を開始できます。保存した Agent プリセット（公開は不要）か inline 設定を使います。そのイベントとファイルを、ユーザーに見える機能にしましょう。",
   "Read the docs": "ドキュメントを読む",
   "One Agent for every user. Their data stays isolated.":
     "1 つの Agent をすべてのユーザーへ。データは互いに隔離。",
@@ -332,8 +338,8 @@ const JA_MESSAGES = {
     "ブリーフからライブサイトへ。Agent の実行は mosoo が担う。",
   "Blueprint turns a conversational brief into a deterministic page. The online product at trybp.page maps each project to a mosoo Thread, runs Blueprint in that Thread's own sandbox, and publishes validated artifacts. The mosoo token never reaches the browser.":
     "Blueprint は会話形式のブリーフを決定的なページに変えます。オンライン製品 trybp.page は各プロジェクトを 1 つの mosoo Thread に対応づけ、その Thread 専用の sandbox 内で Blueprint を実行し、検証済みの成果物を公開します。mosoo token がブラウザに渡ることはありません。",
-  "One Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs.":
-    "Blueprint skill とフルネットワークアクセスを持つ Agent を 1 つ mosoo で公開し、生成処理が任意の参照 URL に到達できるようにします。",
+  "One Agent is published on mosoo with the Blueprint skill and full network access, so generation can reach arbitrary reference URLs. On today's v2 API, a saved Agent preset runs without being published.":
+    "Blueprint skill とフルネットワークアクセスを持つ Agent を 1 つ mosoo で公開し、生成処理が任意の参照 URL に到達できるようにします。現在の v2 API では、保存した Agent プリセットは公開しなくても動きます。",
   "Drive generation from the Control Worker": "Control Worker から生成を駆動する",
   "The Control Worker creates one Thread per project and one Run per prompt or revision. It polls the Run, downloads committed artifacts under outputs/, and keeps the mosoo token off the browser.":
     "Control Worker はプロジェクトごとに 1 つの Thread、プロンプトまたは改訂ごとに 1 つの Run を作成します。Run をポーリングし、outputs/ 配下のコミット済み成果物をダウンロードし、mosoo token をブラウザの外に留めます。",
@@ -360,8 +366,8 @@ const JA_MESSAGES = {
   "Return a product-native artifact": "プロダクトに馴染む成果物を返す",
   "Keep the product UI. Put the managed Agent behind it.":
     "プロダクト UI はそのままに、managed Agent を背後へ。",
-  "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent for long-running work, then turns the returned files and events into a normal product experience.":
-    "PitchPilot は Agent コンソールではなく、完成したプレゼンテーション Web アプリです。バックエンドが長時間処理のために公開済み mosoo Agent を呼び出し、返されたファイルとイベントを通常のプロダクト体験に変換します。",
+  "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent through the v1 API for long-running work, then turns the returned files and events into a normal product experience.":
+    "PitchPilot は Agent コンソールではなく、完成したプレゼンテーション Web アプリです。バックエンドが長時間処理のために v1 API で公開済み mosoo Agent を呼び出し、返されたファイルとイベントを通常のプロダクト体験に変換します。",
   "The application owns the user experience. mosoo owns published Agent execution, Thread and Run lifecycle, event delivery, and Agent-produced files.":
     "アプリケーションがユーザー体験を担い、mosoo が公開済み Agent の実行、Thread と Run のライフサイクル、イベント配信、Agent 生成ファイルを担います。",
   "Verified delivery path": "検証済みの提供経路",
@@ -415,9 +421,9 @@ const JA_MESSAGES = {
     "ghfind の 1 機能が公開済み mosoo Agent 上で動いています。",
   "ghfind has two distinct products: a deterministic 0 to 100 value and trust score for GitHub accounts, and a deep evaluation for public repositories. mosoo powers only the repository evaluation. A published Agent inspects the project in a sandbox and returns structured artifacts; ghfind owns the rubric, job workflow, validation, storage, and result page.":
     "ghfind には、GitHub アカウント向けの決定論的な 0〜100 価値・信頼スコアと、公開リポジトリ向けの詳細評価があります。mosoo が担うのはリポジトリ評価だけです。公開済み Agent が sandbox でプロジェクトを調査して構造化 artifact を返し、rubric、ジョブフロー、検証、保存、結果ページは ghfind が担います。",
-  "Publish one project analyst": "プロジェクト分析 Agent を 1 つ公開する",
-  "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle.":
-    "ghfind はプロジェクト評価 Skill を持つ Agent を 1 つ公開します。評価ごとの Thread はそれぞれ専用の sandbox で実行され、mosoo が harness、environment、実行ライフサイクルを管理します。",
+  "Publish one project analyst (v1 API)": "プロジェクト分析 Agent を 1 つ公開する（v1 API）",
+  "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle. On today's v2 API, a saved Agent preset runs without being published.":
+    "ghfind はプロジェクト評価 Skill を持つ Agent を 1 つ公開します。評価ごとの Thread はそれぞれ専用の sandbox で実行され、mosoo が harness、environment、実行ライフサイクルを管理します。現在の v2 API では、保存した Agent プリセットは公開しなくても動きます。",
   "Create one Thread per repository": "リポジトリごとに Thread を 1 つ作成する",
   "For each repository, ghfind's Go worker creates a Thread with a stable idempotency key, persists the Thread and Run ids, and follows the Run to a terminal state. The mosoo token never reaches the browser.":
     "ghfind の Go worker はリポジトリごとに安定した冪等キーで Thread を作成し、Thread と Run の ID を保存して終端状態まで追跡します。mosoo token がブラウザに渡ることはありません。",

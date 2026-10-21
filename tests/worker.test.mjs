@@ -240,10 +240,18 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
   );
   assert.match(markdown, /OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API/);
   assert.match(markdown, /mosoo is in Alpha\./);
+  // The home's claim (round 3c, staging v5/round3/review/seo-geo.md SG-17): the agent from your laptop is saved as an
+  // Agent preset (docs "Save an Agent preset"), and a Session starts from that preset or inline; an inline Session
+  // needs no saved Agent but carries no Skills or MCP servers (MAIN docs/prd/public-thread-api-surface.md L8, L25).
   assert.match(
     markdown,
-    /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads with an inline configuration and a Project API key \(msp_\)\. No Agent is required\./,
+    /save its harness, model, instructions, Skills, remote MCP servers and pinned npm\/PyPI packages as an Agent preset \(https:\/\/mosoo\.ai\/docs\/first-agent\/\)\. Nothing syncs from your laptop\./,
   );
+  assert.match(
+    markdown,
+    /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects\/\{projectId\}\/threads with a Project API key \(msp_\) and the preset \(\{"type":"agent","agent_id":"\.\.\."\}\), or with an inline configuration, which needs no saved Agent but carries no Skills or MCP servers\./,
+  );
+  assert.doesNotMatch(markdown, /No Agent is required/);
   assert.match(markdown, /POST \/api\/v2\/threads\/\{threadId\}\/events/);
   assert.match(markdown, /Follow events over SSE\. There are no Webhooks\./);
   assert.match(markdown, /Bring your own model provider key\. mosoo supplies no models\./);
@@ -265,19 +273,31 @@ test("worker negotiates homepage HTML to clean Markdown", async () => {
 
 test("worker answers localized homepages with Markdown in their language", async () => {
   const cases = [
-    { pathname: "/", language: "en", text: /^mosoo is an open-source, API-first managed Agent runtime/m },
-    { pathname: "/en", language: "en", text: /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects/ },
+    {
+      pathname: "/",
+      language: "en",
+      text: /^mosoo is an open-source, API-first managed Agent runtime/m,
+      preset: "https://mosoo.ai/docs/first-agent/",
+    },
+    {
+      pathname: "/en",
+      language: "en",
+      text: /POST https:\/\/cloud\.mosoo\.ai\/api\/v2\/projects/,
+      preset: "https://mosoo.ai/docs/first-agent/",
+    },
     {
       pathname: "/zh",
       language: "zh-CN",
       text: /^> mosoo 是开源、API 优先的托管 Agent runtime，面向应用后端。/m,
       docs: "https://mosoo.ai/docs/zh-Hans/quickstart/",
+      preset: "https://mosoo.ai/docs/zh-Hans/first-agent/",
     },
     {
       pathname: "/ja",
       language: "ja",
       text: /^> mosoo は、アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime です。/m,
       docs: "https://mosoo.ai/docs/ja/quickstart/",
+      preset: "https://mosoo.ai/docs/ja/first-agent/",
     },
   ];
 
@@ -297,6 +317,9 @@ test("worker answers localized homepages with Markdown in their language", async
     assert.match(markdown, /msp_/);
     assert.match(markdown, /https:\/\/cloud\.mosoo\.ai\/api\/v2\/openapi\.json/);
     if (entry.docs) assert.ok(markdown.includes(entry.docs), `${entry.pathname} links ${entry.docs}`);
+    // Each language links its own "Save an Agent preset" page and names the preset as a configuration source.
+    assert.ok(markdown.includes(entry.preset), `${entry.pathname} links ${entry.preset}`);
+    assert.ok(markdown.includes('{"type":"agent","agent_id":"..."}'), `${entry.pathname} shows the preset source`);
     assert.doesNotMatch(markdown, RETIRED_NARRATIVE);
     assert.doesNotMatch(markdown, /\bMosoo\b/);
   }
@@ -337,6 +360,7 @@ test("worker serves a product-wide llms.txt index", async () => {
   assert.match(markdown, /curl -fsSL https:\/\/install\.mosoo\.ai\/install\.sh \| bash/);
   for (const url of [
     "https://mosoo.ai/docs/quickstart/",
+    "https://mosoo.ai/docs/first-agent/",
     "https://mosoo.ai/docs/api-reference-v2/",
     "https://cloud.mosoo.ai/api/v2/openapi.json",
     "https://cloud.mosoo.ai/api/v1/openapi.json",

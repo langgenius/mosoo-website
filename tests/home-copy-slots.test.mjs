@@ -232,6 +232,21 @@ test("the lime screen has three cards, each label a state (en)", () => {
   assert.match(COPY.accent.en.h2b, /your backend/i, "the lime H2 says who sends the work");
 });
 
+// The FAQ's 24/7 question is answered denial first (staging v5/round3/review/truth.md P1-1, round 3c): a snippet, an
+// AI answer or the FAQPage extract that keeps only the first sentence must not read as "yes, always on" (staging
+// narrative/TRUTH.md D2: 24/7 only as a denial). So the answer opens with no uptime promise, says there is no timer
+// before it says that nobody needs to be on duty, and the same holds in zh and ja (their first sentence is the denial).
+test("the 24/7 answer opens with the denial, and no timers comes before no one on duty (en, zh, ja)", () => {
+  const item = (locale) => COPY.faq[locale].items.find((entry) => /24/.test(entry.q));
+  const en = item("en").a;
+  assert.match(en, /^No uptime promise in Alpha\. /, "en: the first sentence is the denial");
+  assert.ok(en.indexOf("no timers") < en.indexOf("no laptop or person on duty"), "en: no timers, then no one on duty");
+  assert.match(item("zh").a.split("。")[0], /不承诺可用性$/, "zh: the first sentence is the denial");
+  assert.ok(item("zh").a.indexOf("没有定时器") < item("zh").a.indexOf("不用人守着"), "zh: no timers, then no one on duty");
+  assert.match(item("ja").a.split("。")[0], /保証なし$/, "ja: the first sentence is the denial");
+  assert.ok(item("ja").a.indexOf("タイマーはなし") < item("ja").a.indexOf("見張りも不要"), "ja: no timers, then no one on duty");
+});
+
 // The spec table (sections/spec.ts): one row per part, in this order, and the Harness row's four names are the hero's
 // (the switch rolls them in HARNESS_IDS order). The title reads as a pick of one of four, never as a Session changing
 // harness: harness and model are frozen at creation and a Session never changes harness (MAIN docs/SPEC.md §3 L31;
@@ -316,6 +331,25 @@ test("the closing's Copy, its sentence and its status region share one [data-pro
     const prompt = /<p [^>]*data-prompt[^>]*>([^<]+)<\/p>/.exec(wrapper)?.[1] ?? "";
     const text = prompt.replace(/&(amp|lt|gt|quot|#39);/g, (_, entity) => ENTITIES[entity]);
     assert.equal(text, COPY.closing[locale].prompt, `${locale}: the sentence Copy copies is closing.prompt`);
+  }
+});
+
+// The closing title fades in where it stands (round 3c, staging v5/round3/review/visual.md P1-2): a title that floats
+// up from 250px lower (data-rise="block" + "title") crossed the legend and the prompt card under it for about half a
+// second on desktop, because they stay put and paint under a moving title. "line" is the rise engine's fade-only
+// preset (src/effects/v5/rise.ts); the second line keeps its own late fade.
+test("the closing title only fades, so it never crosses the card under it (en, zh, ja)", () => {
+  for (const locale of LOCALES) {
+    const html = renderLandingLocale(
+      readFileSync(new URL("../apps/landing/index.html", import.meta.url), "utf8"),
+      locale,
+    );
+    const closing = /<section id="start"[\s\S]*?<\/section>/.exec(html)?.[0] ?? "";
+    const title = /<div data-rise="([^"]+)"><h2 id="closing-title"([^>]*)>/.exec(closing);
+    assert.ok(title, `${locale}: the closing title's wrapper`);
+    assert.equal(title[1], "line", `${locale}: the wrapper fades, it does not move`);
+    assert.doesNotMatch(title[2], /data-rise/, `${locale}: the title itself has no rise of its own`);
+    assert.doesNotMatch(closing, /data-rise="(block|title|card)"/, `${locale}: nothing in the closing moves`);
   }
 });
 

@@ -38,7 +38,7 @@ export function UseCasePitchPilotPage(): ReactElement {
         useCase={PITCHPILOT}
         title={t("Keep the product UI. Put the managed Agent behind it.")}
         lead={t(
-          "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent for long-running work, then turns the returned files and events into a normal product experience.",
+          "PitchPilot is a complete presentation web app, not an Agent console. Its backend calls one published mosoo Agent through the v1 API for long-running work, then turns the returned files and events into a normal product experience.",
         )}
         actions={
           <>
@@ -137,7 +137,7 @@ export function UseCasePitchPilotPage(): ReactElement {
       <ClosingCta
         title={t("Put a managed Agent behind your product UI.")}
         body={t(
-          "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.",
+          "Today one API call from your backend starts a Session, from a saved Agent preset (no publishing needed) or an inline configuration. Turn its events and files into the feature your users see.",
         )}
       />
     </CasePage>

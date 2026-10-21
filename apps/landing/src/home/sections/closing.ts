@@ -14,7 +14,11 @@
 //   clipboard and says so (label + live region, 1.6 s); if the clipboard refuses, the sentence is selected instead.
 //   Without JS the button is hidden (../system.css) and the sentence is selectable text, and one click selects all of
 //   it (user-select: all);
-// - rise: the title's data-rise="block" / "title" / "line".
+// - rise: the title fades in where it stands, at every width (data-rise="line" on its wrapper; the second line keeps
+//   its own late "line" fade), as it already did below 992px. It no longer floats up with "block" + "title": the
+//   legend and the card stay put under it, so a title rising from 250px lower crossed them for about half a second
+//   on desktop (round 3c, staging v5/round3/review/visual.md P1-2; frames and per-frame boxes in
+//   v5/round3/c-content/).
 
 import type { HomeCopy, HomeLocale } from "../copy.ts";
 import { LINKS } from "../copy.ts";
@@ -37,7 +41,7 @@ export function render(_locale: HomeLocale, copy: HomeCopy): string {
   return `<section id="start" data-section="closing" class="v5-sec v5-closing" aria-labelledby="closing-title">
 <div class="v5-wrap">
 <div class="v5-closing-plate v5-field v5-field--closing">
-<div data-rise="block"><h2 id="closing-title" class="v5-h2" data-rise="title">${twoTone(c.h2a, c.h2b, ' data-rise="line"')}</h2></div>
+<div data-rise="line"><h2 id="closing-title" class="v5-h2">${twoTone(c.h2a, c.h2b, ' data-rise="line"')}</h2></div>
 <div class="v5-closing-setup" data-product-ui>
 <p class="v5-closing-legend">${esc(c.legend)}</p>
 <div class="v5-closing-card">

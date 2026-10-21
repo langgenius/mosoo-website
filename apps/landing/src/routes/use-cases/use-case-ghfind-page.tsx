@@ -53,9 +53,9 @@ export function UseCaseGhfindPage(): ReactElement {
         <CaseSteps
           items={[
             {
-              title: t("Publish one project analyst"),
+              title: t("Publish one project analyst (v1 API)"),
               body: t(
-                "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle.",
+                "ghfind publishes one Agent with its project-evaluation skill. Each evaluation's Thread runs in its own sandbox, and mosoo manages the harness, environment, and execution lifecycle. On today's v2 API, a saved Agent preset runs without being published.",
               ),
             },
             {
@@ -101,7 +101,7 @@ export function UseCaseGhfindPage(): ReactElement {
       <ClosingCta
         title={t("Put an Agent behind your own product.")}
         body={t(
-          "Today one API call from your backend starts a Session, with no saved or published Agent. Turn its events and files into the feature your users see.",
+          "Today one API call from your backend starts a Session, from a saved Agent preset (no publishing needed) or an inline configuration. Turn its events and files into the feature your users see.",
         )}
       />
     </CasePage>

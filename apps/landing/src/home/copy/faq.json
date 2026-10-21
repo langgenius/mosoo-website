@@ -4,7 +4,7 @@
     "items.0": "README.md L8 (positioning, verbatim), L43 (hosted console cloud.mosoo.ai), L39 (Alpha). Session: own sandbox, workspace, conversation (docs/SPEC.md L32); kept after the sandbox is reclaimed, no inactivity deadline (SPEC L53, L60; docs/prd/session-lifecycle.md L8); files outlive the run (docs/prd/session-files.md L7).",
     "items.1": "Four harnesses (README.md L9); SPEC calls claude-agent-sdk 'Claude Code' (SPEC L79); Pi is the pi-coding-agent package (DRIVER runtime-images.json L27, Containerfile L51). The preset's parts (README.md L37; SPEC L32); MCP remote only (docs/prd/mcp-interaction.md L7, L17); exact-version npm / PyPI (docs/prd/environment.md L7). Nothing syncs: no code reads local agent config (grep apps/api/src apps/web/src: exit 1).",
     "items.2": "The app owns end-user login; mosoo does not authenticate end users (README.md L26; docs/prd/public-thread-api-surface.md L13); a Project key is a backend secret (public-thread-api-surface.md L22; SPEC L23); one owner, no members, roles or invitations (SPEC L22).",
-    "items.3": "One admitted input starts one turn (SPEC L18); no schedule, trigger or webhook in the 14 OpenAPI v2 paths (MAIN apps/api/openapi/public-api-v2.generated.json), no Webhooks (SPEC L73, L91); README, SPEC and docs/prd have 0 hits for schedul|cron|trigger. No approvals (SPEC L65). Caps: 'mosoo or the account', fails at once, not queued (SPEC L42); 5 per account and 50 per deployment (apps/api/src/modules/runtime/infrastructure/runtime-subject-lifecycle/runtime-subject-record-store.ts L73-L74; numbers not printed, TRUTH §6 Q1 default). Alpha, no uptime promise (README.md L39; 0 hits for uptime|SLA|24/7|always on in README, SPEC, architecture, prd).",
+    "items.3": "One admitted input starts one turn (SPEC L18); no schedule, trigger or webhook in the 14 OpenAPI v2 paths (MAIN apps/api/openapi/public-api-v2.generated.json), no Webhooks (SPEC L73, L91); README, SPEC and docs/prd have 0 hits for schedul|cron|trigger. No approvals (SPEC L65). Caps: 'mosoo or the account', fails at once, not queued (SPEC L42); 5 per account and 50 per deployment (apps/api/src/modules/runtime/infrastructure/runtime-subject-lifecycle/runtime-subject-record-store.ts L73-L74; numbers not printed, TRUTH §6 Q1 default). Alpha, no uptime promise (README.md L39; 0 hits for uptime|SLA|24/7|always on in README, SPEC, architecture, prd). Order (round 3c): the denial first, then no timers, then that it runs when a job is sent, so a snippet or an AI answer that keeps only the first sentence stays true (staging v5/round3/review/truth.md P1-1; v5/round3/c-content/NOTES.md: the first sentence alone read as 24/7 by 5/5 readers before, 0/5 after).",
     "items.4": "MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'; BYOK, the provider bills that account, no spending cap or per-turn budget (SPEC L25).",
     "items.5": "SITE apps/blog/src/content/blog/introducing-mosoo-computer.mdx L2, L70; SITE copy/nav.json L19 ('A persistent cloud computer for agents.'); the personal-computer lifecycle belongs to mosoo computer (SPEC L89); every Session gets its own sandbox (SPEC L32)."
   },
@@ -26,7 +26,7 @@
       },
       {
         "q": "Does it run 24/7? How far does it scale?",
-        "a": "It runs whenever your backend or cron sends a job, with no laptop or person on duty. mosoo has no timers. Sandboxes are capped per account and overall: past a cap, a job fails fast. No uptime promise in Alpha."
+        "a": "No uptime promise in Alpha. mosoo has no timers. It runs whenever your backend or cron sends a job, with no laptop or person on duty. Sandboxes are capped per account and overall: past a cap, a job fails fast."
       },
       {
         "q": "What does it cost to start?",
@@ -56,7 +56,7 @@
       },
       {
         "q": "能 7×24 小时运行吗？能扩展到多大？",
-        "a": "你的后端或 cron 发来任务，它就运行，不用电脑开着，也不用人守着。mosoo 没有定时器。sandbox 按账户和全局设上限，超出即失败。Alpha 阶段不承诺可用性。"
+        "a": "Alpha 阶段不承诺可用性。mosoo 没有定时器。你的后端或 cron 发来任务，它就运行，不用电脑开着，也不用人守着。sandbox 按账户和全局设上限，超出即失败。"
       },
       {
         "q": "开始使用要付费吗？",
@@ -86,7 +86,7 @@
       },
       {
         "q": "24 時間動く？どこまでスケールする？",
-        "a": "バックエンドや cron が送れば動き、PC も見張りも不要。タイマーはなし。sandbox にはアカウント単位と全体の上限があり、超えると即失敗。Alpha 版で稼働率の保証なし。"
+        "a": "Alpha 版で稼働率の保証なし。タイマーはなし。バックエンドや cron が送れば動き、PC も見張りも不要。sandbox にはアカウント単位と全体の上限があり、超えると即失敗。"
       },
       {
         "q": "始めるのに費用はかかりますか？",
