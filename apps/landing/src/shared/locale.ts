@@ -25,16 +25,23 @@ export const htmlLanguage = {
   ja: "ja",
 } as const satisfies Record<Locale, string>;
 
-export function navigateToLocale(nextLocale: Locale): void {
-  document.cookie = `mosoo_locale=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
-
-  if (/^\/(?:(en|zh|ja)\/)?health$/.test(window.location.pathname)) {
-    window.location.assign(nextLocale === "en" ? "/health" : `/${nextLocale}/health`);
-    return;
+/** The same page in another locale (e.g. /en/use-cases → /ja/use-cases). */
+export function localeHref(nextLocale: Locale, pathname = window.location.pathname): string {
+  if (/^\/(?:(en|zh|ja)\/)?health$/.test(pathname)) {
+    return nextLocale === "en" ? "/health" : `/${nextLocale}/health`;
   }
 
-  // Keep the visitor on the current page (e.g. /en/pricing → /ja/pricing).
-  const segments = window.location.pathname.split("/").filter(Boolean);
+  const segments = pathname.split("/").filter(Boolean);
   const rest = isLocale(segments[0] ?? "") ? segments.slice(1) : segments;
-  window.location.assign(["", nextLocale, ...rest].join("/"));
+  return ["", nextLocale, ...rest].join("/");
+}
+
+/** The worker's `/` redirect reads this cookie before Accept-Language. */
+export function rememberLocale(nextLocale: Locale): void {
+  document.cookie = `mosoo_locale=${nextLocale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+}
+
+export function navigateToLocale(nextLocale: Locale): void {
+  rememberLocale(nextLocale);
+  window.location.assign(localeHref(nextLocale));
 }

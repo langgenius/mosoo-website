@@ -1,0 +1,471 @@
+/* 2 Stage (sections/stage.ts). One plate, three states of the kit's Session object (round 3b: laptop, cloud, app).
+   Two layouts from one DOM (each step is an <article>: object layer, caption):
+   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates, each showing
+     its own state, no step row;
+   - pinned ([data-stage-mode="pinned"], src/effects/v5/stage.ts): the articles are layers of one plate that sticks
+     88px from the top (under the 68px floating nav); the first article's object is moved through the three states in
+     place (data-step -> the kit's --kit-cloud / --kit-app, transitioned), the captions and the step row switch with it.
+   Plate composition: the object at the top, centred, whole inside the plate (committee O3), 48px down (24 on desktops
+   under 880px tall); the caption bottom-left (32, 32), at most 560 wide; pinned, the step row over the caption. The
+   kit's size follows the plate: up to 20px (17 under 1280px wide, 16 on tablets), never more than the plate's width
+   allows (the wide object is 42.6em, the narrow one 21.2em, under 564px: phones), so no card is ever cut; on desktops
+   it also follows the viewport's height, so the first screen holds the whole first plate, the stacked Sessions
+   included (round 3c, staging v5/round3/c-plate). Every rule is scoped under .v5-stage (sections/README.md). */
+
+.v5-stage {
+  --pin-top: 88px; /* the floating nav ends at 68 (12 + 56) */
+  --plate-h: clamp(560px, 100vh - 120px, 720px);
+  --plate-r: 16px;
+  --obj-top: 48px;
+  --kit-max: 17px; /* the kit's root size where the plate is not full size */
+  --kit-w: 42.6; /* the object's width in em (kit.css: --sx + --sw + the fan, 2 * --dx) */
+  --kit-h: 13.7; /* the first state's height in em (kit.css: the stack over the cards + a card) */
+  --kit-fit: var(--kit-max); /* no height term under 901px wide (tablets, phones) */
+  --cap-h: 62px; /* a caption at 1440: the 22px title (29) + 8 + the 16px line (25), one line each */
+  margin-top: 48px;
+}
+
+/* The first plate whole above the fold, 16px to spare, the stack included (round 3c: on 1280 x 800, 1366 x 768,
+   1440 x 800 and 1536 x 864 the fold cut the stacked Sessions, and on 1366 x 768 the You / Your backend row): the
+   kit's size also follows the viewport's height. The hero ends at 496 (en, zh, ja from 1200px wide; lower on
+   narrower screens, so the sum holds there too): 496 + 48 + 48 + 16 = 608. Never under 15px, so every word on the
+   cards stays at 14px or more (#125). */
+@media (min-width: 901px) {
+  .v5-stage {
+    --kit-fit: max(15px, (100vh - 608px) / var(--kit-h));
+  }
+}
+
+/* Shorter than 880px: the hero starts 16px higher (hero.css), the plate comes 24px under the CTA row and the object
+   24px into it: 480 + 24 + 24 + 16 = 544. */
+@media (min-width: 901px) and (max-height: 879px) {
+  .v5-stage {
+    --obj-top: 24px;
+    --kit-fit: max(15px, (100vh - 544px) / var(--kit-h));
+    margin-top: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .v5-stage {
+    --kit-max: 20px;
+  }
+}
+
+/* ------------------------------------------------------------------------------------- default: stacked */
+/* The outer plate is only a column of plates here; each article carries the field. */
+.v5-stage .v5-stage-plate {
+  display: grid;
+  gap: 24px;
+  background-image: none;
+  background-color: transparent;
+}
+
+.v5-stage .v5-stage-plate::before {
+  content: none;
+}
+
+.v5-stage .v5-stage-tags {
+  display: none;
+}
+
+.v5-stage .v5-step {
+  position: relative;
+  height: var(--plate-h);
+  overflow: hidden;
+  border-radius: var(--plate-r);
+}
+
+.v5-stage .v5-step-lines {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The "hero" line field: 1120 x 720, centred on the plate; a narrower plate crops both sides. Its knot sits behind the
+   front Session (public/landing/v5/lines/params.json, hero.pin: 860, 270), so the lines come in from the right, pass
+   behind the Sessions and leave under the laptop card, never through the gap between the two cards at card height
+   (CHANGES §2.3; staging v5/round3/b-objects). A smaller kit or a higher object (short screens) lifts the field with
+   the card, the knot 11.1em under the object's top, but never so far that the field's box (the canvas clips to it)
+   stops short of the plate's foot; across, the field stays centred, so its lines run to both edges. */
+.v5-stage .v5-lf--wide {
+  /* the kit's size, as .kit-scene works it out below (the plate is the viewport less 80px, at most 1120) */
+  --lk: min(var(--kit-max), (min(1120px, 100vw - 80px) - 64px) / var(--kit-w), var(--kit-fit));
+  inset: max(var(--plate-h) - 720px, var(--obj-top) + 11.1 * var(--lk) - 270px) auto auto calc(50% - 560px);
+  width: 1120px;
+  height: 720px;
+}
+
+/* A short plate (560-648px) brings the step row and the caption up into the lines under the laptop card: the field
+   fades out behind that block only (the plate's bottom-left 640 x 180), elsewhere it runs to the edges. Two mask
+   layers add up (mask-composite: add, the default): seen right of the block, or above it. Phones fade their own way. */
+@media (min-width: 721px) {
+  .v5-stage .v5-step-lines {
+    mask-image:
+      linear-gradient(to right, transparent 640px, #000 680px),
+      linear-gradient(#000 calc(100% - 180px), transparent calc(100% - 140px));
+  }
+}
+
+/* The object's layer: the plate's width is the kit's container (its size and its narrow layout follow it). */
+.v5-stage .v5-step-screen {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  container-type: inline-size;
+}
+
+.v5-stage .v5-step-obj {
+  position: absolute;
+  top: var(--obj-top);
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.v5-stage .kit-scene {
+  flex: none;
+  font-size: min(var(--kit-max), (100cqw - 64px) / var(--kit-w), var(--kit-fit));
+}
+
+/* Under 564px the kit draws its narrow layout (kit.css), 21.2em wide: as large as the plate allows, 12 to 15px, set
+   from the plate's left like the caption under it (the phone poster's knot is placed for that, params.json). */
+@container (width < 564px) {
+  .v5-stage .v5-step-obj {
+    justify-content: flex-start;
+  }
+
+  .v5-stage .kit-scene {
+    font-size: clamp(12px, 100cqw / 21.2, 15px);
+  }
+}
+
+.v5-stage .v5-step-cap {
+  position: absolute;
+  z-index: 4;
+  left: 32px;
+  bottom: 32px;
+  width: min(560px, 100% - 64px);
+}
+
+/* -------------------------------------------------------------------------------------------- captions */
+/* -0.02em, not Inter's -0.014em: Hanken Grotesk has no optical-size axis and measured 7-11% looser at 22px / 500
+   (staging v5/graft/font/NOTES.md §5, tracking-specimen.png). */
+.v5-stage .v5-step-title {
+  color: var(--ink);
+  font: 500 22px/1.3 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.v5-stage .v5-step-line {
+  margin-top: 8px;
+  color: var(--ink-2);
+  font: 400 16px/1.55 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.v5-stage .v5-step-line:lang(ja) {
+  word-break: auto-phrase;
+}
+
+/* #141 (staging committee/PLAN.md 2-1, item 2, as challenge/141.md amended it; round 3b b-copy): a step title is a
+   heading, so zh keeps its words whole (keep-all: the three titles break at their spaces or not at all, from 320 in
+   Chrome and WebKit) and ja breaks at phrases (auto-phrase only, no keep-all under it: WebKit has no auto-phrase and
+   keeps normal breaking there, so a title never runs past the plate). */
+.v5-stage .v5-step-title:lang(zh) {
+  word-break: keep-all;
+}
+
+.v5-stage .v5-step-title:lang(ja) {
+  word-break: auto-phrase;
+}
+
+/* ----------------------------------------------------------------------------------------------- pinned */
+.v5-stage[data-stage-mode="pinned"] {
+  height: 220vh; /* the plate plus about 1.2 screens of run (design review P1-2; was 300vh, the contract's is 350vh) */
+}
+
+.v5-stage[data-stage-mode="pinned"] [data-stage-pin] {
+  top: var(--pin-top);
+  height: var(--plate-h);
+}
+
+/* The outer element becomes the plate: field, grain, clip. */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-plate {
+  position: relative;
+  display: block;
+  height: var(--plate-h);
+  overflow: hidden;
+  border-radius: var(--plate-r);
+  background-image: var(--v5-field-img);
+  background-color: var(--v5-field-base);
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-stage-plate::before {
+  content: "";
+}
+
+/* The articles become transparent layers of it; everything they hold shares the plate's stacking context:
+   lines 0, objects 1, captions 4, the step row 5. */
+.v5-stage[data-stage-mode="pinned"] .v5-step {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  overflow: visible;
+  isolation: auto;
+  border-radius: 0;
+  background: none;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step::before {
+  content: none;
+}
+
+/* One object on screen, the first article's, moved in place: the engine's data-step is the kit's state (kit.css reads
+   --kit-cloud and --kit-app; registered, so they transition and every part moves on the one curve). The other two
+   articles keep theirs at opacity 0, for screen readers: each state's object and caption stay in reading order. */
+.v5-stage[data-stage-mode="pinned"] .v5-step:not(.v5-step--laptop) .v5-step-screen {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.v5-stage[data-stage-mode="pinned"][data-step="1"] .v5-step--laptop .kit-scene {
+  --kit-cloud: 1;
+  --kit-app: 0;
+}
+
+.v5-stage[data-stage-mode="pinned"][data-step="2"] .v5-step--laptop .kit-scene {
+  --kit-cloud: 0;
+  --kit-app: 1;
+}
+
+/* The step row (O1, committee 2026-10-21: no box, no fill, no shadow; the words keep CTRL's contents row, BRIEF §3.4):
+   the lit step in ink 15px / 500, the told ones folded to ink-2 13px, the next ones not there yet; each rises in
+   (width, opacity, 6px) as it is lit and folds as the next one takes over. It sits over the caption (round 3b: the
+   object fills the plate's top from the first screen on, where the row used to be), with its progress line between
+   them. The row waits for the run: until --stage-p leaves 0 (the engine's data-stage-started) it is out of sight, so
+   the first screen shows no step word. It stays in the accessibility tree (a list of the three steps, the lit one
+   aria-current="step"). */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-tags {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(32px + var(--cap-h) + 28px);
+  left: 32px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  color: var(--ink);
+  font: 500 15px/20px var(--font-sans);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+.v5-stage[data-stage-mode="pinned"]:not([data-stage-started]) .v5-stage-tags {
+  opacity: 0;
+  translate: 0 8px;
+}
+
+.v5-stage .v5-stage-tags > li {
+  max-width: 220px;
+  overflow: clip; /* the width folds to 0 for a next step; clip keeps the baseline (hidden would not) */
+}
+
+.v5-stage .v5-stage-tags > [data-stage-state="past"] {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+.v5-stage .v5-stage-tags > [data-stage-state="next"] {
+  max-width: 0;
+  margin-left: -14px; /* cancels the row's gap while it is not there */
+  opacity: 0;
+  translate: 0 6px;
+}
+
+/* Under the row, the run as one 132px 1px line (structure: 18% ink), filled with ink by --stage-fill: a third per
+   step, each third filling over its own step's stretch of the run, so the fill reaches the lit step as it lights
+   (staging committee/challenge/128.md §3) and every pixel of the pinned scroll still moves something (design review
+   P1-2). */
+.v5-stage[data-stage-mode="pinned"] .v5-stage-tags::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 132px;
+  height: 1px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) 0 0 / calc(var(--stage-fill, 0) * 100%) 100% no-repeat,
+    var(--line-2);
+}
+
+/* Captions: each clips its own box and rolls its text through it (past up, next below), cross-fading on the way: the
+   old caption is gone by 0.45 s, the new one is in from 0.15 s, so at a switch there is always one caption on screen
+   and never two legible at once. */
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap {
+  overflow: hidden;
+}
+
+/* The captions share one place; only the lit one takes the pointer (the next one's empty box sat on top of it, so its
+   words could not be selected). */
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap:not([data-stage-state="active"]) {
+  pointer-events: none;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap:is([data-stage-state="past"], [data-stage-state="next"]) > .v5-step-cap-in {
+  opacity: 0;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap[data-stage-state="past"] > .v5-step-cap-in {
+  translate: 0 -100%;
+}
+
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap[data-stage-state="next"] > .v5-step-cap-in {
+  translate: 0 100%;
+}
+
+/* Transitions only once the engine is ready (its first pinned paint never animates), with the switch's 0.9 s; the row
+   itself comes in (and goes when the reader scrolls back to the top) in 0.6 s. The object's two state numbers take the
+   switch's 0.9 s and curve: its parts move together and in place. */
+.v5-stage[data-stage-ready] .v5-step--laptop .kit-scene {
+  transition:
+    --kit-cloud 0.9s var(--ease-stage),
+    --kit-app 0.9s var(--ease-stage);
+}
+
+.v5-stage[data-stage-ready] .v5-stage-tags {
+  transition:
+    opacity 0.6s var(--ease-stage),
+    translate 0.6s var(--ease-stage);
+}
+
+.v5-stage[data-stage-ready] .v5-stage-tags > li {
+  transition:
+    max-width 0.9s var(--ease-stage),
+    margin 0.9s var(--ease-stage),
+    color 0.9s var(--ease-stage),
+    font-size 0.9s var(--ease-stage),
+    translate 0.9s var(--ease-stage),
+    opacity 0.6s var(--ease-stage);
+}
+
+.v5-stage[data-stage-ready] .v5-step-cap-in {
+  transition:
+    translate 0.9s var(--ease-stage),
+    opacity 0.45s var(--ease-theme);
+}
+
+.v5-stage[data-stage-ready] .v5-step-cap[data-stage-state="active"] > .v5-step-cap-in {
+  transition:
+    translate 0.9s var(--ease-stage),
+    opacity 0.6s var(--ease-theme) 0.15s;
+}
+
+/* The plate fades in with the hero's lead and CTA row (system.css v5-rise-fade), a beat later. */
+@media (prefers-reduced-motion: no-preference) {
+  .v5-stage .v5-stage-plate {
+    animation: v5-rise-fade 0.6s var(--ease-quart) 0.1s both;
+  }
+}
+
+/* Reduced motion never pins, so its stacked plates need not match the pinned one: 620 still holds the cloud state's
+   card (to 442 at the 20px kit) above the caption (from 526). */
+@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
+  .v5-stage {
+    --plate-h: 620px;
+  }
+}
+
+/* ------------------------------------------------------------------------------------- tablets, 721-900 */
+/* Never pinned here: three plates of the desktop composition, a little shorter, the kit up to 16px. */
+@media (min-width: 721px) and (max-width: 900px) {
+  .v5-stage {
+    --plate-h: 600px;
+    --kit-max: 16px;
+  }
+}
+
+/* -------------------------------------------------------------------------------------- phones, to 720 */
+@media (max-width: 720px) {
+  .v5-stage {
+    --plate-r: 14px;
+    margin-top: 32px;
+  }
+
+  .v5-stage .v5-stage-plate {
+    gap: 16px;
+  }
+
+  /* A column with the caption at the bottom (Mintlify's label), at least 460 tall: the plates line up. No step label:
+     each caption names its step. */
+  .v5-stage .v5-step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    min-height: 460px;
+    padding: 20px 20px 22px;
+  }
+
+  .v5-stage .v5-step-screen {
+    position: relative;
+    inset: auto;
+    align-self: stretch;
+  }
+
+  .v5-stage .v5-step-obj {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+  }
+
+  .v5-stage .v5-step-cap {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: auto;
+    margin-top: auto;
+    padding-top: 20px;
+    align-self: stretch;
+  }
+
+  .v5-stage .v5-step-title {
+    font-size: 18px;
+  }
+
+  /* Ink, not ink-2: the phone field (hero-358x460) is darkest under the caption's right half (mean #a8b5c8), where
+     15px ink-2 measures 3.1:1; ink stays above 7:1 (staging v5/sections/hero-stage/NOTES.md §5). */
+  .v5-stage .v5-step-line {
+    margin-top: 6px;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption. Its
+     knot (262, 158 at the 390 phone's kit) stays behind the front Session on narrower phones too: the field moves up
+     and left with the smaller kit (17em right of the object's left edge, 9.6em under its top, 20px in from the plate's
+     corner), never right or down, so its box always covers the plate's top-left. */
+  .v5-stage .v5-lf--phone {
+    --kn: clamp(12px, (100vw - 88px) / 21.2, 15px); /* the narrow kit's size (the plate's inside: viewport - 88) */
+    inset: min(0px, 9.6 * var(--kn) - 138px) auto auto min(0px, 17 * var(--kn) - 242px);
+    width: 720px;
+    height: 460px;
+    mask-image: linear-gradient(#000 300px, transparent 352px);
+  }
+}
+
+/* Under 360px the plate gives the object 4px more on each side, so the narrow layout keeps its 12px floor. */
+@media (max-width: 359px) {
+  .v5-stage .v5-step {
+    padding-inline: 16px;
+  }
+
+  .v5-stage .v5-lf--phone {
+    --kn: clamp(12px, (100vw - 80px) / 21.2, 15px);
+  }
+}

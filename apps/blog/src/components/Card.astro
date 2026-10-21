@@ -1,62 +1,69 @@
 ---
+// An index card (v5): Intent's feature-card anatomy on the v5 tokens. Styles: src/styles/index-cards.css.
+//   media    the post's cover, cropped to 11:8 (the lead card: 16:9 beside its text on wide screens)
+//   title    `cardTitle ?? title`, one serif line where the slot allows; the title's link covers the card
+//   desc     `description` in full, `descriptionEmphasis` (a phrase from it) in bold
+//   meta     category · date, at the foot
+// The cover is decorative here: the title beside it names the link. Play / pause stays outside the link.
+import type { CollectionEntry } from "astro:content";
 import CardVisual from "./CardVisual.astro";
 import CoverControls from "./CoverControls.astro";
 import { getCover } from "../covers/registry";
+import { cardCoverFocus } from "../covers/card-focus";
 import { draftLabel } from "../lib/drafts";
 import { categoryLabel, dateLocaleByLocale } from "../lib/copy.mjs";
 
 interface Props {
+  post: CollectionEntry<"blog">;
   href: string;
-  title: string;
-  category: string;
-  date: Date;
   locale?: "en" | "zh" | "ja";
-  description?: string | undefined;
-  slug: string;
-  heroImage?: string | undefined;
-  heroAlt?: string | undefined;
-  heroCover?: string | undefined;
-  draft?: boolean;
+  variant?: "grid" | "lead";
 }
-const { href, title, category, date, locale = "en", description, slug, heroImage, heroAlt, heroCover, draft = false } = Astro.props;
+const { post, href, locale = "en", variant = "grid" } = Astro.props;
+const { title, cardTitle, description, descriptionEmphasis, category, date, heroImage, heroCover, draft } = post.data;
+const lead = variant === "lead";
 const liveCover = getCover(heroCover);
-const coverUid = `cover-card-${slug}`;
+const coverUid = `cover-${variant}-${post.id}`;
+const coverFocus = liveCover ? `--cover-focus: ${+(cardCoverFocus(liveCover.id) * 100).toFixed(2)}%` : undefined;
 const dateLabel = date.toLocaleDateString(dateLocaleByLocale[locale] ?? "en-US", {
   year: "numeric",
   month: "short",
   day: "numeric",
 });
-const displayCategory = categoryLabel(locale, category);
+const emphasisAt = descriptionEmphasis ? description.indexOf(descriptionEmphasis) : -1;
+const descBefore = emphasisAt >= 0 ? description.slice(0, emphasisAt) : description;
+const descAfter = emphasisAt >= 0 && descriptionEmphasis ? description.slice(emphasisAt + descriptionEmphasis.length) : "";
+const TitleTag = lead ? "h2" : "h3";
 ---
 
-<div class="cv-card relative" data-cover-zone={liveCover ? "" : undefined}>
-<a href={href} class="group flex flex-col gap-4">
-  <div class="overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--border)]">
-    <CardVisual slug={slug} heroImage={heroImage} heroAlt={heroAlt ?? title} heroCover={heroCover} coverUid={coverUid} label={draft ? draftLabel[locale] : undefined} ratio="16/9" />
+<article
+  class:list={["bc cv-card", lead && "bc--lead"]}
+  data-card={lead ? undefined : ""}
+  data-category={category}
+  data-rise="card"
+  data-cover-zone={liveCover ? "" : undefined}
+  style={coverFocus}
+>
+  <div class="bc-media">
+    <CardVisual
+      slug={post.id}
+      heroImage={heroImage}
+      heroAlt=""
+      heroCover={heroCover}
+      coverUid={coverUid}
+      eager={lead}
+      label={draft ? draftLabel[locale] : undefined}
+      ratio="fill"
+    />
   </div>
-  <div class="flex min-w-0 flex-1 flex-col gap-2">
-    <div class="flex items-center gap-2 text-[13px] text-[color:var(--fg-muted)]">
-      <span class="font-semibold text-[color:var(--accent-text)]">{displayCategory}</span>
-      <span aria-hidden="true">·</span>
-      <time datetime={date.toISOString()}>{dateLabel}</time>
-    </div>
-    <h3 class="font-display text-[19px] font-medium leading-[1.3] tracking-[-0.015em] text-[color:var(--ink-950)] underline decoration-transparent decoration-2 underline-offset-4 transition-[text-decoration-color] duration-200 group-hover:decoration-[color:var(--green-500)]">
-      {title}
-    </h3>
-    {
-      description && (
-        <p class="text-[14px] leading-[1.6] text-[color:var(--fg-secondary)] line-clamp-2">
-          {description}
-        </p>
-      )
-    }
-  </div>
-</a>
-{
-  liveCover && (
-    <div class="pointer-events-none absolute inset-x-0 top-0 aspect-[16/9]">
-      <CoverControls cover={liveCover.id} uid={coverUid} locale={locale} compact class="pointer-events-auto absolute left-2 top-2" />
-    </div>
-  )
-}
-</div>
+  <TitleTag class="bc-title"><a class="bc-link" href={href}>{cardTitle ?? title}</a></TitleTag>
+  <p class="bc-desc" data-card-desc>
+    {descBefore}{emphasisAt >= 0 && <strong>{descriptionEmphasis}</strong>}{descAfter}
+  </p>
+  <p class="bc-meta" data-card-meta>
+    <span class="bc-category">{categoryLabel(locale, category)}</span>
+    <span aria-hidden="true">·</span>
+    <time datetime={date.toISOString()}>{dateLabel}</time>
+  </p>
+  {liveCover && <CoverControls cover={liveCover.id} uid={coverUid} locale={locale} compact class="bc-controls" />}
+</article>

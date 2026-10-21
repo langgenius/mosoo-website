@@ -1,0 +1,156 @@
+/* 5 Closing (sections/closing.ts). Scoped to .v5-closing; tokens, type, buttons and the focus ring come from
+   ../system.css, the plate's bitmap and grain from ../v5-fields.css (.v5-field--closing, T1).
+   Sources (staging): v4d's closing (d-object.css .d-plate-field / .d-close-h / .d-ccard* at 9e92312: centred 48px
+   title, a 568px card); Frame's lime CTA glow (system .v5-btn--lime). Two layers, plate > card (#130, committee
+   2026-10-21, committee/challenge/130.md, version B): the legend and the white card sit on the plate; GitBook's glass
+   bezel that held them (6% stone, blur 5px, 0 4px 12px .15, r16: a redrawn window frame, hallmark gate 47, and a
+   third layer) is gone, and with it the page's heaviest shadow. The plate keeps T1's 1120x480 bitmap at 1:1 on
+   desktop (sizes in NOTES.md). */
+
+.v5-closing-plate {
+  /* The title's second line: ink-3 on this plate measured 3.05:1 at the median and 2.57:1 on the darkest 5% of
+     the grain under it; ink-3-text keeps the two tones and clears 3:1 (NOTES.md, contrast). */
+  --tone-b: var(--ink-3-text);
+  border-radius: 16px; /* the stage plate's radius (#130; v4d's was 20) */
+  /* 73 + title 100 + 32 + legend 30 + card 64 + 32 + CTA 48 + 12 + caption 20 + 69 = 480: the bezel's 18px (its 40px
+     bar and 8px foot, less the legend's 30) went to the plate's padding, so the bitmap stays 1:1 */
+  padding: 73px 24px 69px;
+  text-align: center;
+}
+
+/* The [data-product-ui] wrapper of the legend, the card and the status region (the copy engine's anchor, closing.ts):
+   no look of its own, only v4d's 584px measure, centred, its text left-aligned. */
+.v5-closing-setup {
+  width: min(584px, 100%);
+  margin: 32px auto 0;
+  text-align: left;
+}
+
+/* The card's label, on the plate over the card's left edge (4px in, as the card's corner rounds). */
+.v5-closing-legend {
+  padding: 0 4px 10px;
+  color: var(--ink);
+  font: 500 13px/20px var(--font-sans);
+}
+
+.v5-closing-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 8px 8px 8px 20px;
+  border-radius: 16px; /* GitBook: the white card is r16 like its frame, not concentric */
+  background: var(--paper);
+}
+
+.v5-closing-prompt {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+  font: 400 16px/24px var(--font-sans);
+  letter-spacing: -0.005em;
+  overflow-wrap: anywhere; /* a long URL in the sentence wraps instead of leaving the card */
+  -webkit-user-select: all;
+  user-select: all; /* one click selects the whole sentence, for a reader copying by hand (no JS, no clipboard) */
+}
+
+/* Copy: the system's grey button (.v5-btn .v5-btn--grey: frame fill, no line, no shadow, 48 high, r8, Hanken
+   16 / 500, hover --frame-2, the 2px ink focus ring) inside the card, 8px in from its edge; the lime "Try mosoo" below
+   stays the closing's one solid colour (YC review P1-2). Copy is an action, so it keeps a filled target even if the
+   hero's secondary ever becomes a text link. Its two faces share one cell: the hidden one is the done state's
+   footprint (check + copied label), so the width never changes; the check on the live face shows while the engine's
+   data-done is set. */
+.v5-closing-copy {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+}
+
+.v5-closing-face {
+  display: inline-flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.v5-closing-face--size {
+  visibility: hidden;
+}
+
+.v5-closing .v5-closing-check {
+  width: 18px;
+  height: 18px;
+  margin-left: -4px;
+}
+
+.v5-closing-face:not(.v5-closing-face--size) .v5-closing-check {
+  display: none;
+}
+
+.v5-closing-copy[data-done] .v5-closing-face .v5-closing-check {
+  display: block;
+}
+
+.v5-closing-actions {
+  margin-top: 32px;
+}
+
+.v5-closing-caption {
+  margin-top: 12px;
+  color: var(--ink-2);
+  font: 400 14px/20px var(--font-sans);
+  text-wrap: balance; /* two even lines on phones, not a lone "card." */
+}
+
+:lang(ja) :is(.v5-closing-prompt, .v5-closing-caption) {
+  word-break: auto-phrase;
+}
+
+/* #141 (staging committee/PLAN.md 2-1, item 1): the legend is a label, so zh and ja keep their words whole: keep-all
+   breaks it only at its spaces (「粘贴给你电脑上的 Agent」, 「手元の Agent に貼り付け」: one line from 320 in Chrome
+   and WebKit), and ja breaks at phrases where auto-phrase exists (Chrome); WebKit, without it, keeps keep-all. */
+:lang(zh) .v5-closing-legend,
+:lang(ja) .v5-closing-legend {
+  word-break: keep-all;
+}
+
+:lang(ja) .v5-closing-legend {
+  word-break: auto-phrase;
+}
+
+@media (max-width: 720px) {
+  /* 57 / 53: the bezel's 18px again, so the 390 plate keeps its 468 */
+  .v5-closing-plate {
+    padding: 57px 16px 53px;
+  }
+
+  .v5-closing-setup {
+    margin-top: 28px;
+  }
+
+  /* The sentence takes the card's full width; Copy drops under it, at the right. Beside it the sentence had 155px
+     (four lines at 390). */
+  .v5-closing-card {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 8px 8px 16px;
+  }
+
+  .v5-closing-prompt {
+    flex-basis: 100%;
+    padding-right: 8px;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  /* The grey button at its phone height (44, PLAN §3 1-2 item 2), under the sentence at the right. */
+  .v5-closing-copy {
+    height: 44px;
+    margin-left: auto;
+  }
+
+  .v5-closing-actions {
+    margin-top: 28px;
+  }
+}

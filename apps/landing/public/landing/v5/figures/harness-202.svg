@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="202" height="202" viewBox="0 0 202 202" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- harness · one cone, four discs · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M12 140L201 140M12 140L201 82.21"/>
+<path stroke-width=".75" d="M64 97.6A6.89 26.5 0 0 1 69.97 137.35A6.89 26.5 0 0 1 58.03 137.35A6.89 26.5 0 0 1 64 97.6M87.4 78.52A9.99 38.42 0 0 1 96.05 136.16A9.99 38.42 0 0 1 78.75 136.16A9.99 38.42 0 0 1 87.4 78.52M121.33 50.85A14.49 55.72 0 0 1 133.88 134.43A14.49 55.72 0 0 1 108.78 134.43A14.49 55.72 0 0 1 121.33 50.85M170.53 10.74A21.01 80.79 0 0 1 188.72 131.92A21.01 80.79 0 0 1 152.34 131.92A21.01 80.79 0 0 1 170.53 10.74M12 140L169.41 172.2M12 140L166.11 12.54"/>
+</svg>

@@ -1,7 +1,9 @@
 ---
 title: "当 Cloud Agent 成为未来：什么样的基础设施必然会出现？"
 titleAccent: "基础设施"
+cardTitle: "什么必然会出现？"
 description: "如果 Cloud Agent 成为主流，开发者真正需要的不会只是更多 Agent CRUD，而是一套能解析、运行和治理 Environment 的中立控制面。本文从结果倒推这层基础设施为什么必然出现。"
+descriptionEmphasis: "中立控制面"
 date: 2026-08-18
 category: "Product"
 author: "Evanchen"
@@ -21,11 +23,11 @@ draft: false
 
 真正值得追问的问题会变成：**为了让这个未来繁荣，哪些基础设施必然需要存在？**
 
-这篇文章不是在预测某一家 Sandbox 公司会赢，也不是 Mosoo 已上线功能的发布公告。它是一份产品备忘录：先把 Cloud Agent 成为主流当作“果”，再往回推，开发者最终一定会缺少什么。
+这篇文章不是在预测某一家 Sandbox 公司会赢，也不是 mosoo 已上线功能的发布公告。它是一份产品备忘录：先把 Cloud Agent 成为主流当作“果”，再往回推，开发者最终一定会缺少什么。
 
 ## 先把结论写在前面
 
-> 我说的“中立 Environment Control Plane”，不是 Mosoo 自己提供所有计算资源，而是：开发者只依赖 Mosoo 的 Environment 与 Run 协议，Harness 和底层 Sandbox 都可以替换。
+> 我说的“中立 Environment Control Plane”，不是 mosoo 自己提供所有计算资源，而是：开发者只依赖 mosoo 的 Environment 与 Run 协议，Harness 和底层 Sandbox 都可以替换。
 >
 > **One API to run and govern any harness inside a reusable cloud environment.**
 
@@ -110,9 +112,9 @@ Run Attempt
 
 - 不绑定 Harness：同一个 Environment 可以明确选择不同 Harness。
 - 不绑定 Sandbox：未来可以落到托管供应商或企业自托管计算。
-- 不绑定 Framework：Mastra、Eve、Flue、Deep Agents 可以调用 Mosoo，但 Mosoo 不必重新实现它们。
+- 不绑定 Framework：Mastra、Eve、Flue、Deep Agents 可以调用 mosoo，但 mosoo 不必重新实现它们。
 - 不假设 Repo：任务也可以围绕文件、数据集、浏览器或业务 API 展开。
-- 不要求 Agent：身份、记忆、Channel 和发布属于更上层的 Mosoo Agents。
+- 不要求 Agent：身份、记忆、Channel 和发布属于更上层的 mosoo Agents。
 
 所以，首版完全可以只使用一个 Sandbox 后端。只要公共 Run 协议、Environment Revision 和结果语义没有把这个后端写死，它就保留了以后成为 Router 的位置。
 
@@ -130,11 +132,11 @@ const run = await mosoo.run({
 })
 ```
 
-`mosoo/general` 对应的是一个开箱即用、由 Mosoo 维护的 Environment 地址。私有 `env_xxx` 是用户需要定制工具、网络和依赖时的升级路径，而不是第一次运行的门槛。
+`mosoo/general` 对应的是一个开箱即用、由 mosoo 维护的 Environment 地址。私有 `env_xxx` 是用户需要定制工具、网络和依赖时的升级路径，而不是第一次运行的门槛。
 
 但这个类比有一条不能越过的边界：模型请求通常不会修改外部世界，Agent Run 会。
 
-因此，Mosoo 未来可以根据地区、隔离等级、容量、冷启动、价格和历史成功率路由 Sandbox，却不能在 Agent 已经修改文件或调用外部 API 后，静默把任务切到另一台机器继续执行。安全的 Fallback 只能发生在首次副作用之前；否则必须从干净 Revision 创建一个用户可见的新 Attempt。
+因此，mosoo 未来可以根据地区、隔离等级、容量、冷启动、价格和历史成功率路由 Sandbox，却不能在 Agent 已经修改文件或调用外部 API 后，静默把任务切到另一台机器继续执行。安全的 Fallback 只能发生在首次副作用之前；否则必须从干净 Revision 创建一个用户可见的新 Attempt。
 
 ## Gallery 不是起点，兼容数据才是
 
@@ -144,7 +146,7 @@ Agent Gallery 很容易被想象成这个时代的 Model Gallery。但目录本�
 Environment × Harness × Provider
 ```
 
-同一种组合启动要多久、失败在哪里、消耗多少资源、哪些权限会冲突、什么情况下能够安全重试，这些数据才会让 Mosoo 从统一入口逐渐变成有判断力的 Router。
+同一种组合启动要多久、失败在哪里、消耗多少资源、哪些权限会冲突、什么情况下能够安全重试，这些数据才会让 mosoo 从统一入口逐渐变成有判断力的 Router。
 
 更可信的增长顺序是：
 
@@ -167,17 +169,17 @@ Gallery 应该是被验证过的 Environment 自然形成的分发层，而不�
 | 首发多供应商 Broker | 同时连接多家 Sandbox，按价格与容量路由 | 很快陷入最低公分母、Snapshot 迁移和副作用语义 |
 | 只做 Environment Spec / Registry | 开源规格与环境目录 | 容易传播，但缺少执行数据、收入和控制权 |
 
-Mosoo 当前更应该选择第一条。先成为一个真正好用的运行入口，再根据实际需求获得 Broker 能力。
+mosoo 当前更应该选择第一条。先成为一个真正好用的运行入口，再根据实际需求获得 Broker 能力。
 
-## Mosoo 已经有什么，还缺什么
+## mosoo 已经有什么，还缺什么
 
 这篇文章描述的是方向，不是当前产品现状。
 
-截至本文写作时，Mosoo 主干仍然按 `App → Agent → Session → Run` 组织：[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) 与 [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) 都要求 `agentId`，创建执行也从 [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) 开始。
+截至本文写作时，mosoo 主干仍然按 `App → Agent → Session → Run` 组织：[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) 与 [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) 都要求 `agentId`，创建执行也从 [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) 开始。
 
 但可以复用的底座已经存在：不可变的 [Environment Revision](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/environment.schema.ts#L35-L60)、多种 Harness Driver、Sandbox Provisioning，以及 Run 的事件、审批、取消、Artifact、Usage 和清理链路。
 
-因此，[#546](https://github.com/langgenius/mosoo/issues/546) 提议的不是重写 Runtime，而是拆开产品边界：Mosoo Agents 继续承载 Pet 所需的 Agent 身份、发布、记忆、Channel 与长期状态；Mosoo Cattle 则让共享执行内核不再要求 Agent 身份。
+因此，[#546](https://github.com/langgenius/mosoo/issues/546) 提议的不是重写 Runtime，而是拆开产品边界：mosoo Agents 继续承载 Pet 所需的 Agent 身份、发布、记忆、Channel 与长期状态；mosoo Cattle 则让共享执行内核不再要求 Agent 身份。
 
 ## 六个月内，应该刻意不做什么
 

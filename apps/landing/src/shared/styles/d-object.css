@@ -1,0 +1,1365 @@
+/* d-object (物件 Object) canvas and home forms. Tokens and every size come
+   from staging refs/UI-FORMS.md §c (U09, U02, U03, U05, U06), §d (outline),
+   proposals/d-object/PROPOSAL.md §2, and are recorded in v4d/UI-LOCK.md.
+   Plain CSS on purpose: the forms are locked shapes, not utility soup. */
+
+:root {
+  /* v5: the home's values (src/home/system.css), so every page shares one desk, one ink family, one pair of lines
+     and one lime (#143; app.css aliases the older token names to these). */
+  --d-frame: #f4f4f4; /* the home's --frame, Frame's white smoke */
+  --d-frame-2: #ebebeb; /* the frame's hover: the grey button (the home's --frame-2, chroma 0) */
+  --d-paper: #ffffff;
+  --d-tile: #f5f3f0;
+  --d-ink: #161815;
+  --d-ink-2: #515350;
+  --d-ink-3: #7f817e; /* 3.9:1 on white: 24px and up, or decoration */
+  --d-ink-3-text: #6b6d6a; /* 5.2:1 on white: small grey text */
+  --d-line: rgb(22 24 21 / 0.1); /* the home's --line (was 8%) */
+  --d-line-2: rgb(22 24 21 / 0.18); /* the home's --line-2 (was 16%) */
+  --d-accent: #bcf870; /* the home's lime (was the older green #6fd305) */
+  --d-accent-hover: color-mix(in oklab, #bcf870 62%, #ffffff); /* a lime button hovers brighter (home --accent-hover) */
+  --d-accent-tint: #deffb5; /* the lime CTA's glow, selection */
+  --d-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --d-shadow-card: 0 0 0 1px rgb(22 24 21 / 0.05), 0 2px 8px rgb(22 24 21 / 0.07);
+  --d-shadow-paper: 0 0 0 1px rgb(22 24 21 / 0.06), 0 18px 40px -18px rgb(21 23 20 / 0.35);
+  --d-grain: url("/landing/grain.webp");
+  /* Plates: oklch C <= 0.03 (UI-FORMS c.0, brand/outline rule 5). */
+  --d-stone-a: #ebe8e1;
+  --d-stone-b: #d7d3ca;
+  --d-mist-a: oklch(0.945 0.012 250);
+  --d-mist-b: oklch(0.865 0.022 250);
+  --d-clay: oklch(0.915 0.028 60);
+}
+
+html:has(.d-shell) {
+  background-color: var(--d-frame);
+}
+
+.d-shell {
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--d-frame);
+  color: var(--d-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  padding: 16px 16px 0;
+}
+
+.d-skip {
+  position: absolute;
+  left: -9999px;
+}
+
+.d-skip:focus {
+  left: 24px;
+  top: 24px;
+  z-index: 60;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--d-ink);
+  color: #f4f4f2;
+}
+
+/* The white sheet (Apollo sheet). Plain: the owner had the 1px dot grid removed on 2026-10-20. */
+.d-paper {
+  position: relative;
+  border-radius: 12px;
+  background-color: var(--d-paper);
+  padding-bottom: 96px;
+}
+
+/* Ink, not lime: #6fd305 is 1.91:1 on the paper and fails WCAG 1.4.11. */
+:where(.d-shell) :focus-visible {
+  outline: 2px solid var(--d-ink);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- nav (N1) */
+.d-nav {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 5;
+}
+
+.d-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--d-ink);
+  font: 600 17px/1 var(--font-sans);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------- shared bits */
+.d-home > section,
+.d-home > .d-coda {
+  width: min(1120px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.d-sec {
+  margin-top: 144px;
+}
+
+.d-soft {
+  color: var(--d-ink-3);
+}
+
+.d-soft-42 {
+  color: rgb(22 24 21 / 0.55);
+}
+
+.d-glyph {
+  filter: grayscale(1) brightness(0.35) contrast(1.4);
+  flex: none;
+}
+
+.d-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.d-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--d-grain) 0 0 / 256px 256px;
+  mix-blend-mode: multiply;
+  opacity: 0.14;
+  pointer-events: none;
+}
+
+.d-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--d-ink);
+  color: #f4f4f2;
+  font: 500 15px/1 var(--font-sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.16s,
+    transform 0.16s var(--d-ease);
+}
+
+.d-btn:hover {
+  background: #2a2c28;
+}
+
+.d-btn:active {
+  transform: scale(0.97);
+}
+
+.d-btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 14px;
+  color: var(--d-ink);
+  font: 500 15px/1 var(--font-sans);
+  text-decoration: none;
+}
+
+.d-btn-text span {
+  transition: transform 0.2s var(--d-ease);
+}
+
+.d-btn-text:hover span {
+  transform: translateX(3px);
+}
+
+.d-dot {
+  display: inline-block;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--d-ink-3);
+}
+
+.d-dot.live {
+  background: var(--d-accent);
+}
+
+.d-h2 {
+  margin: 0;
+  font: 400 48px/1.04 var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+/* --------------------------------------------------- 01 hero + U09 object */
+.d-hero {
+  padding-top: 64px;
+  text-align: center;
+}
+
+.d-h1 {
+  margin: 0 auto;
+  max-width: 1000px;
+  font: 400 72px/1 var(--font-display);
+  letter-spacing: -0.03em;
+}
+
+.d-h1 > span {
+  display: block;
+}
+
+.d-h1 > span,
+.d-h2,
+.d-close-h,
+.d-supply-h {
+  text-wrap: balance;
+}
+
+.d-lead {
+  margin: 22px auto 0;
+  max-width: 600px;
+  color: var(--d-ink-2);
+  font: 400 18px/1.5 var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+.d-lead,
+.d-verb-p,
+.d-pc-a,
+.d-plate-cap p {
+  text-wrap: pretty;
+}
+
+.d-actions {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.d-stage {
+  position: relative;
+  height: 404px;
+  margin: 36px auto 0;
+  text-align: left;
+}
+
+/* Window: block width 324.9px inside a 340px box (viewBox 53.91 x 46.99). */
+.d-win {
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  width: 340px;
+  margin-left: -170px;
+}
+
+.d-win-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 1;
+}
+
+.d-win-fill {
+  position: absolute;
+  left: 2.226%;
+  top: 2.554%;
+  width: 95.548%;
+  height: 87.169%;
+  -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+  background: radial-gradient(120% 95% at 50% 100%, #cdc8be 0%, #e3e0d9 50%, #f6f5f1 100%);
+}
+
+/* S4: the one white card in the window, from ~40% of the window height down
+   across its lower edge; the sentence sits at the top, the track and the
+   event at the bottom. */
+.d-obj {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  top: 34%;
+  bottom: 15px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px 18px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--d-shadow-paper);
+}
+
+/* 44px so the sentence breaks into two lines and fills the card (review
+   P1-3: at 30px the card read as an empty form). */
+.d-obj-line {
+  margin: 0 0 18px;
+  font: 400 44px/1 var(--font-display);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.d-obj-track {
+  position: relative;
+  height: 1px;
+  margin: auto 4px 12px;
+  background: var(--d-line-2);
+}
+
+.d-obj-track i {
+  position: absolute;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.d-obj-track .l {
+  left: -3px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--d-ink);
+}
+
+.d-obj-track .r {
+  right: -3px;
+  background: var(--d-accent);
+}
+
+.d-obj-ev {
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  color: var(--d-ink-2);
+  font: 400 11.5px/1 var(--font-mono);
+}
+
+.d-obj-ev b {
+  font-weight: 400;
+  color: var(--d-ink);
+}
+
+/* Satellites: 184 wide, four 3px ink crop marks (Ramp), never rotated. */
+.d-sat {
+  position: absolute;
+  z-index: 3;
+  width: 184px;
+  padding: 12px 14px 13px;
+  border: 1px solid rgb(22 24 21 / 0.1);
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(21 23 20 / 0.06);
+  will-change: transform;
+}
+
+/* Placed from the stage centre line, so the window and the satellites keep
+   their overlap at every width (identical to the old px values at 1120). */
+.d-sat.s1 { left: calc(50% - 324px); top: 64px; --dock-x: -92px; --dock-y: -26px; }
+.d-sat.s2 { left: calc(50% + 140px); top: 104px; --dock-x: 100px; --dock-y: -38px; }
+.d-sat.s3 { left: calc(50% - 322px); top: 220px; --dock-x: -86px; --dock-y: 42px; }
+.d-sat.s4 { left: calc(50% + 138px); top: 252px; --dock-x: 92px; --dock-y: 34px; }
+
+.d-stage[data-dock="out"] .d-sat {
+  transform: translate(var(--dock-x), var(--dock-y));
+}
+
+.d-sat-c {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--d-ink);
+}
+
+.d-sat-c.c1 { left: -2px; top: -2px; }
+.d-sat-c.c2 { right: -2px; top: -2px; }
+.d-sat-c.c3 { left: -2px; bottom: -2px; }
+.d-sat-c.c4 { right: -2px; bottom: -2px; }
+
+.d-sat-k {
+  margin: 0;
+  color: var(--d-ink-2);
+  font: 400 10px/1 var(--font-mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.d-sat-v {
+  margin: 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 500 15px/1.25 var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+/* --------------------------------------------------------------- 02 U02 */
+.d-verbs-sec {
+  margin-top: 112px;
+}
+
+.d-verbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  min-height: 280px;
+  border: 1px solid var(--d-line-2);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.d-verb {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 84px;
+  padding: 24px 26px 26px;
+}
+
+.d-verb + .d-verb {
+  border-left: 1px solid var(--d-line-2);
+}
+
+.d-tile {
+  display: block;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--d-ink);
+  color: #ecebe6;
+  font: 400 14px/36px var(--font-mono);
+  letter-spacing: -0.08em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.d-tile.live {
+  color: var(--d-accent);
+}
+
+/* Rests on frame 4 (the reduced-motion frame); plays four cycles once the
+   section is in view (reveal.ts sets data-in), then stops. */
+.d-tile-strip {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-108px);
+}
+
+.d-verbs[data-in="true"] .d-tile-strip {
+  animation: d-glyph 0.96s steps(8) 4;
+}
+
+.d-tile-strip > span {
+  display: block;
+  height: 36px;
+}
+
+@keyframes d-glyph {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-288px);
+  }
+}
+
+.d-verb-h {
+  margin: 0 0 8px;
+  font: 600 20px/1.2 var(--font-sans);
+  letter-spacing: -0.012em;
+}
+
+.d-verb-p {
+  margin: 0;
+  max-width: 300px;
+  color: var(--d-ink-2);
+  font: 400 14px/1.5 var(--font-sans);
+}
+
+/* ------------------------------------------------- 03 F19 stacked turn */
+.d-plate {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.d-plate-mist {
+  height: 540px;
+  background:
+    radial-gradient(70% 55% at 50% 0%, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(60% 50% at 85% 100%, oklch(0.84 0.024 240 / 0.7) 0%, transparent 70%),
+    linear-gradient(170deg, var(--d-mist-a) 0%, var(--d-mist-b) 100%);
+}
+
+.d-stack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 96px;
+  width: min(680px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+/* Opaque: at 94% white the back card's top edge showed through. */
+.d-stack-card {
+  position: relative;
+  z-index: 2;
+  padding: 28px 32px 28px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--d-shadow-paper);
+}
+
+.d-stack-back {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -12px;
+  height: 60px;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 0.78);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.05), 0 10px 24px -14px rgb(21 23 20 / 0.3);
+  z-index: 1;
+}
+
+.d-stack-back.b2 {
+  left: 34px;
+  right: 34px;
+  bottom: -24px;
+  background: rgb(255 255 255 / 0.56);
+  z-index: 0;
+}
+
+.d-stack-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.d-stack-label {
+  font: 500 20px/1.2 var(--font-sans);
+  letter-spacing: -0.012em;
+}
+
+.d-stack-token {
+  color: var(--d-ink-2);
+  font: 400 12px/1 var(--font-mono);
+}
+
+.d-stack-track {
+  margin: 26px 0 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.d-stack-end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1f0ed;
+}
+
+.d-stack-file {
+  width: 20px;
+  height: 20px;
+  color: var(--d-ink);
+}
+
+/* A progress bar (issue #122's ~13px bars), not a switch: no knob, no shadow.
+   Full, because the status line says the restore is done. */
+.d-stack-rail {
+  position: relative;
+  flex: 1;
+  height: 11px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ecebe8;
+}
+
+.d-stack-knob {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--d-ink-3);
+}
+
+.d-stack-status {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--d-ink-2);
+  font: 400 15px/1.3 var(--font-sans);
+}
+
+/* The finished state: a still check, no spinner. */
+.d-stack-done {
+  width: 15px;
+  height: 15px;
+  color: var(--d-ink-2);
+}
+
+.d-plate-cap {
+  position: absolute;
+  left: 40px;
+  bottom: 36px;
+  max-width: 560px;
+}
+
+.d-plate-cap h2 {
+  margin: 0;
+  font: 500 22px/1.3 var(--font-sans);
+  letter-spacing: -0.014em;
+}
+
+.d-plate-cap p {
+  margin: 8px 0 0;
+  color: var(--d-ink-2);
+  font: 400 16px/1.55 var(--font-sans);
+}
+
+/* ----------------------------------------------- 04 U03 overflow cards */
+.d-supply {
+  position: relative;
+  height: 600px;
+}
+
+/* The cards overhang the field by 50px, so its edge meets the cards' status
+   rule instead of grazing the label baseline. */
+.d-supply-field {
+  position: absolute;
+  inset: 0 0 50px;
+  border-radius: 20px;
+  background: linear-gradient(165deg, var(--d-stone-a) 0%, var(--d-stone-b) 100%);
+}
+
+.d-supply-h {
+  position: absolute;
+  left: 40px;
+  top: 36px;
+  margin: 0;
+  font: 400 48px/1.04 var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+.d-supply-cards {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.d-mcard {
+  display: flex;
+  flex-direction: column;
+  height: 340px;
+  padding: 22px 24px 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--d-shadow-card);
+}
+
+.d-mcard p {
+  margin: 0;
+}
+
+.d-mcard-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 14px/1 var(--font-sans);
+}
+
+.d-mcard-glyph {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--d-ink);
+}
+
+/* Head on top, value and label sunk onto the status line (a metric tile). */
+.d-mcard-val {
+  margin-top: auto !important;
+  font: 500 64px/1 var(--font-sans);
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.d-mcard-lab {
+  margin-top: 8px !important;
+  color: var(--d-ink-2);
+  font: 400 14px/1.4 var(--font-sans);
+}
+
+.d-mcard-stat {
+  margin-top: 24px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--d-line);
+  color: var(--d-ink-2);
+  font: 400 12.5px/1.2 var(--font-sans);
+}
+
+/* ------------------------------------------------- 05 U05 punch-card FAQ */
+.d-faq {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 564px;
+  gap: 48px;
+  align-items: start;
+}
+
+.d-faq-side {
+  position: sticky;
+  top: 32px;
+}
+
+.d-faq-side .d-h2 {
+  margin-top: 0;
+}
+
+.d-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.d-pc {
+  position: relative;
+  border: 1px solid rgb(22 24 21 / 0.1);
+  border-radius: 2px;
+  background: #fafaf8;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.d-pc[open] {
+  background: #fff;
+  border-color: rgb(22 24 21 / 0.26);
+}
+
+.d-pc summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 116px;
+  padding: 26px 34px 26px 30px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.d-pc summary::-webkit-details-marker {
+  display: none;
+}
+
+.d-pc-c {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(22 24 21 / 0.45);
+}
+
+.d-pc[open] .d-pc-c {
+  background: var(--d-ink);
+}
+
+/* Hover previews the open card: the corner dots go solid. */
+@media (hover: hover) {
+  .d-pc:not([open]) summary:hover .d-pc-c {
+    background: var(--d-ink);
+  }
+}
+
+.d-pc-c.c1 { left: 9px; top: 9px; }
+.d-pc-c.c2 { right: 9px; top: 9px; }
+.d-pc-c.c3 { left: 9px; bottom: 9px; }
+.d-pc-c.c4 { right: 9px; bottom: 9px; }
+
+.d-pc-q {
+  font: 500 20px/1.3 var(--font-sans);
+  letter-spacing: -0.012em;
+}
+
+.d-pc-n {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  height: 26px;
+}
+
+.d-faq-ind {
+  color: var(--d-ink);
+  fill: transparent;
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.35, 1),
+    fill 0.3s;
+}
+
+.d-pc[open] .d-faq-ind {
+  fill: currentColor;
+  transform: translateX(-10px);
+}
+
+.d-pc-a {
+  margin: -12px 0 0;
+  padding: 0 34px 28px 30px;
+  max-width: 494px;
+  color: var(--d-ink-2);
+  font: 400 15px/1.6 var(--font-sans);
+}
+
+/* -------------------------------------- 06 U06 card on the F34 grain field */
+.d-plate-field {
+  padding: 96px 24px 104px;
+  text-align: center;
+  border-radius: 20px;
+  background:
+    radial-gradient(60% 80% at 12% 18%, var(--d-mist-b) 0%, transparent 70%),
+    radial-gradient(55% 75% at 88% 82%, var(--d-clay) 0%, transparent 70%),
+    #eeece8;
+}
+
+.d-close-h {
+  margin: 0 0 40px;
+  font: 400 48px/1.02 var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+.d-ccard {
+  position: relative;
+  width: min(568px, 100%);
+  margin: 0 auto;
+  padding: 34px 24px 18px;
+  border: 1px solid rgb(22 24 21 / 0.1);
+  border-radius: 4px;
+  background: #fafaf9;
+  text-align: left;
+}
+
+.d-ccard-legend {
+  position: absolute;
+  top: -8px;
+  left: 22px;
+  padding: 0 8px;
+  background: linear-gradient(to bottom, transparent 50%, #fafaf9 50%);
+  color: var(--d-ink-2);
+  font: 400 11px/16px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.d-ccard-c {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgb(22 24 21 / 0.35);
+}
+
+.d-ccard-c.c1 { left: 7px; top: 7px; }
+.d-ccard-c.c2 { right: 7px; top: 7px; }
+.d-ccard-c.c3 { left: 7px; bottom: 7px; }
+.d-ccard-c.c4 { right: 7px; bottom: 7px; }
+
+.d-ccard-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 0 6px 0 22px;
+  border: 1px solid rgb(22 24 21 / 0.13);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.d-ccard-p {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font: 400 15px/1 var(--font-sans);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.d-btn-sm {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.d-ccard-btn {
+  flex: none;
+}
+
+.d-ccard-btn-i {
+  display: none;
+  width: 18px;
+  height: 18px;
+}
+
+.d-ccard-fine {
+  margin: 14px 0 0;
+  text-align: center;
+  color: var(--d-ink-2);
+  font: 400 12px/1.4 var(--font-sans);
+}
+
+/* --------------------------------- page-end nested outline + S3 dot field */
+.d-coda {
+  margin-top: 144px;
+  display: flex;
+  justify-content: center;
+}
+
+.d-nest {
+  position: relative;
+  width: calc(var(--coda-w) * 1.02065);
+}
+
+.d-nest > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Inner block of the three: x 23.664 / 98.839, y 23.664 / 69.254. */
+.d-nest-dots {
+  position: absolute;
+  left: 23.942%;
+  top: 34.17%;
+  width: 52.115%;
+  height: 59.145%;
+  -webkit-mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+  mask: url("/brand/outline/portal-mask.svg") 0 0 / 100% 100% no-repeat;
+  background-color: #efeee9;
+  background-image:
+    radial-gradient(60% 75% at 50% 100%, rgb(239 238 233 / 0) 0%, rgb(239 238 233 / 0) 35%, #efeee9 100%),
+    radial-gradient(rgb(22 24 21 / 0.55) 1px, transparent 1.3px);
+  background-size:
+    100% 100%,
+    9px 9px;
+  background-position:
+    0 0,
+    4px 100%;
+  clip-path: inset(0);
+  transition: clip-path 1.2s var(--d-ease);
+}
+
+.d-coda[data-in="false"] .d-nest-dots {
+  clip-path: inset(100% 0 0 0);
+}
+
+/* ------------------------------------------------------------------ footer */
+.d-footer {
+  padding: 56px 8px 28px;
+}
+
+.d-footer-in {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.d-footer-line {
+  margin: 0 0 40px;
+  max-width: 360px;
+  color: var(--d-ink-2);
+  font: 400 15px/1.5 var(--font-sans);
+}
+
+.d-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+
+/* The home footer's column heading (src/home/sections/footer.css .v5-ft-h): Hanken 500 14/20 in ink, sentence case.
+   It was an 11px uppercase mono kicker (#143, hallmark: a kicker on every block). */
+.d-footer-h {
+  margin: 0 0 12px;
+  color: var(--d-ink);
+  font: 500 14px/20px var(--font-sans);
+}
+
+.d-footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.d-footer-cols li + li {
+  margin-top: 8px;
+}
+
+.d-footer a {
+  color: var(--d-ink);
+  font: 400 14px/1.5 var(--font-sans);
+  text-decoration: none;
+}
+
+.d-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.d-footer-bottom {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid var(--d-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: var(--d-ink-2);
+  font: 400 13px/1.4 var(--font-sans);
+}
+
+.d-footer-bottom p {
+  margin: 0;
+}
+
+/* ------------------------------------------------------- CJK line breaks */
+:lang(zh) .d-h1,
+:lang(zh) .d-h2,
+:lang(zh) .d-close-h,
+:lang(zh) .d-supply-h,
+:lang(ja) .d-h1,
+:lang(ja) .d-h2,
+:lang(ja) .d-close-h,
+:lang(ja) .d-supply-h {
+  word-break: keep-all;
+  letter-spacing: -0.01em;
+}
+
+:lang(ja) :is(.d-lead, .d-verb-p, .d-pc-q, .d-pc-a, .d-plate-cap p, .d-ccard-p, .d-footer-line) {
+  word-break: auto-phrase;
+}
+
+/* Japanese display lines: proportional kana and punctuation. */
+:lang(ja) :is(.d-h1, .d-h2, .d-close-h, .d-supply-h, .d-obj-line) {
+  font-feature-settings: "palt";
+}
+
+/* zh has no phrase segmentation in CSS; keep-all breaks at the spaces and
+   punctuation the copy already carries, so "一个" never splits. */
+:lang(zh) :is(.d-pc-q, .d-verb-p) {
+  word-break: keep-all;
+}
+
+/* ----------------------------------------------------- tablets (721–1100) */
+@media (max-width: 1100px) {
+  .d-faq {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .d-faq-side {
+    position: static;
+  }
+}
+
+/* Between 721 and 1000 the U03 row takes the phone's scroll-snap layout and
+   the undocked offsets shrink, so nothing is clipped by the paper. */
+@media (max-width: 1000px) {
+  .d-h1 {
+    font-size: 56px;
+  }
+
+  .d-sat {
+    --dock-x: 0px !important;
+  }
+
+  .d-supply {
+    height: auto;
+    padding: 32px 0 0;
+  }
+
+  .d-supply-field {
+    bottom: 48px;
+  }
+
+  .d-supply-h {
+    position: relative;
+    left: auto;
+    top: auto;
+    padding: 0 20px;
+  }
+
+  .d-supply-cards {
+    position: relative;
+    left: auto;
+    right: auto;
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    padding: 0 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .d-mcard {
+    flex: none;
+    width: 300px;
+    height: 300px;
+    scroll-snap-align: start;
+  }
+}
+
+/* ------------------------------------------------------------ phones (390) */
+@media (max-width: 720px) {
+  .d-shell {
+    padding: 8px 8px 0;
+  }
+
+  .d-paper {
+    border-radius: 10px;
+    padding-bottom: 64px;
+  }
+
+  .d-nav {
+    padding: 0 16px;
+  }
+
+  .d-home > section,
+  .d-home > .d-coda {
+    width: calc(100% - 32px);
+  }
+
+  .d-sec {
+    margin-top: 88px;
+  }
+
+  .d-hero {
+    padding-top: 40px;
+  }
+
+  .d-h1 {
+    font-size: 42px;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
+  .d-lead {
+    font-size: 16px;
+  }
+
+  .d-stage {
+    height: 420px;
+    margin-top: 24px;
+  }
+
+  .d-win {
+    top: 74px;
+    width: 280px;
+    margin-left: -140px;
+  }
+
+  .d-obj {
+    left: 26px;
+    right: 26px;
+    bottom: 12px;
+    padding: 16px 16px 14px;
+  }
+
+  .d-obj-line {
+    font-size: 34px;
+    margin-bottom: 14px;
+  }
+
+  /* Phones keep Harness and Next turn (the "days later" half of the H1). */
+  .d-sat.s1,
+  .d-sat.s3 {
+    display: none;
+  }
+
+  /* Pressed 20px into the window, not grazing its top line. */
+  .d-sat.s2 {
+    left: auto;
+    right: 4px;
+    top: 34px;
+    --dock-x: 0px;
+    --dock-y: -14px;
+  }
+
+  .d-sat.s4 {
+    left: 4px;
+    top: auto;
+    bottom: 22px;
+    --dock-x: 0px;
+    --dock-y: 18px;
+  }
+
+  .d-verbs-sec {
+    margin-top: 72px;
+  }
+
+  .d-verbs {
+    grid-template-columns: 1fr;
+  }
+
+  .d-verb {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 18px;
+    min-height: 0;
+    padding: 24px 20px;
+  }
+
+  .d-verb + .d-verb {
+    border-left: 0;
+    border-top: 1px solid var(--d-line-2);
+  }
+
+  .d-plate-mist {
+    height: 460px;
+  }
+
+  .d-stack {
+    top: 40px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    margin-left: 0;
+  }
+
+  .d-stack-card {
+    padding: 20px 18px 22px;
+  }
+
+  .d-plate-cap {
+    left: 20px;
+    right: 20px;
+    bottom: 24px;
+  }
+
+  .d-plate-cap h2 {
+    font-size: 20px;
+  }
+
+  .d-supply-h {
+    font-size: 32px;
+  }
+
+  /* Card height follows its content on phones (no empty band). */
+  .d-mcard {
+    height: auto;
+    min-height: 232px;
+  }
+
+  .d-h2,
+  .d-close-h {
+    font-size: 34px;
+    line-height: 1.06;
+  }
+
+  .d-pc summary {
+    min-height: 96px;
+    padding: 22px 20px;
+  }
+
+  .d-pc-q {
+    font-size: 18px;
+  }
+
+  .d-pc-a {
+    padding: 0 20px 24px;
+  }
+
+  .d-plate-field {
+    padding: 64px 16px 72px;
+  }
+
+  .d-ccard {
+    padding: 30px 14px 16px;
+  }
+
+  .d-ccard-field {
+    height: auto;
+    min-height: 56px;
+    padding: 10px 6px 10px 16px;
+    border-radius: 22px;
+  }
+
+  .d-ccard-p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .d-ccard-btn {
+    width: 44px;
+    padding: 0;
+  }
+
+  .d-ccard-btn-t {
+    display: none;
+  }
+
+  .d-ccard-btn-i {
+    display: block;
+  }
+
+  .d-coda {
+    margin-top: 96px;
+    --coda-w: min(358px, calc(100vw - 48px)) !important;
+  }
+
+  .d-footer-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 32px;
+  }
+
+  .d-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .d-verbs[data-in="true"] .d-tile-strip {
+    animation: none;
+  }
+
+  .d-nest-dots,
+  .d-faq-ind,
+  .d-pc {
+    transition: none;
+  }
+
+  .d-pc[open] .d-faq-ind {
+    transform: none;
+  }
+
+  .d-coda[data-in="false"] .d-nest-dots {
+    clip-path: inset(0);
+  }
+}

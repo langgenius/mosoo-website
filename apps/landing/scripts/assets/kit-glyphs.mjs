@@ -1,0 +1,165 @@
+#!/usr/bin/env node
+// Inline SVG data for the v5 product kit (tool T4): writes apps/landing/src/home/kit/glyphs.ts.
+//
+//   MOSOO_MAIN=<mosoo checkout> node apps/landing/scripts/assets/kit-glyphs.mjs
+//
+// The glyph step of the kit's proof builder (staging v5/tools/kit/build.ts, step "glyphs"), moved into the repo
+// so the repo can regenerate glyphs.ts on its own (staging production/v5/TOOLS-REVIEW.md, T4). Same sources,
+// same transforms, same bytes in the KIT_GLYPHS body; only the two header lines that name the command changed.
+// Sources are read as text, never imported or executed:
+//   runtime marks   @lobehub/icons-static-svg 1.94.0 (MIT): the version MAIN bun.lock L771 pins. It has pi.svg,
+//                   which the 1.91.0 installed in this repo lacks (openai / claudecode / opencode are identical).
+//   mosoo glyphs    MAIN docs/design/assets/sidebar-icons: 24 grid, 1.5 stroke, one 12% plane (class kit-gp).
+//   console glyphs  @hugeicons/core-free-icons 4.2.3 (MIT), MAIN bun.lock L631, as apps/web/src/shared/ui/icons.tsx.
+// Licences, checked 2026-10-21 (round 3b): Hugeicons' free set is MIT ("The 6,000+ free Stroke Rounded icons,
+// including the @hugeicons/core-free-icons package ... are licensed under the MIT License", hugeicons.com/license-
+// agreement, effective 14 Sep 2026; the notice is the package's LICENSE.md, Copyright (c) 2025 Hugeicons, written into
+// glyphs.ts below). The 4.2.3 tarball itself ships no LICENSE file and its README ends "All rights reserved"; its
+// package.json says MIT, and the licence page settles it for this package. @lobehub/icons-static-svg: MIT
+// (package.json). The sidebar glyphs are mosoo's own (MAIN, Apache-2.0).
+// Paths outside this repo come from the environment:
+//   MOSOO_MAIN               a checkout of the mosoo main repo (required);
+//   BUN_INSTALL_CACHE_DIR    bun's package cache (default ~/.bun/install/cache); `bun install` in MAIN fills it
+//                            with the two packages above.
+// Deterministic: same inputs, same bytes.
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const env = (name) => {
+  const value = process.env[name];
+  if (!value) throw new Error(`set ${name}; see the comment at the top of this file`);
+  return value;
+};
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const OUT = resolve(HERE, "../../src/home/kit/glyphs.ts");
+const CACHE = process.env["BUN_INSTALL_CACHE_DIR"] ?? join(homedir(), ".bun/install/cache");
+const LOBE = join(CACHE, "@lobehub/icons-static-svg@1.94.0@@@1/icons");
+const HUGE = join(CACHE, "@hugeicons/core-free-icons@4.2.3@@@1/dist/esm");
+const SIDEBAR = join(env("MOSOO_MAIN"), "docs/design/assets/sidebar-icons");
+
+const LINE = 'fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+
+/** The MIT notice of Hugeicons' free icons (the package's LICENSE.md from 4.3.x on; 4.2.3 ships none), kept with the
+ *  copied paths as the licence asks. */
+const HUGEICONS_NOTICE = [
+  "MIT License. Copyright (c) 2025 Hugeicons",
+  "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated",
+  'documentation files (the "Software"), to deal in the Software without restriction, including without limitation',
+  "the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to",
+  "permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+  "The above copyright notice and this permission notice shall be included in all copies or substantial portions of",
+  "the Software.",
+  'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE',
+  "WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS",
+  "OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR",
+  "OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+];
+const FILL = 'fill="currentColor" fill-rule="evenodd"';
+
+function fromLobe(id, file) {
+  const svg = readFileSync(join(LOBE, file), "utf8");
+  const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1];
+  if (!viewBox) throw new Error(`no viewBox in ${file}`);
+  const body = svg
+    .replace(/^<svg[^>]*>/, "")
+    .replace(/<\/svg>\s*$/, "")
+    .replace(/<title>[\s\S]*?<\/title>/, "")
+    .replace(/<path([^>]*)><\/path>/g, "<path$1/>")
+    .trim();
+  return { id, source: `@lobehub/icons-static-svg 1.94.0 icons/${file}`, viewBox, attrs: FILL, body };
+}
+
+function fromHuge(id, name) {
+  const js = readFileSync(join(HUGE, `${name}.js`), "utf8");
+  const shapes = [...js.matchAll(/\["(path|circle|rect)",\s*\{([^}]*)\}\]/g)].map(([, tag, props]) => {
+    const attrs = [...props.matchAll(/(\w+):\s*"([^"]*)"/g)]
+      .filter(([, key]) => key !== "key")
+      .map(([, key, value]) => `${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}="${value}"`)
+      .join(" ");
+    return `<${tag} ${attrs}/>`;
+  });
+  if (shapes.length === 0) throw new Error(`no shapes in ${name}`);
+  return {
+    id,
+    source: `@hugeicons/core-free-icons 4.2.3 dist/esm/${name}.js`,
+    viewBox: "0 0 24 24",
+    attrs: 'fill="none"',
+    body: shapes.join(""),
+  };
+}
+
+function fromSidebar(id, file) {
+  const svg = readFileSync(join(SIDEBAR, file), "utf8");
+  const plane = ' fill="currentColor" fill-opacity="0.12" stroke="none"';
+  if (!svg.includes(plane)) throw new Error(`${file}: the 12% plane moved; update the generator`);
+  const body = svg
+    .replace(/^[\s\S]*?<svg[^>]*>/, "")
+    .replace(/<\/svg>\s*$/, "")
+    .replaceAll(plane, ' class="kit-gp" stroke="none"')
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("");
+  return { id, source: `MAIN docs/design/assets/sidebar-icons/${file}`, viewBox: "0 0 24 24", attrs: LINE, body };
+}
+
+const glyphs = [
+  fromLobe("openai", "openai.svg"), // openai-runtime (Codex): catalog iconKey "openai"
+  fromLobe("claude-code", "claudecode.svg"), // claude-agent-sdk: iconKey "claude-code"
+  fromLobe("opencode", "opencode.svg"), // acp-fallback: iconKey "opencode"
+  fromLobe("pi", "pi.svg"), // pi: iconKey "pi"
+  fromSidebar("folder", "files.svg"),
+  fromSidebar("cube", "environments.svg"),
+  fromSidebar("key", "providers.svg"),
+  fromSidebar("runs", "runs.svg"),
+  fromSidebar("skills", "skills.svg"), // the Session's Skills row, the spec table's Skills · MCP row
+  fromSidebar("mcp", "mcp-servers.svg"), // the Session's Remote MCP row
+  fromHuge("file", "File02Icon"), // console FileText: report.md
+  fromHuge("check", "CheckIcon"),
+  fromHuge("clock", "Clock03Icon"),
+  fromHuge("refresh", "RefreshIcon"), // console RefreshCw
+  // round 3b, the first plate's three states (staging narrative/CHANGES.md §2, §3, §10 A2):
+  fromHuge("laptop", "LaptopIcon"), // the laptop card's head
+  fromHuge("user", "UserIcon"), // console User (icons.tsx): You, Teammate, Customer
+  fromHuge("server", "ServerStack01Icon"), // Your backend, Your app
+  fromHuge("note", "Note01Icon"), // Instructions (the Session's row, the spec table's row)
+];
+
+const out = [
+  "// GENERATED by apps/landing/scripts/assets/kit-glyphs.mjs. Do not edit; re-run (sources in its header):",
+  "//   MOSOO_MAIN=<mosoo checkout> node apps/landing/scripts/assets/kit-glyphs.mjs",
+  "// Inline SVG for the kit in currentColor. Sources were read as text, never imported or executed:",
+  "//   runtime marks   @lobehub/icons-static-svg 1.94.0 (MIT), the version MAIN bun.lock L771 pins; it has pi.svg,",
+  "//                   which the 1.91.0 installed here lacks (openai / claudecode / opencode are byte-identical).",
+  "//   mosoo glyphs    MAIN docs/design/assets/sidebar-icons: 24 grid, 1.5 stroke, one 12% plane (class kit-gp).",
+  "//   console glyphs  @hugeicons/core-free-icons 4.2.3 (MIT), MAIN bun.lock L631, as apps/web/src/shared/ui/icons.tsx.",
+  "// Hugeicons' notice (the MIT License of its free icons, hugeicons.com/license-agreement):",
+  ...HUGEICONS_NOTICE.map((line) => `//   ${line}`.trimEnd()),
+  "",
+  "export interface KitGlyph {",
+  "  readonly viewBox: string;",
+  "  readonly attrs: string;",
+  "  readonly body: string;",
+  "}",
+  "",
+  "export const KIT_GLYPHS = {",
+  ...glyphs.flatMap((g) => [
+    `  // ${g.source}`,
+    `  ${JSON.stringify(g.id)}: {`,
+    `    viewBox: ${JSON.stringify(g.viewBox)},`,
+    `    attrs: ${JSON.stringify(g.attrs)},`,
+    `    body: ${JSON.stringify(g.body)},`,
+    "  },",
+  ]),
+  "} as const satisfies Record<string, KitGlyph>;",
+  "",
+  "export type KitGlyphId = keyof typeof KIT_GLYPHS;",
+  "",
+].join("\n");
+
+writeFileSync(OUT, out);
+console.log(`glyphs.ts: ${glyphs.length} glyphs, ${out.length} B`);

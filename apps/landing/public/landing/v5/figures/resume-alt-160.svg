@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" stroke="#161815" stroke-linejoin="bevel">
+<!-- resume · the tube runs through the gap · node apps/landing/scripts/assets/linefig.mjs -->
+<path stroke-width="1.25" stroke-dasharray=".01 4" stroke-linecap="round" d="M.79 80L159.21 80"/>
+<path stroke-width="1.25" stroke-dasharray=".01 4.015" stroke-linecap="round" d="M49.11 43.56A9.47 36.44 0 0 1 57.31 98.22A9.47 36.44 0 0 1 40.9 98.22A9.47 36.44 0 0 1 49.11 43.56"/>
+<path stroke-width=".75" d="M118.81 43.56A9.47 36.44 0 0 1 127.02 98.22A9.47 36.44 0 0 1 110.61 98.22A9.47 36.44 0 0 1 118.81 43.56M6.34 116.44L153.66 116.44M6.34 43.56L153.66 43.56"/>
+</svg>

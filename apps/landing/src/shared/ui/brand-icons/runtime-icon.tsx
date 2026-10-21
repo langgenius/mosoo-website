@@ -6,12 +6,15 @@ import { RUNTIME_ICON_URL } from "./runtime-icon-data";
 
 export { hasRuntimeIcon } from "./runtime-icon-data";
 
+/** A runtime's brand mark. Decorative: render the runtime's name next to it. */
 export function RuntimeIcon({
   className,
   runtimeId,
+  size = 20,
 }: {
   className?: string;
   runtimeId: string;
+  size?: number;
 }): ReactElement | null {
   const iconUrl = RUNTIME_ICON_URL[runtimeId];
 
@@ -21,8 +24,12 @@ export function RuntimeIcon({
 
   return (
     <img
-      aria-hidden
+      aria-hidden="true"
       alt=""
+      width={size}
+      height={size}
+      loading="lazy"
+      decoding="async"
       className={cn("inline-block object-contain", className)}
       src={iconUrl}
     />

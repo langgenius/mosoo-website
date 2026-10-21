@@ -1,0 +1,1101 @@
+/* T4 product-vector kit (see index.ts). Rules from refs/apollo/v5/STUDY.md §2.4 / §4, measured at Apollo's
+   display scale (a 600px tile, main row 14px): every length below is a multiple of the root size --k, so the
+   same object is Apollo-sized at 14px ("card") and v4b-sized at 20px ("stage").
+     radii      big card 1.4k (v4b 28px at 20px), strip .85k (20 at 1000), float .6k, tile .66k (20% of side)
+     lines      hairline 1px ink 10%; connector .085k (2 at 1000 = 1.2px at 14px), 2.35k long, ink 22%
+     shadows    only on what sits on something: top .3k/1.3k 8% ink (Apollo action card 0 4px 18px .08)
+     fade       rows 1 / .6 / .2 (/ .08); colour: neutrals + one lit element per object
+   Tokens are local (--kit-*) with the v5 values (BRIEF §3.1), because app.css still defines --accent as the
+   old #6fd305. Map them to the global tokens once those are v5: .kit { --kit-accent: var(--accent); ... }.
+   The Session object (session.ts) is drawn from two state numbers, so a stage can move it between its states in
+   place (below); everything else is static (Apollo's illustrations do not move). */
+
+@property --k {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 14px;
+}
+
+.kit {
+  --k: 1em;
+  --kit-ink: #161815;
+  --kit-ink-2: #515350;
+  --kit-ink-3: #7f817e;
+  --kit-paper: #fff;
+  --kit-sub: #f4f4f4;
+  --kit-line: rgb(22 24 21 / 0.1);
+  --kit-line-2: rgb(22 24 21 / 0.18);
+  --kit-wire: rgb(22 24 21 / 0.22);
+  --kit-well: rgb(22 24 21 / 0.025);
+  --kit-accent: #bcf870;
+  --kit-accent-tint: #deffb5;
+  --kit-accent-deep: #3d630d;
+  --kit-sans: var(--font-sans, "Hanken Grotesk", "Hanken Grotesk Fallback", ui-sans-serif, system-ui, sans-serif);
+  --kit-mono: var(--font-mono, "Fragment Mono", ui-monospace, monospace);
+  --kit-shadow-top: 0 0 0 1px rgb(22 24 21 / 0.05), 0 calc(var(--k) * 0.3) calc(var(--k) * 1.3) rgb(22 24 21 / 0.08);
+  box-sizing: border-box;
+  color: var(--kit-ink);
+  font-family: var(--kit-sans);
+  font-size: var(--kit-size, 14px);
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.kit *,
+.kit *::before,
+.kit *::after {
+  box-sizing: border-box;
+}
+
+/* Zero specificity, so every .kit-* rule below wins over the reset. */
+:where(.kit) :where(p, ol) {
+  margin: 0;
+  padding: 0;
+}
+
+/* v4b's large fragment: chip text 20px on a wide screen, 15px on a phone. */
+.kit--stage {
+  font-size: var(--kit-size, clamp(15px, 0.9vw + 8px, 20px));
+}
+
+/* CJK: the page's stacks (system.css, app.css: Hanken at the CJK face's Latin x-height, faces declared there), set
+   here too so a zh / ja object is right inside any page; no tracking.
+   break-word, not anywhere: anywhere lowers min-content to one glyph and lets flex rows crush a label. */
+.kit:lang(zh) {
+  --kit-sans: "Hanken Grotesk SC", "Hanken Grotesk SC Fallback", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
+  line-break: strict;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+}
+
+.kit:lang(ja) {
+  --kit-sans: "Hanken Grotesk JP", "Hanken Grotesk JP Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic UI", "Yu Gothic", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+  line-break: strict;
+  overflow-wrap: break-word;
+  word-break: auto-phrase;
+}
+
+.kit:lang(zh) *,
+.kit:lang(ja) * {
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------------------------------------ glyphs */
+.kit-g {
+  display: block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+}
+
+/* The mosoo sidebar family has exactly one plane at 12% (MAIN apps/web/src/shared/ui/sidebar-icons.tsx);
+   lit, that plane takes the accent inside its ink outline (Apollo line art: one face filled, STUDY §3.4). */
+.kit-gp {
+  fill: currentColor;
+  fill-opacity: 0.12;
+}
+
+.kit-g--lit .kit-gp {
+  fill: var(--kit-accent);
+  fill-opacity: 1;
+}
+
+.kit-mono {
+  font-family: var(--kit-mono);
+  font-size: 0.84em;
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------------------------------ the Session object */
+/* ./session.ts: the first plate and the stage's three states, one markup (round 3b; staging narrative/CHANGES.md §2,
+   §3, §10 A1). Every part is placed from the layout's numbers (in em of the kit's root size, so the whole object
+   scales with --kit-size) and from two state numbers, --kit-cloud and --kit-app (laptop 0 0, cloud 1 0, app 0 1):
+   data-kit-state sets them, a stage may set them itself and transition them (registered, so every part moves with
+   the same curve and nothing travels sideways: cards change in place). Wide layout by default; a container under
+   564px gets the narrow one (phones: the two cards side by side, the app state as a column).
+   Round 3c (staging v5/round3/c-plate): the first plate reads at a glance. The two rows that differ come first, as
+   one block; the Sessions behind are a fanned deck (wide) or stacked straight up (phones), showing over the front one,
+   in the card's own height band, never under the fold; every word is 14px or more (committee #125). */
+@property --kit-cloud {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --kit-app {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.kit-scene {
+  /* the layout: card widths and places; the cards' rhythm (padding, head height, gaps under the head, row) */
+  --lw: 15; /* the laptop card */
+  --sx: 22; /* the Session column's left edge (the gap leaves room for the request in the app state) */
+  --sw: 19; /* the Session card */
+  --fx: var(--sx); /* the front Session's left and width (the narrow layout moves it per state) */
+  --fw: var(--sw);
+  --pt: 1.2;
+  --px: 1.4;
+  --pb: 1.1;
+  --hd: 1.7;
+  --gp: 0.3; /* head -> the driver row: the two rows that differ read as one block (round 3c) */
+  --gq: 0.9; /* head -> the first row once the driver row has closed (cloud, app) */
+  --rw: 2.6;
+  --edge: 0.8; /* how far each Session behind shows over the one in front, per step back (16px at 20px; round 3c:
+                  the 12px lower edges read as a shadow, 0 of 10 readers saw more than one Session at first glance) */
+  --bi: 0; /* how much narrower each one behind is on each side, per step back (phones: stacked straight up) */
+  --dx: 0.8; /* how much further right, per step back (wide: a fanned deck, its top and right edges showing) */
+  --cg: 0.8; /* the gap between the spread Sessions */
+  /* the state */
+  --kit-cloud: 0;
+  --kit-app: 0;
+  /* derived: the stack over the cards (laptop, cloud) and the cards' top; rows on the front card (3 | 5 | 1), its
+     height, a head-only card's height, the places of the two behind (stacked over it | spread under it) */
+  --st: calc(2 * var(--edge));
+  --fy: calc(var(--st) * (1 - var(--kit-app)));
+  --rows: calc(3 + 2 * var(--kit-cloud) - 2 * var(--kit-app));
+  --gap: calc(var(--gp) + (var(--gq) - var(--gp)) * (var(--kit-cloud) + var(--kit-app)));
+  --hf: calc(var(--pt) + var(--hd) + var(--gap) + var(--pb) + var(--rw) * var(--rows));
+  --hb: calc(var(--pt) + var(--hd) + var(--pb));
+  --hl: calc(var(--pt) + var(--hd) + var(--gp) + var(--pb) + var(--rw) * 3);
+  --b1: calc((1 - var(--kit-app)) * (var(--fy) - var(--edge)) + var(--kit-app) * (var(--fy) + var(--hf) + var(--cg)));
+  --b2: calc(
+    (1 - var(--kit-app)) * (var(--fy) - 2 * var(--edge)) +
+      var(--kit-app) * (var(--fy) + var(--hf) + var(--hb) + 2 * var(--cg))
+  );
+  /* fades: in over the second half of a switch, out over the first */
+  --in-cloud: clamp(0, 2 * var(--kit-cloud) - 1, 1);
+  --in-app: clamp(0, 2 * var(--kit-app) - 1, 1);
+  position: relative;
+  width: calc((var(--sx) + var(--sw) + 2 * var(--dx)) * 1em);
+  pointer-events: none; /* a picture (role="img"): its parts at opacity 0 never take a hit test from what is shown */
+  height: calc(((1 - var(--kit-app)) * (var(--fy) + var(--hf)) + var(--kit-app) * (var(--b2) + var(--hb))) * 1em);
+}
+
+.kit-scene[data-kit-state="cloud"] {
+  --kit-cloud: 1;
+}
+
+.kit-scene[data-kit-state="app"] {
+  --kit-app: 1;
+}
+
+:where(.kit-scene) :where(ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A card: white on the plate, radius 16 (committee O3: whole inside the plate, never larger), the kit's shadow, no line
+   around it. A transparent border shows as a frame where forced colours drop the shadow. */
+.kit-card {
+  position: absolute;
+  top: 0;
+  padding: calc(var(--pt) * 1em) calc(var(--px) * 1em) 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: var(--kit-paper);
+  box-shadow: var(--kit-shadow-top);
+}
+
+/* The head: a neutral glyph, the name in ink 500 (no mosoo mark, committee O3). */
+.kit-head-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  height: calc(var(--hd) * 1em);
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+}
+
+/* The glyph before a name or a row: bare, in the words' colour, no tile (committee O1: the first screen keeps few small
+   shapes; the console's own lists draw their glyphs the same way). */
+.kit-ic {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.kit-ic > .kit-g {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.kit-head-row > .kit-ic > .kit-g {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.kit-rows {
+  margin-top: calc(var(--gap) * 1em);
+}
+
+.kit-laptop .kit-rows {
+  margin-top: calc(var(--gp) * 1em);
+}
+
+/* A row slot: one row's height while it is on (--on), its rule fading with it; two faces may share it (a, b). The
+   driver row sits right under the head, no rule between: where it runs and who drives it are one block; the rule
+   comes under it, over the rows the two cards share. */
+.kit-slot {
+  --on: 1;
+  position: relative;
+  display: grid;
+  height: calc(var(--rw) * var(--on) * 1em);
+  overflow: hidden;
+}
+
+.kit-slot::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--kit-line);
+  opacity: var(--on);
+}
+
+.kit-slot--driver::before {
+  content: none;
+}
+
+.kit-row {
+  display: flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  gap: 0.6em;
+  height: calc(var(--rw) * 1em);
+  font-size: 1em;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* The rows the two cards share read quieter than the two that differ (CHANGES §2.2): ink-2 400 and a step smaller,
+   against ink 500 (round 3c). */
+.kit-row--same {
+  color: var(--kit-ink-2);
+}
+
+.kit-row--key {
+  font-weight: 500;
+}
+
+/* The words: 1.05k (21px at the 20px stage kit); a shared row's 0.95k; the file name in Fragment Mono a step smaller
+   (it runs wide), never under 14px (committee #125). */
+.kit-scene .kit-t {
+  font-size: 1.05em;
+}
+
+.kit-scene .kit-row--same .kit-t {
+  font-size: max(14px, 0.95em);
+}
+
+.kit-scene .kit-row--same .kit-t.kit-mono {
+  font-size: max(14px, 0.86em);
+}
+
+.kit-done {
+  display: block;
+  flex: none;
+  margin-left: auto;
+  color: var(--kit-ink-2);
+}
+
+.kit-done > .kit-g {
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* "pinned": a neutral chip after Environment (no line around it, committee O1), never under 14px (#125). */
+.kit-pin {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 1.55em;
+  margin-left: auto;
+  padding: 0 0.6em;
+  border-radius: 999px;
+  background: var(--kit-sub);
+  color: var(--kit-ink-2);
+  font-size: max(14px, 0.8em);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* --------------------------------------------------------------------- the laptop card and the Sessions */
+.kit-laptop {
+  left: 0;
+  top: calc(var(--fy) * 1em);
+  width: calc(var(--lw) * 1em);
+  height: calc(var(--hl) * 1em);
+  opacity: calc(1 - 0.5 * var(--kit-cloud) - var(--kit-app));
+}
+
+/* A group in the markup only (the three Sessions, in paint order): no box of its own, so it covers nothing (a full-size
+   transparent box over the laptop card would take its hit tests). */
+.kit-sessions {
+  display: contents;
+}
+
+.kit-front {
+  z-index: 3;
+  left: calc(var(--fx) * 1em);
+  top: calc(var(--fy) * 1em);
+  width: calc(var(--fw) * 1em);
+  height: calc(var(--hf) * 1em);
+}
+
+/* The front card's slots (session.ts): the driver (Your backend), the harness, the file | Instructions, then Skills,
+   Remote MCP and Environment. The driver row closes for the cloud state and stays closed; the harness row stays for
+   the cloud state and closes for the app state; the preset's rows are on in the cloud state only. */
+.kit-front .kit-slot--driver {
+  --on: calc(1 - var(--kit-cloud) - var(--kit-app));
+}
+
+.kit-front .kit-slot--harness {
+  --on: calc(1 - var(--kit-app));
+}
+
+.kit-front :is(.kit-slot--skills, .kit-slot--mcp, .kit-slot--env) {
+  --on: var(--kit-cloud);
+}
+
+.kit-front .kit-slot--driver > .kit-row {
+  opacity: clamp(0, 1 - 2 * var(--kit-cloud) - 2 * var(--kit-app), 1);
+}
+
+.kit-front .kit-slot--harness > .kit-row {
+  opacity: clamp(0, 1 - 2 * var(--kit-app), 1);
+}
+
+/* report.md gives way to Instructions in the cloud state and comes back in the app state. */
+.kit-front .kit-row--a {
+  opacity: clamp(0, 1 - 2 * var(--kit-cloud), 1);
+}
+
+.kit-front .kit-row--b,
+.kit-front :is(.kit-slot--skills, .kit-slot--mcp, .kit-slot--env) > .kit-row {
+  opacity: var(--in-cloud);
+}
+
+/* The two Sessions behind: fanned, each a step up and to the right, their top and right edges showing (round 3c: in
+   the card's own height band, where a reader starts, and never under the fold; phones stack them straight up, each a
+   step narrower); spread, whole cards under the front one with their heads. They pass behind it on the way. */
+.kit-back {
+  --inset: calc((1 - var(--kit-app)) * var(--n) * var(--bi));
+  left: calc((var(--fx) + var(--inset) + (1 - var(--kit-app)) * var(--n) * var(--dx)) * 1em);
+  width: calc((var(--fw) - 2 * var(--inset)) * 1em);
+  /* fanned, as tall as the front one; spread, a head */
+  height: calc(((1 - var(--kit-app)) * var(--hf) + var(--kit-app) * var(--hb)) * 1em);
+}
+
+.kit-back--1 {
+  --n: 1;
+  z-index: 2;
+  top: calc(var(--b1) * 1em);
+}
+
+.kit-back--2 {
+  --n: 2;
+  z-index: 1;
+  top: calc(var(--b2) * 1em);
+}
+
+.kit-back > .kit-head-row {
+  opacity: var(--in-app);
+}
+
+/* Stacked, each one back is a shade further into the frame's grey (paper -> --kit-sub), so its edge reads as a card
+   behind, not as a shadow; spread, they are white like the front one. */
+.kit-back--1 {
+  background: color-mix(in srgb, var(--kit-sub) calc((1 - var(--kit-app)) * 50%), var(--kit-paper));
+}
+
+.kit-back--2 {
+  background: color-mix(in srgb, var(--kit-sub) calc((1 - var(--kit-app)) * 100%), var(--kit-paper));
+}
+
+/* -------------------------------------------------------------------------- your app and who calls whom */
+/* Places in the app state (wide): Teammate and Customer on top, a line from each down into Your app, its line (the
+   request, POST …/threads) across to a rail beside the three Sessions, one branch into each. */
+.kit-calls {
+  --c1: 0; /* the source chips: the first one's left, the second one's left, width and height */
+  --c2: 8.4;
+  --cw: 7.8;
+  --ch: 2.2;
+  --ax: 2.05; /* Your app: left, top, width (ja あなたのアプリ fits; each source line enters 1.85em inside it) */
+  --ay: 3.8;
+  --aw: 11.9;
+  --rail: calc(var(--sx) - 0.8); /* the rail into the Sessions */
+  --ln: rgb(22 24 21 / 0.72);
+  position: absolute;
+  inset: 0;
+  opacity: var(--in-app);
+}
+
+.kit-src {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  width: calc(var(--cw) * 1em);
+  height: calc(var(--ch) * 1em);
+  padding: 0 0.8em 0 0.3em;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--kit-paper);
+  box-shadow: var(--kit-shadow-top);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.kit-src > .kit-ic {
+  margin-left: 0.35em;
+}
+
+.kit-scene .kit-src > .kit-t {
+  font-size: 1em;
+}
+
+.kit-src--1 {
+  left: calc(var(--c1) * 1em);
+}
+
+.kit-src--2 {
+  left: calc(var(--c2) * 1em);
+}
+
+.kit-app {
+  padding-inline: 0.9em;
+  left: calc(var(--ax) * 1em);
+  top: calc(var(--ay) * 1em);
+  width: calc(var(--aw) * 1em);
+  height: calc(var(--hb) * 1em);
+}
+
+/* The lines: 1px ink, structure only (committee O1); no arrowheads (CHANGES §10 A1): the request names the direction. */
+.kit-ln {
+  position: absolute;
+  display: block;
+  border: 0 solid var(--ln);
+}
+
+/* Teammate and Customer: a line from each chip straight down into Your app. */
+.kit-ln--use {
+  top: calc(var(--ch) * 1em);
+  height: calc((var(--ay) - var(--ch)) * 1em);
+  border-left-width: 1px;
+}
+
+.kit-ln--use-1 {
+  left: calc((var(--c1) + var(--cw) / 2) * 1em);
+}
+
+.kit-ln--use-2 {
+  left: calc((var(--c2) + var(--cw) / 2) * 1em);
+}
+
+/* Your app -> the rail, at the app card's middle; the request sits on it. */
+.kit-ln--trunk {
+  left: calc((var(--ax) + var(--aw)) * 1em);
+  top: calc((var(--ay) + var(--hb) / 2) * 1em);
+  width: calc((var(--rail) - var(--ax) - var(--aw)) * 1em);
+  border-top-width: 1px;
+}
+
+/* The request, on that line: Fragment Mono (a request line, committee O1), centred on it, its foot 0.35em above. */
+.kit-call {
+  position: absolute;
+  left: calc((var(--ax) + var(--aw)) * 1em);
+  bottom: calc(100% - (var(--ay) + var(--hb) / 2 - 0.35) * 1em);
+  width: calc((var(--rail) - var(--ax) - var(--aw)) * 1em);
+  color: var(--kit-ink);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* As large as 14px while it fits the line from Your app to the rail with 4px to spare each side (#125: the request is
+   14 characters of Fragment Mono, 8.65 times its size wide; 14px from the 18px kit, 12.8px at the 16.35px kit of a
+   1366 x 768 screen, never under 0.7k). */
+.kit-call > .kit-mono {
+  font-size: clamp(0.7em, ((var(--rail) - var(--ax) - var(--aw)) * 1em - 8px) / 8.65, 14px);
+}
+
+/* The rail: from the front Session's head to the last one's, a branch into each (top and bottom drawn here, the
+   middle one by tap-1; tap-0 is the narrow layout's). */
+.kit-ln--bus {
+  left: calc(var(--rail) * 1em);
+  top: calc((var(--fy) + var(--pt) + var(--hd) / 2) * 1em);
+  width: calc((var(--fx) - var(--rail)) * 1em);
+  height: calc((var(--b2) - var(--fy)) * 1em);
+  border-width: 1px 0 1px 1px;
+  border-radius: 0.5em 0 0 0.5em;
+}
+
+.kit-ln--tap {
+  left: calc(var(--rail) * 1em);
+  width: calc((var(--fx) - var(--rail)) * 1em);
+  border-top-width: 1px;
+}
+
+.kit-ln--tap-0 {
+  display: none;
+}
+
+.kit-ln--tap-1 {
+  top: calc((var(--b1) + var(--pt) + var(--hd) / 2) * 1em);
+}
+
+/* The narrow layout (a container under 564px: phones, whose plates are static): the two cards side by side, the
+   laptop card left out of the cloud state (its Session card takes the plate's width: the preset's rows and the chip
+   need it), the app state a column: Teammate and Customer over Your app, the request down and along a rail on the
+   left, one branch into each Session. Its words are the kit's root size, 14px or more from a 390px phone up (#125):
+   the shared rows are quieter by colour and weight only. */
+@container (width < 564px) {
+  .kit-scene {
+    --lw: 10.2; /* report.md at 14px and its tick fit the laptop card (#125) */
+    --sx: 10.9;
+    --sw: 10.3;
+    --pt: 0.9;
+    --px: 0.7;
+    --pb: 0.8;
+    --hd: 1.5;
+    --gp: 0.2;
+    --gq: 0.6;
+    --rw: 2.3;
+    --edge: 1.1;
+    --bi: 0.45;
+    --dx: 0;
+    --cg: 0.6;
+  }
+
+  .kit-scene[data-kit-state="cloud"] {
+    --fx: 0;
+    --fw: calc(var(--sx) + var(--sw));
+  }
+
+  .kit-scene[data-kit-state="cloud"] .kit-laptop {
+    opacity: 0;
+  }
+
+  .kit-scene[data-kit-state="app"] {
+    --fx: 1.6;
+    --fw: 19.6;
+    --fy: 8.7;
+  }
+
+  .kit-scene .kit-t,
+  .kit-scene .kit-row--same .kit-t {
+    font-size: 1em;
+  }
+
+  .kit-scene .kit-row--same .kit-t.kit-mono {
+    font-size: min(14px, 1em);
+  }
+
+  .kit-head-row,
+  .kit-row {
+    gap: 0.45em;
+  }
+
+  .kit-ic {
+    width: 1.1em;
+    height: 1.1em;
+  }
+
+  .kit-ic > .kit-g,
+  .kit-head-row > .kit-ic > .kit-g {
+    width: 1.05em;
+    height: 1.05em;
+  }
+
+  .kit-done > .kit-g {
+    width: 1em;
+    height: 1em;
+  }
+
+  .kit-calls {
+    --c1: 1.6;
+    --c2: 11.2;
+    --cw: 8.4;
+    --ch: 2;
+    --ax: 4;
+    --ay: 3.4;
+    --aw: 13.2;
+    --rail: 0.6;
+  }
+
+  /* Your app -> down, then left along to the rail (rounded where the rail takes it down). */
+  .kit-ln--trunk {
+    left: calc((var(--rail) + 0.5) * 1em);
+    top: calc((var(--ay) + var(--hb)) * 1em);
+    width: calc((var(--ax) + var(--aw) / 2 - var(--rail) - 0.5) * 1em);
+    height: calc((var(--fy) - var(--ay) - var(--hb) - 0.6) * 1em);
+    border-width: 0 1px 1px 0;
+    border-top-width: 0;
+    border-radius: 0 0 0.5em;
+  }
+
+  .kit-call {
+    left: calc((var(--ax) + var(--aw) / 2 + 0.5) * 1em);
+    bottom: auto;
+    top: calc((var(--ay) + var(--hb) + 0.3) * 1em);
+    width: auto;
+    text-align: left;
+  }
+
+  /* The request at 14px (#125); it starts right of the line down from Your app and ends inside the plate. */
+  .kit-call > .kit-mono {
+    font-size: max(14px, 0.7em);
+  }
+
+  .kit-ln--bus {
+    top: calc((var(--fy) - 0.6) * 1em);
+    height: calc((var(--b2) + var(--pt) + var(--hd) / 2 - var(--fy) + 0.6) * 1em);
+    border-width: 1px 0 1px 1px;
+  }
+
+  .kit-ln--tap-0 {
+    display: block;
+    top: calc((var(--fy) + var(--pt) + var(--hd) / 2) * 1em);
+  }
+}
+
+/* The running mark (./objects.ts sandbox cell): 8px lime in a 1px ink ring (v4b's size, TOOLS-REVIEW T4; BRIEF §3.1);
+   grows only above the stage size. */
+.kit-live {
+  display: block;
+  flex: none;
+  width: max(8px, calc(var(--k) * 0.4));
+  height: max(8px, calc(var(--k) * 0.4));
+  border-radius: 50%;
+  background: var(--kit-accent);
+  box-shadow: 0 0 0 1px var(--kit-ink);
+}
+
+/* --------------------------------------------------------------------------------------- underlay */
+/* A T1 strip with T1's grain (v5-fields.css); the box's own background is the placeholder in T1's stops
+   (accent, tint, mint, mist), shown when v5-fields.css is not loaded. */
+.kit-underlay {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  background: linear-gradient(90deg, #d9e9f4 0%, #d3f0f1 20%, #d2f8e2 38%, #deffb5 56%, #bcf870 74%, #bcf870 100%);
+  pointer-events: none;
+}
+
+/* Strip b has its lime end first (T1 fields.mjs, limeAt "start"); the placeholder follows. */
+.kit-underlay--b {
+  background: linear-gradient(270deg, #d9e9f4 0%, #d3f0f1 20%, #d2f8e2 38%, #deffb5 56%, #bcf870 74%, #bcf870 100%);
+}
+
+.kit-underlay > .kit-underlay-tex {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+}
+
+/* Behind a chip or tile, offset down-left (Apollo "Access email": -7, +8 at 1000). */
+.kit-underlay--chip {
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  transform: translate(calc(var(--k) * -0.3), calc(var(--k) * 0.34));
+}
+
+/* ------------------------------------------------------------------------------- the small objects */
+.kit-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--kit-ink-2);
+  font-size: 0.8em; /* sentence case, not an all-caps kicker (TOOLS-REVIEW T4) */
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.kit-eyebrow .kit-g {
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.kit-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--k) * 2.3);
+  height: calc(var(--k) * 2.3);
+  border-radius: calc(var(--k) * 0.55);
+  background: var(--kit-sub);
+}
+
+.kit-icon .kit-g {
+  width: calc(var(--k) * 1.3);
+  height: calc(var(--k) * 1.3);
+}
+
+.kit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2);
+  padding: 0 calc(var(--k) * 0.85) 0 calc(var(--k) * 0.65);
+  border-radius: 999px;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+  white-space: nowrap;
+}
+
+.kit-pill .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+  color: var(--kit-ink-2);
+}
+
+.kit-wire {
+  display: block;
+  flex: none;
+  border-radius: 999px;
+  background: var(--kit-wire);
+}
+
+.kit-wire--across {
+  width: calc(var(--k) * 2.35);
+  height: max(1px, calc(var(--k) * 0.085));
+}
+
+.kit-wire--down {
+  width: max(1px, calc(var(--k) * 0.085));
+  height: calc(var(--k) * 2.35);
+}
+
+/* Harness strip (Apollo CONNECTED SOURCE: strip 104, tiles 77, gap 22, radius 20 at 1000). Its ground is
+   half-white, a step lighter than whatever it sits on (Apollo #F9F9F6 on #EFEFEB), so it holds on a grey
+   well, a white card or the stage plate alike. */
+.kit-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.95);
+  padding: calc(var(--k) * 0.62);
+  border-radius: calc(var(--k) * 0.85);
+  background: rgb(255 255 255 / 0.55);
+  box-shadow: inset 0 0 0 1px var(--kit-line);
+}
+
+.kit-strip > .kit-eyebrow {
+  flex: none;
+  max-width: 6.5em;
+  padding-left: calc(var(--k) * 0.45);
+}
+
+.kit-strip-tiles {
+  display: flex;
+  gap: calc(var(--k) * 0.9);
+}
+
+.kit-tile {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  border-radius: calc(var(--k) * 0.66);
+}
+
+.kit-tile-face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(var(--k) * 3.3);
+  height: calc(var(--k) * 3.3);
+  border-radius: inherit;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px rgb(22 24 21 / 0.06), 0 1px 2px rgb(22 24 21 / 0.06);
+}
+
+.kit-tile-face .kit-g {
+  width: calc(var(--k) * 1.55);
+  height: calc(var(--k) * 1.55);
+}
+
+.kit-tile--lit .kit-tile-face,
+.kit-fchip--lit .kit-fchip-face {
+  box-shadow: var(--kit-shadow-top);
+}
+
+/* Key row: key card, connector, the dotted wall with a grant inside. */
+.kit-keyrow {
+  display: inline-flex;
+  align-items: center;
+}
+
+.kit-keycard {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.7);
+  padding: calc(var(--k) * 0.7) calc(var(--k) * 1.05) calc(var(--k) * 0.7) calc(var(--k) * 0.7);
+  border-radius: calc(var(--k) * 0.74);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+}
+
+.kit-keycard-t {
+  display: grid;
+  gap: calc(var(--k) * 0.3);
+}
+
+.kit-keycard-n {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Dots, not words: ink-3 is fine below 24px here. */
+.kit-mask {
+  color: var(--kit-ink-3);
+  font-size: 0.9em;
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+/* The sandbox: a dotted wall (ElevenLabs dotted line, BRIEF §3.3) around a faint well. */
+.kit-cell {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--k) * 0.7);
+  padding: calc(var(--k) * 0.9) calc(var(--k) * 1);
+  border-radius: calc(var(--k) * 0.85);
+  background: var(--kit-well);
+}
+
+.kit-dots {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.kit-dots-r {
+  x: 0.625px;
+  y: 0.625px;
+  width: calc(100% - 1.25px);
+  height: calc(100% - 1.25px);
+  rx: calc(var(--k) * 0.85);
+  fill: none;
+  stroke: var(--kit-ink);
+  stroke-dasharray: 0.01 4;
+  stroke-linecap: round;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
+}
+
+.kit-proc {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: calc(var(--k) * 0.65);
+  padding: calc(var(--k) * 0.5) calc(var(--k) * 1) calc(var(--k) * 0.5) calc(var(--k) * 0.5);
+  border-radius: calc(var(--k) * 0.6);
+  background: var(--kit-paper);
+  box-shadow: var(--kit-shadow-top);
+  white-space: nowrap;
+}
+
+.kit-proc .kit-icon {
+  width: calc(var(--k) * 2);
+  height: calc(var(--k) * 2);
+}
+
+.kit-proc .kit-icon .kit-g {
+  width: calc(var(--k) * 1.1);
+  height: calc(var(--k) * 1.1);
+}
+
+.kit-cell-status {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.5);
+  color: var(--kit-ink-2);
+  font-size: 0.92em;
+}
+
+/* Files: outputs/ and its files, faded and running off the edge (the card clips them). */
+.kit-files {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.75);
+  white-space: nowrap;
+}
+
+.kit-folder {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+}
+
+.kit-folder .kit-g {
+  width: calc(var(--k) * 1.35);
+  height: calc(var(--k) * 1.35);
+}
+
+.kit-files-row {
+  display: flex;
+  gap: calc(var(--k) * 0.5);
+}
+
+.kit-fchip,
+.kit-rchip {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  flex: none;
+  border-radius: 999px;
+}
+
+.kit-fchip-face,
+.kit-rchip-face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2.15);
+  padding: 0 calc(var(--k) * 0.9) 0 calc(var(--k) * 0.65);
+  border-radius: inherit;
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+}
+
+/* The files after the first fade toward the edge: .6 / .2 / .08. */
+.kit-fchip:nth-child(2) {
+  opacity: 0.6;
+}
+
+.kit-fchip:nth-child(3) {
+  opacity: 0.2;
+}
+
+.kit-fchip:nth-child(n + 4) {
+  opacity: 0.08;
+}
+
+.kit-fchip-face .kit-g,
+.kit-rchip .kit-g {
+  width: calc(var(--k) * 1);
+  height: calc(var(--k) * 1);
+  color: var(--kit-ink-2);
+}
+
+/* Resume: earlier turn, the gap on a connector, the turn that picks it up. */
+.kit-resume {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The earlier turn: the same pill, faded like an older row. */
+.kit-rchip--from {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--k) * 0.4);
+  height: calc(var(--k) * 2.15);
+  padding: 0 calc(var(--k) * 0.9) 0 calc(var(--k) * 0.65);
+  background: var(--kit-paper);
+  box-shadow: 0 0 0 1px var(--kit-line);
+  opacity: 0.6;
+}
+
+.kit-resume-gap {
+  position: relative;
+  display: block;
+  padding: calc(var(--k) * 0.3) 0;
+}
+
+.kit-resume-t {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + var(--k) * 0.6);
+  color: var(--kit-ink-2);
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.kit-rchip--to .kit-rchip-face {
+  height: calc(var(--k) * 2.4);
+  padding: 0 calc(var(--k) * 1.05) 0 calc(var(--k) * 0.75);
+  box-shadow: var(--kit-shadow-top);
+  font-weight: 500;
+}
+
+.kit-rchip-note {
+  margin-left: calc(var(--k) * 0.2);
+  padding-left: calc(var(--k) * 0.6);
+  border-left: 1px solid var(--kit-line-2);
+  color: var(--kit-ink-2);
+  font-weight: 400;
+}
+
+/* Narrow slots (a phone card, a narrow bento cell): the strip drops its eyebrow (the card names it) and the
+   key row stands up, its connector running down as Apollo's do. A slot opts in with
+   `container: kit / inline-size`; phones get the same rules from the viewport. Duplicated on purpose:
+   one block cannot serve both @container and @media. */
+@container kit (max-width: 400px) {
+  .kit-strip > .kit-eyebrow {
+    display: none;
+  }
+
+  .kit-keyrow {
+    flex-direction: column;
+  }
+
+  .kit-keyrow > .kit-wire--across {
+    width: max(1px, calc(var(--k) * 0.085));
+    height: calc(var(--k) * 1.6);
+  }
+}
+
+@media (max-width: 480px) {
+  .kit-strip > .kit-eyebrow {
+    display: none;
+  }
+
+  .kit-keyrow {
+    flex-direction: column;
+  }
+
+  .kit-keyrow > .kit-wire--across {
+    width: max(1px, calc(var(--k) * 0.085));
+    height: calc(var(--k) * 1.6);
+  }
+}
+
+@media (forced-colors: active) {
+  .kit-underlay {
+    display: none;
+  }
+
+  .kit-live {
+    forced-color-adjust: none;
+  }
+}

@@ -33,7 +33,7 @@ export const GET: APIRoute = async ({ site }) => {
   <channel>
     <title>mosoo Blog</title>
     <link>${base}</link>
-    <description>Notes from the bamboo grove — engineering, product, and research from the team building mosoo.</description>
+    <description>Engineering, product, and research notes from the team building mosoo.</description>
     <language>en-us</language>${items}
   </channel>
 </rss>`;

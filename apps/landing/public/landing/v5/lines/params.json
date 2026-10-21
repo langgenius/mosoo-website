@@ -1,0 +1,44 @@
+{
+  "instances": {
+    "hero": {
+      "w": 1120, "h": 720, "fit": "none",
+      "n": 12, "spacing": 7, "length": 2400, "amp": 180, "freq": 0.75, "phase": 0.14, "twist": 0.41, "bulge": 0.66, "morph": 0.5, "res": 81,
+      "rotate": -12,
+      "pin": { "x": 860, "y": 270, "at": 0.48, "pinch": 0.9, "width": 0.13 },
+      "t0": 0, "stroke": 1, "opacity": 0.9,
+      "ramp": { "from": "#64932A", "to": "#BCF870", "ease": 1.4 },
+      "ground": "#d1dce6",
+      "objects": [{ "x": 150, "y": 48, "w": 300, "h": 262, "r": 16 }, { "x": 624, "y": 252, "w": 312, "h": 82, "r": 16 }, { "x": 607, "y": 240, "w": 346, "h": 82, "r": 16 }, { "x": 590, "y": 48, "w": 380, "h": 262, "r": 16 }]
+    },
+    "hero-mobile": {
+      "w": 720, "h": 460, "fit": "none",
+      "n": 12, "spacing": 5, "length": 1400, "amp": 90, "freq": 0.75, "phase": 0.14, "twist": 0.41, "bulge": 0.66, "morph": 0.5, "res": 81,
+      "rotate": -35,
+      "pin": { "x": 262, "y": 158, "at": 0.48, "pinch": 0.9, "width": 0.13 },
+      "t0": 0, "stroke": 1, "opacity": 0.9,
+      "ramp": { "from": "#667757", "to": "#D3EBBA", "ease": 1.4 },
+      "ground": "#cfdbe5",
+      "objects": [{ "x": 20, "y": 20, "w": 144, "h": 166, "r": 16 }, { "x": 202, "y": 166, "w": 110, "h": 51, "r": 16 }, { "x": 189, "y": 155, "w": 136, "h": 52, "r": 16 }, { "x": 176, "y": 20, "w": 162, "h": 166, "r": 16 }]
+    },
+    "card-narrow": {
+      "w": 340, "h": 412, "fit": "cover",
+      "n": 12, "spacing": 5, "length": 520, "amp": 60, "freq": 0.75, "phase": 0.14, "twist": 0.41, "bulge": 0.66, "morph": 0.5, "res": 81,
+      "rotate": -12,
+      "pin": { "x": 72, "y": 180, "at": 0.32, "pinch": 0.9, "width": 0.13 },
+      "t0": 0, "stroke": 1.25,
+      "ramp": { "from": "#3D630D", "to": "#BCF870", "ease": 1.4 },
+      "ground": "#ffffff",
+      "objects": [{ "x": 72, "y": 146, "w": 60, "h": 60, "r": 14 }, { "x": 140, "y": 146, "w": 60, "h": 60, "r": 14 }, { "x": 208, "y": 146, "w": 60, "h": 60, "r": 14 }]
+    },
+    "card-wide": {
+      "w": 700, "h": 412, "fit": "cover",
+      "n": 16, "spacing": 5.2, "length": 1050, "amp": 110, "freq": 0.75, "phase": 0.14, "twist": 0.41, "bulge": 0.66, "morph": 0.5, "res": 81,
+      "rotate": 186,
+      "pin": { "x": 560, "y": 182, "at": 0.28, "pinch": 0.9, "width": 0.13 },
+      "t0": 0, "stroke": 1.25,
+      "ramp": { "from": "#3D630D", "to": "#BCF870", "ease": 1.4 },
+      "ground": "#ffffff",
+      "objects": [{ "x": 140, "y": 140, "w": 420, "h": 72, "r": 16 }]
+    }
+  }
+}

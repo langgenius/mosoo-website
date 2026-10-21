@@ -1,0 +1,39 @@
+{
+  "$comment": "Slots of sections/closing.ts, on the T1 closing plate (1120x480 at 1440). h2a + h2b: the two-line serif H2 (48px; 34px at 390), centred, <= 30 characters together; each line one line at 1440 up to 20 characters. Then the setup-prompt card on the plate (no glass bezel since #130): legend = the card's label just above it (sans 13px, one line up to 40); prompt = the sentence the Copy button puts on the clipboard (sans 16px; one line up to about 50 characters at 1440, two lines at 390); copy / copied = the button's two states (the button is as wide as the longer one; the live region announces copied). Then primary = the lime CTA, and caption = the one line under it (what happens when you click; one line at 1440, two at 390 when it reaches 50). The story ends where it started (narrative/DECK.md §2.7): off the laptop, into your app, and the agent on your laptop gets the setup prompt; the prompt, Copy, the CTA and its caption are unchanged, and the #130 test still checks that Copy copies closing.prompt. Fallback title if the owner prefers: the owner-approved 'Start your first / Session.' (owner-notes L120). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths; the two title lines together). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
+  "$source": {
+    "h2": "Runs in an isolated sandbox in the cloud, not on the laptop (README.md L26); mosoo serves developers who put agents into applications (SITE introducing-mosoo-computer.mdx L70; README.md L8).",
+    "legend": "The console's setup prompt is written for any coding agent (MAIN apps/web/src/routes/project-overview/onboarding-setup-prompt.ts L5-L7). Replaces 'Paste into Codex, Claude Code or Cursor': Cursor is not one of the four harnesses and, next to 'Bring your own agent', would read as 'any agent works' (narrative/draft-1.md L210).",
+    "prompt": "Unchanged. llms.txt can deliver it today: install the CLI, sign in, the user adds the provider key, start a Session (SITE src/worker.js L125, L135-L138). It does not promise to move the laptop's setup (inline carries no Skills or MCP: docs/prd/public-thread-api-surface.md L25).",
+    "caption": "Unchanged. What the click does and what it costs: Try mosoo opens the console (README L18, L43), free to start with no credit card (MAIN apps/web/src/shared/i18n/translations/en.json L51 'No credit card required. Free to start.'). In the v5 five-second test three of five personas could not tell whether Try mosoo meant a free tier, a waitlist, a sales form or a card form (staging v5/FIXES.md §1). The model key it needs first is FAQ 5's and llms.txt's ('Before the first run')."
+  },
+  "en": {
+    "h2a": "Off your laptop.",
+    "h2b": "Into your app.",
+    "legend": "Paste into the agent on your laptop",
+    "prompt": "Read mosoo.ai/llms.txt and start my first Session.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "primary": "Try mosoo",
+    "caption": "Opens the console: free to start, no credit card."
+  },
+  "zh": {
+    "h2a": "从笔记本，",
+    "h2b": "到你的应用里。",
+    "legend": "粘贴给你电脑上的 Agent",
+    "prompt": "读取 mosoo.ai/llms.txt，启动我的首个 Session。",
+    "copy": "复制",
+    "copied": "已复制",
+    "primary": "试用 mosoo",
+    "caption": "打开控制台：免费开始，无需信用卡。"
+  },
+  "ja": {
+    "h2a": "PC を離れて、",
+    "h2b": "アプリの中へ。",
+    "legend": "手元の Agent に貼り付け",
+    "prompt": "mosoo.ai/llms.txt を読み、最初の Session を始めて。",
+    "copy": "コピー",
+    "copied": "コピー済",
+    "primary": "mosoo を試す",
+    "caption": "コンソールが開きます。無料で、カード不要。"
+  }
+}

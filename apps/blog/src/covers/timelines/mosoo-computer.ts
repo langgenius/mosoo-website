@@ -1,4 +1,4 @@
-// Timeline for "Mosoo Computer: a computer your agent can keep working in".
+// Timeline for "mosoo computer: a computer your agent can keep working in".
 // One moment: the computer sleeps, the workspace stays, one request wakes it.
 import type { CoverTimeline } from "../runtime";
 

@@ -1,7 +1,9 @@
 ---
 title: "Cloud Agent が未来になったとき、必然的に現れるインフラとは？"
 titleAccent: "インフラ"
+cardTitle: "必然のインフラとは？"
 description: "Cloud Agent が主流になれば、開発者が必要とするのは Agent CRUD の追加ではなく、Environment を解決・実行・統制する中立的な Control Plane だ。本稿は、その未来から逆算して必然となる基盤を考える。"
+descriptionEmphasis: "中立的な Control Plane"
 date: 2026-08-18
 category: "Product"
 author: "Evanchen"
@@ -21,11 +23,11 @@ draft: false
 
 より重要な問いはこうなる。**その未来を繁栄させるには、どのような infrastructure が必然的に必要になるのか。**
 
-この記事は、どの Sandbox 企業が勝つかを予測するものではない。また、Mosoo がすでに提供している機能のリリース告知でもない。これは product memo だ。Cloud Agent が主流になった未来を「結果」として置き、そこから逆算して、開発者が必ず必要とするものを考える。
+この記事は、どの Sandbox 企業が勝つかを予測するものではない。また、mosoo がすでに提供している機能のリリース告知でもない。これは product memo だ。Cloud Agent が主流になった未来を「結果」として置き、そこから逆算して、開発者が必ず必要とするものを考える。
 
 ## 先に結論を書く
 
-> ここでいう「中立的な Environment Control Plane」とは、Mosoo がすべての compute resource を自前で提供することではない。開発者が依存するのは Mosoo の Environment と Run protocol だけで、Harness とその下の Sandbox は交換できる、という意味だ。
+> ここでいう「中立的な Environment Control Plane」とは、mosoo がすべての compute resource を自前で提供することではない。開発者が依存するのは mosoo の Environment と Run protocol だけで、Harness とその下の Sandbox は交換できる、という意味だ。
 >
 > **One API to run and govern any harness inside a reusable cloud environment.**
 
@@ -110,11 +112,11 @@ Run Attempt
 
 - 一つの Harness に bind しない。同じ Environment から異なる Harness を明示的に選べる。
 - 一つの Sandbox に bind しない。将来は managed provider または enterprise の self-hosted compute で実行できる。
-- 一つの Framework に bind しない。Mastra、Eve、Flue、Deep Agents は Mosoo を呼び出せるが、Mosoo がそれらを再実装する必要はない。
+- 一つの Framework に bind しない。Mastra、Eve、Flue、Deep Agents は mosoo を呼び出せるが、mosoo がそれらを再実装する必要はない。
 - Repo を前提にしない。task は file、dataset、browser、business API を中心にしてもよい。
-- Agent を必須にしない。identity、memory、Channel、publishing は、上位の Mosoo Agents product に属する。
+- Agent を必須にしない。identity、memory、Channel、publishing は、上位の mosoo Agents product に属する。
 
-したがって、最初の version が一つの Sandbox backend しか使わなくてもよい。公開 Run protocol、Environment Revision、result semantics にその backend を hard-code しなければ、Mosoo は将来 Router になる位置を保てる。
+したがって、最初の version が一つの Sandbox backend しか使わなくてもよい。公開 Run protocol、Environment Revision、result semantics にその backend を hard-code しなければ、mosoo は将来 Router になる位置を保てる。
 
 ## 2023 年の OpenRouter から逆算する
 
@@ -130,11 +132,11 @@ const run = await mosoo.run({
 })
 ```
 
-`mosoo/general` は、すぐに使えて Mosoo が maintenance する Environment address だ。private な `env_xxx` は custom tool、network、dependency が必要になったときの upgrade path であり、最初の Run の前提条件ではない。
+`mosoo/general` は、すぐに使えて mosoo が maintenance する Environment address だ。private な `env_xxx` は custom tool、network、dependency が必要になったときの upgrade path であり、最初の Run の前提条件ではない。
 
 ただし、この類推には越えてはならない境界がある。model request は通常、外部世界を変更しない。Agent Run は変更する。
 
-Mosoo は将来、region、isolation level、capacity、cold start、price、過去の success rate に基づいて Sandbox を route できる。しかし Agent がすでに file を変更したり外部 API を呼んだりしたあとで、task を別の machine に静かに移すことはできない。安全な Fallback は最初の side effect より前にしか行えない。それ以外では、clean な Revision から、ユーザーに見える新しい Attempt を作る必要がある。
+mosoo は将来、region、isolation level、capacity、cold start、price、過去の success rate に基づいて Sandbox を route できる。しかし Agent がすでに file を変更したり外部 API を呼んだりしたあとで、task を別の machine に静かに移すことはできない。安全な Fallback は最初の side effect より前にしか行えない。それ以外では、clean な Revision から、ユーザーに見える新しい Attempt を作る必要がある。
 
 ## Gallery は出発点ではない。互換性 data が出発点だ
 
@@ -144,7 +146,7 @@ Agent Gallery をこの時代の Model Gallery と考えるのは簡単だ。し
 Environment × Harness × Provider
 ```
 
-同じ組み合わせでも、起動にどれほど時間がかかるのか。どこで失敗するのか。どれだけ resource を使うのか。どの permission が衝突するのか。どの条件なら安全に retry できるのか。こうした data があるからこそ、Mosoo は統一された入口から、判断力を持つ Router へ成長できる。
+同じ組み合わせでも、起動にどれほど時間がかかるのか。どこで失敗するのか。どれだけ resource を使うのか。どの permission が衝突するのか。どの条件なら安全に retry できるのか。こうした data があるからこそ、mosoo は統一された入口から、判断力を持つ Router へ成長できる。
 
 より信頼できる成長順序は次のようになる。
 
@@ -167,17 +169,17 @@ Gallery は、実際の execution で検証された Environment が自然に形
 | 最初から multi-provider Broker | 複数の Sandbox を接続し、price と capacity で route する | lowest common denominator、Snapshot migration、side-effect semantics にすぐ陥る |
 | Environment Spec / Registry のみ | open specification と environment directory | 広がりやすいが、execution data、revenue、本当の control がない |
 
-Mosoo がいま選ぶべきなのは一つ目だ。まず本当に使いやすい execution entry point になり、実証された需要に応じて Broker capability を獲得する。
+mosoo がいま選ぶべきなのは一つ目だ。まず本当に使いやすい execution entry point になり、実証された需要に応じて Broker capability を獲得する。
 
-## Mosoo にすでにあるもの、まだ足りないもの
+## mosoo にすでにあるもの、まだ足りないもの
 
 この記事が記しているのは direction であり、現在の product state ではない。
 
-執筆時点の Mosoo main branch は、まだ `App → Agent → Session → Run` という構造になっている。[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) と [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) はどちらも `agentId` を要求し、execution も [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) から始まる。
+執筆時点の mosoo main branch は、まだ `App → Agent → Session → Run` という構造になっている。[Session](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/core.schema.ts#L19-L47) と [Run](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/session/runs.schema.ts#L31-L70) はどちらも `agentId` を要求し、execution も [`createAgentSession`](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/apps/api/src/modules/runtime/application/session-runs/create-agent-session.service.ts#L286-L307) から始まる。
 
 一方、再利用できる基盤はすでに存在する。immutable な [Environment Revision](https://github.com/langgenius/mosoo/blob/e5ed1d63dc5529377ff386e5e4b714fd05d239f6/pkgs/db/src/schema/environment.schema.ts#L35-L60)、複数の Harness Driver、Sandbox Provisioning、そして Run の event、approval、cancellation、Artifact、Usage、cleanup の経路だ。
 
-だから [#546](https://github.com/langgenius/mosoo/issues/546) が提案するのは Runtime の rewrite ではなく、product boundary の分離である。Mosoo Agents は Pet に必要な Agent identity、publishing、memory、Channel、long-lived state を引き続き担う。Mosoo Cattle は shared execution kernel から Agent identity の必須条件を取り除く。
+だから [#546](https://github.com/langgenius/mosoo/issues/546) が提案するのは Runtime の rewrite ではなく、product boundary の分離である。mosoo Agents は Pet に必要な Agent identity、publishing、memory、Channel、long-lived state を引き続き担う。mosoo Cattle は shared execution kernel から Agent identity の必須条件を取り除く。
 
 ## 半年間、意図的に作らないもの
 

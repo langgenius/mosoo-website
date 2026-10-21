@@ -25,9 +25,9 @@ export const BLUEPRINT: UseCase = {
   productUrl: "https://trybp.page",
   repoUrl: "https://github.com/samzong/blueprint",
   summary: t(
-    "Prompt in, shippable site out — a cattle mosoo Agent runs the Blueprint CLI, and trybp.page publishes each successful artifact to a stable hostname.",
+    "Prompt in, shippable site out: a mosoo Agent runs the Blueprint CLI, each project in its own sandbox, and trybp.page publishes each successful artifact to a stable hostname.",
   ),
-  tags: ["Thread API", "Cattle sandbox", "Cloudflare Workers"],
+  tags: ["Thread API", "Cloudflare Workers"],
 };
 
 export const PITCHPILOT: UseCase = {
@@ -48,7 +48,7 @@ export const PITCHPILOT: UseCase = {
 };
 
 export const GO_GYM: UseCase = {
-  author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
+  author: { avatar: "/brand/v5/mark-solid.svg", name: "mosoo team" },
   detailPath: `/${locale}/use-cases/go-gym`,
   image: "/landing/use-cases/go-gym-dashboard.png",
   imageAlt: t("The Go Gym dashboard after the Agent recorded a day of meals and training."),
@@ -58,11 +58,11 @@ export const GO_GYM: UseCase = {
   summary: t(
     "A production fitness app where users log meals and workouts in natural language. One shared mosoo Agent turns every conversation into isolated, persistent user data.",
   ),
-  tags: ["Thread API", "Delegated MCP", "Cattle sandbox"],
+  tags: ["Thread API", "Delegated MCP"],
 };
 
 export const CODEX_PET: UseCase = {
-  author: { avatar: "/brand/brand-mark.svg", name: "Mosoo Team" },
+  author: { avatar: "/brand/v5/mark-solid.svg", name: "mosoo team" },
   detailPath: `/${locale}/use-cases/codex-pet`,
   image: "/landing/use-cases/codex-pet-app.png",
   imageAlt: t("The Codex Pet app: one avatar in, nine animation states out."),
@@ -92,7 +92,7 @@ export const GHFIND: UseCase = {
   summary: t(
     "ghfind keeps its deterministic GitHub account score separate from its Agent-powered repository evaluation. For the latter, its Go worker calls one published mosoo Agent through the Thread API and turns three committed artifacts into a native result page.",
   ),
-  tags: ["Go worker", "Thread API", "Cattle sandbox", "Artifacts"],
+  tags: ["Go worker", "Thread API", "Artifacts"],
 };
 
 export const USE_CASES: readonly UseCase[] = [BLUEPRINT, PITCHPILOT, GO_GYM, CODEX_PET, GHFIND];

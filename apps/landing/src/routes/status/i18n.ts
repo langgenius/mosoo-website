@@ -17,7 +17,7 @@ const ZH_MESSAGES = {
   Operational: "正常",
   Degraded: "降级",
   Unknown: "未知",
-  "Mosoo API & control plane": "Mosoo API 与控制面",
+  "mosoo API & control plane": "mosoo API 与控制面",
   "Cloudflare reports whether the production API and control plane complete their invocations successfully.":
     "Cloudflare 记录生产 API 与控制面的每次调用是否成功完成。",
   "Waiting for a fresh Worker invocation": "等待新的 Worker 调用",
@@ -71,11 +71,11 @@ const ZH_MESSAGES = {
     "OpenAI Runtime 在生成回复前失败。生产热修已恢复 sandbox 启动、provider 路由和生命周期收敛。",
   "Read the OpenAI Runtime incident postmortem": "查看 OpenAI Runtime 事故复盘",
   "Signal source": "信号来源",
-  "Cloudflare + Mosoo": "Cloudflare + Mosoo",
-  "Status is derived from Cloudflare Worker outcomes and Mosoo Run terminal events. No synthetic Agent calls, no model-token spend.":
-    "状态来自 Cloudflare Worker 执行结果与 Mosoo Run 终态事件。不发起 synthetic Agent 调用，也不消耗模型 token。",
-  "Cloudflare supplies invocation outcomes; Mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
-    "Cloudflare 提供调用结果；Mosoo 现有结构化业务日志提供 runtime、终态、耗时与错误码。",
+  "Cloudflare + mosoo": "Cloudflare + mosoo",
+  "Status is derived from Cloudflare Worker outcomes and mosoo Run terminal events. No synthetic Agent calls, no model-token spend.":
+    "状态来自 Cloudflare Worker 执行结果与 mosoo Run 终态事件。不发起 synthetic Agent 调用，也不消耗模型 token。",
+  "Cloudflare supplies invocation outcomes; mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
+    "Cloudflare 提供调用结果；mosoo 现有结构化业务日志提供 runtime、终态、耗时与错误码。",
   "How this is measured": "测量方法",
   "The API Worker is observed continuously through Cloudflare Tail events. Runtime completion rates update whenever a real user-facing Run reaches completed, failed, or expired.":
     "通过 Cloudflare Tail 事件持续观测 API Worker；每当真实用户 Run 进入 completed、failed 或 expired，runtime 完成率就会更新。",
@@ -100,7 +100,7 @@ const JA_MESSAGES = {
   Operational: "正常",
   Degraded: "低下",
   Unknown: "不明",
-  "Mosoo API & control plane": "Mosoo API とコントロールプレーン",
+  "mosoo API & control plane": "mosoo API とコントロールプレーン",
   "Cloudflare reports whether the production API and control plane complete their invocations successfully.":
     "Cloudflare は、本番 API とコントロールプレーンの各呼び出しが正常に完了したかを記録します。",
   "Waiting for a fresh Worker invocation": "新しい Worker 呼び出しを待機中",
@@ -157,11 +157,11 @@ const JA_MESSAGES = {
     "OpenAI Runtime が応答生成前に失敗しました。本番ホットフィックスにより sandbox 起動、provider ルーティング、ライフサイクル復旧を回復しました。",
   "Read the OpenAI Runtime incident postmortem": "OpenAI Runtime のポストモーテムを読む",
   "Signal source": "シグナルソース",
-  "Cloudflare + Mosoo": "Cloudflare + Mosoo",
-  "Status is derived from Cloudflare Worker outcomes and Mosoo Run terminal events. No synthetic Agent calls, no model-token spend.":
-    "ステータスは Cloudflare Worker の実行結果と Mosoo Run の終端イベントから算出します。Synthetic Agent 呼び出しも、モデル token の消費もありません。",
-  "Cloudflare supplies invocation outcomes; Mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
-    "Cloudflare が呼び出し結果を、Mosoo の既存構造化ビジネスログが runtime、終端状態、所要時間、エラーコードを提供します。",
+  "Cloudflare + mosoo": "Cloudflare + mosoo",
+  "Status is derived from Cloudflare Worker outcomes and mosoo Run terminal events. No synthetic Agent calls, no model-token spend.":
+    "ステータスは Cloudflare Worker の実行結果と mosoo Run の終端イベントから算出します。Synthetic Agent 呼び出しも、モデル token の消費もありません。",
+  "Cloudflare supplies invocation outcomes; mosoo's existing structured business log supplies runtime, terminal status, duration, and error code.":
+    "Cloudflare が呼び出し結果を、mosoo の既存構造化ビジネスログが runtime、終端状態、所要時間、エラーコードを提供します。",
   "How this is measured": "測定方法",
   "The API Worker is observed continuously through Cloudflare Tail events. Runtime completion rates update whenever a real user-facing Run reaches completed, failed, or expired.":
     "Cloudflare Tail イベントで API Worker を継続観測し、実ユーザーの Run が completed、failed、expired に達するたびに runtime 完了率を更新します。",

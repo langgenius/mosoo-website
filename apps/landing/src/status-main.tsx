@@ -16,15 +16,11 @@ if (!container) {
 
 document.documentElement.lang = htmlLanguage[locale];
 
-const openAuth = (): void => {
-  window.location.href = "https://cloud.mosoo.ai/login";
-};
-
 createRoot(container).render(
   <StrictMode>
     <LazyMotion features={domAnimation} strict>
       <MotionConfig reducedMotion="user">
-        <LandingShell onContinue={openAuth}>
+        <LandingShell>
           <StatusPage />
         </LandingShell>
       </MotionConfig>

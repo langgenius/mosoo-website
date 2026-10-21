@@ -26,16 +26,16 @@ test("a published post that references a draft-only folder protects it", () => {
   assert.deepEqual(draftOnlyPermalinks([post("shared-assets", true), published]), []);
 });
 
-test("Introducing Mosoo Computer is published in every locale and keeps its assets", () => {
+test("Introducing mosoo computer is published in every locale and keeps its assets", () => {
   const entries = posts().filter(([name]) => name.startsWith("introducing-mosoo-computer"));
   assert.deepEqual(entries.map(([name]) => name).sort(), ["introducing-mosoo-computer-ja.mdx", "introducing-mosoo-computer-zh.mdx", "introducing-mosoo-computer.mdx"]);
   for (const [name, source] of entries) {
     assert.equal(readDraftInfo(source)?.draft, false, `${name} must not be a draft`);
     assert.match(source, /^heroImage: "\/blog\/blog\/introducing-mosoo-computer\/cover\.jpg"$/m);
-    assert.match(source, /\]\(\/blog\/blog\/introducing-mosoo-computer\/architecture-en\.png\)/);
+    assert.match(source, /\]\(\/blog\/blog\/introducing-mosoo-computer\/architecture-en\.svg\)/);
   }
   assert.ok(!draftOnlyPermalinks(posts().map(([, source]) => source)).includes("introducing-mosoo-computer"));
-  for (const asset of ["cover.jpg", "cover-material.webp", "architecture-en.png"]) {
+  for (const asset of ["cover.jpg", "cover-material.webp", "architecture-en.svg"]) {
     assert.ok(existsSync(new URL(`../apps/blog/public/blog/introducing-mosoo-computer/${asset}`, import.meta.url)), `${asset} must ship`);
   }
 });
