@@ -290,9 +290,10 @@ unpinned; damping and the pinned stage also return when it flips back.
 | 0 Nav | `<header data-nav>`; CTA slot `<span data-nav-cta>` around the lime 「Try mosoo」; `<nav id="v5-nav-menu" popover>` (the row; the sheet up to 860px) with the Products and language `popover` panels |
 | 1 Hero | H1 `data-rise-load="title"`, its second line `data-rise-load="line"`; sub line and CTA row `data-rise-load="fade"`; the lime CTA `data-nav-cta-watch` |
 | 2 Stage | `<section data-stage>`, sticky layer `data-stage-pin`; per step k: its name in the step row (an `<li>`), component state and sentence each `data-stage-step="k"`; the row shows only while pinned and once `data-stage-started` is set, its 132px line filled by `--stage-fill` |
-| 2b Spec table | `<section data-portal data-switch-run>` (range `-0.4,0`, 120vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` (the field alone) + `data-portal-frame` + the content: the H2, `<span data-portal-door>` (the closed mark's box, under the H2) and the card `<dl data-portal-reveal>`; the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |
+| 2b Spec table | `<section data-portal data-switch-run>` (range `-0.4,0`, 120vh live in A, 200vh in B), `data-portal-pin` > `data-portal-window` (the field alone) + `data-portal-frame` + the content: the H2, `<span data-portal-door>` (the closed mark's box, under the H2) and the card `<dl data-portal-reveal data-portal-hold>`; the Harness `<dd data-switch="time">` (A; B: `"scroll"`, span `0.1,1`), one `data-switch-item` per harness |
 | 3 Full lime screen | the section `data-theme-zone="accent"`; its title wrapper `data-rise="block"`, H2 `data-rise="title"`, second line `data-rise="line"`; the three cards `data-rise="card"` |
-| Section titles elsewhere (FAQ, closing) | `data-rise="block"` / `"title"` / `"line"` |
+| FAQ title | `data-rise="block"` / `"title"` / `"line"` |
+| Closing title | wrapper and second line `data-rise="line"`; no `data-rise="title"` on the H2: opacity only, with no translation |
 | 6 Footer | `<footer data-footer>`; link columns `data-footer-link` inside `data-footer-links`; brand row `data-footer-brand` with the mark and the letters-only wordmark `data-footer-rise` (mark first); the mark's outline path `data-draw`, its line `data-draw="grow-x"` |
 
 Not here: the full lime screen itself is CSS only (Frame's hard edge,
@@ -303,17 +304,17 @@ CSS, and the line field is T2's `linefield.ts`.
 
 `portal.ts`, the v5 graft of v4c's scroll motion (owner 10-20: 「滚动的动效我觉得是有说法的」): a sticky host whose
 ground is seen through the mosoo mark. Closed, the window is the whole mark, its block (the concave-sided window of
-the logo outline) with the bar's line under it and a calm surface inside; with the scroll it grows down and out from
-its top edge, shows the host's content once it holds it whole, rises behind the heading to cover the host, and is
-taken away. Wire it with `initPortal(root)` from `./portal.ts`. Proof: staging `v5/graft/portal/` (the first engine)
-and `v5/round3/door/` (this one; `NOTES.md` there).
+the logo outline) with the bar's line under it and, on the v5 page, the whole spec card scaled inside; with the scroll
+it grows down and out from its top edge, brings the card to full size once it holds it whole, rises behind the
+heading to cover the host, and is taken away. Wire it with `initPortal(root)` from `./portal.ts`. Proof: staging `v5/graft/portal/` (the first engine)
+and `v5/round3/door/` (round 3a) plus `v5/round3/c-door/` (round 3c D2; `NOTES.md` in each).
 
 Round 3a (staging `v5/round3/door/NOTES.md`): the first engine showed live content through a narrow window from the
 first frame; five of five readers took the half-open door for a distortion (a phone mock-up, an hourglass, macOS's
 genie), four of five for a rendering bug, because its concave edges cropped the heading ("ne Session") and the rows,
-and the mark's bar never reached the screen (staging `v5/polish/personas/spec-A-answers.json`). Now nothing is ever
-seen through part of the window: the content sits above the ground, and what the window must hold is shown only
-once it holds all of it.
+and the mark's bar never reached the screen (staging `v5/polish/personas/spec-A-answers.json`). Round 3a moved
+the content above the ground and hid the card until the window held it whole. Round 3c keeps the v5 card visible as a hold: it stays whole inside the window at a smaller scale, then reaches its own place
+and full size when the window can hold it. The H2 stays above the clipped ground.
 
 | Piece | Value | Source |
 | --- | --- | --- |
@@ -322,7 +323,8 @@ once it holds all of it.
 | Closed window | the box of `[data-portal-door]`: its width, its top edge and its centre (the block's height follows the mark); without one, `data-portal-width` px (default 240) centred in the host | round 3a: the whole mark on screen, on the page's axis |
 | Start | the range's start, but never before the whole closed mark, bar line included, is 24 px above the viewport's bottom | round 3a: the bar was 56 px below the fold when the door started |
 | Motion | the size is geometric in the squared progress, `w = w0 · (w1 / w0)^(p²)`: small steps while the mark is small (halfway through, the bar's line is still on screen), a brisk end; the top edge stays put (the window grows down and out) until the zoom's last 15 %, when it rises to the host's top (an ease-in: no sliver) | round 3a: the closed mark reads as the mark before it grows; the top edge passes the heading only at the end, and with no line |
-| Reveal | every `[data-portal-reveal]` gets `data-portal-shown` while the window holds them all with 24 px to spare on every side (the sides' deepest point counted on every row), and once open; the section's CSS fades them in on time, not with the scroll | round 3a: no content is ever seen through part of the window |
+| Reveal | every `[data-portal-reveal]` gets `data-portal-shown` while the window holds them all with 24 px to spare on every side (the sides' deepest point counted on every row), and once open; a section may hide reveals until then, but the v5 page does not: its card is also the hold | round 3a reveal gate; round 3c D2 keeps the card visible |
+| Hold | `[data-portal-hold]` stays whole inside the window before reveal, with 24 px on every side including the deepest concavity; it scales with the window, its centre follows the window's middle then smoothsteps to its own position; it reaches its own position and full size at reveal. Writes `style.translate` / `style.scale`, removed at reveal, open and exit from live mode | round 3c D2 |
 | Open window | covers the host with 2 px to spare (its narrowest width, at mid-height, spans the host), its top edge just above the host's; the clip is then removed | — |
 | Range | `data-portal-range="-0.5,0.5"`: in screens of scroll from the moment the host's top reaches the viewport's top (negative: while the host is still coming in) | ours |
 | Gate | `data-portal-media`, default `(min-width: 901px) and (min-height: 680px)` (where the stage pins), and no reduced motion | stage.ts |
@@ -330,12 +332,11 @@ once it holds all of it.
 Per frame it writes `data-portal-mode="live"`, `data-portal-state="closed | opening | open"` and `--portal-p` (0–1 over
 the range, from the guarded start) on the host, the inline `clip-path` on `[data-portal-window]` (none once open), the
 frame's `opacity` and the `d` of `[data-portal-outline]` / `[data-portal-line]`, and `data-portal-shown` on every
-`[data-portal-reveal]`.
+`[data-portal-reveal]`, plus inline `translate` and `scale` on `[data-portal-hold]` before reveal.
 
-No cropped line and no empty screen, by construction: the content is never under the clip (only the ground is), a
-reveal shows only whole, and the host's heading stays on the page above the closed mark (v4c's empty frames, REVIEW-v4
-§3.3, were a lone window and nothing else on screen). Between the bar's line leaving the screen and the reveal, the
-window shows the ground alone, 72–80 px of scroll at every size measured.
+The content is never under the clip (only the ground is). The hold stays whole inside the window, and the host's
+heading stays on the page above the closed mark. On the v5 page the card is visible from the closed frame through
+the opening, with no opacity fade. Its text scales with it until the reveal gate is reached.
 
 Measured on the v5 page (round 3a; scroll in px from the section's top at the viewport's top; staging
 `v5/round3/door/data/phases-*.json`):
@@ -349,7 +350,7 @@ Measured on the v5 page (round 3a; scroll in px from the section's top at the vi
 | 901 × 680 | −244 | −72 | 0 | −16 | 0 | 160 |
 
 Where the card is nearly as wide as the screen (1024 and below), the window holds it only at the end, so the frame
-fades and the top edge rises before the card shows.
+fades and the top edge rises before the card reaches full size (round 3c keeps the smaller card visible).
 
 ```css
 /* Not live (no JS, reduced motion, outside data-portal-media): the CSS default, the content in the flow. */
@@ -370,9 +371,11 @@ fades and the top edge rises before the card shows.
   [data-portal-window] { position: relative !important; inset: auto !important; clip-path: none !important; }
   [data-portal-frame] { display: none !important; }
 }
-/* The section's own (sections/spec.css): the content over the ground, and a reveal hidden until shown. */
-[data-portal][data-portal-mode="live"] [data-portal-reveal] { transition: opacity .32s var(--ease-expo); }
-[data-portal][data-portal-mode="live"] [data-portal-reveal]:not([data-portal-shown]) { opacity: 0; pointer-events: none; }
+/* The v5 section (sections/spec.css): the card is a visible hold, without an opacity fade. */
+[data-portal][data-portal-mode="live"] [data-portal-reveal]:not([data-portal-shown]) { pointer-events: none; }
+@media print {
+  [data-portal-hold] { translate: none !important; scale: none !important; }
+}
 ```
 
 - Markup: `[data-portal]` > `[data-portal-pin]` (first, at the host's top) > the ground `[data-portal-window]` (an
@@ -381,12 +384,13 @@ fades and the top edge rises before the card shows.
   content, painted over both (the v5 page: `.v5-spec-in`, `position: relative`). In the content, an empty
   `<span data-portal-door aria-hidden="true">` laid out where the closed mark goes (the v5 page: on the axis, 40 px
   under the H2, `clamp(200px, 30vh, 280px)` wide), and `data-portal-reveal` on what the window must hold before it
-  shows (the v5 page: the card). Measured on the v5 page: the closed block is 270 × 214 at 1440 × 900, 240 × 190 at
+  reaches full size (the v5 page: the card, also marked `data-portal-hold`). Measured on the v5 page: the closed block is 270 × 214 at 1440 × 900, 240 × 190 at
   1280 × 800, 230 × 182 at 1024 × 768, 204 × 162 at 901 × 680 and 280 × 222 at 1920 × 1080.
 - The ground owns its `clip-path`; do not style one on it. No `data-rise` in the pin: the rise engine hides what
   starts below the fold, and the heading must be on the page from its first frame.
-- Hidden reveals keep their place and stay in the accessibility tree (opacity, not `visibility`), and take no pointer.
-- Sizes are re-measured when the page, the host, the door or a reveal resizes and when web fonts finish loading.
+- Sections that hide reveals can use opacity, not `visibility`, to keep their place and accessibility-tree presence.
+  The v5 card stays visible as a hold; pointer events remain disabled until `data-portal-shown`.
+- Sizes are re-measured when the page, the host, the door, a reveal or the hold resizes and when web fonts finish loading.
   Boxes come from layout offsets (`offsetLeft` / `offsetTop` up to the pin), not `getBoundingClientRect()`, so a
   `translate` on the way (the harness switch rolls its values with it) does not move them.
 - The host's live height is the pin's screen, plus the range's end, plus the time the open content stays pinned.
