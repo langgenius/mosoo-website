@@ -31,62 +31,39 @@ export interface HarnessRef {
   name: string;
 }
 
-/** Event families with a glyph; the wire names they stand for are in `EventRow.event`. */
-export type EventKind = "run" | "tool" | "file";
+/**
+ * The first plate's three states (round 3b; staging narrative/CHANGES.md §2, §3; the stage's steps):
+ *   laptop  the laptop card and the Session card side by side, row for row, two more Sessions behind the second
+ *   cloud   the laptop card at half strength; the Session card's rows become the Agent preset's parts
+ *   app     the sources call your app, your app calls one Session per job (the stack spread into a column)
+ */
+export type SessionState = "laptop" | "cloud" | "app";
 
-export interface EventRow {
-  kind: EventKind;
-  /** Plain words, not the wire name: "File changed". */
-  text: string;
-  /** The wire name it stands for (MAIN pkgs/contracts/src/session/session.contract.ts L138-152), kept as data only. */
-  event?: string | undefined;
+/** A card's place and who drives it: "Laptop" + "You", "Session" + "Your backend". */
+export interface SessionSide {
+  place: string;
+  driver: string;
 }
 
-/** Call: the request going in. */
-export interface SessionCallProps extends KitBase {
+/**
+ * The Session object (renderSession). Every visible string is a prop (copy/stage.json kit); the same markup draws all
+ * three states, `state` picks the one shown, and a stage can move the object between them in place (the CSS reads
+ * --kit-cloud / --kit-app, kit.css).
+ */
+export interface SessionProps extends KitBase {
+  state: SessionState;
+  /** The harness both cards run, e.g. Codex after the OpenAI mark. */
   harness: HarnessRef;
-  /** The instruction, set as the request's input string (ink, Fragment Mono, in quotes). */
-  instruction: string;
-  /** The attached file (the object's one mono token). */
-  attachment: string;
-  /** v4b: keep the sentence on one line and let the container's edge cut it. */
-  bleed?: boolean | undefined;
-}
-
-/** Watch: the same Session, running, its events flowing to the caller. */
-export interface SessionWatchProps extends KitBase {
-  status: string;
-  /** The current action; `{file}` marks where the file being written sits (appended when absent). */
-  action: string;
-  /** The file being written, drawn as a file path: glyph + mono path, no box (parts.ts filePath; the one mono token). */
+  /** The file both cards made, e.g. report.md (Fragment Mono, the object's one file name). */
   file: string;
-  /** Newest first; two or three rows, faded 1 / .6 / .2. */
-  events: readonly EventRow[];
-  /**
-   * Label of the card the events stream into, e.g. "Your backend": the rows move out of the Session card
-   * onto that card, joined by a connector (Apollo's "A into B"). Omit for the compact one-card form.
-   */
-  stream?: string | undefined;
+  laptop: SessionSide;
+  session: SessionSide;
+  /** The Agent preset's rows after the harness (Instructions, Skills, Remote MCP, Environment) and the chip after the
+   *  last one ("pinned"). */
+  cloud: { rows: readonly string[]; pinned: string };
+  /** Who uses your app (Teammate, Customer), your app, and the call it makes (POST …/threads, Fragment Mono). */
+  app: { sources: readonly string[]; app: string; call: string };
 }
-
-/** Return: Turn 2 a week later, on top of the earlier turns, lit by the underlay. */
-export interface SessionReturnProps extends KitBase {
-  harness: HarnessRef;
-  turn: string;
-  /** The gap since the last turn, e.g. "+7 days" (sans: BRIEF §3.2 keeps mono for files, events, commands). */
-  after: string;
-  restored: string;
-  /** Optional follow-up instruction (grey sentence). Mind the 14-word budget. */
-  line?: string | undefined;
-  /** v4d F19 restore track (saved files -> harness), drawn without words. Default true. */
-  track?: boolean | undefined;
-  underlay?: UnderlayStrip | undefined;
-}
-
-export type SessionProps =
-  | ({ state: "call" } & SessionCallProps)
-  | ({ state: "watch" } & SessionWatchProps)
-  | ({ state: "return" } & SessionReturnProps);
 
 /** Harness card: four tiles, the Session's pick lifted and lit. */
 export interface HarnessStripProps extends KitBase {

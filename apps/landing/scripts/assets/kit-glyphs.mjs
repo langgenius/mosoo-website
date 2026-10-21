@@ -120,10 +120,7 @@ const glyphs = [
   fromSidebar("mcp", "mcp-servers.svg"), // the Session's Remote MCP row
   fromHuge("file", "File02Icon"), // console FileText: report.md
   fromHuge("check", "CheckIcon"),
-  fromHuge("plus", "Add01Icon"),
-  fromHuge("arrow-up", "ArrowUp01Icon"), // the composer's send key
   fromHuge("clock", "Clock03Icon"),
-  fromHuge("terminal", "ComputerTerminal01Icon"), // console SquareTerminal: bash / exec_command / shell
   fromHuge("refresh", "RefreshIcon"), // console RefreshCw
   // round 3b, the first plate's three states (staging narrative/CHANGES.md §2, §3, §10 A2):
   fromHuge("laptop", "LaptopIcon"), // the laptop card's head

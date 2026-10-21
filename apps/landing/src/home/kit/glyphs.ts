@@ -97,29 +97,11 @@ export const KIT_GLYPHS = {
     attrs: "fill=\"none\"",
     body: "<path d=\"M5 13.2592L7.58583 15.9568C8.2525 16.6523 8.58583 17.0001 9.00004 17.0001C9.41425 17.0001 9.74759 16.6523 10.4143 15.9568L19 7.00006\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
   },
-  // @hugeicons/core-free-icons 4.2.3 dist/esm/Add01Icon.js
-  "plus": {
-    viewBox: "0 0 24 24",
-    attrs: "fill=\"none\"",
-    body: "<path d=\"M12.001 5.00003V19.002\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M19.002 12.002L4.99998 12.002\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
-  },
-  // @hugeicons/core-free-icons 4.2.3 dist/esm/ArrowUp01Icon.js
-  "arrow-up": {
-    viewBox: "0 0 24 24",
-    attrs: "fill=\"none\"",
-    body: "<path d=\"M17.9998 15C17.9998 15 13.5809 9.00001 11.9998 9C10.4187 8.99999 5.99985 15 5.99985 15\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
-  },
   // @hugeicons/core-free-icons 4.2.3 dist/esm/Clock03Icon.js
   "clock": {
     viewBox: "0 0 24 24",
     attrs: "fill=\"none\"",
     body: "<path d=\"M18.952 8.60639L21.4621 8.45358C19.6628 3.70459 14.497 0.999731 9.46036 2.34456C4.09594 3.77692 0.909585 9.26089 2.34343 14.5933C3.77727 19.9258 9.28834 23.0874 14.6528 21.6551C18.6358 20.5916 21.418 17.2945 22 13.4842\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M12 7.99982V11.9998L14 13.9998\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
-  },
-  // @hugeicons/core-free-icons 4.2.3 dist/esm/ComputerTerminal01Icon.js
-  "terminal": {
-    viewBox: "0 0 24 24",
-    attrs: "fill=\"none\"",
-    body: "<path d=\"M7.5 7.5L8.72654 8.55719C9.24218 9.00163 9.5 9.22386 9.5 9.5C9.5 9.77614 9.24218 9.99836 8.72654 10.4428L7.5 11.5\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M11.5 12.5H15.5\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/><path d=\"M12 21C15.7497 21 17.6246 21 18.9389 20.0451C19.3634 19.7367 19.7367 19.3634 20.0451 18.9389C21 17.6246 21 15.7497 21 12C21 8.25027 21 6.3754 20.0451 5.06107C19.7367 4.6366 19.3634 4.26331 18.9389 3.95491C17.6246 3 15.7497 3 12 3C8.25027 3 6.3754 3 5.06107 3.95491C4.6366 4.26331 4.26331 4.6366 3.95491 5.06107C3 6.3754 3 8.25027 3 12C3 15.7497 3 17.6246 3.95491 18.9389C4.26331 19.3634 4.6366 19.7367 5.06107 20.0451C6.3754 21 8.25027 21 12 21Z\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\"/>",
   },
   // @hugeicons/core-free-icons 4.2.3 dist/esm/RefreshIcon.js
   "refresh": {

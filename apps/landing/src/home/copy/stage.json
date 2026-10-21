@@ -1,123 +1,95 @@
 {
-  "$comment": "Slots of sections/stage.ts (one plate, three states of the Session object; staging v5/sections/hero-stage/NOTES.md has the slot table with lines at 1440 / 390). steps[k].tag: the step's name in the step row at the plate's top-left, pinned only (sans 500 15px in ink, no box; the told ones fold to 13px ink-2 in one row; none on the first screen or on the stacked plates since O1). steps[k].title + steps[k].line: the caption at the plate's bottom-left (sans 500 22px + sans 16px, max 560 wide: one line each at 1440; phones 18 / 15px, title 1-2 lines, line 2 lines). kit: the props of the kit Session (src/home/kit renderSession) per state. kit.call.instruction is the first screen's sentence, drawn as the request's input string (Fragment Mono, ink, in quotes): at most 6 words (first-screen object words = the hero's harness names + Call's words <= 16); one line at 1440 up to about 51 characters (the plate cuts it beyond), wrapped inside the plate on phones (two lines at 360-414). Budgets: tests/home-copy-slots.test.mjs (object words <= 14 per state; zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$comment": "Slots of sections/stage.ts (one plate, three states of the kit's Session object, src/home/kit/session.ts; the narrative round's deck: staging narrative/DECK.md §2.3, narrative/CHANGES.md §2, §3). steps[k].tag: the step's name in the step row over the caption, pinned only (sans 500 15px in ink, no box; the told ones fold to 13px ink-2 in one row; none on the first screen or on the stacked plates). steps[k].title + steps[k].line: the caption at the plate's bottom-left (sans 500 22px + sans 16px, max 560 wide: one line each at 1440; phones 18 / 15px). kit: the object's words, drawn in every state from one markup: laptop = the first screen (the laptop card and the Session card row for row: place, harness, file, driver; two more Sessions stacked behind, no words), cloud = the laptop card at half strength and the Session card's rows as the Agent preset's parts (cloud.rows after the harness, cloud.pinned the chip after the last row), app = app.sources over app.app, app.call on the line from your app into three Sessions (the front one with the file). harness, file and app.call are machine tokens, the same in every locale; session.place stays Session. Object words per state <= 14, the first screen's names + laptop <= 16 (16 today: no room left). Budgets: tests/home-copy-slots.test.mjs (KIT_CJK: zh / ja widths per label). Step words never show on the first screen (MINUTES L297).",
   "$source": {
-    "story": "One CSV Session, values only from MAIN scripts/public-api-session-workflow.ts: the uploaded input.csv (L24, L85; uploaded first, then referenced by the create call, L89-L96, PRD public-thread-api-surface.md L8), outputs/report.md (L24). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; OpenAPI v2 path + servers https://cloud.mosoo.ai/api/v2; the script posts to /projects/{id}/threads on an /api/v2 base, L60, L97). Events: SSE and saved events; a read returns the latest ones, not the whole history (SPEC §6 L73; PRD L26). Resume: a later turn finds the working directory and the native conversation of the last committed checkpoint (SPEC §4 L53); attachments never enter a checkpoint (SPEC §4 L54; session-files.md L16), so the line names what comes back instead of the CSV (v5 truth review P1-1).",
-    "kit.harness": "Product name (README L9 'OpenAI Codex'; the chip draws the OpenAI mark before it); not translated.",
-    "kit.watch.events": "The console's own labels for three public event types, newest first: file.changed, tool.use.completed, run.started (MAIN apps/web/src/shared/ui/session-events/domain.ts maps them to en.json L987 'File changed', L994 'Tool result', L990 'Run started'; zh-CN.json / ja.json the same keys). stage.ts EVENTS keeps the wire names as data.",
-    "kit.return": "Turn 2 = the follow-up turn; +7 days is SPEC's own example of a later reply (SPEC §4 L53: one minute or seven days, same semantics), not a measured duration; restored from the last committed checkpoint (SPEC §4 L46, L53)."
+    "steps.0": "The reader's situation (owner-notes L224-L225: it works locally; teammates, an internet service or your product need it; it cannot depend on your computer). Teammates and customers reach it only through your app: one owner per Project, no members or invitations (MAIN docs/SPEC.md L22).",
+    "steps.1": "Set up, not import: no code reads a local CLAUDE.md, AGENTS.md, .codex/ or .claude/settings (grep apps/api/src apps/web/src, exit 1; TRUTH C9). Same harness: README.md L9 (its version is mosoo's image pin, DRIVER Containerfile L7-L11, so no 'version' or 'identical'). Instructions, Skills, MCP servers and an Environment are the Agent preset (README.md L37; SPEC L32). MCP is remote HTTPS only (docs/prd/mcp-interaction.md L7, L17). Packages are exact-version public npm / PyPI (docs/prd/environment.md L7).",
+    "steps.2": "Your backend sends the input; the application owns business logic, queues and end-user login (SPEC L9; docs/prd/public-thread-api-surface.md L13). Not you: no interactive tool approvals (SPEC L65). One Session per job: every Session gets its own sandbox, workspace and conversation (SPEC L32). Events stream back over SSE; there are no Webhooks (SPEC L73). Files the Agent writes under outputs/ become downloadable artifacts; other workspace files are restored but not downloadable, hence 'outputs', not 'files' (docs/prd/session-files.md L9; SPEC L75).",
+    "kit.harness": "README.md L9 (OpenAI Codex); the OpenAI glyph before it (kit glyphs). Not translated.",
+    "kit.file": "MAIN scripts/public-api-session-workflow.ts L24 (outputs/report.md); report generation is a first use (SPEC L7). Machine token.",
+    "kit.laptop": "The reader's laptop and the reader (owner-notes L224). Glyphs: Hugeicons 4.2.3 Laptop and User (MAIN bun.lock L631; apps/web/src/shared/ui/icons.tsx L69, L166). zh 电脑 / ja PC and zh 后端 (not 笔记本 / ノート PC / 你的后端): the first screen holds 16 object words in every locale, and Intl.Segmenter counts 笔记/本, ノート/PC, 你的/后/端 as two or three words (narrative/deck/tools/count.mjs).",
+    "kit.session": "Session = one durable Thread (docs/prd/public-thread-api-surface.md L7); driven by your backend (README.md L26). Glyph: Hugeicons ServerStack01 for the backend row.",
+    "kit.cloud": "The preset's parts (README.md L37); MCP remote (mcp-interaction.md L7); pinned = the Session freezes the Environment revision and the rest at creation (environment.md L8; SPEC L31).",
+    "kit.app": "Teammate and Customer are the owner's step 2 (owner-notes L225); they use your app (SPEC L22). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; MAIN apps/api/openapi/public-api-v2.generated.json paths), shortened with an ellipsis. Machine token."
   },
   "en": {
     "steps": [
       {
-        "tag": "Call",
-        "title": "Your backend sends the task.",
-        "line": "POST /api/v2/projects/{id}/threads with the uploaded input.csv."
+        "tag": "Laptop",
+        "title": "It works on your laptop.",
+        "line": "Teammates and customers need it. But it needs your laptop, and you."
       },
       {
-        "tag": "Watch",
-        "title": "Events stream back as it works.",
-        "line": "Follow them live over SSE, or read the saved events later."
+        "tag": "Cloud",
+        "title": "Set up the same agent in mosoo.",
+        "line": "Same Codex, instructions, Skills, remote MCP and pinned packages."
       },
       {
-        "tag": "Resume",
-        "title": "The same Session, a week later.",
-        "line": "Its working directory and conversation come back as they were."
+        "tag": "Your app",
+        "title": "Your backend calls it, not you.",
+        "line": "A Session per job. Events stream back; outputs are yours to download."
       }
     ],
     "kit": {
       "harness": "Codex",
-      "call": {
-        "instruction": "Analyze input.csv and save outputs/report.md",
-        "attachment": "input.csv"
-      },
-      "watch": {
-        "status": "Running",
-        "action": "Writing {file} from input.csv",
-        "file": "outputs/report.md",
-        "stream": "Your backend",
-        "events": ["File changed", "Tool result", "Run started"]
-      },
-      "return": {
-        "turn": "Turn 2",
-        "after": "+7 days",
-        "restored": "Restored from the last checkpoint"
-      }
+      "file": "report.md",
+      "laptop": { "place": "Laptop", "driver": "You" },
+      "session": { "place": "Session", "driver": "Your backend" },
+      "cloud": { "rows": ["Instructions", "Skills", "Remote MCP", "Environment"], "pinned": "pinned" },
+      "app": { "sources": ["Teammate", "Customer"], "app": "Your app", "call": "POST …/threads" }
     }
   },
   "zh": {
     "steps": [
       {
-        "tag": "发起",
-        "title": "你的后端发出任务。",
-        "line": "附上已上传的 input.csv，POST 到 /api/v2/projects/{id}/threads。"
+        "tag": "本地",
+        "title": "它在你电脑上能跑。",
+        "line": "同事、客户都要用，可它离不开你的电脑和你。"
       },
       {
-        "tag": "观察",
-        "title": "事件实时流回你的后端。",
-        "line": "用 SSE 实时跟进，也可以稍后读取已保存的事件。"
+        "tag": "云端",
+        "title": "在 mosoo 配一个同样的 Agent。",
+        "line": "同样的 Codex、指令、技能、远程 MCP 和固定版本的包。"
       },
       {
-        "tag": "续接",
-        "title": "一周后，还是同一个 Session。",
-        "line": "工作目录和对话，原样恢复。"
+        "tag": "你的应用",
+        "title": "由你的后端调用，不是你。",
+        "line": "一个任务一个 Session。事件实时回传，产出可下载。"
       }
     ],
     "kit": {
       "harness": "Codex",
-      "call": {
-        "instruction": "分析 input.csv，保存为 outputs/report.md",
-        "attachment": "input.csv"
-      },
-      "watch": {
-        "status": "运行中",
-        "action": "正在根据 input.csv 写入 {file}",
-        "file": "outputs/report.md",
-        "stream": "你的后端",
-        "events": ["文件已更改", "工具结果", "运行已开始"]
-      },
-      "return": {
-        "turn": "第 2 轮",
-        "after": "+7 天",
-        "restored": "已从上个检查点恢复"
-      }
+      "file": "report.md",
+      "laptop": { "place": "电脑", "driver": "你" },
+      "session": { "place": "Session", "driver": "后端" },
+      "cloud": { "rows": ["指令", "技能", "远程 MCP", "环境"], "pinned": "已固定" },
+      "app": { "sources": ["同事", "客户"], "app": "你的应用", "call": "POST …/threads" }
     }
   },
   "ja": {
     "steps": [
       {
-        "tag": "呼ぶ",
-        "title": "バックエンドからタスクを送る。",
-        "line": "POST /api/v2/projects/{id}/threads に input.csv の ID を添えて。"
+        "tag": "手元",
+        "title": "あなたの PC では動く。",
+        "line": "同僚も顧客も使いたい。でも PC とあなたが要る。"
       },
       {
-        "tag": "見る",
-        "title": "動くそばからイベントが届く。",
-        "line": "SSE でリアルタイムに追え、保存済みのイベントも後で読めます。"
+        "tag": "クラウド",
+        "title": "mosoo に同じ Agent を用意する。",
+        "line": "同じ Codex、指示、スキル、リモート MCP、版を固定したパッケージ。"
       },
       {
-        "tag": "再開",
-        "title": "1 週間後も、同じ Session。",
-        "line": "作業ディレクトリと会話が、そのまま戻ります。"
+        "tag": "アプリ",
+        "title": "あなたでなく、バックエンドが呼ぶ。",
+        "line": "ジョブごとに Session。イベントが届き、成果物は取り出せる。"
       }
     ],
     "kit": {
       "harness": "Codex",
-      "call": {
-        "instruction": "input.csv を分析、outputs/report.md に保存",
-        "attachment": "input.csv"
-      },
-      "watch": {
-        "status": "実行中",
-        "action": "{file} を書き込み中",
-        "file": "outputs/report.md",
-        "stream": "あなたのバックエンド",
-        "events": ["ファイル変更", "ツール結果", "実行開始"]
-      },
-      "return": {
-        "turn": "ターン 2",
-        "after": "+7 日",
-        "restored": "チェックポイントから復元"
-      }
+      "file": "report.md",
+      "laptop": { "place": "PC", "driver": "あなた" },
+      "session": { "place": "Session", "driver": "バックエンド" },
+      "cloud": { "rows": ["指示", "スキル", "リモート MCP", "環境"], "pinned": "固定" },
+      "app": { "sources": ["同僚", "顧客"], "app": "あなたのアプリ", "call": "POST …/threads" }
     }
   }
 }

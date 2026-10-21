@@ -1,27 +1,29 @@
-/* 2 Stage (sections/stage.ts), owned by the hero + stage agent. One plate, three states of the T4 Session.
+/* 2 Stage (sections/stage.ts). One plate, three states of the kit's Session object (round 3b: laptop, cloud, app).
    Two layouts from one DOM (each step is an <article>: object layer, caption):
-   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates, no step row;
+   - default (no JS, reduced motion, below 901px or 680px tall): the articles are three stacked plates, each showing
+     its own state, no step row;
    - pinned ([data-stage-mode="pinned"], src/effects/v5/stage.ts): the articles are layers of one plate that sticks
-     88px from the top (under the 68px floating nav), the step row and the captions switch with the object.
-   Plate composition (721px and up): the step row top-left (32, 32), pinned only; object from (50% - 140px, 96), Call
-   and Watch running off the right edge; caption bottom-left (32, 32), at most 560 wide. 50% - 140px keeps the
-   object's left edge on the line field's knot at any plate width (the "hero" host is centred, 1120 x 720, see
-   .v5-lf--wide below). Phones: a column (object, caption) per plate. Every rule is scoped under .v5-stage
-   (sections/README.md). Values and references: staging v5/sections/hero-stage/NOTES.md. */
+     88px from the top (under the 68px floating nav); the first article's object is moved through the three states in
+     place (data-step -> the kit's --kit-cloud / --kit-app, transitioned), the captions and the step row switch with it.
+   Plate composition: the object at the top, centred, whole inside the plate (committee O3), 48px down, so the first
+   screen at 1440 x 900 holds both cards and the two stacked edges (CHANGES §2.2); the caption bottom-left (32, 32), at
+   most 560 wide; pinned, the step row over the caption. The kit's size follows the plate: up to 20px (17 under 840px
+   tall, 16 on tablets), never more than the plate's width allows (the wide object is 41em, the narrow one 21.2em, under
+   564px: phones), so no card is ever cut. Every rule is scoped under .v5-stage (sections/README.md). */
 
 .v5-stage {
   --pin-top: 88px; /* the floating nav ends at 68 (12 + 56) */
   --plate-h: clamp(560px, 100vh - 120px, 720px);
   --plate-r: 16px;
-  --obj-top: 96px;
-  --obj-x: calc(50% - 140px);
-  --kit-size: 17px; /* the kit's root size (kit.css .kit--stage); 20px where the plate is full size */
+  --obj-top: 48px;
+  --kit-max: 17px; /* the kit's root size where the plate is not full size */
+  --cap-h: 62px; /* a caption at 1440: the 22px title (29) + 8 + the 16px line (25), one line each */
   margin-top: 48px;
 }
 
 @media (min-width: 1280px) and (min-height: 840px) {
   .v5-stage {
-    --kit-size: 20px;
+    --kit-max: 20px;
   }
 }
 
@@ -57,25 +59,59 @@
   pointer-events: none;
 }
 
-/* The "hero" line field: 1120 x 720, centred on the plate, so its knot (420, 214) lands on the object's left edge,
-   50% - 140px, at every plate width; a narrower plate crops both sides. */
+/* The "hero" line field: 1120 x 720, centred on the plate; a narrower plate crops both sides. Its knot sits behind the
+   Session stack at every plate width (public/landing/v5/lines/params.json, hero.pin: 860, 270), so the lines come in
+   from the right, pass behind the Sessions and leave under the laptop card, never through the gap between the two
+   cards at card height (CHANGES §2.3; checked at five plate sizes, staging v5/round3/b-objects). */
 .v5-stage .v5-lf--wide {
   inset: 0 auto auto calc(50% - 560px);
   width: 1120px;
   height: 720px;
 }
 
+/* A short plate (560-648px) brings the step row and the caption up into the lines under the laptop card: the field
+   fades out behind that block only (the plate's bottom-left 640 x 180), elsewhere it runs to the edges. Two mask
+   layers add up (mask-composite: add, the default): seen right of the block, or above it. Phones fade their own way. */
+@media (min-width: 721px) {
+  .v5-stage .v5-step-lines {
+    mask-image:
+      linear-gradient(to right, transparent 640px, #000 680px),
+      linear-gradient(#000 calc(100% - 180px), transparent calc(100% - 140px));
+  }
+}
+
+/* The object's layer: the plate's width is the kit's container (its size and its narrow layout follow it). */
 .v5-stage .v5-step-screen {
   position: absolute;
   z-index: 1;
   inset: 0;
+  container-type: inline-size;
 }
 
 .v5-stage .v5-step-obj {
   position: absolute;
   top: var(--obj-top);
-  left: var(--obj-x);
-  width: calc(50% + 100px); /* to 40px short of the right edge */
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.v5-stage .kit-scene {
+  flex: none;
+  font-size: min(var(--kit-max), (100cqw - 64px) / 41);
+}
+
+/* Under 564px the kit draws its narrow layout (kit.css), 21.2em wide: as large as the plate allows, 12 to 15px, set
+   from the plate's left like the caption under it (the phone poster's knot is placed for that, params.json). */
+@container (width < 564px) {
+  .v5-stage .v5-step-obj {
+    justify-content: flex-start;
+  }
+
+  .v5-stage .kit-scene {
+    font-size: clamp(12px, 100cqw / 21.2, 15px);
+  }
 }
 
 .v5-stage .v5-step-cap {
@@ -107,41 +143,6 @@
   word-break: auto-phrase;
 }
 
-/* ------------------------------------------------------------------------------------------ the objects */
-/* Call: v4b's fragment, 45k wide from the knot, cut by the plate (kit proof 04). */
-.v5-stage .v5-step-obj > .kit[data-kit-state="call"] {
-  width: 45em;
-}
-
-/* Watch, stream form: the Session card runs off the edge like Call; the connector drops from under the status chip
-   into the event card, which starts under the chip and stays inside the plate. */
-.v5-stage .v5-step-obj > .kit-flow {
-  width: 45em;
-  align-items: flex-start;
-}
-
-.v5-stage .v5-step-obj > .kit-flow > .kit-wire--down {
-  margin-left: calc(var(--k) * 2.75);
-}
-
-.v5-stage .v5-step-obj > .kit-flow > .kit-stream {
-  width: min(26em, 100% - var(--k) * 1.6);
-  margin-left: calc(var(--k) * 0.8);
-}
-
-/* Return: the F19 stack, whole (its right-hand "+N days" and the track's harness end must show). */
-.v5-stage .v5-step-obj > .kit-stack {
-  width: min(31em, 100%);
-}
-
-/* Watch's grey sentence: ink-3 where it sets at 24px (the kit at 20px, the media query above); kit.css keeps it ink-2
-   everywhere else (contrast under 24px). Call's instruction is ink everywhere (kit.css .kit-line--input). */
-@media (min-width: 1280px) and (min-height: 840px) {
-  .v5-stage .kit-line:not(.kit-line--input) {
-    color: var(--kit-ink-3);
-  }
-}
-
 /* ----------------------------------------------------------------------------------------------- pinned */
 .v5-stage[data-stage-mode="pinned"] {
   height: 220vh; /* the plate plus about 1.2 screens of run (design review P1-2; was 300vh, the contract's is 350vh) */
@@ -168,7 +169,7 @@
 }
 
 /* The articles become transparent layers of it; everything they hold shares the plate's stacking context:
-   lines 0, objects 1-3 (the contract's past / active / next), captions 4, tags 5. */
+   lines 0, objects 1, captions 4, the step row 5. */
 .v5-stage[data-stage-mode="pinned"] .v5-step {
   position: absolute;
   inset: 0;
@@ -183,20 +184,35 @@
   content: none;
 }
 
-.v5-stage[data-stage-mode="pinned"] .v5-stage-screen {
-  margin: 0; /* the contract's -8px bleed is for opaque screens; these are transparent layers */
+/* One object on screen, the first article's, moved in place: the engine's data-step is the kit's state (kit.css reads
+   --kit-cloud and --kit-app; registered, so they transition and every part moves on the one curve). The other two
+   articles keep theirs at opacity 0, for screen readers: each state's object and caption stay in reading order. */
+.v5-stage[data-stage-mode="pinned"] .v5-step:not(.v5-step--laptop) .v5-step-screen {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.v5-stage[data-stage-mode="pinned"][data-step="1"] .v5-step--laptop .kit-scene {
+  --kit-cloud: 1;
+  --kit-app: 0;
+}
+
+.v5-stage[data-stage-mode="pinned"][data-step="2"] .v5-step--laptop .kit-scene {
+  --kit-cloud: 0;
+  --kit-app: 1;
 }
 
 /* The step row (O1, committee 2026-10-21: no box, no fill, no shadow; the words keep CTRL's contents row, BRIEF §3.4):
    the lit step in ink 15px / 500, the told ones folded to ink-2 13px, the next ones not there yet; each rises in
-   (width, opacity, 6px) as it is lit and folds as the next one takes over. The row waits for the run: until
-   --stage-p leaves 0 (the engine's data-stage-started) it is out of sight, so the first screen shows no step word
-   and the first one to appear is "Call", as the stage starts to move. It stays in the accessibility tree (a list
-   of the three steps, the lit one aria-current="step"). */
+   (width, opacity, 6px) as it is lit and folds as the next one takes over. It sits over the caption (round 3b: the
+   object fills the plate's top from the first screen on, where the row used to be), with its progress line between
+   them. The row waits for the run: until --stage-p leaves 0 (the engine's data-stage-started) it is out of sight, so
+   the first screen shows no step word. It stays in the accessibility tree (a list of the three steps, the lit one
+   aria-current="step"). */
 .v5-stage[data-stage-mode="pinned"] .v5-stage-tags {
   position: absolute;
   z-index: 5;
-  top: 32px;
+  bottom: calc(32px + var(--cap-h) + 28px);
   left: 32px;
   display: flex;
   align-items: baseline;
@@ -231,9 +247,8 @@
 
 /* Under the row, the run as one 132px 1px line (structure: 18% ink), filled with ink by --stage-fill: a third per
    step, each third filling over its own step's stretch of the run, so the fill reaches the lit step as it lights
-   (with the fill following the scroll position alone, Resume was lit 87% of its stretch before the fill got under
-   it; staging committee/challenge/128.md §3) and every pixel of the pinned scroll still moves something (design
-   review P1-2). */
+   (staging committee/challenge/128.md §3) and every pixel of the pinned scroll still moves something (design review
+   P1-2). */
 .v5-stage[data-stage-mode="pinned"] .v5-stage-tags::after {
   content: "";
   position: absolute;
@@ -253,6 +268,12 @@
   overflow: hidden;
 }
 
+/* The captions share one place; only the lit one takes the pointer (the next one's empty box sat on top of it, so its
+   words could not be selected). */
+.v5-stage[data-stage-mode="pinned"] .v5-step-cap:not([data-stage-state="active"]) {
+  pointer-events: none;
+}
+
 .v5-stage[data-stage-mode="pinned"] .v5-step-cap:is([data-stage-state="past"], [data-stage-state="next"]) > .v5-step-cap-in {
   opacity: 0;
 }
@@ -266,7 +287,14 @@
 }
 
 /* Transitions only once the engine is ready (its first pinned paint never animates), with the switch's 0.9 s; the row
-   itself comes in (and goes when the reader scrolls back to the top) in 0.6 s. */
+   itself comes in (and goes when the reader scrolls back to the top) in 0.6 s. The object's two state numbers take the
+   switch's 0.9 s and curve: its parts move together and in place. */
+.v5-stage[data-stage-ready] .v5-step--laptop .kit-scene {
+  transition:
+    --kit-cloud 0.9s var(--ease-stage),
+    --kit-app 0.9s var(--ease-stage);
+}
+
 .v5-stage[data-stage-ready] .v5-stage-tags {
   transition:
     opacity 0.6s var(--ease-stage),
@@ -302,8 +330,8 @@
   }
 }
 
-/* Reduced motion never pins, so its stacked plates need not match the pinned one: 620 still clears Watch (to 486 at
-   the 20px kit) above the caption (from 527). */
+/* Reduced motion never pins, so its stacked plates need not match the pinned one: 620 still holds the cloud state's
+   card (to 442 at the 20px kit) above the caption (from 526). */
 @media (prefers-reduced-motion: reduce) and (min-width: 901px) {
   .v5-stage {
     --plate-h: 620px;
@@ -311,23 +339,11 @@
 }
 
 /* ------------------------------------------------------------------------------------- tablets, 721-900 */
-/* Never pinned here: three plates of the desktop composition, a little shorter, the kit at 16px. The Call card
-   still bleeds, but its instruction wraps inside the plate: the plate shows the card from 50% - 140px to its right
-   edge, so the line may be 50cqw + 140px wide, less the card's 1.6k padding and 16px of air (at 768 the one-line
-   instruction lost its closing quote to the cut). */
+/* Never pinned here: three plates of the desktop composition, a little shorter, the kit up to 16px. */
 @media (min-width: 721px) and (max-width: 900px) {
   .v5-stage {
     --plate-h: 600px;
-    --kit-size: 16px;
-  }
-
-  .v5-stage .v5-step {
-    container-type: inline-size;
-  }
-
-  .v5-stage .kit-session--bleed .kit-line {
-    max-width: calc(50cqw + 140px - var(--k) * 1.6 - 16px);
-    white-space: normal;
+    --kit-max: 16px;
   }
 }
 
@@ -335,7 +351,6 @@
 @media (max-width: 720px) {
   .v5-stage {
     --plate-r: 14px;
-    --kit-size: 15px;
     margin-top: 32px;
   }
 
@@ -343,9 +358,8 @@
     gap: 16px;
   }
 
-  /* A column with the caption at the bottom (Mintlify's label), at least 460 tall: the plates line up, and the first
-     one's caption stays under the 844px fold of a 390 phone (no plate word on the first screen but the card's). No
-     step label: each caption names its step. */
+  /* A column with the caption at the bottom (Mintlify's label), at least 460 tall: the plates line up. No step label:
+     each caption names its step. */
   .v5-stage .v5-step {
     display: flex;
     flex-direction: column;
@@ -364,37 +378,8 @@
   .v5-stage .v5-step-obj {
     position: relative;
     top: auto;
+    right: auto;
     left: auto;
-    width: auto;
-  }
-
-  /* Call and Watch run off the right edge, as on the desktop plate. */
-  .v5-stage .v5-step-obj > .kit[data-kit-state="call"],
-  .v5-stage .v5-step-obj > .kit-flow {
-    width: calc(100% + 64px);
-  }
-
-  /* The card bleeds, its words do not: the instruction wraps inside the plate. The card runs 44px past the plate's
-     edge (64 - the plate's 20px padding) and pads its text 1.6k (24px) in, so 40px more keeps the line 16px clear of
-     the cut at every phone width (YC review P1-5: at 360-414 the sentence was cut at "outputs/r"). */
-  .v5-stage .kit-session--bleed .kit-line {
-    padding-right: 40px;
-    white-space: normal;
-  }
-
-  /* Watch's card bleeds the same way, so its sentence keeps the same 40px: the file path (glyph and path, no box
-     since O1) no longer pushes "from" onto the next line by its own width, and at 320-360 en ran 15-17px under the
-     cut (measured 2026-10-21 04:10). */
-  .v5-stage .v5-step-obj > .kit-flow .kit-line {
-    padding-right: 40px;
-  }
-
-  .v5-stage .v5-step-obj > .kit-flow > .kit-stream {
-    width: calc(100% - 64px - var(--k) * 0.8);
-  }
-
-  .v5-stage .v5-step-obj > .kit-stack {
-    width: 100%;
   }
 
   .v5-stage .v5-step-cap {
@@ -420,12 +405,18 @@
     line-height: 1.5;
   }
 
-  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption,
-     whose top sits at 364 in a 460 plate. */
+  /* "hero-mobile": 720 x 460 from the plate's top-left (the plate's minimum height), fading out above the caption. */
   .v5-stage .v5-lf--phone {
     inset: 0 auto auto 0;
     width: 720px;
     height: 460px;
     mask-image: linear-gradient(#000 300px, transparent 352px);
+  }
+}
+
+/* Under 360px the plate gives the object 4px more on each side, so the narrow layout keeps its 12px floor. */
+@media (max-width: 359px) {
+  .v5-stage .v5-step {
+    padding-inline: 16px;
   }
 }

@@ -106,13 +106,43 @@ const BUDGETS = {
   "footer.copyright": 40, // system
 };
 
-// The Session object's states (src/home/kit renderSession): visible words per state, at most 14 (object words,
-// counted as tools/budget.ts does: the object's text split at spaces; {file} stands for the file).
+// The Session object's states (src/home/kit): visible words per state, at most 14 (object words, counted as
+// tools/budget.ts does: the object's text split at spaces).
+// NEW CLAIM (staging narrative/CHANGES.md §2): the first plate's three states. laptop = the first screen: the laptop
+// card and the Session card, row for row (place, harness, file, who drives it), the Session card's two copies behind
+// it carry no words; cloud = the laptop card still on screen at half strength, the Session card's rows become the
+// Agent preset's parts; app = the sources call your app, your app calls the Sessions (three cards, one with the file).
 const KIT_STATE_WORDS = 14;
 const kitStates = (kit) => ({
-  call: [kit.harness, kit.call.instruction, kit.call.attachment],
-  watch: [kit.watch.status, kit.watch.action.replace("{file}", kit.watch.file), kit.watch.stream, ...kit.watch.events],
-  return: [kit.return.turn, kit.return.after, kit.return.restored],
+  laptop: [
+    kit.laptop.place,
+    kit.harness,
+    kit.file,
+    kit.laptop.driver,
+    kit.session.place,
+    kit.harness,
+    kit.file,
+    kit.session.driver,
+  ],
+  cloud: [
+    kit.laptop.place,
+    kit.harness,
+    kit.file,
+    kit.laptop.driver,
+    kit.session.place,
+    kit.harness,
+    ...kit.cloud.rows,
+    kit.cloud.pinned,
+  ],
+  app: [
+    ...kit.app.sources,
+    kit.app.app,
+    kit.app.call,
+    kit.session.place,
+    kit.session.place,
+    kit.session.place,
+    kit.file,
+  ],
 });
 
 const words = (value) => value.split(/\s+/).filter(Boolean).length;
@@ -208,7 +238,12 @@ test("each state of the Session object shows at most 14 words (en)", () => {
     const count = strings.reduce((sum, value) => sum + words(value), 0);
     assert.ok(count <= KIT_STATE_WORDS, `stage.kit ${state}: ${count} words > ${KIT_STATE_WORDS}`);
   }
-  assert.match(COPY.stage.en.kit.watch.action, /\{file\}/, "the watch action marks where the file path goes");
+  // NEW CLAIM: the two cards differ only in where it runs and who drives it (no arrow, no "import"; staging
+  // narrative/judge-truth:.md L32); the rows they share are the same strings.
+  const { laptop, session } = COPY.stage.en.kit;
+  assert.notEqual(laptop.place, session.place, "the place differs");
+  assert.notEqual(laptop.driver, session.driver, "who drives it differs");
+  assert.match(session.driver, /backend/i, "the Session card is driven by your backend (truth rule 3)");
 });
 
 // tools/budget.ts: at most 25 marketing words on the first screen. The hero's own slots must leave that room; the
@@ -224,14 +259,14 @@ test("the hero's marketing words fit the first-screen budget (en)", () => {
   assert.equal(h.harnesses.length, 4, "four harness names");
 });
 
-// The first screen also shows the stage plate's first state (the Call card, sections/stage.ts): its words and the
+// The first screen also shows the stage plate's first state (NEW CLAIM: laptop, the two cards): its words and the
 // four harness names in the lead are the first screen's object words, at most 16 in tools/budget.ts (counted the same
-// way as when the names were keycaps: staging v5/sections/hero-stage/NOTES.md §6, names 6 + Call 7 = 13). The step
-// row shows no word on the first screen (it waits for the run, sections/stage.css).
-test("the harness names and the Call card fit the first screen's object words (en)", () => {
+// way as when the names were keycaps: names 7 + the two cards 9 = 16, no room left). The step row shows no word on
+// the first screen (it waits for the run, sections/stage.css).
+test("the harness names and the two cards fit the first screen's object words (en)", () => {
   const names = COPY.hero.en.harnesses.reduce((sum, value) => sum + words(value), 0);
-  const call = kitStates(COPY.stage.en.kit).call.reduce((sum, value) => sum + words(value), 0);
-  assert.ok(names + call <= 16, `first-screen object words: harness names ${names} + Call card ${call} > 16`);
+  const plate = kitStates(COPY.stage.en.kit).laptop.reduce((sum, value) => sum + words(value), 0);
+  assert.ok(names + plate <= 16, `first-screen object words: harness names ${names} + the two cards ${plate} > 16`);
 });
 
 // The closing's Copy (#130, committee 2026-10-21): the copy engine (src/home/copy-prompt.ts) finds the sentence and
@@ -312,15 +347,17 @@ const CJK_GROUPS = [
   { name: "hero.lead", paths: ["hero.lead.pre", "hero.lead.or", "hero.lead.post"] },
   { name: "closing.h2a + h2b", paths: ["closing.h2a", "closing.h2b"], width: 15 },
 ];
+// NEW CLAIM: the kit's labels, each kept to the width its en string takes in its row (card header, row label, chip),
+// rounded up; harness, file and app.call are machine tokens checked for equality below, not for width.
 const KIT_CJK = {
-  "kit.call.instruction": 25, // set in Fragment Mono since v5 FIXES: the plate cuts it at 1440 from about 51 en characters
-  "kit.watch.action": 24, // with the file path in it: one line at 1440 and 1024, two at 390, as en
-  "kit.watch.status": 8,
-  "kit.watch.stream": 12,
-  "kit.watch.events.*": 10,
-  "kit.return.turn": 8,
-  "kit.return.after": 6,
-  "kit.return.restored": 16,
+  "kit.laptop.place": 5, // en "Laptop": the narrow card's header
+  "kit.laptop.driver": 4, // en "You"
+  "kit.session.place": 5, // en "Session"
+  "kit.session.driver": 7, // en "Your backend"
+  "kit.cloud.rows.*": 7, // en "Environment" is the longest row label
+  "kit.cloud.pinned": 4, // en "pinned": a chip after the Environment row
+  "kit.app.sources.*": 5, // en "Customer": a source chip
+  "kit.app.app": 7, // en "Your app": the app card's header
 };
 
 test("zh and ja fit en's visual widths (full-width characters, Latin counting half)", () => {
@@ -334,8 +371,7 @@ test("zh and ja fit en's visual widths (full-width characters, Latin counting ha
         if (grouped.has(where)) continue;
         if (section === "stage" && path[0] === "kit") {
           const kit = Object.entries(KIT_CJK).find(([pattern]) => matches(pattern, path));
-          const text = path[2] === "action" ? value.replace("{file}", COPY.stage[locale].kit.watch.file) : value;
-          if (kit && cjkWidth(text) > kit[1]) overflow.push(`${locale} ${where}: ${cjkWidth(text)} > ${kit[1]} wide: ${text}`);
+          if (kit && cjkWidth(value) > kit[1]) overflow.push(`${locale} ${where}: ${cjkWidth(value)} > ${kit[1]} wide: ${value}`);
           continue;
         }
         const budget = budgetFor(section, path);
@@ -365,13 +401,14 @@ test("product names and machine tokens are spelled the same in every locale", ()
   for (const locale of ["zh", "ja"]) {
     assert.deepEqual(COPY.hero[locale].harnesses, COPY.hero.en.harnesses, `${locale} hero harness names`);
     assert.equal(COPY.stage[locale].kit.harness, COPY.stage.en.kit.harness, `${locale} stage harness`);
-    assert.equal(COPY.stage[locale].kit.call.attachment, COPY.stage.en.kit.call.attachment, `${locale} attached file`);
-    assert.equal(COPY.stage[locale].kit.watch.file, COPY.stage.en.kit.watch.file, `${locale} file being written`);
+    // NEW CLAIM: the file both cards show and the call your app makes are machine tokens
+    assert.equal(COPY.stage[locale].kit.file, COPY.stage.en.kit.file, `${locale} the file on the cards`);
+    assert.equal(COPY.stage[locale].kit.app.call, COPY.stage.en.kit.app.call, `${locale} the call your app makes`);
+    assert.equal(COPY.stage[locale].kit.session.place, COPY.stage.en.kit.session.place, `${locale} Session stays Session`);
     assert.deepEqual(
       COPY.footer[locale].columns.harnesses.names,
       COPY.footer.en.columns.harnesses.names,
       `${locale} footer harness names`,
     );
-    assert.match(COPY.stage[locale].kit.watch.action, /\{file\}/, `${locale} watch action marks the file`);
   }
 });

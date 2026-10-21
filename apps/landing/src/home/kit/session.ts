@@ -1,79 +1,90 @@
-// The Session object in its three stage states (BRIEF §4 row 2). One card, three fillings, so the stage
-// reads as the same object changing: chip -> sentence -> body.
-//   Call    harness chip, the instruction as the request's string, the attached file  (lit: none; the request
-//           has no keys to press: v5's first 5-second test read the console composer's + and send as a chat box)
-//   Watch   Running chip, the current action with the file being written as a path; a connector down to
-//           the card the events stream into, rows fading 1 / .6 / .2     (lit: the lime dot)
-//   Return  Turn 2 on two earlier turns, "+7 days", the restore track, restored  (lit: T1 underlay above)
-// Sources: v4b fragment (renderPaperHero / .pp-frag*, owner: "传达是清晰的"), v4d F19 stack (.d-stack*),
-// Apollo gtm-system / source-of-truth (connector between two parts) and busywork (faded rows), STUDY §2.4.
-// The composer's attach and send keys are gone from Call (staging v5/FIXES.md: 5 of 5 personas read them as a chat
-// input, not an API call).
+// The Session object in the stage's three states (round 3b, the new claim: staging narrative/CHANGES.md §2, §3, §10 A1;
+// the words: narrative/DECK.md §2.3). One markup draws all three, so the stage moves the same object from state to
+// state in place (kit.css: every part reads --kit-cloud and --kit-app; no card ever travels from the laptop to the
+// Session, staging narrative/judge-truth:.md L32):
+//   laptop  the first plate. Two white cards side by side, row for row, no arrow and no line: Laptop (Codex,
+//           report.md done, You) and Session (Codex, report.md done, Your backend), two more Sessions stacked behind
+//           the second with their lower edges showing. The two rows that differ (where it runs, who drives it) are
+//           ink 500, the two it shares ink-2 400 (CHANGES §2.2: 5 of 10 readers had to hunt for the difference).
+//   cloud   the laptop card stays, at half strength; the Session card's rows turn, row by row, into the Agent
+//           preset's parts: Codex, Instructions, Skills, Remote MCP, Environment with a "pinned" chip.
+//   app     the laptop card is gone; the stack spreads into a column of three Sessions (the front one keeps
+//           report.md); Your app calls them, and Teammate and Customer use your app. 1px ink lines say only who calls
+//           whom (committee O1: lines are structure); the line into the Sessions carries the request, POST …/threads,
+//           in Fragment Mono. No arrowheads: the request names the direction.
+// Card heads carry neutral glyphs, never the mosoo mark; nothing says Pending; three Sessions, not more (an account
+// runs at most five sandboxes at once, MAIN record-store L74). Glyphs: ./glyphs.ts (sources in its header).
 
-import { chip, esc, eventRows, fileChip, glyph, LIVE_DOT, root, runtimeGlyph, sentenceWithFile, underlay, wire } from "./parts.ts";
-import type { SessionCallProps, SessionProps, SessionReturnProps, SessionWatchProps } from "./types.ts";
+import { esc, glyph, root, runtimeGlyph } from "./parts.ts";
+import type { KitGlyphId } from "./glyphs.ts";
+import type { SessionProps } from "./types.ts";
 
-export function renderSessionCall(props: SessionCallProps): string {
-  const cls = props.bleed === true ? "kit-session kit-session--call kit-session--bleed" : "kit-session kit-session--call";
-  return (
-    `<div ${root(props, "session", cls)} data-kit-state="call">` +
-    `<div class="kit-head" data-kit-part="head">${chip(runtimeGlyph(props.harness.runtime), props.harness.name)}</div>` +
-    `<p class="kit-line kit-line--input" data-kit-part="line">${esc(props.instruction)}</p>` +
-    `<div class="kit-ctl" data-kit-part="ctl">${fileChip(props.attachment)}</div></div>`
-  );
+/** A glyph before a card's name or a row's words: bare, in the words' colour (no tile: committee O1, few shapes). */
+function mark(svg: string): string {
+  return `<span class="kit-ic">${svg}</span>`;
 }
 
-export function renderSessionWatch(props: SessionWatchProps): string {
-  const head = `<div class="kit-head" data-kit-part="head">${chip(LIVE_DOT, props.status, "kit-chip--live")}</div>`;
-  const line = `<p class="kit-line" data-kit-part="line">${sentenceWithFile(props.action, props.file)}</p>`;
-  if (props.stream === undefined) {
-    return `<div ${root(props, "session", "kit-session kit-session--watch")} data-kit-state="watch">${head}${line}${eventRows(props.events)}</div>`;
-  }
-  return (
-    `<div ${root(props, "session", "kit-flow")} data-kit-state="watch">` +
-    `<div class="kit-session">${head}${line}</div>` +
-    wire("down") +
-    `<div class="kit-stream" data-kit-part="stream"><span class="kit-eyebrow">${esc(props.stream)}</span>${eventRows(props.events)}</div>` +
-    `</div>`
-  );
+function head(id: KitGlyphId, text: string): string {
+  return `<p class="kit-head-row" data-kit-part="head">${mark(glyph(id))}${words(text)}</p>`;
 }
 
-/** v4d F19's restore track: the saved files run back into the harness; full, because it is done. */
-function restoreTrack(props: SessionReturnProps): string {
-  return (
-    `<div class="kit-track" data-kit-part="track">` +
-    `<span class="kit-track-end">${glyph("file")}</span>` +
-    `<span class="kit-track-rail"><i></i></span>` +
-    `<span class="kit-track-end">${runtimeGlyph(props.harness.runtime)}</span>` +
-    `</div>`
-  );
+/** One row's face. "key": a row that differs between the cards (ink 500); "same": a row they share (ink-2 400). */
+function face(svg: string, words: string, tone: "key" | "same", side = ""): string {
+  return `<span class="kit-row kit-row--${tone}${side}">${mark(svg)}${words}</span>`;
 }
 
-export function renderSessionReturn(props: SessionReturnProps): string {
-  const line = props.line === undefined ? "" : `<p class="kit-line" data-kit-part="line">${esc(props.line)}</p>`;
-  return (
-    `<div ${root(props, "session", "kit-stack")} data-kit-state="return">` +
-    underlay(props.underlay ?? "a", "kit-underlay--top") +
-    `<i class="kit-back kit-back--2" data-kit-part="back"></i>` +
-    `<i class="kit-back kit-back--1" data-kit-part="back"></i>` +
-    `<div class="kit-session kit-session--front">` +
-    `<div class="kit-head" data-kit-part="head">${chip(runtimeGlyph(props.harness.runtime), props.turn)}` +
-    `<span class="kit-meta" data-kit-part="meta">${esc(props.after)}</span></div>` +
-    line +
-    (props.track === false ? "" : restoreTrack(props)) +
-    `<p class="kit-status" data-kit-part="status">${glyph("check")}<span>${esc(props.restored)}</span></p>` +
-    `</div></div>`
-  );
+/** A row's or a chip's words (the file name passes `mono`: Fragment Mono, the object's one file name). */
+function words(text: string, mono = false): string {
+  return `<span class="kit-t${mono ? " kit-mono" : ""}">${esc(text)}</span>`;
 }
 
-/** One entry point for the stage engine: the same props shape with a `state`. */
+const DONE = `<span class="kit-done">${glyph("check")}</span>`;
+
 export function renderSession(props: SessionProps): string {
-  switch (props.state) {
-    case "call":
-      return renderSessionCall(props);
-    case "watch":
-      return renderSessionWatch(props);
-    case "return":
-      return renderSessionReturn(props);
-  }
+  const { app, cloud, file, harness, laptop, session } = props;
+  const codex = face(runtimeGlyph(harness.runtime), words(harness.name), "same");
+  const result = (side = ""): string => face(glyph("file"), `${words(file, true)}${DONE}`, "same", side);
+  const rows = (cells: readonly string[]): string =>
+    `<ul class="kit-rows">${cells.map((cell) => `<li class="kit-slot">${cell}</li>`).join("")}</ul>`;
+  const sessionHead = head("runs", session.place);
+  const laptopCard =
+    `<div class="kit-card kit-laptop" data-kit-part="laptop">${head("laptop", laptop.place)}` +
+    rows([codex, result(), face(glyph("user"), words(laptop.driver), "key")]) +
+    `</div>`;
+  // The front Session's five slots: what each shows in laptop | cloud | app (kit.css .kit-slot:nth-child).
+  //   1 Codex | Codex | -     2 report.md | Instructions | report.md     3 Your backend | Skills | -
+  //   4 - | Remote MCP | -    5 - | Environment pinned | -
+  const front =
+    `<div class="kit-card kit-front" data-kit-part="session">${sessionHead}` +
+    rows([
+      codex,
+      result(" kit-row--a") + face(glyph("note"), words(cloud.rows[0] ?? ""), "key", " kit-row--b"),
+      face(glyph("server"), words(session.driver), "key", " kit-row--a") +
+        face(glyph("skills"), words(cloud.rows[1] ?? ""), "key", " kit-row--b"),
+      face(glyph("mcp"), words(cloud.rows[2] ?? ""), "key"),
+      face(glyph("cube"), `${words(cloud.rows[3] ?? "")}<span class="kit-pin">${esc(cloud.pinned)}</span>`, "key"),
+    ]) +
+    `</div>`;
+  // The two Sessions behind it: stacked (only their lower edges show), then spread under it with their heads.
+  const backs = [2, 1].map((n) => `<div class="kit-card kit-back kit-back--${n}" data-kit-part="back">${sessionHead}</div>`);
+  // Your app and who uses it, and the lines of who calls whom (drawn by kit.css from the layout's numbers).
+  const sources = app.sources
+    .map((name, i) => `<span class="kit-src kit-src--${i + 1}" data-kit-part="source">${mark(glyph("user"))}${words(name)}</span>`)
+    .join("");
+  const calls =
+    `<div class="kit-calls" data-kit-part="calls">` +
+    `<i class="kit-ln kit-ln--use kit-ln--use-1"></i><i class="kit-ln kit-ln--use kit-ln--use-2"></i>` +
+    `<i class="kit-ln kit-ln--trunk"></i><i class="kit-ln kit-ln--bus"></i>` +
+    `<i class="kit-ln kit-ln--tap kit-ln--tap-0"></i><i class="kit-ln kit-ln--tap kit-ln--tap-1"></i>` +
+    sources +
+    `<div class="kit-card kit-app" data-kit-part="app">${head("server", app.app)}</div>` +
+    `<span class="kit-call" data-kit-part="call"><span class="kit-mono">${esc(app.call)}</span></span>` +
+    `</div>`;
+  return (
+    `<div ${root(props, "session", "kit-scene")} data-kit-state="${props.state}">` +
+    laptopCard +
+    `<div class="kit-sessions">${backs.join("")}${front}</div>` +
+    calls +
+    `</div>`
+  );
 }

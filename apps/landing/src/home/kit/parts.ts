@@ -1,11 +1,12 @@
-// Primitives of the T4 kit: escaping, the root element, glyphs and the five relation pieces Apollo uses
-// (refs/apollo/v5/STUDY.md §2.8): connector, stack + shadow, lit underlay, source mark, faded rows.
+// Primitives of the T4 kit: escaping, the root element, glyphs and the relation pieces Apollo uses
+// (refs/apollo/v5/STUDY.md §2.8) that ./objects.ts draws with: connector, lit underlay, dotted wall, running dot. The
+// Session object (./session.ts) builds its cards, rows and lines from these and kit.css.
 // Everything returns an HTML string; kit.css draws it. Erasable TypeScript only, so Node and Bun can import
 // this file as is at build time.
 
 import { KIT_GLYPHS } from "./glyphs.ts";
 import type { KitGlyphId } from "./glyphs.ts";
-import type { EventKind, EventRow, KitBase, RuntimeId, UnderlayStrip } from "./types.ts";
+import type { KitBase, RuntimeId, UnderlayStrip } from "./types.ts";
 
 export function esc(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -29,10 +30,6 @@ export function runtimeGlyph(runtime: RuntimeId, cls = ""): string {
   return glyph(RUNTIME_GLYPH[runtime], cls);
 }
 
-// Event family -> glyph: runs (mosoo sidebar family) for run.*, SquareTerminal for tool calls (the console
-// draws bash / exec_command / shell with it), File02 for file.changed and session_files.updated.
-const EVENT_GLYPH: Readonly<Record<EventKind, KitGlyphId>> = { file: "file", run: "runs", tool: "terminal" };
-
 /**
  * Root attributes of every object: the scale class, the product-object marker the word budget counts
  * (UI-FORMS §g), the language and the accessibility contract (label -> one image; no label -> hidden).
@@ -46,26 +43,8 @@ export function root(base: KitBase, kind: string, cls: string): string {
   return `class="${classes}" data-kit="${kind}" data-product-ui${lang}${a11y}`;
 }
 
-/** Pill with a white disc: harness name, Running, Turn 2. */
-export function chip(icon: string, text: string, cls = ""): string {
-  return `<span class="kit-chip${cls ? ` ${cls}` : ""}" data-kit-part="chip"><span class="kit-chip-ic">${icon}</span><span class="kit-chip-t">${esc(text)}</span></span>`;
-}
-
 /** The running mark: a lime dot circled by 1px of ink (BRIEF §3.1, the only solid lime inside an object). */
 export const LIVE_DOT = '<i class="kit-live"></i>';
-
-/** A file as a pill: glyph + name. `mono` makes the name the object's one mono token. */
-export function fileChip(name: string, mono = true): string {
-  return `<span class="kit-file" data-kit-part="file">${glyph("file")}<span class="${mono ? "kit-mono" : "kit-file-t"}">${esc(name)}</span></span>`;
-}
-
-/**
- * A file path in the running text: the file glyph and the path in Fragment Mono, ink, with no box or shadow (O1,
- * committee 2026-10-21: names, files and buttons carry no outline; mono is for paths). Glyph and path never part.
- */
-export function filePath(text: string): string {
-  return `<span class="kit-key" data-kit-part="key">${glyph("file")}${esc(text)}</span>`;
-}
 
 /**
  * The lit underlay: a T1 strip (with T1's grain) inside a box that kit.css offsets from the lit element.
@@ -82,23 +61,3 @@ export function wire(direction: "across" | "down"): string {
 
 /** The dotted wall (ElevenLabs dotted line: 1.25px, dasharray .01 4, round caps) drawn around a box. */
 export const DOTTED_WALL = '<svg class="kit-dots" aria-hidden="true" focusable="false"><rect class="kit-dots-r"/></svg>';
-
-/** Event rows, newest first; kit.css fades them 1 / .6 / .2 toward the card edge. */
-export function eventRows(rows: readonly EventRow[]): string {
-  const items = rows
-    .map(
-      (row) =>
-        `<li class="kit-ev" data-kit-part="ev"${row.event === undefined ? "" : ` data-event="${esc(row.event)}"`}>${glyph(EVENT_GLYPH[row.kind])}<span>${esc(row.text)}</span></li>`,
-    )
-    .join("");
-  return `<ol class="kit-events" data-kit-part="events">${items}</ol>`;
-}
-
-/** A sentence with `{file}` replaced by the file path (appended when the marker is missing). */
-export function sentenceWithFile(text: string, file: string): string {
-  const at = text.indexOf("{file}");
-  if (at < 0) {
-    return `${esc(text)} ${filePath(file)}`;
-  }
-  return `${esc(text.slice(0, at))}${filePath(file)}${esc(text.slice(at + "{file}".length))}`;
-}
