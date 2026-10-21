@@ -2,7 +2,7 @@
 // use cases, pricing).
 // Run (repo root): node apps/landing/scripts/assets/social-card-v5.mjs
 //   CHROME=<Chrome or Chrome for Testing binary> overrides the default macOS Google Chrome path.
-// Writes apps/landing/public/brand/social-card-v5-20261021.png and prints its size and SHA-256.
+// Writes apps/landing/public/brand/social-card-v5-20261021b.png and prints its size and SHA-256.
 //
 // The v5 language (staging production/v5/BRIEF.md §3): one white paper sheet on the #F4F4F4 frame, the black
 // lockup top left (public/brand/v5/logo-nav.svg), the home's two-tone serif line (Roboto Serif, the en display file,
@@ -13,7 +13,10 @@
 // copy, lib.mjs). Same Chrome and inputs give the same pixels; a new card gets a new dated file name, so social
 // caches that kept an old card cannot serve it under this URL. History: the 2026-10-20 card (Hedvig Letters Serif,
 // redrawn once under its name when the CTA moved from Inter to Hanken Grotesk, as it had never been published) gave
-// way to this one when the display face became Roboto Serif on 2026-10-21 (committee O2).
+// way to social-card-v5-20261021.png when the display face became Roboto Serif on 2026-10-21 (committee O2), and that
+// one, still v4d's line, to this card the same day, when the hero took the new claim's H1 (staging narrative/DECK.md
+// §2.2; owner 2026-10-21 02:40): a new name all the same (RULING C11), though the 20261021 card was never published
+// (https://mosoo.ai/brand/social-card-v5-20261021.png answered 404 on 2026-10-21 10:49 CST).
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -23,19 +26,19 @@ import { join } from "node:path";
 
 import { LANDING, sharp } from "./lib.mjs";
 
-const OUT = join(LANDING, "public", "brand", "social-card-v5-20261021.png");
+const OUT = join(LANDING, "public", "brand", "social-card-v5-20261021b.png");
 const CHROME = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const W = 1200;
 const H = 630;
 
-// The home's H1 and lime CTA (apps/landing/src/home/copy/hero.json en: h1a, h1b, primary). The v5 content phase
-// kept v4d's H1, so the card already says it. If the hero line changes, change these three strings, regenerate,
-// and give the file a new date (and update with it the og:image of index.html, status.html, use-cases.html and
-// pricing.html, the blog's BaseLayout.astro default, the home's imageAlt in scripts/landing-locales.mjs and the
-// blog's ogImageAlt).
+// The home's H1 and lime CTA (apps/landing/src/home/copy/hero.json en: h1a, h1b, primary; en carries no break
+// marks). If the hero line changes, change these three strings, regenerate, and give the file a new date (and update
+// with it the og:image of index.html, status.html, use-cases.html and pricing.html, the blog's BaseLayout.astro
+// default, the home's imageAlt in scripts/landing-locales.mjs and index.html, the blog's ogImageAlt, and the card's
+// name in tests/site-seo.test.mjs and tests/brand-assets.test.mjs).
 const COPY = {
-  line1: "Run agents from your backend.",
-  line2: "Continue them days later.",
+  line1: "Your agent works locally.",
+  line2: "Now it runs without you.",
   cta: "Try mosoo",
 };
 

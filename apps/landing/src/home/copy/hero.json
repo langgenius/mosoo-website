@@ -1,21 +1,22 @@
 {
-  "$comment": "Slots of sections/hero.ts (staging v5/sections/hero-stage/NOTES.md has the slot table, measured at the budget maximum). H1 = h1a + h1b (display-face 72px two-tone: one line each at 1440; 42px at 390: two lines each). Lead = '{lead.pre} {harness 1}, {harness 2}, {harness 3} {lead.or} {harness 4} {lead.post}' (zh / ja join the names with 、), the harness names as plain names in the sentence (ui.ts nameList: sans 500 in ink, no box, no glyph), sans 20px balanced in 760px: two lines at 1440; 17px at 390: three to four lines. primary: the lime CTA; secondary: the grey CTA (one row at 1440; at the budget maximum they stack at 390). Words: H1 + lead + CTAs stay within 24 so the first screen keeps <= 25 marketing words (it shows no step word since O1). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources of every claim: staging v5/content/NOTES.md.",
+  "$comment": "Slots of sections/hero.ts (staging v5/sections/hero-stage/NOTES.md has the slot table, measured at the budget maximum). H1 = h1a + h1b (display-face 72px two-tone: one line each at 1440; 42px at 390). Lead = '{lead.pre} {harness 1}, {harness 2}, {harness 3} {lead.or} {harness 4} {lead.post}' (zh / ja join the names with 、 and leave no space after a pre that ends in punctuation), the harness names as plain names in the sentence (ui.ts nameList: sans 500 in ink, no box, no glyph), sans 20px balanced in 760px: two lines at 1440; 17px at 390. primary: the lime CTA; secondary: the grey CTA. Words: H1 + lead + CTAs stay within 24 so the first screen keeps <= 25 marketing words (it shows no step word since O1; tools/budget.ts measures en / zh / ja 23 / 23 / 24). Copy: the narrative round's deck (staging narrative/DECK.md §2.2, 2026-10-21), the owner's claim of 02:40 (it works on your laptop; it needs your laptop and you; set up the same agent in mosoo; your backend runs it without you), hero V2 of that round's five-second test (problem named 5/5; 'why not my laptop' partly clear 4/5, hinted 1/5, unclear 0/5; narrative/NARRATIVE.md §8). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
   "$source": {
-    "h1": "v4d's H1 (9e92312 home-copy.json hero), the clearest of the four v4 heroes (REVIEW-v4 §2: persona clarity median 7). README L8: 'API-first managed Agent runtime for application backends'; SPEC §4 L53: a reply one minute or seven days after a completed turn has the same semantics.",
-    "lead": "One API call from the backend starts a Session (README L32, SPEC §1 L12-L13; OpenAPI v2 POST /projects/{projectId}/threads), each Session in its own sandbox (README L9, SPEC §3 L32).",
-    "harnesses": "README L9 names them OpenAI Codex, Claude Agent SDK, OpenCode and Pi; not translated (tests keep them equal in every locale).",
-    "primary": "README L18 'Try mosoo' -> https://cloud.mosoo.ai.",
-    "secondary": "The v2 quickstart (copy.ts localeLinks().quickstart).",
-    "news": "The announcement above the H1 (owner 2026-10-20 17:15: the NEW pill over the headline must stay). Production's strings (origin/main apps/landing/src/routes/login/landing/hero.tsx L63-66; shared/i18n.ts L19 / L47), with the product's name in lowercase (owner 2026-10-20 21:57: 「mosoo computer 一律小写」); the chip says New in every locale, as production's does. Chrome, not marketing copy: the link carries data-budget=\"chrome\" (tools/budget.ts leaves it out of the word counts)."
+    "h1a": "The reader's own situation, not a product promise (owner-notes L224 step 1; TRUTH A1, A3). Tested as V2 h1a.",
+    "h1b": "No interactive tool approvals (MAIN docs/SPEC.md L65); one admitted input starts one turn with many model and tool calls (SPEC L18); each turn runs in an isolated sandbox on Cloudflare Containers (README.md L26). Not an uptime promise (README.md L39). The plate's 'Your backend' row says who sends the work (truth rule 3, narrative/judge-truth:.md L34). Tested as V2 h1b.",
+    "lead": "README.md L9 ('Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API'). 'Set up the same' = save the same configuration as an Agent preset (README.md L37; SPEC L32); nothing imports a local setup (grep of apps/api/src and apps/web/src for CLAUDE.md, AGENTS.md, .codex/, .claude/settings: exit 1; TRUTH C9). Tested as V2 lead.",
+    "harnesses": "README.md L9; not translated (tests keep them equal in every locale).",
+    "primary": "README.md L18 'Try mosoo' -> https://cloud.mosoo.ai. Unchanged.",
+    "secondary": "Unchanged: the v2 quickstart (copy.ts localeLinks().quickstart); 15/15 personas clicked it first in the 2026-10-21 round (narrative/NARRATIVE.md §8.1).",
+    "news": "Unchanged: the announcement above the H1 (owner 2026-10-20 17:15: the NEW pill over the headline must stay; owner-notes L171, L188). Production's strings (origin/main apps/landing/src/routes/login/landing/hero.tsx L63-66; shared/i18n.ts L19 / L47), with the product's name in lowercase (owner 2026-10-20 21:57: 「mosoo computer 一律小写」); the chip says New in every locale, as production's does. Chrome, not marketing copy: the link carries data-budget=\"chrome\" (tools/budget.ts leaves it out of the word counts)."
   },
   "en": {
     "news": { "tag": "New", "text": "mosoo computer is live" },
-    "h1a": "Run agents from your backend.",
-    "h1b": "Continue them days later.",
+    "h1a": "Your agent works locally.",
+    "h1b": "Now it runs without you.",
     "lead": {
-      "pre": "One API call starts",
+      "pre": "Set up the same",
       "or": "or",
-      "post": "in a sandboxed Session."
+      "post": "agent behind one API."
     },
     "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
     "primary": "Try mosoo",

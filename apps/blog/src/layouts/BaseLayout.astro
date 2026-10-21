@@ -34,7 +34,7 @@ const {
   description,
   canonical,
   ogImage,
-  ogImageAlt = "mosoo: Run agents from your backend. Continue them days later.",
+  ogImageAlt = "mosoo: Your agent works locally. Now it runs without you.",
   type = "website",
   publishedTime,
   author,
@@ -45,7 +45,7 @@ const {
   surface = "paper",
 } = Astro.props;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
-const ogImageUrl = ogImage ?? new URL("/brand/social-card-v5-20261021.png", Astro.site).href;
+const ogImageUrl = ogImage ?? new URL("/brand/social-card-v5-20261021b.png", Astro.site).href;
 const hreflangEntries = (hreflang ? Object.entries(hreflang) : []).filter(
   (entry): entry is [string, string] => Boolean(entry[1]),
 );

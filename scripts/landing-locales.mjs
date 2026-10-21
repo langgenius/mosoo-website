@@ -11,10 +11,10 @@ import { homeFaq, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mj
 // home (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
 // landing-home.mjs and are written into the markers in index.html.
 // imageAlt describes the social card that ships today
-// (public/brand/social-card-v5-20261021.png, apps/landing/scripts/assets/
+// (public/brand/social-card-v5-20261021b.png, apps/landing/scripts/assets/
 // social-card-v5.mjs): the text on the card, which is English in every locale:
-// the en hero H1 (copy/hero.json, kept from v4d in the content phase); change
-// it together with the og:image when the card is regenerated.
+// "mosoo: " and the en hero H1 (copy/hero.json); change it together with the
+// og:image when the card is regenerated.
 const HOME_SEO = {
   en: {
     lang: "en",
@@ -24,7 +24,7 @@ const HOME_SEO = {
     socialTitle: "An open-source, API-first managed Agent runtime for application backends",
     socialDescription:
       "Start an agent task from your backend with one request. Continue it in the same Session days later, on OpenAI Codex, Claude Agent SDK, OpenCode, or Pi.",
-    imageAlt: "mosoo: Run agents from your backend. Continue them days later.",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
   zh: {
     lang: "zh-CN",
@@ -34,7 +34,7 @@ const HOME_SEO = {
     socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
       "后端用一个请求启动 Agent 任务，几天后仍可在同一个 Session 里继续。支持 OpenAI Codex、Claude Agent SDK、OpenCode 和 Pi，使用你自己的模型密钥。",
-    imageAlt: "mosoo: Run agents from your backend. Continue them days later.",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
   ja: {
     lang: "ja",
@@ -45,7 +45,7 @@ const HOME_SEO = {
       "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:
       "バックエンドから 1 つのリクエストで Agent のタスクを始め、数日後も同じ Session で続けられます。OpenAI Codex、Claude Agent SDK、OpenCode、Pi をご自身のモデルキーで実行します。",
-    imageAlt: "mosoo: Run agents from your backend. Continue them days later.",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
 };
 

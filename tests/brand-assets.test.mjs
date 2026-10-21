@@ -48,7 +48,7 @@ const BAMBOO_CARDS = {
   "social-card-20261019.png": "fd744e4902b145737ab28320b566b49ffa03da441557ffbb7235afe5b5c7e8bd",
   "social-card-geist-20260917.png": "31c8f6e3f2c0459494019090c080a38b43315ac2d578833cacd0c578358ce388",
 };
-const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261021.png";
+const V5_CARD = "https://mosoo.ai/brand/social-card-v5-20261021b.png"; // the narrative round's H1 (social-card-v5.mjs)
 
 const sha256 = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const filesUnder = (dir) =>
