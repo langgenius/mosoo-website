@@ -4,6 +4,41 @@ const PLATFORM_STALE_AFTER_MS = 5 * 60_000;
 const RUNTIME_STALE_AFTER_MS = DAY_MS;
 const FAILURE_THRESHOLD = 3;
 const SEEN_RUN_LIMIT = 1_000;
+const ERROR_MESSAGE_LIMIT = 500;
+const FAILURE_SOURCES = ["platform", "upstream_provider", "user_config", "unknown"];
+const OFFICIAL_PROVIDER_HOSTS = new Set([
+  "api.openai.com",
+  "generativelanguage.googleapis.com",
+  "api.anthropic.com",
+]);
+const MOSOO_HOSTS = new Set(["mosoo.ai", "cloud.mosoo.ai"]);
+const PLATFORM_ERROR_PATTERNS = [
+  "driver process exited",
+  "driver exited",
+  "durable object reset because its code was updated",
+  "runtime subject is busy with lifecycle maintenance",
+  "runtime session became inactive before the run completed",
+  "llm proxy upstream request failed",
+  "input.attachmentids is unsupported",
+  "app-server message queue limit exceeded",
+  "accepted status delivery timed out",
+  "invalid json payload",
+  'unknown name "store"',
+];
+const USER_CONFIG_ERROR_PATTERNS = [
+  "country, region, or territory not supported",
+  "region not supported",
+  "unsupported_country_region_territory",
+  "no credits",
+  "insufficient credits",
+  "insufficient balance",
+  "credit balance",
+  "quota",
+  "invalid api key",
+  "invalid_api_key",
+  "incorrect api key",
+  "api key not valid",
+];
 
 const FAILED_WORKER_OUTCOMES = new Set([
   "exception",
@@ -23,6 +58,73 @@ export const STATUS_COMPONENTS = [
 
 function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function failureEndpointHosts(message) {
+  // Prefer endpoint/zone fields over incidental links in provider error pages.
+  const labelled = [...message.matchAll(
+    /\b(?:zone|host|hostname|url|api[_-]?base|base[_-]?url)["']?\s*[:=]\s*["']?(?:https?:\/\/)?([a-z0-9.-]+\.[a-z]{2,})(?=[:/?#\s"'<>,;)}\]]|$)/g,
+  )].map((match) => match[1]);
+  if (labelled.length > 0) return labelled;
+  return [...message.matchAll(
+    /https?:\/\/([a-z0-9.-]+\.[a-z]{2,})(?=[:/?#\s"'<>,;)}\]]|$)/g,
+  )].map((match) => match[1]);
+}
+
+export function classifyFailureSource({ errorCode, errorMessage, status } = {}) {
+  if (status === "completed") return null;
+  const message = typeof errorMessage === "string"
+    ? errorMessage.toLowerCase().replace(/\\"/g, '"')
+    : "";
+  const code = typeof errorCode === "string" ? errorCode.toLowerCase() : "";
+
+  // Specific Mosoo/protocol bugs take precedence over provider context.
+  if (PLATFORM_ERROR_PATTERNS.some((pattern) => message.includes(pattern))) return "platform";
+  if (USER_CONFIG_ERROR_PATTERNS.some((pattern) => `${code} ${message}`.includes(pattern))) {
+    return "user_config";
+  }
+
+  const hosts = failureEndpointHosts(message);
+  const official = hosts.some((host) => OFFICIAL_PROVIDER_HOSTS.has(host));
+  if (hosts.some((host) => !OFFICIAL_PROVIDER_HOSTS.has(host) && !MOSOO_HOSTS.has(host))) {
+    return "user_config";
+  }
+  if (message.includes("request rejected") && !official) return "user_config";
+  if (
+    official &&
+    /\b[45]\d{2}\b|rate[_ -]?limit|too many requests|overloaded|timed out|origin_response_timeout/.test(
+      `${code} ${message}`,
+    )
+  ) {
+    return "upstream_provider";
+  }
+  if (message.includes("the operation timed out")) return "platform";
+  // A runtime/provider name in a generic error code does not establish origin.
+  return "unknown";
+}
+
+function runFailureSource(event) {
+  if (event.status !== "failed" && event.status !== "expired") return null;
+  return FAILURE_SOURCES.includes(event.failureSource)
+    ? event.failureSource
+    : classifyFailureSource(event);
+}
+
+function emptyFailureCounts() {
+  return Object.fromEntries(FAILURE_SOURCES.map((source) => [source, 0]));
+}
+
+function dailyCounts(daily, legacyFailureSource) {
+  const succeeded = daily?.succeeded ?? 0;
+  const total = daily?.total ?? 0;
+  const failedBySource = emptyFailureCounts();
+  for (const source of FAILURE_SOURCES) {
+    failedBySource[source] = daily?.failedBySource?.[source] ?? 0;
+  }
+  const classified = Object.values(failedBySource).reduce((sum, count) => sum + count, 0);
+  // Legacy runtime failures have no recoverable source; invocation failures do.
+  failedBySource[legacyFailureSource] += Math.max(0, total - succeeded - classified);
+  return { failedBySource, succeeded, total };
 }
 
 function timestampMs(value, fallback = Date.now()) {
@@ -63,23 +165,39 @@ export function createEmptyStatusState() {
     platform: emptySignal(),
     seenRunIds: [],
     updatedAt: null,
-    version: 2,
+    version: 3,
   };
 }
 
 function currentState(previous) {
-  return isRecord(previous) && previous.version === 2 ? previous : createEmptyStatusState();
+  if (!isRecord(previous) || (previous.version !== 2 && previous.version !== 3)) {
+    return createEmptyStatusState();
+  }
+  if (previous.version === 3) return previous;
+  return {
+    ...previous,
+    // v2 counted every failed Run in this streak. Its platform-only streak
+    // cannot be reconstructed from daily totals and the latest observation.
+    components: Object.fromEntries(Object.entries(previous.components ?? {}).map(([id, component]) => [
+      id, { ...component, consecutiveFailures: 0 },
+    ])),
+    version: 3,
+  };
 }
 
 function mergeSignal(signal, observation) {
   const history = { ...signal.history };
   const day = dateKey(observation.observedAt);
-  const daily = history[day] ?? { succeeded: 0, total: 0 };
+  const invocation = observation.type === "invocation";
+  const daily = dailyCounts(history[day], invocation ? "platform" : "unknown");
+  const failureSource = invocation ? "platform" : observation.failureSource;
+  if (!observation.succeeded) daily.failedBySource[failureSource] += 1;
   const cutoff = dateKey(
     timestampMs(observation.observedAt) - (HISTORY_DAYS - 1) * DAY_MS,
   );
 
   history[day] = {
+    failedBySource: daily.failedBySource,
     succeeded: daily.succeeded + (observation.succeeded ? 1 : 0),
     total: daily.total + 1,
   };
@@ -89,7 +207,9 @@ function mergeSignal(signal, observation) {
 
   return {
     ...signal,
-    consecutiveFailures: observation.succeeded ? 0 : signal.consecutiveFailures + 1,
+    consecutiveFailures: observation.succeeded
+      ? 0
+      : (signal.consecutiveFailures ?? 0) + (failureSource === "platform" ? 1 : 0),
     history,
     latest: observation,
   };
@@ -124,7 +244,9 @@ export function mergeStatusEvents(previous, incoming) {
       if (!definition || (!succeeded && !failed)) continue;
 
       const component = components[event.runtimeId] ?? emptyComponent(definition);
-      components[event.runtimeId] = mergeSignal(component, { ...event, succeeded });
+      components[event.runtimeId] = mergeSignal(component, {
+        ...event, failureSource: runFailureSource(event), succeeded,
+      });
       seenRunIds.add(event.runId);
     } else {
       continue;
@@ -143,30 +265,36 @@ export function mergeStatusEvents(previous, incoming) {
     platform,
     seenRunIds: [...seenRunIds].slice(-SEEN_RUN_LIMIT),
     updatedAt,
-    version: 2,
+    version: 3,
   };
 }
 
-function historyWindow(signal, nowMs) {
+function historyWindow(signal, nowMs, legacyFailureSource = "unknown") {
   return Array.from({ length: HISTORY_DAYS }, (_, index) => {
     const date = dateKey(nowMs - (HISTORY_DAYS - 1 - index) * DAY_MS);
-    return { date, ...(signal.history[date] ?? { succeeded: 0, total: 0 }) };
+    return { date, ...dailyCounts(signal.history?.[date], legacyFailureSource) };
   });
 }
 
 function summarizeHistory(history) {
   const total = history.reduce((sum, day) => sum + day.total, 0);
   const succeeded = history.reduce((sum, day) => sum + day.succeeded, 0);
+  const failedBySource = emptyFailureCounts();
+  for (const day of history) {
+    for (const source of FAILURE_SOURCES) failedBySource[source] += day.failedBySource[source];
+  }
+  const availabilityTotal = succeeded + failedBySource.platform;
   return {
     failed: total - succeeded,
-    successRate: total === 0 ? null : succeeded / total,
+    failedBySource,
+    successRate: availabilityTotal > 0 ? succeeded / availabilityTotal : total > 0 ? 1 : null,
     succeeded,
     total,
   };
 }
 
 function isFresh(latest, nowMs, staleAfterMs) {
-  if (latest === null) return false;
+  if (!latest) return false;
   const age = nowMs - timestampMs(latest.observedAt, 0);
   return age >= 0 && age <= staleAfterMs;
 }
@@ -174,7 +302,7 @@ function isFresh(latest, nowMs, staleAfterMs) {
 export function buildPublicStatus(previous = createEmptyStatusState(), now = new Date()) {
   const state = currentState(previous);
   const nowMs = now.getTime();
-  const platformHistory = historyWindow(state.platform, nowMs);
+  const platformHistory = historyWindow(state.platform, nowMs, "platform");
   const platformSummary = summarizeHistory(platformHistory);
   const platformFresh = isFresh(state.platform.latest, nowMs, PLATFORM_STALE_AFTER_MS);
   const platform = {
@@ -197,10 +325,12 @@ export function buildPublicStatus(previous = createEmptyStatusState(), now = new
     const history = historyWindow(component, nowMs);
     const summary = summarizeHistory(history);
     const fresh = isFresh(component.latest, nowMs, RUNTIME_STALE_AFTER_MS);
+    const consecutiveFailures = component.consecutiveFailures ?? 0;
 
     return {
       completedRuns90d: summary.succeeded,
-      consecutiveFailures: component.consecutiveFailures,
+      consecutiveFailures,
+      failedBySource90d: summary.failedBySource,
       failedRuns90d: summary.failed,
       history,
       id: definition.id,
@@ -212,7 +342,7 @@ export function buildPublicStatus(previous = createEmptyStatusState(), now = new
       runs90d: summary.total,
       status: !fresh
         ? "unknown"
-        : component.consecutiveFailures >= FAILURE_THRESHOLD
+        : consecutiveFailures >= FAILURE_THRESHOLD
           ? "degraded"
           : "operational",
       successRate90d: summary.successRate,
@@ -235,6 +365,8 @@ export function buildPublicStatus(previous = createEmptyStatusState(), now = new
       components.some((component) => component.consecutiveFailures >= FAILURE_THRESHOLD),
     status,
     updatedAt: state.updatedAt,
+    // The additive public feed stays compatible with /health's v2 reader.
+    // Only the stored state needs v3 to distinguish legacy failure streaks.
     version: 2,
   };
 }
@@ -299,12 +431,18 @@ export function statusEventsFromTailItems(items, nowMs = Date.now()) {
         continue;
       }
 
+      const errorMessage = [
+        metadata.errorMessage, metadata.error_message, metadata.error?.message, metadata.error,
+      ].find((value) => typeof value === "string");
+      const failureSource = runFailureSource({ ...metadata, errorMessage });
       events.push({
         durationMs:
           typeof metadata.durationMs === "number" && Number.isFinite(metadata.durationMs)
             ? Math.max(0, metadata.durationMs)
             : null,
         errorCode: typeof metadata.errorCode === "string" ? metadata.errorCode : null,
+        ...(errorMessage === undefined ? {} : { errorMessage: errorMessage.slice(0, ERROR_MESSAGE_LIMIT) }),
+        ...(failureSource === null ? {} : { failureSource }),
         observedAt: isoTimestamp(entry.timestamp, timestampMs(observedAt)),
         runId: metadata.runId,
         runtimeId: metadata.runtimeId,
