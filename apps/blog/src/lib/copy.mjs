@@ -9,19 +9,19 @@ export const categoryLabelsByLocale = {
     Engineering: "Engineering",
     Product: "Product",
     Research: "Research",
-    "Customer Stories": "Customer Stories",
+    "Built on mosoo": "Built on mosoo",
   },
   zh: {
     Engineering: "工程",
     Product: "产品",
     Research: "研究",
-    "Customer Stories": "客户故事",
+    "Built on mosoo": "用 mosoo 构建",
   },
   ja: {
     Engineering: "エンジニアリング",
     Product: "プロダクト",
     Research: "リサーチ",
-    "Customer Stories": "導入事例",
+    "Built on mosoo": "mosoo で構築",
   },
 };
 
@@ -30,28 +30,28 @@ export const headerCopyByLocale = {
     blog: "Blog",
     backToMosoo: "Back to mosoo",
     languageLabel: "Blog language",
-    learnMore: "Learn More",
+    tryMosoo: "Try mosoo",
     rssTitle: "Subscribe via RSS",
   },
   zh: {
     blog: "博客",
     backToMosoo: "返回 mosoo",
     languageLabel: "博客语言",
-    learnMore: "了解更多",
+    tryMosoo: "试用 mosoo",
     rssTitle: "订阅 RSS",
   },
   ja: {
     blog: "ブログ",
     backToMosoo: "mosoo に戻る",
     languageLabel: "ブログ言語",
-    learnMore: "詳しく見る",
+    tryMosoo: "mosoo を試す",
     rssTitle: "RSS を購読",
   },
 };
 
 export const indexCopyByLocale = {
   en: {
-    title: "Notes from the bamboo grove.",
+    title: "Notes from building mosoo.",
     description: "Letters for builders moving Agents from local experiments into production systems.",
     all: "All",
     allPosts: "All posts",
@@ -60,7 +60,7 @@ export const indexCopyByLocale = {
     empty: "No posts yet - check back soon.",
   },
   zh: {
-    title: "竹林手记。",
+    title: "mosoo 开发手记。",
     description: "写给正在把 Agent 从本地实验带进生产系统的人。",
     all: "全部",
     allPosts: "全部文章",
@@ -69,7 +69,7 @@ export const indexCopyByLocale = {
     empty: "暂无文章。",
   },
   ja: {
-    title: "竹林からのノート。",
+    title: "mosoo の開発ノート。",
     description: "Agent をローカルの実験からプロダクションシステムへ運ぼうとしている人に向けた手紙。",
     all: "すべて",
     allPosts: "すべての記事",
@@ -84,26 +84,28 @@ export const postCopyByLocale = {
     back: "← All posts",
     more: "← More posts",
     by: "By",
-    learnMore: "Learn More →",
+    github: "mosoo on GitHub →",
   },
   zh: {
     back: "← 返回全部文章",
     more: "← 更多文章",
     by: "作者",
-    learnMore: "了解更多 →",
+    github: "GitHub 上的 mosoo →",
   },
   ja: {
     back: "← 記事一覧に戻る",
     more: "← ほかの記事",
     by: "著者",
-    learnMore: "詳しく見る →",
+    github: "GitHub の mosoo →",
   },
 };
 
+// The company credit, the same in every language, as on the home (apps/landing/src/home/copy/footer.json; the holder
+// named in the mosoo LICENSE).
 export const footerCopyByLocale = {
-  en: "© 2026 mosoo - take root, and grow a bamboo sea.",
-  zh: "© 2026 mosoo - 扎根，长成竹海。",
-  ja: "© 2026 mosoo - 根を張り、竹の海へ育つ。",
+  en: "© 2026 LangGenius, Inc.",
+  zh: "© 2026 LangGenius, Inc.",
+  ja: "© 2026 LangGenius, Inc.",
 };
 
 export function localeFromLang(lang) {

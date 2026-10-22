@@ -1,0 +1,95 @@
+{
+  "$comment": "Slots of sections/stage.ts (one plate, three states of the kit's Session object, src/home/kit/session.ts; the narrative round's deck: staging narrative/DECK.md §2.3, narrative/CHANGES.md §2, §3). steps[k].tag: the step's name in the step row over the caption, pinned only (sans 500 15px in ink, no box; the told ones fold to 13px ink-2 in one row; none on the first screen or on the stacked plates). steps[k].title + steps[k].line: the caption at the plate's bottom-left (sans 500 22px + sans 16px, max 560 wide: one line each at 1440; phones 18 / 15px). kit: the object's words, drawn in every state from one markup: laptop = the first screen (the laptop card and the Session card row for row: place, harness, file, driver; two more Sessions stacked behind, no words), cloud = the laptop card at half strength and the Session card's rows as the Agent preset's parts (cloud.rows after the harness, cloud.pinned the chip after the last row), app = app.sources over app.app, app.call on the line from your app into three Sessions (the front one with the file). harness, file and app.call are machine tokens, the same in every locale; session.place stays Session. Object words per state <= 14, the first screen's names + laptop <= 16 (16 today: no room left). Budgets: tests/home-copy-slots.test.mjs (KIT_CJK: zh / ja widths per label). Step words never show on the first screen (MINUTES L297).",
+  "$source": {
+    "steps.0": "The reader's situation (owner-notes L224-L225: it works locally; teammates, an internet service or your product need it; it cannot depend on your computer). Teammates and customers reach it only through your app: one owner per Project, no members or invitations (MAIN docs/SPEC.md L22).",
+    "steps.1": "Set up, not import: no code reads a local CLAUDE.md, AGENTS.md, .codex/ or .claude/settings (grep apps/api/src apps/web/src, exit 1; TRUTH C9). Same harness: README.md L9 (its version is mosoo's image pin, DRIVER Containerfile L7-L11, so no 'version' or 'identical'). Instructions, Skills, MCP servers and an Environment are the Agent preset (README.md L37; SPEC L32). MCP is remote HTTPS only (docs/prd/mcp-interaction.md L7, L17). Packages are exact-version public npm / PyPI (docs/prd/environment.md L7).",
+    "steps.2": "Your backend sends the input; the application owns business logic, queues and end-user login (SPEC L9; docs/prd/public-thread-api-surface.md L13). Not you: no interactive tool approvals (SPEC L65). One Session per job: every Session gets its own sandbox, workspace and conversation (SPEC L32). Events stream back over SSE; there are no Webhooks (SPEC L73). Files the Agent writes under outputs/ become downloadable artifacts; other workspace files are restored but not downloadable, hence 'outputs', not 'files' (docs/prd/session-files.md L9; SPEC L75).",
+    "kit.harness": "README.md L9 (OpenAI Codex); the OpenAI glyph before it (kit glyphs). Not translated.",
+    "kit.file": "MAIN scripts/public-api-session-workflow.ts L24 (outputs/report.md); report generation is a first use (SPEC L7). Machine token.",
+    "kit.laptop": "The reader's laptop and the reader (owner-notes L224). Glyphs: Hugeicons 4.2.3 Laptop and User (MAIN bun.lock L631; apps/web/src/shared/ui/icons.tsx L69, L166). zh 电脑 / ja PC and zh 后端 (not 笔记本 / ノート PC / 你的后端): the first screen holds 16 object words in every locale, and Intl.Segmenter counts 笔记/本, ノート/PC, 你的/后/端 as two or three words (narrative/deck/tools/count.mjs).",
+    "kit.session": "Session = one durable Thread (docs/prd/public-thread-api-surface.md L7); driven by your backend (README.md L26). Glyph: Hugeicons ServerStack01 for the backend row.",
+    "kit.cloud": "The preset's parts (README.md L37); MCP remote (mcp-interaction.md L7); pinned = the Session freezes the Environment revision and the rest at creation (environment.md L8; SPEC L31).",
+    "kit.app": "Teammate and Customer are the owner's step 2 (owner-notes L225); they use your app (SPEC L22). The call: POST /api/v2/projects/{projectId}/threads (docs/prd/public-thread-api-surface.md L8; MAIN apps/api/openapi/public-api-v2.generated.json paths), shortened with an ellipsis. Machine token."
+  },
+  "en": {
+    "steps": [
+      {
+        "tag": "Laptop",
+        "title": "It works on your laptop.",
+        "line": "Teammates and customers need it. But it needs your laptop, and you."
+      },
+      {
+        "tag": "Cloud",
+        "title": "Set up the same agent in mosoo.",
+        "line": "Same Codex, instructions, Skills, remote MCP and pinned packages."
+      },
+      {
+        "tag": "Your app",
+        "title": "Your backend calls it, not you.",
+        "line": "A Session per job. Events stream back; outputs are yours to download."
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "file": "report.md",
+      "laptop": { "place": "Laptop", "driver": "You" },
+      "session": { "place": "Session", "driver": "Your backend" },
+      "cloud": { "rows": ["Instructions", "Skills", "Remote MCP", "Environment"], "pinned": "pinned" },
+      "app": { "sources": ["Teammate", "Customer"], "app": "Your app", "call": "POST …/threads" }
+    }
+  },
+  "zh": {
+    "steps": [
+      {
+        "tag": "本地",
+        "title": "它在你电脑上能跑。",
+        "line": "同事、客户都要用，可它离不开你的电脑和你。"
+      },
+      {
+        "tag": "云端",
+        "title": "在 mosoo 配一个同样的 Agent。",
+        "line": "同样的 Codex、指令、技能、远程 MCP 和固定版本的包。"
+      },
+      {
+        "tag": "你的应用",
+        "title": "由你的后端调用，不是你。",
+        "line": "一个任务一个 Session。事件实时回传，产出可下载。"
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "file": "report.md",
+      "laptop": { "place": "电脑", "driver": "你" },
+      "session": { "place": "Session", "driver": "后端" },
+      "cloud": { "rows": ["指令", "技能", "远程 MCP", "环境"], "pinned": "已固定" },
+      "app": { "sources": ["同事", "客户"], "app": "你的应用", "call": "POST …/threads" }
+    }
+  },
+  "ja": {
+    "steps": [
+      {
+        "tag": "手元",
+        "title": "あなたの PC では動く。",
+        "line": "同僚も顧客も使いたい。でも PC とあなたが要る。"
+      },
+      {
+        "tag": "クラウド",
+        "title": "mosoo に同じ Agent を用意する。",
+        "line": "同じ Codex、指示、スキル、リモート MCP、版を固定したパッケージ。"
+      },
+      {
+        "tag": "アプリ",
+        "title": "あなたでなく、バックエンドが呼ぶ。",
+        "line": "ジョブごとに Session。イベントが届き、成果物は取り出せる。"
+      }
+    ],
+    "kit": {
+      "harness": "Codex",
+      "file": "report.md",
+      "laptop": { "place": "PC", "driver": "あなた" },
+      "session": { "place": "Session", "driver": "バックエンド" },
+      "cloud": { "rows": ["指示", "スキル", "リモート MCP", "環境"], "pinned": "固定" },
+      "app": { "sources": ["同僚", "顧客"], "app": "あなたのアプリ", "call": "POST …/threads" }
+    }
+  }
+}

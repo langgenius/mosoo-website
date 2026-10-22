@@ -1,116 +1,43 @@
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
 import type { ReactElement, ReactNode } from "react";
 
-import { useIdleReady } from "@/shared/lib/use-idle-ready";
+import { t } from "@/shared/i18n";
+import { SiteFooter } from "@/shared/ui/site-footer";
+import { SiteNav } from "@/shared/ui/site-nav";
 
-import { LoginLandingTopbar } from "../topbar";
-import type { TopbarNav } from "../topbar";
+/** The page a nav link marks as current. */
+export type TopbarNav = "use-cases";
 
-const LandingFooter = lazy(async () => {
-  const mod = await import("./footer");
-  return { default: mod.LandingFooter };
-});
-
-function getViewportHeightSnapshot(): number {
-  return window.innerHeight;
-}
-
-function subscribeViewportHeight(listener: () => void): () => void {
-  window.addEventListener("resize", listener);
-
-  return () => {
-    window.removeEventListener("resize", listener);
-  };
-}
-
-// exa-style footer reveal: the foreground content sits on a higher layer and
-// "peels up" as you reach the bottom, uncovering the footer pinned behind it.
-// Falls back to a normal in-flow footer when it's taller than the viewport.
+/**
+ * The chrome every landing page shares (d-object canvas): a stone frame with
+ * one white paper sheet on it (Apollo's sand frame + white sheet), the nav at
+ * the top of the paper, the page in <main id="main">, and the footer back on
+ * the frame. The document scrolls; nothing is pinned.
+ */
 export function LandingShell({
-  onContinue,
   activeNav,
   theme = "landing",
   children,
 }: {
-  onContinue: () => void;
   activeNav?: TopbarNav;
-  // "landing" keeps the warm forest palette; "brand" drops it to inherit the
-  // cool/bright :root palette the blog uses, so a page can match the blog.
+  /** Kept for callers; the home page no longer has its own nav shape. */
+  navVariant?: "bar" | "capsule";
+  // "landing" keeps the page's palette tokens; "brand" drops them to inherit
+  // the :root palette the blog uses.
   theme?: "landing" | "brand";
   children: ReactNode;
 }): ReactElement {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [footerHeight, setFooterHeight] = useState(0);
-  const loadFooter = useIdleReady();
-  const viewportHeight = useSyncExternalStore(
-    subscribeViewportHeight,
-    getViewportHeightSnapshot,
-    () => 0,
-  );
-
-  const setContentNode = useCallback((node: HTMLDivElement | null): void => {
-    contentRef.current = node;
-  }, []);
-
-  const setFooterNode = useCallback((node: HTMLDivElement | null): void => {
-    footerRef.current = node;
-
-    if (node !== null) {
-      setFooterHeight(node.offsetHeight);
-    }
-  }, []);
-
-  useEffect(() => {
-    const measure = (): void => {
-      if (footerRef.current) {
-        setFooterHeight(footerRef.current.offsetHeight);
-      }
-    };
-    const observer = new ResizeObserver(measure);
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
-    if (contentRef.current) {
-      observer.observe(contentRef.current);
-    }
-    window.addEventListener("resize", measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
-
-  const reveal = footerHeight > 0 && viewportHeight > 0 && footerHeight <= viewportHeight;
-
   return (
-    <div
-      data-theme={theme === "landing" ? "landing" : undefined}
-      className="bg-paper-100 fixed inset-0 overflow-x-hidden overflow-y-auto"
-    >
-      <div
-        ref={setContentNode}
-        className="bg-paper-100 relative z-10 shadow-[0_24px_48px_-16px_rgba(11,26,20,0.45)]"
-        style={reveal ? { marginBottom: footerHeight } : undefined}
-      >
-        <LoginLandingTopbar onContinue={onContinue} activeNav={activeNav} />
-        {children}
+    <div data-theme={theme === "landing" ? "landing" : undefined} className="landing-shell d-shell">
+      <a href="#main" className="d-skip">
+        {t("Skip to content")}
+      </a>
+      <div className="d-paper">
+        <SiteNav active={activeNav} />
+        <main id="main" tabIndex={-1} className="outline-none">
+          {children}
+        </main>
       </div>
-      <div ref={setFooterNode} className={reveal ? "fixed inset-x-0 bottom-0 z-0" : "relative z-0"}>
-        {loadFooter ? (
-          <Suspense fallback={null}>
-            <LandingFooter />
-          </Suspense>
-        ) : null}
-      </div>
+      <SiteFooter />
     </div>
   );
 }

@@ -1,8 +1,11 @@
 ---
 title: "Agent 的两个分野：Pet 与 Cattle"
 titleAccent: "Pet 与 Cattle"
+cardTitle: "成为谁，还是做什么？"
 description: "人们对 Agent 正在形成两种完全不同的期待：一种有身份、有记忆，需要被长期培养；另一种无状态、可替换，用更自由的推理管道取代固定 workflow。"
+descriptionEmphasis: "两种完全不同的期待"
 date: 2026-08-11
+updated: 2026-10-20
 category: "Product"
 author: "Evanchen"
 authorAvatar: "/blog/blog/authors/evanchen.jpg"
@@ -14,6 +17,8 @@ heroAlt: "手绘插图：左侧是一株带名牌、叶片用 lime 色影线填�
 heroCover: "pet-and-cattle"
 draft: false
 ---
+
+**2026-10-20 更新。** mosoo 此后已移除 Pet 与 Cattle 两种 Agent Type：现在每个 Session 都有自己的 sandbox、工作区、原生对话和 checkpoint 链（[SPEC 第 3、8 节](https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md)）。下文关于 mosoo 两种 Agent Type 的一节，描述的是 2026 年 8 月时的产品。
 
 我越来越相信，Agent 最后会出现两个分野。
 
@@ -84,7 +89,7 @@ Pet 和 Cattle 不是由行业、模型或任务名称决定的。决定它们�
 
 mosoo 目前把它们实现为两种 Agent Type：**Assistant Agent（Pet）** 与 **Task Agent（Cattle）**。
 
-Pet 保留稳定的工作环境，让多个 session 可以共享持续积累的状态；Cattle 为每次 run 创建干净的工作环境，任务结束后就释放。更完整的当前边界写在 [mosoo 的 Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md) 里。
+Pet 保留稳定的工作环境，让多个 session 可以共享持续积累的状态；Cattle 为每次 run 创建干净的工作环境，任务结束后就释放。当时更完整的边界写在 [mosoo 的 Agent Type PRD](https://github.com/langgenius/mosoo/blob/b1e9adc6e0b37799de40fa601ce6321e6f5423f2/docs/prd/agent-type.md) 里。
 
 我也知道，把两者直接放在同一个 Agent Type 选择器里，不会是最终正确的 product design。它们实际上服务的是两类用户，购买方式、授权方式、部署方式和成本心智都不同。mosoo 目前先把这条 runtime 边界实现出来，产品边界会在未来继续拆清楚。
 

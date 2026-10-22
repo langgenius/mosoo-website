@@ -1,0 +1,204 @@
+/* 4 FAQ (sections/faq.ts). Scoped to .v5-faq; tokens, type and the focus ring come from ../system.css.
+   Sources (staging): v4b's two columns, U16 (v4b paper.css .pp-q*); the indicator, REVIEW-v4 §4 G7 = Enter Pro's
+   .faq-item__dot (refs/enter-pro/cdp2/cssom-rules.json: 6px, 1px ink ring, fills and moves -10px while the question
+   moves +10px; the answer indented 10px under it); open and close, Frame (refs/frame/v5/motion/STUDY.md §5: 350 ms
+   ease, height 0 -> content, the answer from translateY(50% of itself) and opacity 0). Rules: 1px ink, the page's
+   one line (BRIEF §3.3; Frame's FAQ rules are 1px #000); they were 8% ink, where the line language broke off
+   (design review P2-2).
+   Measurements and the slot table: staging v5/sections/faq-closing/NOTES.md. */
+
+.v5-faq {
+  --faq-rule: var(--ink); /* 1px ink, the line language */
+  --faq-t: 0.35s ease; /* Frame's FAQ: every part of the open and close in 350 ms, ease */
+  interpolate-size: allow-keywords; /* the open height animates to its content (::details-content below) */
+}
+
+/* v4b U16: the title alone on the left, the rows on the right: 464 + 56 + 600 at 1440. 464 holds a 20-character
+   title line at 48px on one line (an X line that long measured 456px). Narrower, both columns shrink in step, so
+   the title wraps before the rows get cramped; one column from 960px. */
+.v5-faq-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 464fr) minmax(0, 600fr);
+  column-gap: 56px;
+  align-items: start;
+}
+
+.v5-faq-list {
+  border-bottom: 1px solid var(--faq-rule);
+}
+
+.v5-faq-item {
+  border-top: 1px solid var(--faq-rule);
+}
+
+/* The question row: v4b's (22 + 24 + 22, rules 69px apart), the dot at the end. */
+.v5-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 0;
+  list-style: none;
+  cursor: pointer;
+  transition: padding-bottom var(--faq-t);
+}
+
+.v5-faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.v5-faq-item[open] > .v5-faq-q {
+  padding-bottom: 10px; /* v4b: the answer's gap stays inside the summary, so the focus ring never covers the answer */
+}
+
+.v5-faq-qt {
+  min-width: 0;
+  color: var(--ink);
+  font: 500 18px/24px var(--font-sans); /* v4b .pp-q summary: 500 18px/1.35 */
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+  transition: translate var(--faq-t);
+}
+
+.v5-faq-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  transition:
+    translate var(--faq-t),
+    background-color var(--faq-t);
+}
+
+.v5-faq-item[open] .v5-faq-qt {
+  translate: 10px 0;
+}
+
+.v5-faq-item[open] .v5-faq-dot {
+  background-color: var(--ink);
+  translate: -10px 0;
+}
+
+/* Hover and keyboard focus preview the open row (Enter Pro: :hover and :focus-within take the open look). */
+@media (hover: hover) and (pointer: fine) {
+  .v5-faq-q:hover .v5-faq-qt {
+    translate: 10px 0;
+  }
+
+  .v5-faq-q:hover .v5-faq-dot {
+    background-color: var(--ink);
+    translate: -10px 0;
+  }
+}
+
+.v5-faq-q:focus-visible .v5-faq-qt {
+  translate: 10px 0;
+}
+
+.v5-faq-q:focus-visible .v5-faq-dot {
+  background-color: var(--ink);
+  translate: -10px 0;
+}
+
+/* Frame's open and close. The details' content box grows from 0 to its height (interpolate-size above) and stays
+   painted while it closes (content-visibility, allow-discrete); inside it the answer rises from 50% of its own
+   height and fades in. Browsers without ::details-content open and close at once, which is the same end state. */
+.v5-faq-item::details-content {
+  block-size: 0;
+  overflow-y: clip;
+  transition:
+    block-size var(--faq-t),
+    content-visibility var(--faq-t) allow-discrete;
+}
+
+.v5-faq-item[open]::details-content {
+  block-size: auto;
+}
+
+.v5-faq-a {
+  padding: 0 56px 22px 10px; /* Enter Pro: under the shifted question, clear of the dot column; v4b's 22 below */
+  opacity: 0;
+  translate: 0 50%;
+  transition:
+    translate var(--faq-t),
+    opacity var(--faq-t);
+}
+
+.v5-faq-item[open] .v5-faq-a {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Opening, the answer has no style to transition from (a closed item's content is skipped), so it starts here;
+   only where the box can grow around it too, or the sliding answer would cross the next row. */
+@supports selector(::details-content) {
+  @starting-style {
+    .v5-faq-item[open] .v5-faq-a {
+      opacity: 0;
+      translate: 0 50%;
+    }
+  }
+}
+
+.v5-faq-a p {
+  max-width: 560px;
+  color: var(--ink-2);
+  font: 400 16px/1.6 var(--font-sans);
+  text-wrap: pretty;
+}
+
+/* CJK: zh questions break only at the punctuation the copy carries; ja breaks at phrases. */
+:lang(zh) .v5-faq-qt {
+  word-break: keep-all;
+}
+
+:lang(ja) :is(.v5-faq-qt, .v5-faq-a p) {
+  word-break: auto-phrase;
+}
+
+/* One column from 960px down (v4b's tablet step): the title above the rows. */
+@media (max-width: 960px) {
+  .v5-faq-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+  }
+}
+
+@media (max-width: 720px) {
+  .v5-faq-grid {
+    row-gap: 28px;
+  }
+
+  .v5-faq-q {
+    gap: 16px;
+    padding: 20px 0;
+  }
+
+  .v5-faq-qt {
+    font-size: 17px;
+  }
+
+  .v5-faq-a {
+    padding: 0 24px 20px 10px;
+  }
+
+  .v5-faq-a p {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v5-faq-q,
+  .v5-faq-qt,
+  .v5-faq-dot,
+  .v5-faq-a {
+    transition: none;
+  }
+
+  /* Its own rule: a browser that does not know ::details-content drops only this one. */
+  .v5-faq-item::details-content {
+    transition: none;
+  }
+}

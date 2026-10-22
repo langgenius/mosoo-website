@@ -1,11 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import Hero from "./Hero.astro";
 import Card from "./Card.astro";
 import CategoryTabs from "./CategoryTabs.astro";
 import { CATEGORIES } from "../content.config";
 import { getPostHref, type Locale } from "../lib/i18n";
 import { indexCopyByLocale } from "../lib/copy.mjs";
+import "../styles/index-cards.css";
 
 interface Props {
   posts: CollectionEntry<"blog">[];
@@ -26,94 +26,44 @@ const categories = CATEGORIES.filter((category) =>
 );
 ---
 
-<main data-page>
-  <section class="culm-band border-b border-[color:var(--border)]">
-    <div class="mx-auto w-full max-w-[1180px] px-7 pt-14 pb-12 md:pt-20 md:pb-16">
-      <p
-        class="text-[13px] font-semibold tracking-[-0.01em] text-[color:var(--accent-text)]"
-        data-reveal
-        style="--reveal-i: 0"
-      >
-        {eyebrow}
-      </p>
-      <h1
-        class="mt-3 max-w-3xl font-display text-[40px] font-medium leading-[1.06] tracking-[-0.022em] text-[color:var(--ink-950)] md:text-[56px]"
-        data-reveal
-        style="--reveal-i: 1"
-      >
-        {title}
-      </h1>
-      <p
-        class="mt-4 max-w-xl text-[17px] leading-[1.6] text-[color:var(--fg-secondary)]"
-        data-reveal
-        style="--reveal-i: 2"
-      >
-        {description}
-      </p>
-    </div>
+<main data-page data-blog-index>
+  <section class="blog-wrap bi-masthead">
+    <p class="bi-eyebrow">{eyebrow}</p>
+    <h1 class="bi-title">{title}</h1>
+    <p class="bi-lede">{description}</p>
   </section>
 
   {
     featured && (
-      <section class="border-b border-[color:var(--border)]">
-        <div
-          class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-16"
-          data-reveal
-          style="--reveal-i: 3"
-        >
-          <Hero featured={featured} base={base} locale={locale} />
-        </div>
+      <section class="blog-wrap bi-lead">
+        <Card post={featured} href={getPostHref(featured, base)} locale={locale} variant="lead" />
       </section>
     )
   }
 
-  <section>
-    <div class="mx-auto w-full max-w-[1180px] px-7 py-12 md:py-14">
-      <div class="mb-7 flex items-baseline justify-between gap-4">
-        <h2 class="font-display text-[24px] font-medium tracking-[-0.015em] text-[color:var(--ink-950)] md:text-[28px]">
-          {copy.allPosts}
-        </h2>
-        <span class="text-[13px] tabular-nums text-[color:var(--fg-muted)]">
-          {posts.length} {posts.length === 1 ? copy.post : copy.posts}
-        </span>
-      </div>
-
-      <CategoryTabs categories={categories} locale={locale} />
-
-      <div class="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
-        {
-          posts.map((post, i) => (
-            <div
-              data-card
-              data-category={post.data.category}
-              data-reveal
-              style={`--reveal-i: ${i % 3}`}
-            >
-              <Card
-                href={getPostHref(post, base)}
-                title={post.data.title}
-                category={post.data.category}
-                date={post.data.date}
-                locale={locale}
-                description={post.data.description}
-                slug={post.id}
-                heroImage={post.data.heroImage}
-                heroAlt={post.data.heroAlt}
-                heroCover={post.data.heroCover}
-                draft={post.data.draft}
-              />
-            </div>
-          ))
-        }
-      </div>
-
-      {
-        posts.length === 0 && (
-          <div class="rounded-[var(--r-lg)] border border-dashed border-[color:var(--border)] p-12 text-center text-[14px] text-[color:var(--fg-muted)]">
-            {copy.empty}
-          </div>
-        )
-      }
+  <section class="blog-wrap bi-all" aria-labelledby="bi-all-posts">
+    <div class="bi-all-head">
+      <h2 id="bi-all-posts" class="bi-h2">{copy.allPosts}</h2>
+      <span class="bi-count">
+        {posts.length} {posts.length === 1 ? copy.post : copy.posts}
+      </span>
     </div>
+
+    <CategoryTabs categories={categories} locale={locale} />
+
+    <div class="bi-grid">
+      {posts.map((post) => <Card post={post} href={getPostHref(post, base)} locale={locale} />)}
+    </div>
+
+    {posts.length === 0 && <p class="bi-empty">{copy.empty}</p>}
   </section>
 </main>
+
+<script>
+  // Card entrance: the landing's v5 rise engine (data-rise="card": Intent's 120px / 700 ms /
+  // cubic-bezier(.25, 1, .5, 1), cards entering together 100 ms apart). It hides only cards that start
+  // below the fold, and does nothing under prefers-reduced-motion; without JS every card is visible.
+  import { initRise } from "../../../landing/src/effects/v5/rise.ts";
+
+  initRise();
+</script>

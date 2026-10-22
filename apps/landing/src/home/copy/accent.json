@@ -1,0 +1,44 @@
+{
+  "$comment": "Slots of sections/accent.ts (UI lock: staging v5/sections/accent/NOTES.md; the cards: staging v5/polish/lime/NOTES.md, lines measured from 320 to 1440). Before the edge, on white: gap (a two-word line in the display face, 72px / 40px, one line; no tab label over it since O1, committee 2026-10-21). On the full lime screen: h2a + h2b (two-tone H2, 64px / 40px; one line each at 1440), sub (sans 20 / 17, two lines at 1440, three at 390), and one row of three unequal cards (1fr 2fr 1fr; one card per row on tablets and phones). The white gap and the lime screen carry the owner's last step (owner-notes 2026-10-21 02:40: no human in the loop, around the clock, scalable) in the only words the main repo backs (narrative/DECK.md §2.5): nobody at the keyboard, your backend sends the jobs, a Session per job, no deadline for follow-ups. The three T3 figures stay, in their order (committee MINUTES L380): card 1 the sandbox figure (approvals), card 2 the file stack (jobs: own files), card 3 the Session ID pillar (follow-ups: same Session). Each label is a state, \"<thing>: <state>\" (zh / ja with a full-width colon), not a part's name: the five parts are the spec table's rows. Label 16 w500, one line; line 15, at most two lines, balanced (accent.css): write each line as two phrases of about the same length, and join with a no-break space (\\u00a0) what must not be split across lines (ja: the particle after a Latin word, a numeral and its counter). No soft 24/7 on this screen: no day or night, any time, goes on, on its own; the one 'nobody' line is answered by 'your backend' (narrative/judge-truth:.md L34-L35; tests/home-copy-slots.test.mjs). Break marks (#141, committee PLAN 2-1): in zh and ja a '|' is a line-break opportunity, rendered as <wbr> (markup.ts renderHome); the CJK headings and labels are keep-all, so such a line breaks only at a space or a '|' (in WebKit, which has no auto-phrase, not even after its comma). Put one after the comma or between the phrases where the line may break, never inside a word; en carries none. The slot budgets do not count them (tests/home-copy-slots.test.mjs). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
+  "$source": {
+    "gap": "The reader closes the laptop: the work is sent by a server, not by it (README.md L26; SPEC L9). Nothing here claims a turn survives a client disconnect (unverified, TRUTH D2).",
+    "h2": "No interactive tool approvals (SPEC L65). The input comes from the application, which owns business queues (SPEC L9, L18); mosoo has no schedule, trigger or webhook (OpenAPI v2: 14 paths, none of them; SPEC L73, L91).",
+    "sub": "Unchanged: a turn succeeds only with a committed checkpoint (SPEC L46, L49); the next input restores it, on a fresh sandbox once the old one was reclaimed (SPEC L53; docs/prd/session-lifecycle.md L8).",
+    "cards.0": "Full access inside the Session sandbox; provider keys and MCP credentials never enter it (SPEC L65). Says 'model keys', not 'keys': Environment variables are readable in the sandbox (docs/prd/environment.md L20).",
+    "cards.1": "Every Session gets its own sandbox, workspace and native conversation (SPEC L32); creation freezes the configuration and the Environment revision (SPEC L31; environment.md L8).",
+    "cards.2": "Formal and API Sessions have no inactivity deadline (SPEC L60); a reply one minute or seven days later has the same semantics (SPEC L53). Not the retired 'pick up ... days later' family (RULING L699)."
+  },
+  "en": {
+    "gap": "Laptop closed.",
+    "h2a": "Nobody at the keyboard.",
+    "h2b": "Your backend sends jobs.",
+    "sub": "Every successful turn ends in a checkpoint. The next turn resumes from there.",
+    "cards": [
+      { "label": "Approvals: none", "line": "Full access in the sandbox; model keys stay out." },
+      { "label": "Jobs: a Session each", "line": "Own files and conversation, one pinned setup." },
+      { "label": "Follow-ups: no deadline", "line": "A minute or seven days later, same Session." }
+    ]
+  },
+  "zh": {
+    "gap": "合上笔记本。",
+    "h2a": "键盘前|没有人。",
+    "h2b": "任务由你的后端|发出。",
+    "sub": "成功的一轮，留下检查点。下一轮，从那里继续。",
+    "cards": [
+      { "label": "审批：无", "line": "sandbox 里有完全权限，|模型密钥留在外面。" },
+      { "label": "任务：各有 Session", "line": "文件和对话各自独立，|配置固定。" },
+      { "label": "后续：不设期限", "line": "一分钟后或七天后，|还是同一个 Session。" }
+    ]
+  },
+  "ja": {
+    "gap": "PC は閉じた。",
+    "h2a": "キーボードの|前は、|無人。",
+    "h2b": "ジョブは|バックエンド|から。",
+    "sub": "成功したターンはチェックポイントで終わり、次のターンはそこから再開します。",
+    "cards": [
+      { "label": "承認：なし", "line": "sandbox 内はフルアクセス。モデルキーは外に。" },
+      { "label": "ジョブ：各自の Session", "line": "ファイルも会話も専用、設定は固定。" },
+      { "label": "続き：期限なし", "line": "1 分後でも 7 日後でも、同じ Session。" }
+    ]
+  }
+}

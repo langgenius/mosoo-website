@@ -3,38 +3,11 @@
    Brand: enterprise AI agent + knowledge platform, inspired by Moso bamboo (毛竹).
    System: neutral-forward, premium & minimal, lime-green as a disciplined accent.
    ----------------------------------------------------------------------------
-   Fonts are loaded from local workspace assets and emitted by consumer builds.
-   Display: Cabinet Grotesk. Sans: Geist. Mono: Geist Mono.
+   This file declares no font faces: each consumer loads its own and sets the
+   --font-* stacks below (the blog: apps/blog/src/styles/global.css). The
+   Cabinet Grotesk, Geist and Geist Mono faces it used to declare had no page
+   asking for them and their files are gone (#143).
    ========================================================================== */
-
-@font-face {
-  font-family: "Cabinet Grotesk";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("../../apps/landing/public/fonts/CabinetGrotesk-Variable.woff2")
-      format("woff2-variations"),
-    url("../../apps/landing/public/fonts/CabinetGrotesk-Variable.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Geist";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("../../apps/landing/public/fonts/Geist-Variable.woff2") format("woff2-variations"),
-    url("../../apps/landing/public/fonts/Geist-Variable.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Geist Mono";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src:
-    url("../../apps/landing/public/fonts/GeistMono-Variable.woff2") format("woff2-variations"),
-    url("../../apps/landing/public/fonts/GeistMono-Variable.woff2") format("woff2");
-}
 
 :root {
   /* ---------------------------------------------------------------------------
@@ -54,21 +27,25 @@
   --green-950: #1a310b;
 
   /* ---------------------------------------------------------------------------
-     2 · NEUTRALS  (true cool grays — calm, GitHub-like; green is NOT in here)
+     2 · NEUTRALS  — the v5 ink family (#143, staging committee/PLAN.md 2-4
+     item 3; the landing's app.css aliases the same names): one near-black,
+     ink-2, ink-3-text for small grey text (5.2:1 on white), ink-3 for 24px
+     and up, the home's two hairlines and its frame. They were cool greys
+     (#1c2024, #08090a…), so the blog set a second and third near-black.
      --------------------------------------------------------------------------- */
-  --ink-950: #08090a; /* strongest ink */
-  --ink-900: #1c2024; /* primary text */
-  --ink-800: #2b3036;
-  --ink-700: #3d434b; /* secondary text */
-  --ink-600: #515860;
-  --ink-500: #656c75; /* tertiary / muted text */
-  --ink-400: #828a93; /* placeholder */
-  --ink-300: #aeb5be; /* disabled text */
-  --ink-200: #d2d7dd; /* strong border */
-  --ink-150: #dfe3e8; /* divider */
-  --ink-100: #e9ecf0; /* hairline border */
-  --ink-50: #f4f6f8; /* subtle fill / row hover */
-  --paper: #fbfbfc; /* app / page background */
+  --ink-950: #161815; /* strongest ink */
+  --ink-900: #161815; /* primary text */
+  --ink-800: #161815;
+  --ink-700: #515350; /* secondary text */
+  --ink-600: #515350;
+  --ink-500: #6b6d6a; /* tertiary / muted text */
+  --ink-400: #6b6d6a; /* placeholder */
+  --ink-300: #7f817e; /* disabled text */
+  --ink-200: rgb(22 24 21 / 0.18); /* strong border */
+  --ink-150: rgb(22 24 21 / 0.1); /* divider */
+  --ink-100: rgb(22 24 21 / 0.1); /* hairline border */
+  --ink-50: #f4f4f4; /* subtle fill / row hover: the frame */
+  --paper: #ffffff; /* app / page background */
   --surface: #ffffff; /* cards, panels, sheets */
 
   /* ---------------------------------------------------------------------------
@@ -128,11 +105,10 @@
   /* ---------------------------------------------------------------------------
      6 · TYPOGRAPHY
      --------------------------------------------------------------------------- */
-  --font-display:
-    "Cabinet Grotesk", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; /* warm, soft, rounded — headlines */
-  --font-sans:
-    "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* clean neo-grotesque — body & UI */
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* System stacks: the consumer names its own faces (the blog sets these in global.css). */
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* weights */
   --fw-regular: 400;

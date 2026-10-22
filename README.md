@@ -29,7 +29,7 @@ Production currently uses this topology:
 
 - `apps/landing` contains the React/Vite landing page.
 - `apps/blog` contains the Astro/MDX blog.
-- `pkgs/design-tokens` contains the shared Mosoo CSS design tokens used by the
+- `pkgs/design-tokens` contains the shared mosoo CSS design tokens used by the
   blog.
 - `scripts/build-site.mjs` assembles the landing and blog outputs into one
   deployable directory.
@@ -96,7 +96,7 @@ dist/
 The Cloudflare Worker uses strict 404 handling for `/blog/*` and SPA fallback
 behavior for landing-page routes.
 
-The status page consumes Cloudflare invocation outcomes and Mosoo's structured
+The status page consumes Cloudflare invocation outcomes and mosoo's structured
 `session.run.terminal` business logs through a Tail Worker. It does not create
 Threads, invoke models, or require status secrets. Configuration and incident policy live in
 [`docs/operations/reliability.md`](https://github.com/langgenius/mosoo/blob/main/docs/operations/reliability.md).
@@ -139,8 +139,8 @@ Three consecutive failed or expired Runs trigger the existing degraded status.
 Existing status history is preserved when adding Pi; no store migration or
 synthetic success record is needed.
 
-Publish this website change after the matched Pi Driver and Mosoo API have passed
-their rollout validation (see the Mosoo repository's `docs/pi-runtime.md`). After
+Publish this website change after the matched Pi Driver and mosoo API have passed
+their rollout validation (see the mosoo repository's `docs/pi-runtime.md`). After
 deployment, check `/status.json` for component `pi` and inspect `/health`,
 `/zh/health`, and `/ja/health`. Before a real production Pi Run, verify Unknown and
 no data; after one, verify the recorded terminal status and duration rather than

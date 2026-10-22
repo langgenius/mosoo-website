@@ -1,0 +1,51 @@
+{
+  "$comment": "Slots of sections/hero.ts (staging v5/sections/hero-stage/NOTES.md has the slot table, measured at the budget maximum). H1 = h1a + h1b (display-face 72px two-tone: one line each at 1440; 42px at 390). Lead = '{lead.pre} {harness 1}, {harness 2}, {harness 3} {lead.or} {harness 4} {lead.post}' (zh / ja join the names with 、 and leave no space after a pre that ends in punctuation), the harness names as plain names in the sentence (ui.ts nameList: sans 500 in ink, no box, no glyph), sans 20px balanced in 760px: two lines at 1440; 17px at 390. primary: the lime CTA; secondary: the grey CTA. Words: H1 + lead + CTAs stay within 24 so the first screen keeps <= 25 marketing words (it shows no step word since O1; tools/budget.ts measures en / zh / ja 23 / 23 / 24). Copy: the narrative round's deck (staging narrative/DECK.md §2.2, 2026-10-21), the owner's claim of 02:40 (it works on your laptop; it needs your laptop and you; set up the same agent in mosoo; your backend runs it without you), hero V2 of that round's five-second test (problem named 5/5; 'why not my laptop' partly clear 4/5, hinted 1/5, unclear 0/5; narrative/NARRATIVE.md §8). Break marks (#141, committee PLAN 2-1): in zh and ja a '|' is a line-break opportunity, rendered as <wbr> (markup.ts renderHome); the CJK headings and labels are keep-all, so such a line breaks only at a space or a '|' (in WebKit, which has no auto-phrase, not even after its comma). Put one after the comma or between the phrases where the line may break, never inside a word; en carries none. The slot budgets do not count them (tests/home-copy-slots.test.mjs). Budgets: tests/home-copy-slots.test.mjs (en characters, zh / ja full-width widths). Sources: $source; zh / ja await a native speaker's review (DECK.md §7).",
+  "$source": {
+    "h1a": "The reader's own situation, not a product promise (owner-notes L224 step 1; TRUTH A1, A3). Tested as V2 h1a.",
+    "h1b": "No interactive tool approvals (MAIN docs/SPEC.md L65); one admitted input starts one turn with many model and tool calls (SPEC L18); each turn runs in an isolated sandbox on Cloudflare Containers (README.md L26). Not an uptime promise (README.md L39). The plate's 'Your backend' row says who sends the work (truth rule 3, narrative/judge-truth:.md L34). Tested as V2 h1b.",
+    "lead": "README.md L9 ('Run OpenAI Codex, Claude Agent SDK, OpenCode, and Pi behind one API'). 'Set up the same' = save the same configuration as an Agent preset (README.md L37; SPEC L32); nothing imports a local setup (grep of apps/api/src and apps/web/src for CLAUDE.md, AGENTS.md, .codex/, .claude/settings: exit 1; TRUTH C9). Tested as V2 lead.",
+    "harnesses": "README.md L9; not translated (tests keep them equal in every locale).",
+    "primary": "README.md L18 'Try mosoo' -> https://cloud.mosoo.ai. Unchanged.",
+    "secondary": "Unchanged: the v2 quickstart (copy.ts localeLinks().quickstart); 15/15 personas clicked it first in the 2026-10-21 round (narrative/NARRATIVE.md §8.1).",
+    "news": "Unchanged: the announcement above the H1 (owner 2026-10-20 17:15: the NEW pill over the headline must stay; owner-notes L171, L188). Production's strings (origin/main apps/landing/src/routes/login/landing/hero.tsx L63-66; shared/i18n.ts L19 / L47), with the product's name in lowercase (owner 2026-10-20 21:57: 「mosoo computer 一律小写」); the chip says New in every locale, as production's does. Chrome, not marketing copy: the link carries data-budget=\"chrome\" (tools/budget.ts leaves it out of the word counts)."
+  },
+  "en": {
+    "news": { "tag": "New", "text": "mosoo computer is live" },
+    "h1a": "Your agent works locally.",
+    "h1b": "Now it runs without you.",
+    "lead": {
+      "pre": "Set up the same",
+      "or": "or",
+      "post": "agent behind one API."
+    },
+    "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "Try mosoo",
+    "secondary": "Read the quickstart"
+  },
+  "zh": {
+    "news": { "tag": "New", "text": "mosoo computer 已上线" },
+    "h1a": "你的 Agent，|本地能跑。",
+    "h1b": "现在，|不用你守着。",
+    "lead": {
+      "pre": "配一个同样的",
+      "or": "或",
+      "post": "Agent，放在一个 API 后面。"
+    },
+    "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "试用 mosoo",
+    "secondary": "快速开始"
+  },
+  "ja": {
+    "news": { "tag": "New", "text": "mosoo computer をリリースしました" },
+    "h1a": "Agent は|手元で動く。",
+    "h1b": "今度は、|無人で。",
+    "lead": {
+      "pre": "同じ",
+      "or": "か",
+      "post": "の Agent を用意し、API で呼び出す。"
+    },
+    "harnesses": ["OpenAI Codex", "Claude Agent SDK", "OpenCode", "Pi"],
+    "primary": "mosoo を試す",
+    "secondary": "クイックスタート"
+  }
+}

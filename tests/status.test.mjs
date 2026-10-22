@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -218,7 +219,7 @@ test("Pi platform failures and expiry trigger the same incident policy as other 
   assert.equal(status.releasePolicyTriggered, true);
 });
 
-test("Cloudflare Tail events reuse Mosoo terminal logs without synthetic traffic", () => {
+test("Cloudflare Tail events reuse mosoo terminal logs without synthetic traffic", () => {
   const events = statusEventsFromTailItems(
     [
       {
@@ -625,4 +626,34 @@ test("StatusStore persists source buckets through JSON and exposes counts withou
   assert.equal(result.components[0].successRate90d, 0.5);
   assert.deepEqual(result.components[0].failedBySource90d, { ...noFailures, platform: 1, user_config: 1 });
   assert.doesNotMatch(JSON.stringify(result), /errorMessage|api\.gaoxin\.net\.cn|Driver process exited/);
+});
+
+// The page (v5 subpage clean-up, staging REVIEW-v4 G9 and §4.10): no green fill
+// anywhere, no logo of its own (the site nav carries the ink mark), one button, the
+// grey secondary (#143: lime only for a button to mosoo, no ink-filled buttons).
+const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+const GREEN = /green-\d|#6fd305|#66c600|#5cb300|status-brand|--accent\b|#bcf870|\blime\b/i;
+
+test("the status page carries no green and no logo of its own", () => {
+  const page = read("apps/landing/src/routes/status/status-page.tsx");
+  const code = page.split("\n").filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line)).join("\n");
+  assert.doesNotMatch(code, GREEN, "status-page.tsx names a green");
+  assert.doesNotMatch(page, /logo-mark\.svg|<img\b/, "the page draws no mark of its own");
+  assert.doesNotMatch(page, /DISPLAY_FONT|Cabinet/, "the title takes the display token, not Cabinet Grotesk");
+  assert.match(page, /<Menu\.Trigger className="sub-btn sub-btn--grey sp-btn">/, "Get updates is the grey button");
+
+  // Every rule the page's classes use (app.css, from the status block on) stays neutral or amber/ember.
+  const css = read("apps/landing/src/shared/styles/app.css");
+  const statusCss = css.slice(css.indexOf("/* ---------------------------------------------------------------- status */"));
+  assert.ok(statusCss.length > 1000, "the status block is in app.css");
+  assert.doesNotMatch(statusCss, GREEN, "the status CSS names a green");
+  assert.doesNotMatch(css, /\.status-brand/, "the old green ramp is gone");
+  assert.match(css, /\.sub-btn--grey \{\s*background: var\(--sub-frame\);/, "the grey secondary sits on the frame");
+  assert.doesNotMatch(statusCss, /\.sp-btn[^{]*\{[^}]*background: var\(--sub-ink\)/, "no ink-filled button");
+  assert.match(statusCss, /\.sp-day--operational \{\s*background: var\(--sub-ink-2\);/);
+
+  // The static page served before (and without) JavaScript.
+  const html = read("apps/landing/status.html");
+  assert.doesNotMatch(html, GREEN, "status.html names a green");
+  assert.doesNotMatch(html, /href="\/[a-z]{2}\/pricing"/, "status.html links no pricing page");
 });

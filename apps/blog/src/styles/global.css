@@ -1,15 +1,234 @@
 @import "tailwindcss";
 @import "@mosoo/design-tokens/mosoo.css";
 
-/* The signature "culm" texture — a barely-there vertical hairline every 64px,
-   the bamboo-segment rhythm called out in the design system. Used on the hero
-   band; pull it back to ~2.5% opacity so it reads as paper grain, not stripes. */
-.culm-band {
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0 64px,
-    rgba(15, 20, 12, 0.025) 64px 65px
-  );
+/* ============================================================================
+   v5 type (BRIEF §3.2): Roboto Serif for display (the 400 file for the Latin
+   in zh / ja headings, Georgia fitted to it until it loads), Hanken Grotesk
+   for text and UI (in place of Inter since 2026-10-20, with an Arial fallback
+   sized to it), Fragment Mono for code. Same files, family names, metric
+   overrides, unicode ranges and CJK stacks as the landing (apps/landing/src/
+   shared/styles/app.css), so a title here sets exactly like one on the home
+   page.
+   The files are referenced from apps/landing/public/fonts the way
+   @mosoo/design-tokens references the old ones: Vite emits hashed copies into
+   this build. Licences: the OFL / licence texts next to those files.
+   The tokens below override the design-tokens stacks, which name system
+   faces only since #143 (its Cabinet Grotesk, Geist and Geist Mono faces and
+   files are gone). Live covers set their labels in the site
+   fonts by design (src/covers/registry.ts), so they follow this switch too.
+   ========================================================================== */
+@font-face {
+  font-family: "Roboto Serif Display";
+  font-style: normal;
+  font-weight: 440;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2") format("woff2");
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212;
+}
+@font-face {
+  font-family: "Roboto Serif Display CJK";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/RobotoSerif-display-wdth86-opsz36-wght400-latin.woff2") format("woff2");
+  size-adjust: 96%;
+  ascent-override: 100%;
+  descent-override: 28.125%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212;
+}
+@font-face {
+  font-family: "Roboto Serif Fallback";
+  src: local("Georgia");
+  size-adjust: 99.3%;
+  ascent-override: 96.68%;
+  descent-override: 27.19%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/HankenGrotesk-latin.woff2") format("woff2");
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Hanken Grotesk Fallback";
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 100.6%;
+  ascent-override: 99.4%;
+  descent-override: 30.12%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+/* The same file for zh and ja lines, at the x-height of the CJK face's own
+   Latin (PingFang SC 0.517em, Hiragino Sans 0.545em; Hanken 0.493em), with
+   Hanken's line box and an Arial stand-in at each scale. Same values as the
+   landing (apps/landing/src/home/system.css). */
+@font-face {
+  font-family: "Hanken Grotesk SC";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/HankenGrotesk-latin.woff2") format("woff2");
+  size-adjust: 104.87%;
+  ascent-override: 95.36%;
+  descent-override: 28.89%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Hanken Grotesk SC Fallback";
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 105.5%;
+  ascent-override: 94.79%;
+  descent-override: 28.72%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Hanken Grotesk JP";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/HankenGrotesk-latin.woff2") format("woff2");
+  size-adjust: 110.55%;
+  ascent-override: 90.46%;
+  descent-override: 27.41%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Hanken Grotesk JP Fallback";
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 111.21%;
+  ascent-override: 89.92%;
+  descent-override: 27.25%;
+  line-gap-override: 0%;
+  unicode-range:
+    U+0020-007E, U+00A0-00FF, U+0102, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304,
+    U+0308-0309, U+0323, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2039-203A, U+2044, U+20AC,
+    U+2122, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../../landing/public/fonts/FragmentMono-Regular-latin.woff2") format("woff2");
+  unicode-range: U+0000-2FFF;
+}
+
+:root {
+  --font-display:
+    "Roboto Serif Display", "Roboto Serif Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    "Hiragino Mincho ProN", "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
+  --font-sans:
+    "Hanken Grotesk", "Hanken Grotesk Fallback", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans",
+    "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* v5 colour tokens (BRIEF §3.1). Prefixed, because @mosoo/design-tokens
+     still owns --paper, --accent (#6fd305) and the ink ramp that the article
+     pages use (its --paper and ink ramp carry the v5 values since #143:
+     #ffffff, #161815 …). --v5-ink-3 is for text of 24px and up only. */
+  --v5-frame: #f4f4f4;
+  --v5-paper: #ffffff;
+  --v5-ink: #161815;
+  --v5-ink-2: #515350;
+  --v5-ink-3: #7f817e;
+  --v5-line: rgb(22 24 21 / 0.1);
+  --v5-line-2: rgb(22 24 21 / 0.18);
+
+  /* The page surface behind the header and footer: paper by default, the
+     #F4F4F4 frame on the index pages (BaseLayout surface="frame"). */
+  --blog-bg: var(--paper);
+
+  /* One content width for the header, the index and the footer: Intent's
+     1440 layout (40px gutters, so three 440px cards with 20px gaps). */
+  --blog-max: 1440px;
+  --blog-gutter: 16px;
+}
+@media (min-width: 640px) {
+  :root {
+    --blog-gutter: 24px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --blog-gutter: 40px;
+  }
+}
+
+/* zh: the display face's 400 file for the Latin in headings, Hanken at
+   PingFang SC's Latin x-height, then the same CJK stacks. */
+:root:lang(zh) {
+  --font-display:
+    "Roboto Serif Display CJK", "Roboto Serif Fallback", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC",
+    "Hiragino Mincho ProN", "PingFang SC", "Microsoft YaHei UI", ui-serif, Georgia, serif;
+  --font-sans:
+    "Hanken Grotesk SC", "Hanken Grotesk SC Fallback", "PingFang SC", "Hiragino Sans GB", "Hiragino Sans",
+    "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", ui-sans-serif, system-ui,
+    sans-serif;
+}
+
+/* Japanese needs Japanese system faces ahead of the Simplified Chinese ones
+   (same order as the landing); Hanken at Hiragino Sans's Latin x-height. */
+:root:lang(ja) {
+  --font-display:
+    "Roboto Serif Display CJK", "Roboto Serif Fallback", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP",
+    "Noto Serif CJK JP", ui-serif, Georgia, serif;
+  --font-sans:
+    "Hanken Grotesk JP", "Hanken Grotesk JP Fallback", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI",
+    "Yu Gothic", "Noto Sans JP", "Noto Sans CJK JP", ui-sans-serif, system-ui, sans-serif;
+}
+
+body[data-surface="frame"] {
+  --blog-bg: var(--v5-frame);
+}
+
+.blog-wrap {
+  width: 100%;
+  max-width: var(--blog-max);
+  margin-inline: auto;
+  padding-inline: var(--blog-gutter);
+}
+
+/* Keyboard focus: a 2px ink ring (v5; never lime). */
+:focus-visible {
+  outline: 2px solid var(--v5-ink);
+  outline-offset: 2px;
 }
 
 /* ============================================================================
@@ -17,8 +236,9 @@
 
      none  · no entrance motion; hover micro-transitions only
      fade  · the page fades in once as a unit (opacity, 480ms)
-     rise  · masthead/featured/cards fade in and rise 12px with a short
-             stagger; below-fold cards reveal as they scroll into view
+     rise  · the article header and hero fade in and rise 12px with a short
+             stagger ([data-reveal]). The index cards do not use this: they
+             enter with the landing's v5 rise engine (BlogIndex.astro).
 
    Entrance styles only apply once JS has confirmed itself (html.js), so
    content is never hidden without a script to reveal it. Only opacity and
@@ -64,6 +284,17 @@ html.js[data-motion="rise"] [data-reveal].is-revealed {
   }
 }
 
+/* The index cards use the landing's v5 rise engine (data-rise="card"), which
+   hides below-the-fold cards with inline styles until they scroll in. Paper
+   never scrolls them in, so print shows every card. */
+@media print {
+  [data-rise] {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+}
+
 /* Headings keep their rag balanced; body copy avoids one-word orphans. */
 h1,
 h2,
@@ -76,7 +307,9 @@ p {
 
 /* Reading view — calm paper, Hanken Grotesk body, generous line-height. The
    article body sets its own type scale so prose stays consistent regardless of
-   the parent layout. */
+   the parent layout. The display face ships one weight per language (440 for
+   en, 400 for zh / ja): the serif headings ask for 400, which selects it, so
+   the browser never fakes a bold; h4 is a sans heading. */
 .prose-mosoo {
   font-family: var(--font-sans);
   font-size: var(--text-body-lg);
@@ -96,9 +329,9 @@ p {
 .prose-mosoo h2 {
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-regular);
   line-height: var(--lh-heading);
-  letter-spacing: var(--ls-heading);
+  letter-spacing: -0.015em;
   color: var(--ink-950);
   margin-top: var(--space-12);
   margin-bottom: var(--space-3);
@@ -106,15 +339,15 @@ p {
 .prose-mosoo h3 {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-regular);
   line-height: var(--lh-heading);
-  letter-spacing: var(--ls-heading);
+  letter-spacing: -0.01em;
   color: var(--ink-950);
   margin-top: var(--space-8);
   margin-bottom: var(--space-2);
 }
 .prose-mosoo h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: var(--text-h4);
   font-weight: var(--fw-semibold);
   color: var(--ink-950);
@@ -124,17 +357,19 @@ p {
 .prose-mosoo p {
   margin: 0;
 }
+/* Links, list dots and the quote rule in v5 ink (design review #143 no. 3, staging committee/PLAN.md 2-4: the
+   second green #3a6e0e and --green-500 retired): ink text on a 1px ink-3 underline (3.8:1 on the article paper; the
+   line, not a colour, marks the link, WCAG 1.4.1) that turns ink on hover. */
 .prose-mosoo a {
-  color: var(--accent-text);
+  color: var(--v5-ink);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: rgba(58, 110, 14, 0.35);
-  transition: color var(--dur) var(--ease-out);
+  text-decoration-color: var(--v5-ink-3);
+  transition: text-decoration-color var(--dur) var(--ease-out);
 }
 .prose-mosoo a:hover {
-  color: var(--accent-press);
-  text-decoration-color: var(--accent-press);
+  text-decoration-color: currentColor;
 }
 .prose-mosoo strong {
   font-weight: var(--fw-semibold);
@@ -151,6 +386,9 @@ p {
   padding: 0.12em 0.36em;
   border-radius: var(--r-xs);
   border: 1px solid var(--border);
+  /* A long inline token (wss://api.openai.com/v1/responses) may break on a phone rather than push the page
+     sideways; Fragment Mono is ~3% wider than Geist Mono, which tipped it over at 360. Code blocks scroll. */
+  overflow-wrap: anywhere;
 }
 .prose-mosoo pre {
   font-family: var(--font-mono);
@@ -171,7 +409,7 @@ p {
   font-size: inherit;
 }
 .prose-mosoo blockquote {
-  border-left: 2px solid var(--green-500);
+  border-left: 2px solid var(--v5-ink);
   padding: 0 0 0 var(--space-5);
   margin: var(--space-8) 0;
   color: var(--fg-secondary);
@@ -201,7 +439,7 @@ p {
   width: 5px;
   height: 5px;
   border-radius: 1px;
-  background: var(--green-500);
+  background: var(--v5-ink);
 }
 .prose-mosoo ol {
   list-style: decimal;
@@ -244,6 +482,9 @@ p {
   padding: var(--space-3) var(--space-3);
   text-align: left;
   vertical-align: top;
+  /* Long code tokens (session:{sessionId}) may break, so a three-column table fits a phone instead of
+     pushing the page sideways (it overflowed 15px at 390 before the v5 fonts, 24px after). */
+  overflow-wrap: anywhere;
 }
 .prose-mosoo th {
   font-weight: var(--fw-semibold);

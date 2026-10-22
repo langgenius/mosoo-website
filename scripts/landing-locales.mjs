@@ -1,106 +1,56 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const EN = {
-  lang: "en",
-  title: "mosoo — Open-Source Agent Runtime for Coding Agents",
-  description:
-    "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes. Open source, self-hostable, and built for coding agents.",
-  socialDescription:
-    "Run OpenAI Codex, Claude Agent SDK, and OpenCode behind one Agent API in isolated sandboxes.",
-  imageAlt: "mosoo open-source agent runtime",
-  structuredDescription:
-    "Open-source agent runtime and API for running coding agents in isolated sandboxes.",
-  subcategory: "AI agent runtime",
-  directHeading: "Direct answers",
-  sourceHeading: "Sources and verification",
-  sourceGithub: "GitHub source",
-  sourceApiDocs: "API docs",
-  sourceOpenApi: "OpenAPI 3.1",
-  sourceLlmIndex: "llms.txt",
-  whatQuestion: "What is mosoo?",
-  whatAnswer:
-    "mosoo is an open-source Agent runtime and API for coding agents. It runs OpenAI Codex, Claude Agent SDK, and OpenCode in isolated sandboxes, keeps Threads and files across Runs, and is self-hostable on Cloudflare.",
-  whoQuestion: "Who is mosoo for?",
-  whoAnswer:
-    "mosoo is for developers extending coding agents into products and automations who need hosted Threads, files, sandboxes, tool events, and API access without rebuilding a runtime for every integration.",
-  callQuestion: "How does a product call a Mosoo Agent?",
-  callAnswer:
-    "A trusted backend uses the Public Thread API to create or resume a Thread, send user events, stream results, and attach files. Mosoo App-owner tokens stay on servers, not browsers.",
-  selfHostQuestion: "Is mosoo self-hostable?",
-  selfHostAnswer:
-    "Yes. mosoo is open source and self-hostable on Cloudflare. Operators bring their own model and provider keys in the production plane.",
-  verifyQuestion: "Where can I verify Mosoo's source and API contract?",
-  verifyAnswer:
-    "Use the GitHub repository, the public API documentation, and the OpenAPI 3.1 document. The product also publishes llms.txt and auth.md for machine-readable discovery.",
-};
+import { HOME_COPY } from "../apps/landing/src/home/copy.ts";
+import { homeFaq, renderHomeFallback, renderHomeJsonLd } from "./landing-home.mjs";
 
-const SEO = {
-  en: EN,
+// Home page head copy. The title is the README positioning (langgenius/mosoo
+// README.md:8), kept as the entity's name (staging narrative/DECK.md §3); the
+// description says what the hero says (the narrative round's deck, DECK.md §3,
+// narrative/deck/meta.json): the agent works on your laptop; set up the same
+// one of the four harnesses in mosoo's cloud (README.md:9, 37: a saved Agent,
+// nothing imported); your backend runs it without you (README.md:26; SPEC
+// L9, L65), one Session per job (SPEC L32). No uptime promise, no scale
+// number (narrative/TRUTH.md). The static v5 home
+// (apps/landing/src/home/markup.ts), the FAQ and the JSON-LD come from
+// landing-home.mjs and are written into the markers in index.html, whose
+// head carries the en strings below verbatim (localizeHomeHead swaps them).
+// imageAlt describes the social card that ships today
+// (public/brand/social-card-v5-20261021b.png, apps/landing/scripts/assets/
+// social-card-v5.mjs): the text on the card, which is English in every locale:
+// "mosoo: " and the en hero H1 (copy/hero.json); change it together with the
+// og:image when the card is regenerated.
+const HOME_SEO = {
+  en: {
+    lang: "en",
+    title: "Open-source Agent runtime for application backends | mosoo",
+    description:
+      "Your agent works on your laptop. Set up the same OpenAI Codex, Claude Agent SDK, OpenCode or Pi agent in mosoo's cloud, and your backend runs it without you.",
+    socialTitle: "An open-source, API-first managed Agent runtime for application backends",
+    socialDescription:
+      "Your agent works on your laptop. Set up the same OpenAI Codex, Claude Agent SDK, OpenCode or Pi agent once in mosoo's cloud, and your backend runs it without you, one Session per job.",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
+  },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — 面向 Coding Agent 的开源 Agent runtime",
+    title: "面向应用后端的开源 Agent runtime | mosoo",
     description:
-      "通过统一的 Agent API，在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode。开源、可自行托管，专为 Coding Agent 构建。",
+      "你的 Agent 在本地能跑。在 mosoo 的云端配一个同样的 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi Agent，交给你的后端调用，不用你守着。",
+    socialTitle: "开源、API 优先的托管 Agent runtime，面向应用后端",
     socialDescription:
-      "通过统一的 Agent API，在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode。",
-    imageAlt: "mosoo 开源 Agent runtime",
-    structuredDescription: "用于在隔离 sandbox 中运行 Coding Agent 的开源 Agent runtime 与 API。",
-    subcategory: "AI Agent runtime",
-    directHeading: "直接答案",
-    sourceHeading: "来源与验证",
-    sourceGithub: "GitHub 源码",
-    sourceApiDocs: "API 文档",
-    sourceOpenApi: "OpenAPI 3.1",
-    sourceLlmIndex: "llms.txt",
-    whatQuestion: "mosoo 是什么？",
-    whatAnswer:
-      "mosoo 是面向 Coding Agent 的开源 Agent runtime 与 API。它在隔离 sandbox 中运行 OpenAI Codex、Claude Agent SDK 和 OpenCode，跨 Run 保留 Thread 与文件，并可在 Cloudflare 上自行托管。",
-    whoQuestion: "mosoo 适合谁？",
-    whoAnswer:
-      "mosoo 面向把 Coding Agent 扩展到产品和自动化中的开发者；他们需要托管 Thread、文件、sandbox、工具事件和 API 访问，而不想为每个集成都重建一套 runtime。",
-    callQuestion: "产品如何调用 mosoo Agent？",
-    callAnswer:
-      "可信后端通过 Public Thread API 创建或恢复 Thread、发送用户事件、流式读取结果并挂载文件。mosoo App owner token 留在服务器上，不暴露给浏览器。",
-    selfHostQuestion: "mosoo 可以自行托管吗？",
-    selfHostAnswer:
-      "可以。mosoo 是开源的，并可在 Cloudflare 上自行托管。运营方在生产平面中带入自己的模型与服务商密钥。",
-    verifyQuestion: "在哪里验证 Mosoo 的源码和 API 合约？",
-    verifyAnswer:
-      "查看 GitHub 仓库、公开 API 文档和 OpenAPI 3.1 文档。产品也发布 llms.txt 与 auth.md，便于机器读取和发现。",
+      "你的 Agent 在本地能跑。在 mosoo 的云端配一次同样的 OpenAI Codex、Claude Agent SDK、OpenCode 或 Pi Agent，由你的后端调用，每个任务一个 Session，不用你守着。",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — Coding Agent 向けオープンソース Agent runtime",
+    title: "アプリのバックエンド向けオープンソース Agent runtime | mosoo",
     description:
-      "OpenAI Codex、Claude Agent SDK、OpenCode を、隔離された sandbox 上で 1 つの Agent API 経由で実行。オープンソースでセルフホスト可能、Coding Agent のために設計されています。",
+      "Agent は手元で動く。同じ OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Agent を mosoo のクラウドに用意すれば、あなたがいなくてもバックエンドから動かせます。",
+    socialTitle:
+      "アプリケーションのバックエンドのための、オープンソースで API ファーストなマネージド Agent runtime",
     socialDescription:
-      "OpenAI Codex、Claude Agent SDK、OpenCode を、隔離された sandbox 上で 1 つの Agent API 経由で実行。",
-    imageAlt: "mosoo オープンソース Agent runtime",
-    structuredDescription:
-      "隔離された sandbox で Coding Agent を実行するための、オープンソース Agent runtime と API。",
-    subcategory: "AI Agent runtime",
-    directHeading: "直接回答",
-    sourceHeading: "ソースと検証",
-    sourceGithub: "GitHub ソース",
-    sourceApiDocs: "API ドキュメント",
-    sourceOpenApi: "OpenAPI 3.1",
-    sourceLlmIndex: "llms.txt",
-    whatQuestion: "mosoo とは？",
-    whatAnswer:
-      "mosoo は Coding Agent 向けのオープンソース Agent runtime と API です。OpenAI Codex、Claude Agent SDK、OpenCode を隔離された sandbox で実行し、Run をまたいで Thread とファイルを保持し、Cloudflare 上でセルフホストできます。",
-    whoQuestion: "mosoo は誰向けですか？",
-    whoAnswer:
-      "mosoo は、Coding Agent をプロダクトや自動化に組み込みたい開発者向けです。integration ごとに runtime を作り直さず、ホストされた Thread、ファイル、sandbox、tool event、API access を使えます。",
-    callQuestion: "プロダクトから mosoo Agent を呼ぶには？",
-    callAnswer:
-      "信頼されたバックエンドが Public Thread API で Thread を作成または再開し、user event を送り、結果を stream し、ファイルを添付します。mosoo App owner token はサーバーに置き、ブラウザへ公開しません。",
-    selfHostQuestion: "mosoo はセルフホストできますか？",
-    selfHostAnswer:
-      "はい。mosoo はオープンソースで、Cloudflare 上にセルフホストできます。運用者は production plane で自分のモデルと provider key を持ち込みます。",
-    verifyQuestion: "Mosoo のソースと API contract はどこで確認できますか？",
-    verifyAnswer:
-      "GitHub repository、公開 API ドキュメント、OpenAPI 3.1 ドキュメントで確認できます。機械可読な discovery のために llms.txt と auth.md も公開しています。",
+      "手元で動いた Agent を、mosoo のクラウドへ。同じ OpenAI Codex、Claude Agent SDK、OpenCode、Pi の Agent を一度用意すれば、バックエンドがジョブごとに Session を開き、あなたがいなくても動きます。",
+    imageAlt: "mosoo: Your agent works locally. Now it runs without you.",
   },
 };
 
@@ -112,7 +62,8 @@ const FALLBACK_LABELS = {
     docs: "Docs",
     quickstart: "Quickstart",
     blog: "Blog",
-    login: "Log in",
+    // The console login, named as the home's bar and the subpages' bar name it (copy/nav.json signIn), #143.
+    signIn: "Sign in",
   },
   zh: {
     pricing: "定价",
@@ -121,7 +72,7 @@ const FALLBACK_LABELS = {
     docs: "文档",
     quickstart: "快速开始",
     blog: "博客",
-    login: "登录",
+    signIn: "登录",
   },
   ja: {
     pricing: "料金",
@@ -130,62 +81,80 @@ const FALLBACK_LABELS = {
     docs: "ドキュメント",
     quickstart: "クイックスタート",
     blog: "ブログ",
-    login: "ログイン",
+    signIn: "ログイン",
   },
 };
 
-const PRICING_SEO = {
-  en: {
-    lang: "en",
-    title: "mosoo — Pricing",
-    description:
-      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys. Paid plans with more sandbox hours and concurrency are coming soon.",
-    socialDescription:
-      "Start free on mosoo Cloud: run coding agents in isolated sandboxes with BYOK keys.",
-    imageAlt: "mosoo pricing",
-  },
-  zh: {
-    lang: "zh-CN",
-    title: "mosoo — 定价",
-    description:
-      "在 mosoo Cloud 免费起步：以 BYOK 密钥在隔离 sandbox 中运行 Coding Agent。含更多 sandbox 时长与并发的付费方案即将上线。",
-    socialDescription: "在 mosoo Cloud 免费起步：以 BYOK 密钥在隔离 sandbox 中运行 Coding Agent。",
-    imageAlt: "mosoo 定价",
-  },
-  ja: {
-    lang: "ja",
-    title: "mosoo — 料金",
-    description:
-      "mosoo Cloud で無料で開始：BYOK キーを使い、隔離された sandbox で Coding Agent を実行。sandbox 時間と同時実行数を拡張する有料プランは近日公開。",
-    socialDescription:
-      "mosoo Cloud で無料で開始：BYOK キーを使い、隔離された sandbox で Coding Agent を実行。",
-    imageAlt: "mosoo の料金",
-  },
-};
+// Pricing (#138, staging committee/PLAN.md 2-3) is kept as a page in the subpage shell, unlisted: noindex, out of
+// the sitemap (scripts/sitemap.mjs), linked from no nav. It says one thing, the home FAQ's answer to "What does it
+// cost to start?" (apps/landing/src/home/copy/faq.json item 5, since the narrative round put the FAQ in the story's
+// order, staging narrative/DECK.md §2.6; sources in its $source: console en.json L51, SPEC §2 L25), and that answer
+// is also its description and share text. So the FAQ is the only copy: the build writes the answer into
+// pricing.html's slots for every locale (fillPricingAnswer), and the React page reads the same item
+// (src/routes/pricing/pricing-page.tsx COST_QUESTION). The one button is the home's lime "Try mosoo" (copy/nav.json
+// cta).
+const PRICING_QUESTION = 4;
+
+const escapeHtml = (value) =>
+  value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+
+function pricingAnswer(locale) {
+  const item = homeFaq(locale)[PRICING_QUESTION];
+  if (!item) throw new Error(`Landing locale build: copy/faq.json (${locale}) has no cost question (item 5) for pricing.`);
+  return escapeHtml(item.a);
+}
+
+const PRICING_SEO = Object.fromEntries(
+  [
+    ["en", "en", "Pricing | mosoo", "mosoo pricing"],
+    ["zh", "zh-CN", "定价 | mosoo", "mosoo 定价"],
+    ["ja", "ja", "料金 | mosoo", "mosoo の料金"],
+  ].map(([locale, lang, title, imageAlt]) => {
+    const answer = pricingAnswer(locale);
+    return [locale, { lang, title, description: answer, socialDescription: answer, imageAlt }];
+  }),
+);
+
+// The places in pricing.html that carry the answer; whatever stands there in the source, the build writes the en
+// answer in first, so the locale pass below swaps one known string.
+const PRICING_ANSWER_SLOTS = [
+  /(<meta\s+name="description"\s+content=")[^"]*(")/,
+  /(<meta\s+property="og:description"\s+content=")[^"]*(")/,
+  /(<meta\s+name="twitter:description"\s+content=")[^"]*(")/,
+  /(<p data-pricing-answer\b[^>]*>)[^<]*(<\/p>)/,
+];
+
+function fillPricingAnswer(source) {
+  const answer = PRICING_SEO.en.description;
+  return PRICING_ANSWER_SLOTS.reduce((html, slot) => {
+    if (!slot.test(html)) throw new Error(`Landing locale build could not find the pricing slot ${slot}`);
+    return html.replace(slot, (_, open, close) => `${open}${answer}${close}`);
+  }, source);
+}
 
 const STATUS_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — System Status",
+    title: "System status | mosoo",
     description:
-      "Live service availability and real production Run completion rates for mosoo, derived from Cloudflare and Mosoo business logs.",
+      "Live service availability and real production Run completion rates for mosoo, derived from Cloudflare and mosoo business logs.",
     socialDescription:
       "Observed production service availability and Run completion rates for mosoo.",
     imageAlt: "mosoo system status",
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — 系统状态",
+    title: "系统状态 | mosoo",
     description:
-      "基于 Cloudflare 调用结果与 Mosoo 业务日志，查看生产服务可用性和真实 Run 完成率。",
+      "基于 Cloudflare 调用结果与 mosoo 业务日志，查看生产服务可用性和真实 Run 完成率。",
     socialDescription: "查看 mosoo 生产服务可用性与真实 Run 完成率。",
     imageAlt: "mosoo 系统状态",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — システムステータス",
+    title: "システムステータス | mosoo",
     description:
-      "Cloudflare の実行結果と Mosoo のビジネスログから、本番サービス可用性と実 Run 完了率を確認できます。",
+      "Cloudflare の実行結果と mosoo のビジネスログから、本番サービス可用性と実 Run 完了率を確認できます。",
     socialDescription: "mosoo の本番サービス可用性と実 Run 完了率。",
     imageAlt: "mosoo システムステータス",
   },
@@ -194,27 +163,28 @@ const STATUS_SEO = {
 const USE_CASES_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — Use Cases",
+    title: "Use cases | mosoo",
     description:
       "Products built on mosoo: see what each product does, what mosoo provides, and how the rest of the stack fits together.",
-    socialDescription: "Real products built on mosoo: agents published once and called as APIs.",
+    socialDescription:
+      "Products that use mosoo as their Agent backend. Each case explains the product, the value mosoo provides, and the integration path.",
     imageAlt: "mosoo use cases",
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — 用例",
+    title: "用例 | mosoo",
     description:
       "用 mosoo 构建的产品：了解每个产品的作用、mosoo 提供的能力，以及技术栈其他部分如何协同。",
-    socialDescription: "用 mosoo 构建的真实产品：Agent 发布一次，即可作为 API 调用。",
+    socialDescription: "这些产品使用 mosoo 作为 Agent backend。每个案例都会说明产品、mosoo 提供的价值与集成路径。",
     imageAlt: "mosoo 用例",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — ユースケース",
+    title: "ユースケース | mosoo",
     description:
       "mosoo でつくられたプロダクト：各プロダクトの役割、mosoo が提供する機能、スタック全体の連携を紹介します。",
     socialDescription:
-      "mosoo でつくられた実プロダクト：Agent を一度公開すれば API として呼び出せます。",
+      "mosoo を Agent backend として使うプロダクト。各ケースでは、プロダクト、mosoo が提供する価値、統合経路を紹介します。",
     imageAlt: "mosoo ユースケース",
   },
 };
@@ -222,29 +192,29 @@ const USE_CASES_SEO = {
 const USE_CASE_BLUEPRINT_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — Blueprint: A site builder for everyone",
+    title: "Blueprint: a site builder for everyone | mosoo",
     description:
-      "How Blueprint at trybp.page uses one shared cattle mosoo Agent, Thread-scoped projects, and Worker-side publish to turn a brief into a live site.",
+      "How Blueprint at trybp.page uses one mosoo Agent, a Thread per project, and Worker-side publishing to turn a brief into a live site.",
     socialDescription:
-      "Prompt in, shippable site out — a cattle mosoo Agent runs Blueprint; trybp.page publishes the artifact.",
+      "Prompt in, shippable site out: a mosoo Agent runs Blueprint, and trybp.page publishes the artifact.",
     imageAlt: "The Blueprint control surface on trybp.page",
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — Blueprint：人人可用的站点构建器",
+    title: "Blueprint：人人可用的站点构建器 | mosoo",
     description:
-      "trybp.page 上的 Blueprint 如何用一个共享的 cattle mosoo Agent、按项目划分的 Thread，以及 Worker 侧发布，把 brief 变成线上站点。",
+      "trybp.page 上的 Blueprint 如何用一个 mosoo Agent、每个项目一个 Thread，以及 Worker 侧发布，把 brief 变成线上站点。",
     socialDescription:
-      "提示词进，可上线站点出——cattle mosoo Agent 运行 Blueprint；trybp.page 发布产物。",
+      "提示词进，可上线站点出：mosoo Agent 运行 Blueprint，trybp.page 发布产物。",
     imageAlt: "trybp.page 上的 Blueprint 控制台",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — Blueprint：だれでも使えるサイトビルダー",
+    title: "Blueprint：だれでも使えるサイトビルダー | mosoo",
     description:
-      "trybp.page の Blueprint が、共有 cattle mosoo Agent、プロジェクト単位の Thread、Worker 側の公開でブリーフをライブサイトに変える方法。",
+      "trybp.page の Blueprint が、1 つの mosoo Agent、プロジェクトごとの Thread、Worker 側の公開でブリーフをライブサイトに変える方法。",
     socialDescription:
-      "プロンプトを入れると出荷可能なサイトが出てくる — cattle の mosoo Agent が Blueprint を実行し、trybp.page が成果物を公開します。",
+      "プロンプトを入れると出荷可能なサイトが出てくる：mosoo Agent が Blueprint を実行し、trybp.page が成果物を公開します。",
     imageAlt: "trybp.page 上の Blueprint コントロール画面",
   },
 };
@@ -252,7 +222,7 @@ const USE_CASE_BLUEPRINT_SEO = {
 const USE_CASE_PITCHPILOT_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — PitchPilot: Agent-powered Web App",
+    title: "PitchPilot: an Agent-powered web app | mosoo",
     description:
       "How PitchPilot keeps its product UI while one published mosoo Agent handles attachments, Runs, events, and committed HTML artifacts for preview and download.",
     socialDescription:
@@ -262,7 +232,7 @@ const USE_CASE_PITCHPILOT_SEO = {
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — PitchPilot：Agent 驱动的 Web 应用",
+    title: "PitchPilot：Agent 驱动的 Web 应用 | mosoo",
     description:
       "PitchPilot 如何保留自己的产品 UI，同时让一个已发布的 mosoo Agent 处理附件、Run、事件与已提交的 HTML artifact，并提供预览和下载。",
     socialDescription: "一个完整的 Web 应用，把已发布的 mosoo Agent 放在自己的产品体验背后。",
@@ -270,7 +240,7 @@ const USE_CASE_PITCHPILOT_SEO = {
   },
   ja: {
     lang: "ja",
-    title: "mosoo — PitchPilot：Agent 搭載 Web アプリ",
+    title: "PitchPilot：Agent 搭載 Web アプリ | mosoo",
     description:
       "PitchPilot が独自のプロダクト UI を保ちながら、公開済み mosoo Agent に添付ファイル、Run、イベント、コミット済み HTML artifact を処理させ、プレビューとダウンロードを提供する方法。",
     socialDescription:
@@ -282,7 +252,7 @@ const USE_CASE_PITCHPILOT_SEO = {
 const USE_CASE_GO_GYM_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — Go Gym: Multi-user Agent Backend",
+    title: "Go Gym: a multi-user Agent backend | mosoo",
     description:
       "How Go Gym uses one shared mosoo Agent, user-scoped Threads, delegated MCP identity, and isolated sandboxes inside a production multi-user fitness app.",
     socialDescription:
@@ -291,7 +261,7 @@ const USE_CASE_GO_GYM_SEO = {
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — Go Gym：多用户 Agent Backend",
+    title: "Go Gym：多用户 Agent Backend | mosoo",
     description:
       "Go Gym 如何在生产级多用户健身应用中使用一个共享的 mosoo Agent、用户范围内的 Thread、委托 MCP 身份与隔离 sandbox。",
     socialDescription: "一个共享的 mosoo Agent 把健身对话转化为隔离、持久的用户记录。",
@@ -299,7 +269,7 @@ const USE_CASE_GO_GYM_SEO = {
   },
   ja: {
     lang: "ja",
-    title: "mosoo — Go Gym：マルチユーザー Agent Backend",
+    title: "Go Gym：マルチユーザー Agent Backend | mosoo",
     description:
       "Go Gym が本番マルチユーザーフィットネスアプリで、共有 mosoo Agent、ユーザー単位の Thread、委任 MCP ID、隔離 sandbox を使う方法。",
     socialDescription:
@@ -311,24 +281,24 @@ const USE_CASE_GO_GYM_SEO = {
 const USE_CASE_CODEX_PET_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — Codex Pet: Agent as API",
+    title: "Codex Pet: Agent as API | mosoo",
     description:
-      "How one published mosoo Agent turns an uploaded avatar into all nine Codex pet animation states — integrated from Codex through the Thread API.",
+      "How one published mosoo Agent turns an uploaded avatar into all nine Codex pet animation states, integrated from Codex through the Thread API.",
     socialDescription:
       "One published mosoo Agent turns an uploaded avatar into all nine Codex pet animation states.",
     imageAlt: "The Codex Pet app built on mosoo",
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — Codex Pet：Agent as API",
+    title: "Codex Pet：Agent as API | mosoo",
     description:
-      "一个已发布的 mosoo Agent 如何把一张上传的头像变成全部九个 Codex 宠物动画状态——由 Codex 通过 Thread API 完成集成。",
+      "一个已发布的 mosoo Agent 如何把一张上传的头像变成全部九个 Codex 宠物动画状态，由 Codex 通过 Thread API 完成集成。",
     socialDescription: "一个已发布的 mosoo Agent 把一张上传的头像变成全部九个 Codex 宠物动画状态。",
     imageAlt: "用 mosoo 构建的 Codex Pet 应用",
   },
   ja: {
     lang: "ja",
-    title: "mosoo — Codex Pet：Agent as API",
+    title: "Codex Pet：Agent as API | mosoo",
     description:
       "公開済みの mosoo Agent 1 つが、アップロードされたアバターを 9 つの Codex ペットアニメーション状態に変換。Codex から Thread API 経由で統合します。",
     socialDescription:
@@ -340,7 +310,7 @@ const USE_CASE_CODEX_PET_SEO = {
 const USE_CASE_GHFIND_SEO = {
   en: {
     lang: "en",
-    title: "mosoo — ghfind: Deep project valuation engine",
+    title: "ghfind: a deep project valuation engine | mosoo",
     description:
       "ghfind uses one published mosoo Agent for deep repository evaluation while ghfind owns scoring, workflow, validation, storage, and UI.",
     socialDescription:
@@ -349,7 +319,7 @@ const USE_CASE_GHFIND_SEO = {
   },
   zh: {
     lang: "zh-CN",
-    title: "mosoo — ghfind：深度项目评测估值引擎",
+    title: "ghfind：深度项目评测估值引擎 | mosoo",
     description:
       "ghfind 把确定性的 GitHub 账号评分与仓库评估分开；仓库评估由一个已发布的 mosoo Agent 检查项目，并通过 Thread API 返回结构化 artifact。",
     socialDescription:
@@ -358,7 +328,7 @@ const USE_CASE_GHFIND_SEO = {
   },
   ja: {
     lang: "ja",
-    title: "mosoo — ghfind：プロジェクト評価・バリュエーションエンジン",
+    title: "ghfind：プロジェクト評価・バリュエーションエンジン | mosoo",
     description:
       "ghfind は決定論的な GitHub アカウントスコアとリポジトリ評価を分離し、後者では公開済み mosoo Agent がプロジェクトを調査して Thread API から構造化 artifact を返します。",
     socialDescription:
@@ -373,59 +343,56 @@ function replaceRequired(html, search, replacement) {
   }
   return html.replaceAll(search, replacement);
 }
+// A third element { optional: true } localizes the string where it is and skips it where it is not.
 function applyReplacements(source, replacements) {
   return replacements.reduce(
-    (html, [search, replacement]) =>
-      search === replacement ? html : replaceRequired(html, search, replacement),
+    (html, [search, replacement, { optional = false } = {}]) =>
+      search === replacement || (optional && !html.includes(search))
+        ? html
+        : replaceRequired(html, search, replacement),
     source,
   );
 }
 
+// The static nav that the subpages (pricing, status, use cases) still carry.
+// Pricing is optional: v5 takes it out of the navs (staging production/v5/TOOLS-REVIEW.md T5, #138), and the
+// subpages drop it one by one; where it is still linked, it is localized as before.
 function navReplacements(locale) {
   const labels = FALLBACK_LABELS[locale];
   return [
-    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`],
+    ['href="/en/pricing">Pricing</a>', `href="/${locale}/pricing">${labels.pricing}</a>`, { optional: true }],
     ['href="/en/use-cases">Use cases</a>', `href="/${locale}/use-cases">${labels.useCases}</a>`],
     ['href="/health">Status</a>', `href="${locale === "en" ? "/health" : `/${locale}/health`}">${labels.status}</a>`],
     [">Docs</a>", `>${labels.docs}</a>`],
     [">Quickstart</a>", `>${labels.quickstart}</a>`],
     [">Blog</a>", `>${labels.blog}</a>`],
-    [">Log in</a>", `>${labels.login}</a>`],
+    [">Sign in</a>", `>${labels.signIn}</a>`],
   ];
 }
 
-function directAnswerReplacements(copy) {
-  return [
-    "directHeading",
-    "sourceHeading",
-    "sourceGithub",
-    "sourceApiDocs",
-    "sourceOpenApi",
-    "sourceLlmIndex",
-    "whatQuestion",
-    "whatAnswer",
-    "whoQuestion",
-    "whoAnswer",
-    "callQuestion",
-    "callAnswer",
-    "selfHostQuestion",
-    "selfHostAnswer",
-    "verifyQuestion",
-    "verifyAnswer",
-  ].map((key) => [EN[key], copy[key]]);
+// Replaces exactly one `<!-- mosoo:<name> ... -->` comment. A function
+// replacement keeps "$" in the inserted HTML (shell variables in code) literal.
+function fillMarker(html, name, content) {
+  const marker = new RegExp(`<!-- mosoo:${name}\\b[\\s\\S]*?-->`, "g");
+  const count = html.match(marker)?.length ?? 0;
+  if (count !== 1) {
+    throw new Error(`Landing locale build expected one mosoo:${name} marker, found ${count}`);
+  }
+  return html.replace(marker, () => content);
 }
 
-function localizeHtml(source, locale, copy) {
+function localizeHomeHead(source, locale) {
+  const en = HOME_SEO.en;
+  const copy = HOME_SEO[locale];
   const url = `https://mosoo.ai/${locale}`;
-  const replacements = [
-    [`<html lang="${EN.lang}">`, `<html lang="${copy.lang}">`],
-    [EN.title, copy.title],
-    [EN.description, copy.description],
-    [EN.socialDescription, copy.socialDescription],
-    [EN.imageAlt, copy.imageAlt],
-    [EN.structuredDescription, copy.structuredDescription],
-    [EN.subcategory, copy.subcategory],
-    ...directAnswerReplacements(copy),
+  return applyReplacements(source, [
+    // The home's <html> also declares the damped scroll (src/effects/v5/damp-scroll.ts).
+    [`<html lang="${en.lang}" data-damp>`, `<html lang="${copy.lang}" data-damp>`],
+    [en.title, copy.title],
+    [en.description, copy.description],
+    [en.socialTitle, copy.socialTitle],
+    [en.socialDescription, copy.socialDescription],
+    [en.imageAlt, copy.imageAlt],
     [
       '<link rel="canonical" href="https://mosoo.ai/en" />',
       `<link rel="canonical" href="${url}" />`,
@@ -434,14 +401,11 @@ function localizeHtml(source, locale, copy) {
       '<meta property="og:url" content="https://mosoo.ai/en" />',
       `<meta property="og:url" content="${url}" />`,
     ],
-    ['"@id": "https://mosoo.ai/en#faq"', `"@id": "${url}#faq"`],
-    ['"url": "https://mosoo.ai/en"', `"url": "${url}"`],
-    ['"inLanguage": "en"', `"inLanguage": "${copy.lang}"`],
-    ...navReplacements(locale),
-  ];
-
-  return applyReplacements(source, replacements);
+  ]);
 }
+
+// The no-JS h1 of a subpage is its title without the " | mosoo" suffix.
+const headingOf = (title) => title.replace(/ \| mosoo$/, "");
 
 // Localizes any landing subpage (pricing, status, use cases…): the EN copy in
 // the source HTML is looked up from seo.en and swapped for seo[locale].
@@ -453,6 +417,10 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
   const replacements = [
     [`<html lang="${en.lang}">`, `<html lang="${copy.lang}">`],
     [en.title, copy.title],
+    [
+      `>\n          ${headingOf(en.title)}\n        </h1>`,
+      `>\n          ${headingOf(copy.title)}\n        </h1>`,
+    ],
     [en.description, copy.description],
     [en.socialDescription, copy.socialDescription],
     [en.imageAlt, copy.imageAlt],
@@ -467,19 +435,35 @@ function localizeSubpageHtml(source, locale, seo, subpath, extraReplacements = [
     ...navReplacements(locale),
     ...extraReplacements,
   ];
+  // A string listed twice (pricing's description is also its share text) is swapped once: replaceAll takes every copy.
+  const unique = replacements.filter(
+    ([search], index) => replacements.findIndex(([other]) => other === search) === index,
+  );
 
-  return applyReplacements(source, replacements);
+  return applyReplacements(source, unique);
 }
 
+// The display face's preload in index.html is the en file (wght 440). zh and ja set the Latin in their headings
+// in the wght 400 file ("Roboto Serif Display CJK", src/home/system.css), so their pages preload that one instead:
+// one display-font request per page.
+const DISPLAY_PRELOAD_EN =
+  '<link rel="preload" href="/fonts/RobotoSerif-display-wdth86-opsz36-wght440-latin.woff2" as="font" type="font/woff2" crossorigin />';
+const DISPLAY_PRELOAD_CJK = DISPLAY_PRELOAD_EN.replace("-wght440-", "-wght400-");
+
+// Head copy is localized first, then the generated JSON-LD and static page go
+// into the markers, so the EN-to-locale replacements never touch them.
 export function renderLandingLocale(source, locale) {
-  const copy = SEO[locale];
-  if (!copy) throw new Error(`Unsupported landing locale: ${locale}`);
-  return localizeHtml(source, locale, copy);
+  if (!HOME_SEO[locale]) throw new Error(`Unsupported landing locale: ${locale}`);
+  const preloaded = locale === "en" ? source : replaceRequired(source, DISPLAY_PRELOAD_EN, DISPLAY_PRELOAD_CJK);
+  const head = fillMarker(localizeHomeHead(preloaded, locale), "home-head", renderHomeJsonLd(locale));
+  return fillMarker(head, "home-fallback", renderHomeFallback(locale));
 }
 
 export function renderPricingLocale(source, locale) {
   if (!PRICING_SEO[locale]) throw new Error(`Unsupported pricing locale: ${locale}`);
-  return localizeSubpageHtml(source, locale, PRICING_SEO, "/pricing");
+  return localizeSubpageHtml(fillPricingAnswer(source), locale, PRICING_SEO, "/pricing", [
+    [">Try mosoo</a>", `>${escapeHtml(HOME_COPY[locale].nav.cta)}</a>`],
+  ]);
 }
 
 export function renderStatusLocale(source, locale) {
@@ -547,8 +531,11 @@ export async function buildLandingLocales(landingDist) {
     "utf8",
   );
 
+  // dist/index.html keeps no unfilled markers if a host ever serves it directly.
+  await writeFile(join(landingDist, "index.html"), renderLandingLocale(source, "en"));
+
   await Promise.all(
-    Object.keys(SEO).map(async (locale) => {
+    Object.keys(HOME_SEO).map(async (locale) => {
       await writeFile(join(landingDist, `${locale}.html`), renderLandingLocale(source, locale));
       await mkdir(join(landingDist, locale, "use-cases"), { recursive: true });
       await writeFile(

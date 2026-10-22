@@ -1,6 +1,9 @@
 ---
-import { getIndexHref, getLocaleOptions, type Locale } from "../lib/i18n";
+import { getIndexHref, getLocaleOptions, navCopyByLocale, type Locale } from "../lib/i18n";
 import { headerCopyByLocale } from "../lib/copy.mjs";
+import LanguageSwitch from "./LanguageSwitch.astro";
+// The mark on the mosoo tile: the v5 mark's own geometry, generated for the landing (as the home's panel draws it).
+import { BRAND_MARK } from "../../../landing/src/shared/ui/brand-v5.generated.ts";
 
 interface Props {
   availableLocales?: Locale[];
@@ -15,57 +18,724 @@ const currentLocale = localeOptions.find(({ active }) => active)?.locale ?? "en"
 const blogHref = getIndexHref(currentLocale, base);
 const landingHref = `/${currentLocale}`;
 const copy = headerCopyByLocale[currentLocale] ?? headerCopyByLocale.en;
+const nav = navCopyByLocale[currentLocale];
+// A post without translations has nothing to switch to, so the switch only shows with two or more languages.
+const showLanguages = localeOptions.length > 1;
+const products = [
+  { id: "mosoo", href: "https://cloud.mosoo.ai", ...nav.mosoo, fresh: false },
+  { id: "computer", href: "https://computer.mosoo.ai", ...nav.computer, fresh: true },
+] as const;
+// The home's chrome (staging v5 design review P1-4): the ink lockup of the v5 nav (the landing's generated
+// public/brand/v5/logo-nav.svg, served from the site root next to the blog) and its one lime CTA, "Try mosoo".
+// The right side is the home bar's (owner 2026-10-20 17:15; staging v5/polish/nav/DESIGN.md §2, §7;
+// apps/landing/src/home/sections/nav.ts): Products ▾ is a button with a native popover (popover + popovertarget: it
+// opens, closes on a click outside and on Esc with no script) holding the two products. Up to 860px the whole <nav>
+// is itself the popover the menu button opens, a sheet under the bar with the panel inline and the CTA last.
+// The language is not behind a menu (owner 17:12 「多语言切换不明显」; staging v5/polish/verify-visual.md §0 no. 1):
+// the three segments of ./LanguageSwitch.astro stand on the bar at every width, in the <nav> before the CTA on wide
+// screens (where the home bar has its language) and beside the menu button up to 860px, where the <nav> is the
+// closed sheet. Two copies in the HTML, one shown at any width; the footer has the third.
 ---
 
-<header class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--paper)]/85 backdrop-blur-md">
-  <div class="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:flex-nowrap sm:gap-6 sm:px-7">
-    <div class="flex shrink-0 items-center gap-3 whitespace-nowrap text-[color:var(--fg)]">
-      <a href={landingHref} aria-label="mosoo home">
-        <img src={`${base}/brand-wordmark.svg`} alt="mosoo" class="h-5 w-auto" />
+<header
+  class="sticky top-0 z-20 border-b border-[color:var(--border)] bg-[color:var(--blog-bg)]/85 backdrop-blur-md bn"
+  data-blog-nav
+>
+  <div class="blog-wrap bn-in">
+    <div class="bn-brand">
+      <a href={landingHref} aria-label={nav.home} class="bn-home">
+        <img src="/brand/v5/logo-nav.svg" alt="mosoo" width="93" height="20" class="h-5 w-auto" />
       </a>
-      <span class="text-[color:var(--ink-300)]">/</span>
-      <a
-        href={blogHref}
-        class="text-[14.5px] font-medium tracking-[-0.01em] text-[color:var(--ink-900)] transition-colors duration-150 hover:text-[color:var(--accent-text)]"
-      >
-        {copy.blog}
-      </a>
+      <span class="bn-sep" aria-hidden="true">/</span>
+      <a href={blogHref} class="bn-blog">{copy.blog}</a>
     </div>
-    <nav class="ml-auto flex items-center gap-3 text-[14px] text-[color:var(--fg-secondary)] sm:gap-6">
-      <a href={landingHref} class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline">{copy.backToMosoo}</a>
-      <a
-        href={`${base}/rss.xml`}
-        class="hidden font-medium transition-colors duration-150 hover:text-[color:var(--fg)] sm:inline"
-        title={copy.rssTitle}
-        >RSS</a
-      >
-      <div
-        class="flex shrink-0 items-center overflow-hidden whitespace-nowrap rounded-[var(--r-sm)] border border-[color:var(--border)] font-mono text-[12px] font-semibold uppercase tracking-[0.08em]"
-        aria-label={copy.languageLabel}
-      >
-        {
-          localeOptions.map((option) => (
-            <a
-              href={option.href}
-              aria-current={option.active ? "true" : undefined}
-              class:list={[
-                "px-2.5 py-1 transition-colors",
-                option.active
-                  ? "bg-[color:var(--ink-900)] text-white"
-                  : "text-[color:var(--fg-secondary)] hover:bg-[color:var(--ink-50)] hover:text-[color:var(--fg)]",
-              ]}
+    <div class="bn-end">
+      <nav class="bn-row" id="bn-menu" aria-label={nav.label} popover>
+        <div class="bn-dd bn-dd--products">
+          <button type="button" class="bn-tg" popovertarget="bn-products">
+            {nav.products}
+            <svg
+              class="bn-chev"
+              viewBox="0 0 10 6"
+              width="10"
+              height="6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"><path d="M1 1l4 4 4-4"></path></svg
             >
-              {option.label}
-            </a>
-          ))
+          </button>
+          <div class="bn-pop bn-pop--products" id="bn-products" popover>
+            <p class="bn-pop-h" id="bn-products-h">{nav.products}</p>
+            <ul class="bn-prods" aria-labelledby="bn-products-h">
+              {
+                products.map((product) => (
+                  <li>
+                    {/* The spaces between the parts are the link's text (it reads "mosoo Open-source …"); the grid
+                        drops them from the layout. */}
+                    <a class="bn-prod" href={product.href}>
+                      <span class="bn-tile" aria-hidden="true">
+                        {product.id === "mosoo" ? (
+                          <svg
+                            class="bn-tile-g"
+                            viewBox={BRAND_MARK.vb.join(" ")}
+                            fill="currentColor"
+                            focusable="false"
+                          >
+                            <path d={BRAND_MARK.fill} />
+                            <path d={BRAND_MARK.bar} fill="none" stroke="currentColor" stroke-width={BRAND_MARK.stroke} />
+                          </svg>
+                        ) : (
+                          <svg
+                            class="bn-tile-g"
+                            viewBox="0 0 12 12"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            focusable="false"
+                          >
+                            <rect x="1.1" y="1.6" width="9.8" height="6.6" rx="1.2" />
+                            <path d="M6 8.2v2.2M3.6 10.4h4.8" />
+                          </svg>
+                        )}
+                      </span>{" "}
+                      <span class="bn-prod-name">
+                        <span translate="no">{product.name}</span>
+                        {product.fresh && (
+                          <>
+                            {" "}
+                            <span class="bn-new">{nav.new}</span>
+                          </>
+                        )}
+                      </span>{" "}
+                      <span class="bn-prod-line">{product.line}</span>{" "}
+                      <span class="bn-prod-host" translate="no">
+                        {new URL(product.href).host}
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+        <a href={landingHref} class="bn-a">{copy.backToMosoo}</a>
+        <a href={`${base}/rss.xml`} class="bn-a" title={copy.rssTitle}>RSS</a>
+        {
+          showLanguages && (
+            <div class="bn-lang bn-lang--row">
+              <LanguageSwitch availableLocales={availableLocales} names="short" />
+            </div>
+          )
         }
-      </div>
-      <a
-        href="https://github.com/langgenius/mosoo"
-        class="hidden items-center gap-2 whitespace-nowrap rounded-[var(--r-md)] bg-[color:var(--ink-900)] px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] text-white transition-colors hover:bg-[color:var(--ink-800)] sm:inline-flex"
-      >
-        {copy.learnMore}
-      </a>
-    </nav>
+        <a href="https://cloud.mosoo.ai" class="bn-cta">{copy.tryMosoo}</a>
+      </nav>
+      {
+        showLanguages && (
+          <div class="bn-lang bn-lang--bar">
+            <LanguageSwitch availableLocales={availableLocales} names="short" compact />
+          </div>
+        )
+      }
+      <button type="button" class="bn-menu" popovertarget="bn-menu" aria-label={nav.menu}>
+        <svg
+          class="bn-burger"
+          viewBox="0 0 18 18"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path class="bn-burger-a" d="M2 6.25h14"></path>
+          <path class="bn-burger-b" d="M2 11.75h14"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 </header>
+
+<script>
+  // What the browser does not do for the popovers, as the home's nav engine does it (apps/landing/src/effects/v5/
+  // nav.ts): close an open panel, or the phone sheet, once focus lands outside it and its button (WCAG 2.4.11), and
+  // once its button is no longer shown (a tablet turned to landscape with the sheet open); focusin, not focusout, so
+  // closing never sends focus back to the button. Without JS the menus still open, close and link. (The language
+  // links remember a pick themselves: ./LanguageSwitch.astro.)
+  const bar = document.querySelector<HTMLElement>("[data-blog-nav]");
+  if (bar) {
+    const popovers = [...bar.querySelectorAll<HTMLElement>("[popover]")].map((panel) => ({
+      panel,
+      button: bar.querySelector(`[popovertarget="${CSS.escape(panel.id)}"]`),
+    }));
+    document.addEventListener("focusin", (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      for (const { panel, button } of popovers) {
+        if (panel.matches(":popover-open") && !panel.contains(target) && !button?.contains(target)) panel.hidePopover();
+      }
+    });
+    window.addEventListener(
+      "resize",
+      () => {
+        for (const { panel, button } of popovers) {
+          if (panel.matches(":popover-open") && button && button.getClientRects().length === 0) panel.hidePopover();
+        }
+      },
+      { passive: true },
+    );
+  }
+</script>
+
+<style>
+  /* The home bar's look (apps/landing/src/home/sections/nav.css; the subpages' shared/styles/site-nav.css carries the
+     same values) on the blog's sticky glass header: links and triggers in Hanken 500 14.5 ink-2, panels as paper
+     cards 8px under the bar, from their trigger by CSS anchor positioning (without it: under the bar's right end). */
+  .bn {
+    --bn-gap: 24px;
+    --bn-h: 64px;
+    --bn-lime: #bcf870;
+    --bn-ease: cubic-bezier(0, 0, 0.2, 1);
+    --bn-ease-theme: cubic-bezier(0.4, 0, 0.2, 1);
+    anchor-name: --bn-bar;
+  }
+
+  .bn-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bn-gap);
+    height: var(--bn-h);
+  }
+
+  .bn-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+
+  .bn-home {
+    display: block;
+    color: var(--fg);
+  }
+
+  .bn-sep {
+    color: var(--ink-300);
+  }
+
+  .bn-blog {
+    color: var(--v5-ink-2);
+    font: 500 14.5px/1 var(--font-sans);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    transition: color 0.15s var(--bn-ease-theme);
+  }
+
+  .bn-blog:hover {
+    color: var(--v5-ink);
+  }
+
+  .bn-end {
+    display: flex;
+    align-items: center;
+    gap: var(--bn-gap);
+  }
+
+  /* The <nav> is a popover only for the phone sheet: here it is the bar's row. */
+  .bn-row {
+    position: static;
+    inset: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--bn-gap);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+
+  .bn-a,
+  .bn-tg {
+    display: inline-flex;
+    align-items: center;
+    padding-block: 15px;
+    border-radius: 6px;
+    color: var(--v5-ink-2);
+    font: 500 14.5px/1 var(--font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.15s var(--bn-ease-theme);
+  }
+
+  .bn-a:hover,
+  .bn-tg:hover {
+    color: var(--v5-ink);
+  }
+
+  .bn-dd {
+    display: flex;
+    align-items: center;
+  }
+
+  .bn-tg {
+    gap: 6px;
+    margin: 0;
+    padding-inline: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .bn-dd--products > .bn-tg {
+    anchor-name: --bn-products;
+  }
+
+  /* The language segments (./LanguageSwitch.astro) at the CTA's 36px: 30px segments in the 3px slot. On wide screens
+     the copy in the <nav>, up to 860px the one beside the menu button (below). */
+  .bn-lang {
+    --ls-h: 30px;
+    --ls-pad: 11px;
+  }
+
+  .bn-lang--bar {
+    display: none;
+  }
+
+  .bn-chev {
+    display: block;
+    flex: none;
+    margin-top: 1px;
+    transition: rotate 0.2s var(--bn-ease);
+  }
+
+  .bn-dd:has(> .bn-pop:popover-open) > .bn-tg {
+    color: var(--v5-ink);
+  }
+
+  .bn-dd:has(> .bn-pop:popover-open) .bn-chev {
+    rotate: 180deg;
+  }
+
+  /* The CTA: the home's lime button at the bar's size (36px high). */
+  .bn-cta {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    background: var(--bn-lime);
+    color: var(--v5-ink);
+    font: 500 14.5px/1 var(--font-sans);
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.15s var(--bn-ease-theme);
+  }
+
+  .bn-cta:hover {
+    background: #d6fba6;
+  }
+
+  /* The panels: paper cards, r12, with the home's floating bar's own shadow and no line around them (the home's
+     .v5-nav-pop; O1, committee 2026-10-21: a card is not outlined, the 12% ink edge is gone). Hidden unless open. */
+  .bn-pop {
+    display: none;
+    position: fixed;
+    inset: auto;
+    top: calc(var(--bn-h) + 9px); /* no anchor positioning: 8px under the bar and its 1px rule */
+    right: var(--blog-gutter);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 8px;
+    overflow: visible;
+    border: 0;
+    border-radius: 12px;
+    background: var(--v5-paper);
+    color: var(--v5-ink);
+    box-shadow:
+      0 1px 2px rgb(22 24 21 / 0.06),
+      0 10px 30px -14px rgb(22 24 21 / 0.22);
+    font: 400 15px/1.4 var(--font-sans);
+    text-align: left;
+  }
+
+  .bn-pop:popover-open {
+    display: block;
+  }
+
+  .bn-pop--products {
+    width: 464px;
+    max-width: calc(100% - 32px);
+  }
+
+  @supports (anchor-name: --bn-a) {
+    .bn-pop {
+      top: calc(anchor(--bn-bar bottom) + 8px);
+    }
+
+    .bn-pop--products {
+      right: auto;
+      left: clamp(16px, anchor(--bn-products left) - 20px, 100% - 480px);
+    }
+  }
+
+  /* The list heading shows in the phone sheet; elsewhere it only names the list. */
+  .bn-pop-h {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .bn-prods {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bn-prod {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "tile name host"
+      ". line line";
+    column-gap: 12px;
+    row-gap: 4px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--v5-ink);
+    text-decoration: none;
+    transition: background-color 0.15s var(--bn-ease-theme);
+  }
+
+  .bn-prod:hover {
+    background: var(--v5-frame);
+  }
+
+  .bn-prod:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .bn-tile {
+    grid-area: tile;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: var(--bn-lime);
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.05);
+    color: var(--v5-ink);
+  }
+
+  .bn-tile-g {
+    display: block;
+    width: 12px;
+    height: 12px;
+  }
+
+  .bn-prod-name {
+    grid-area: name;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    font: 500 15px/20px var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .bn-prod-host {
+    grid-area: host;
+    color: var(--v5-ink-2);
+    font: 400 12px/20px var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  /* No orphaned last word, and ja breaks at phrases (as the home's lines). */
+  .bn-prod-line {
+    grid-area: line;
+    color: var(--v5-ink-2);
+    font: 400 14px/20px var(--font-sans);
+    text-wrap: pretty;
+  }
+
+  .bn-prod-line:lang(ja) {
+    word-break: auto-phrase;
+  }
+
+  /* The New chip at the home's one size (apps/landing/src/home/system.css .v5-new: 20px, 11px; O1: one component,
+     one size). */
+  .bn-new {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--bn-lime);
+    color: var(--v5-ink);
+    font: 600 11px/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .bn-menu {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .bn {
+      --bn-gap: 20px;
+    }
+  }
+
+  /* Up to 860px, as on the home: logo / Blog, then the language segments and the menu button; the button opens the
+     sheet under the bar: Products, Back to mosoo and RSS, and the CTA. The segments drop the globe and pad 8 (ja
+     needs 392px for logo / ブログ, the three names and the button); under 400px they show initials (EN / 中 / 日),
+     and under 360px the "/ Blog" crumb gives way (the posts keep "← All posts", the index its own masthead). */
+  @media (max-width: 860px) {
+    .bn {
+      --bn-gap: 12px;
+      --bn-h: 56px;
+    }
+
+    .bn-end {
+      gap: 8px;
+    }
+
+    .bn-lang--row {
+      display: none;
+    }
+
+    .bn-lang--bar {
+      --ls-globe: none;
+      --ls-pad: 8px;
+      display: block;
+    }
+
+    .bn-menu {
+      display: grid;
+      flex: none;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      margin: 0 -14px 0 0; /* the two lines, not the 44px box, end at the text edge */
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: none;
+      color: var(--v5-ink);
+      cursor: pointer;
+    }
+
+    .bn-burger {
+      display: block;
+    }
+
+    .bn-burger path {
+      transform-origin: 9px 9px;
+      transition: transform 0.2s var(--bn-ease);
+    }
+
+    .bn-end:has(.bn-row:popover-open) .bn-burger-a {
+      transform: translateY(2.75px) rotate(45deg);
+    }
+
+    .bn-end:has(.bn-row:popover-open) .bn-burger-b {
+      transform: translateY(-2.75px) rotate(-45deg);
+    }
+
+    /* At most 420px wide from the text edge: the bar's width on phones, a menu-sized card on tablets. Its place and
+       look sit on the element and only display follows the open state (the home's rule): while it fades out it stays
+       in the top layer for 150ms, and with its place tied to :popover-open it would drop back into the bar. */
+    .bn-row {
+      position: fixed;
+      inset: auto;
+      top: calc(var(--bn-h) + 9px);
+      left: max(var(--blog-gutter), 100% - var(--blog-gutter) - 420px);
+      right: var(--blog-gutter);
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      max-height: calc(100dvh - var(--bn-h) - 33px);
+      padding: 8px;
+      overflow: auto;
+      overscroll-behavior: contain;
+      border: 0; /* the panels' look: no line, the floating bar's shadow (O1; the home's .v5-nav-links sheet) */
+      border-radius: 12px;
+      background: var(--v5-paper);
+      color: var(--v5-ink);
+      box-shadow:
+        0 1px 2px rgb(22 24 21 / 0.06),
+        0 10px 30px -14px rgb(22 24 21 / 0.22);
+    }
+
+    .bn-row:popover-open {
+      display: flex;
+    }
+
+    .bn-dd {
+      display: block;
+    }
+
+    .bn-tg {
+      display: none;
+    }
+
+    /* In the sheet the panels sit in the flow, shown whenever the sheet is. */
+    .bn-row .bn-pop {
+      position: static;
+      display: block;
+      width: auto;
+      max-width: none;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .bn-pop-h {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: auto;
+      height: auto;
+      margin: 0;
+      padding: 10px 12px 6px;
+      overflow: visible;
+      clip-path: none;
+      color: var(--v5-ink);
+      font: 500 14px/20px var(--font-sans);
+    }
+
+    .bn-dd--products {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--v5-line);
+    }
+
+    .bn-prod {
+      grid-template-columns: 20px minmax(0, 1fr);
+      grid-template-areas:
+        "tile name"
+        ". line"
+        ". host";
+      row-gap: 2px;
+    }
+
+    .bn-prod-line {
+      margin-top: 2px;
+    }
+
+    .bn-a {
+      min-height: 44px;
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--v5-ink);
+      font: 500 15px/20px var(--font-sans);
+    }
+
+    .bn-a:hover {
+      background: var(--v5-frame);
+    }
+
+    .bn-a:focus-visible {
+      outline-offset: -2px;
+    }
+
+    /* The CTA closes the sheet, full width and lined up with the rows' text. */
+    .bn-cta {
+      height: 44px;
+      margin: 12px 12px 4px;
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .bn-sep,
+    .bn-blog {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (min-width: 861px) {
+    .bn-pop {
+      transition:
+        opacity 0.15s var(--bn-ease),
+        translate 0.15s var(--bn-ease),
+        display 0.15s allow-discrete,
+        overlay 0.15s allow-discrete;
+    }
+
+    .bn-pop:not(:popover-open) {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+
+    @starting-style {
+      .bn-pop:popover-open {
+        opacity: 0;
+        translate: 0 -4px;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) and (max-width: 860px) {
+    .bn-row {
+      transition:
+        opacity 0.15s var(--bn-ease),
+        translate 0.15s var(--bn-ease),
+        display 0.15s allow-discrete,
+        overlay 0.15s allow-discrete;
+    }
+
+    .bn-row:not(:popover-open) {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+
+    @starting-style {
+      .bn-row:popover-open {
+        opacity: 0;
+        translate: 0 -4px;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bn-blog,
+    .bn-a,
+    .bn-tg,
+    .bn-chev,
+    .bn-cta,
+    .bn-burger path,
+    .bn-prod {
+      transition: none;
+    }
+  }
+</style>

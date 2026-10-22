@@ -1,8 +1,11 @@
 ---
 title: "Agent は二つに分かれていく：Pet と Cattle"
 titleAccent: "Pet と Cattle"
+cardTitle: "誰か、それとも何か。"
 description: "人々が Agent に抱く期待は二つに分かれつつある。一つは identity と memory を持ち、時間をかけて育てる存在。もう一つは stateless で交換可能、固定 workflow をより自由な推論 pipeline で置き換える存在だ。"
+descriptionEmphasis: "二つに分かれつつある"
 date: 2026-08-11
+updated: 2026-10-20
 category: "Product"
 author: "Evanchen"
 authorAvatar: "/blog/blog/authors/evanchen.jpg"
@@ -14,6 +17,8 @@ heroAlt: "手描きイラスト：左にはライム色のハッチングの葉�
 heroCover: "pet-and-cattle"
 draft: false
 ---
+
+**2026-10-20 追記。** mosoo はその後、Pet と Cattle の二つの Agent Type を廃止した。現在はどの Session にも専用の sandbox、ワークスペース、ネイティブの会話、checkpoint の系譜がある（[SPEC 第 3・8 節](https://github.com/langgenius/mosoo/blob/main/docs/SPEC.md)）。以下の mosoo の二つの Agent Type についての節は、2026 年 8 月時点の製品について書いたものだ。
 
 Agent は最終的に二つに分かれていく。私はそう考えるようになった。
 
@@ -84,7 +89,7 @@ Pet と Cattle は、業界、model、task の名前で決まるものではな�
 
 mosoo は現在、二つを **Assistant Agent（Pet）** と **Task Agent（Cattle）** という Agent Type として実装している。
 
-Pet は安定した working environment を保ち、複数の session をまたいで state を蓄積できる。Cattle は run ごとに clean な working environment を作り、task が終わると解放する。現在の境界は [mosoo の Agent Type PRD](https://github.com/langgenius/mosoo/blob/main/docs/prd/agent-type.md) に詳しく記している。
+Pet は安定した working environment を保ち、複数の session をまたいで state を蓄積できる。Cattle は run ごとに clean な working environment を作り、task が終わると解放する。当時の境界は [mosoo の Agent Type PRD](https://github.com/langgenius/mosoo/blob/b1e9adc6e0b37799de40fa601ce6321e6f5423f2/docs/prd/agent-type.md) に詳しく記している。
 
 二つを一つの Agent Type selector に並べることが、最終的に正しい product design ではないとも分かっている。実際には異なる二種類のユーザーに向けたもので、購入、authorization、deployment、cost の考え方が違う。mosoo はまず runtime の境界を実装した。product の境界はこれからさらに整理していく。
 

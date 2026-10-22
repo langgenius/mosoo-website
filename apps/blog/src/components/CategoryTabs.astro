@@ -13,7 +13,7 @@ const copy = indexCopyByLocale[locale] ?? indexCopyByLocale.en;
 ---
 
 <div
-  class="flex flex-wrap items-center gap-2 overflow-x-auto"
+  class="flex flex-wrap items-center gap-2"
   data-category-tabs
 >
   {
@@ -22,7 +22,7 @@ const copy = indexCopyByLocale[locale] ?? indexCopyByLocale.en;
         type="button"
         data-category={c}
         aria-pressed={c === active ? "true" : "false"}
-        class="rounded-full border border-[color:var(--border)] bg-transparent px-3.5 py-1.5 text-[13px] font-medium tracking-[-0.01em] text-[color:var(--fg-secondary)] transition-colors duration-150 hover:border-[color:var(--border-strong)] hover:text-[color:var(--fg)] aria-pressed:border-[color:var(--ink-900)] aria-pressed:bg-[color:var(--ink-900)] aria-pressed:text-white aria-pressed:hover:border-[color:var(--ink-800)] aria-pressed:hover:bg-[color:var(--ink-800)] aria-pressed:hover:text-white"
+        class="rounded-full border border-[color:var(--v5-line-2)] bg-transparent px-3.5 py-1.5 text-[14px] font-medium leading-5 tracking-[-0.01em] text-[color:var(--v5-ink-2)] transition-colors duration-150 hover:border-[color:var(--v5-ink)] hover:text-[color:var(--v5-ink)] aria-pressed:border-[color:var(--v5-ink)] aria-pressed:bg-[color:var(--v5-ink)] aria-pressed:text-white aria-pressed:hover:text-white"
       >
         {c === "All" ? copy.all : categoryLabel(locale, c)}
       </button>
