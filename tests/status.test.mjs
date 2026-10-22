@@ -437,10 +437,10 @@ test("runtime availability only counts completed Runs and platform failures", ()
   const cases = [
     { sources: [], rate: null },
     { sources: ["user_config"], rate: 1 },
-    { sources: ["upstream_provider", "unknown"], rate: 1 },
+    { sources: ["upstream_provider", "unknown"], rate: 0 },
     { sources: ["platform"], rate: 0 },
-    { sources: ["completed", "user_config", "upstream_provider", "unknown"], rate: 1 },
-    { sources: ["completed", "completed", "platform", "user_config", "upstream_provider", "unknown"], rate: 2 / 3 },
+    { sources: ["completed", "user_config", "upstream_provider", "unknown"], rate: 1 / 2 },
+    { sources: ["completed", "completed", "platform", "user_config", "upstream_provider", "unknown"], rate: 2 / 4 },
   ];
   for (const { sources, rate } of cases) {
     const events = sources.map((source, index) => runEvent(`availability-${index}`, {
@@ -460,8 +460,8 @@ test("runtime availability only counts completed Runs and platform failures", ()
   }
 });
 
-test("non-platform failures alone never degrade a fresh runtime or trigger release policy", () => {
-  for (const failureSource of ["user_config", "upstream_provider", "unknown"]) {
+test("user_config and upstream_provider failures alone never degrade a fresh runtime or trigger release policy", () => {
+  for (const failureSource of ["user_config", "upstream_provider"]) {
     const events = Array.from({ length: 4 }, (_, index) => runEvent(`non-platform-${index}`, { failureSource }));
     const state = mergeStatusEvents(createEmptyStatusState(), events);
     const status = buildPublicStatus(state, new Date(observedAt));
@@ -474,11 +474,20 @@ test("non-platform failures alone never degrade a fresh runtime or trigger relea
   }
 });
 
-test("non-platform failures preserve platform streaks and success resets them", () => {
+test("unclassified failures degrade a fresh runtime like platform failures", () => {
+  const events = Array.from({ length: 3 }, (_, index) => runEvent(`unknown-${index}`, { failureSource: "unknown" }));
+  const status = buildPublicStatus(mergeStatusEvents(createEmptyStatusState(), events), new Date(observedAt));
+  assert.equal(status.components[0].consecutiveFailures, 3);
+  assert.equal(status.components[0].status, "degraded");
+  assert.equal(status.components[0].successRate90d, 0);
+  assert.equal(status.releasePolicyTriggered, true);
+});
+
+test("user and provider failures preserve platform streaks and success resets them", () => {
   let state = createEmptyStatusState();
   const sources = ["platform", "user_config", "platform", "upstream_provider", "unknown",
     "platform", "user_config", "upstream_provider", "unknown", "completed", "unknown"];
-  const expectedStreaks = [1, 1, 2, 2, 2, 3, 3, 3, 3, 0, 0];
+  const expectedStreaks = [1, 1, 2, 2, 3, 4, 4, 4, 5, 0, 1];
   for (const [index, failureSource] of sources.entries()) {
     state = mergeStatusEvents(state, [runEvent(`streak-${index}`, {
       failureSource, status: failureSource === "completed" ? "completed" : "failed",
@@ -531,10 +540,10 @@ test("v2 history remains readable and uncategorized Run failures migrate to unkn
   assert.equal(before.components[0].completedRuns90d, 2);
   assert.equal(before.components[0].failedRuns90d, 4);
   assert.equal(before.components[0].runs90d, 6);
-  assert.equal(before.components[0].successRate90d, 1);
-  assert.equal(before.components[0].consecutiveFailures, 0);
-  assert.equal(before.components[0].status, "operational");
-  assert.equal(before.releasePolicyTriggered, false);
+  assert.equal(before.components[0].successRate90d, 2 / 6);
+  assert.equal(before.components[0].consecutiveFailures, 4);
+  assert.equal(before.components[0].status, "degraded");
+  assert.equal(before.releasePolicyTriggered, true);
   assert.deepEqual(before.components[0].failedBySource90d, { ...noFailures, unknown: 4 });
   assert.deepEqual(before.components[3].failedBySource90d, noFailures);
   assert.equal(before.platform.successRate90d, 2 / 3);
@@ -548,8 +557,8 @@ test("v2 history remains readable and uncategorized Run failures migrate to unkn
   assert.equal(merged.version, 3);
   assert.equal(after.observedSince, observedAt);
   assert.equal(after.components[0].runs90d, 7);
-  assert.equal(after.components[0].consecutiveFailures, 1);
-  assert.equal(after.components[0].successRate90d, 2 / 3);
+  assert.equal(after.components[0].consecutiveFailures, 5);
+  assert.equal(after.components[0].successRate90d, 2 / 7);
   assert.deepEqual(after.components[0].failedBySource90d, { ...noFailures, platform: 1, unknown: 4 });
   assert.deepEqual(previous, unchanged);
 
@@ -572,7 +581,7 @@ test("partial daily buckets and missing counters default to zero or unknown", ()
   assert.equal(result.runs90d, 8);
   assert.equal(result.failedRuns90d, 7);
   assert.equal(result.consecutiveFailures, 0);
-  assert.equal(result.successRate90d, 1 / 3);
+  assert.equal(result.successRate90d, 1 / 7);
   assert.deepEqual(result.failedBySource90d,
     { platform: 2, user_config: 1, upstream_provider: 0, unknown: 4 });
   const merged = mergeStatusEvents(state, [runEvent("new", { failureSource: "user_config" })]);
@@ -656,4 +665,33 @@ test("the status page carries no green and no logo of its own", () => {
   const html = read("apps/landing/status.html");
   assert.doesNotMatch(html, GREEN, "status.html names a green");
   assert.doesNotMatch(html, /href="\/[a-z]{2}\/pricing"/, "status.html links no pricing page");
+});
+
+test("production failures traced in Cloudflare logs classify as intended", () => {
+  const cases = [
+    // 2026-10-20 Codex Run: a user-configured relay rejected every Responses call.
+    {
+      errorCode: "openai.turn_failed",
+      errorMessage: "unexpected status 403 Forbidden: Request rejected. Quote the request id when contacting support., url: https://cloud.mosoo.ai/api/driver/llm/proxy/cred/responses, cf-ray: a4d60900ea7626d3-SJC",
+      source: "user_config",
+    },
+    // 2026-10-20 Pi Run: the same relay's origin timed out behind its own Cloudflare zone.
+    {
+      errorCode: "pi.turn_failed",
+      errorMessage: '524 {"title":"Error 524: A timeout occurred","status":524,"error_name":"origin_response_timeout","zone":"api.gaoxin.net.cn"}',
+      source: "user_config",
+    },
+    // 2026-10-13 Pi Runs: Mosoo sent a field Gemini does not accept.
+    {
+      errorCode: "pi.turn_failed",
+      errorMessage: '400 Invalid JSON payload received. Unknown name "store": Cannot find field.',
+      source: "platform",
+    },
+    // Today's Tail carries only the generic code, so the same Runs stay unknown.
+    { errorCode: "openai.turn_failed", source: "unknown" },
+    { errorCode: "pi.turn_failed", source: "unknown" },
+  ];
+  for (const { source, ...run } of cases) {
+    assert.equal(classifyFailureSource({ ...run, status: "failed" }), source, run.errorMessage ?? run.errorCode);
+  }
 });

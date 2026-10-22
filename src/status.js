@@ -110,6 +110,10 @@ function runFailureSource(event) {
     : classifyFailureSource(event);
 }
 
+function countsAgainstAvailability(failureSource) {
+  return failureSource === "platform" || failureSource === "unknown";
+}
+
 function emptyFailureCounts() {
   return Object.fromEntries(FAILURE_SOURCES.map((source) => [source, 0]));
 }
@@ -174,15 +178,9 @@ function currentState(previous) {
     return createEmptyStatusState();
   }
   if (previous.version === 3) return previous;
-  return {
-    ...previous,
-    // v2 counted every failed Run in this streak. Its platform-only streak
-    // cannot be reconstructed from daily totals and the latest observation.
-    components: Object.fromEntries(Object.entries(previous.components ?? {}).map(([id, component]) => [
-      id, { ...component, consecutiveFailures: 0 },
-    ])),
-    version: 3,
-  };
+  // v2 counted every failed Run in its streak. Unclassified failures still
+  // count, so the v2 streak carries over unchanged.
+  return { ...previous, version: 3 };
 }
 
 function mergeSignal(signal, observation) {
@@ -209,7 +207,7 @@ function mergeSignal(signal, observation) {
     ...signal,
     consecutiveFailures: observation.succeeded
       ? 0
-      : (signal.consecutiveFailures ?? 0) + (failureSource === "platform" ? 1 : 0),
+      : (signal.consecutiveFailures ?? 0) + (countsAgainstAvailability(failureSource) ? 1 : 0),
     history,
     latest: observation,
   };
@@ -283,7 +281,9 @@ function summarizeHistory(history) {
   for (const day of history) {
     for (const source of FAILURE_SOURCES) failedBySource[source] += day.failedBySource[source];
   }
-  const availabilityTotal = succeeded + failedBySource.platform;
+  // Only failures positively traced to the user's setup or the model
+  // provider are excluded. Unclassified failures still count against Mosoo.
+  const availabilityTotal = succeeded + failedBySource.platform + failedBySource.unknown;
   return {
     failed: total - succeeded,
     failedBySource,
