@@ -13,6 +13,7 @@
 //   [data-linefield]         line field canvas, 4.5 s runs    src/effects/v5/linefield.ts (T2)
 //   [data-play-for]          short motion bursts (the comet)  src/effects/v5/play-for.ts
 //   [data-copy]              copy the setup prompt            ./copy-prompt.ts (v4c)
+//   [data-v5-home]           Halloween accents, date-gated    ./halloween/halloween.ts (seasonal)
 //
 // The same list as initMotion() in src/effects/v5/index.ts, except that the nav gets its range first
 // (TOOLS-REVIEW T6: min(400px, 45vh); the engine reads data-nav-range once, at init).
@@ -30,6 +31,7 @@ import { initLinefields } from "../effects/v5/linefield.ts";
 import { initPlayFor } from "../effects/v5/play-for.ts";
 import { initCopyPrompt } from "./copy-prompt.ts";
 import { initFooterMark } from "./footer-mark.ts";
+import { initHalloween } from "./halloween/halloween.ts";
 
 const NAV_RANGE_MAX_PX = 400;
 const NAV_RANGE_VIEWPORT = 0.45;
@@ -86,6 +88,7 @@ export function initHomeEffects(root: ParentNode = document): () => void {
     initLinefields(root),
     initPlayFor(root),
     initCopyPrompt(root),
+    initHalloween(root),
   ];
   return () => {
     for (const stop of stops) {
