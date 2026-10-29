@@ -1,0 +1,118 @@
+/* Halloween (./halloween.ts): the season's three accents. The web and the ghost exist only while the module has added
+   them; the arrow's rule waits for data-halloween on the home's root. Decoration: no pointer, out of the flow, never
+   over a control or a word. The one colour the page does not have, pumpkin, is a glyph's only (the arrow on hover): no
+   text changes colour, so every contrast on the page stays as it is. Motion (no-preference only): the web and the
+   ghost fade in once the H1 has risen (system.css: 1 s), then the ghost bobs twice, up to 3px, and rests (the page's
+   motion settles; nothing loops). Remove with the folder. */
+
+.v5[data-halloween] {
+  /* 3.1:1 on the pill's hover grey (--frame-2), 3.3:1 on --frame: the non-text minimum for the arrow it colours */
+  --hw-pumpkin: #d9620f;
+}
+
+/* ------------------------------------------------------------------------------------------------------ web */
+/* The first plate's top-left corner, under the object (stage.css: lines 0, object 1, captions 4) and clipped by the
+   plate's radius. The width keeps the web clear of the laptop card, which starts 48px down (24 on desktops under 880px
+   tall) and at least 48px in on desktops (901px wide), 33px on tablets, 20px on phones (stage.css, kit.css). */
+.v5 .v5-hw-web {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: clamp(60px, 6vw + 8px, 104px);
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.v5 .v5-hw-web svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Silk at 30% ink (about the page's --line-2), the spider a shade darker than its thread. */
+.v5 .v5-hw-silk {
+  opacity: 0.3;
+}
+
+.v5 .v5-hw-spider {
+  opacity: 0.6;
+}
+
+.v5 .v5-hw-thread {
+  opacity: 0.5;
+}
+
+/* Tablets and phones: a smaller web and no spider (at 52px it would be a 3px blot). */
+@media (max-width: 900px) {
+  .v5 .v5-hw-web {
+    width: 52px;
+  }
+
+  .v5 .v5-hw-spider {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .v5 .v5-hw-web {
+    width: 44px;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------------- ghost */
+/* The span is a zero-width inline tied to the end of the line's text ("you.", by its word joiner: ./halloween.ts), so
+   the balanced line breaks and centres exactly as before, and it is the box the ghost is placed from (its top is the
+   top of the line's text). The ghost itself is out of the flow. Sized in em, so it follows the H1 (72px, 42px on
+   phones) and its colour (the second line's ink-3). */
+.v5 .v5-hw-ghost {
+  position: relative;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.v5 .v5-hw-ghost svg {
+  position: absolute;
+  top: 0.24em; /* hovering between the cap height and the x-height */
+  left: 0.1em;
+  width: 0.46em;
+  height: 0.46em;
+  overflow: visible;
+  rotate: -8deg;
+}
+
+/* After a full-width stop (zh, ja: 「。」 sits in the left half of its box), the ghost moves into the blank half, as
+   close to the stop as it is to the en line's period. */
+.v5 .v5-hw-ghost--stop svg {
+  left: -0.3em;
+}
+
+/* -------------------------------------------------------------------------------------------------- arrow */
+.v5[data-halloween] .v5-hero-news:is(:hover, :focus-visible) .v5-hero-news-arrow {
+  color: var(--hw-pumpkin);
+}
+
+/* --------------------------------------------------------------------------------------------------- motion */
+@keyframes v5-hw-float {
+  to {
+    translate: 0 -0.04em;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .v5 :is(.v5-hw-web, .v5-hw-ghost) {
+    animation: v5-rise-fade 0.8s var(--ease-quart) 0.9s both;
+  }
+
+  .v5 .v5-hw-ghost svg {
+    animation: v5-hw-float 3.2s ease-in-out 1.7s 4 alternate; /* up, down, up, down: it ends where it started */
+  }
+}
+
+@media print {
+  .v5 :is(.v5-hw-web, .v5-hw-ghost) {
+    display: none;
+  }
+}
