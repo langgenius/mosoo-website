@@ -38,7 +38,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
   `@/` alias, no JSON import except through `../copy.ts`.
 - May import: `../copy.ts` (copy, `LINKS`, `localeLinks`, `LANGUAGES`, `HARNESS_IDS`), `../ui.ts` (`esc`,
   `twoTone`, `harnessName`, `nameList`, `button`), `../kit/index.ts` (the product objects), `../runtime-glyphs.ts`,
-  `../../shared/ui/brand-v5.generated.ts`. Not React, not `src/shared/styles/app.css`.
+  `../../shared/ui/brand-v5.generated.ts`, `../../shared/github-stars.ts` (the nav: GitHub's star count, which
+  `nav.ts` takes as `render()`'s third argument). Not React, not `src/shared/styles/app.css`.
 - Every visible string comes from the copy file. Product names stay as data in the copy files; URLs come from
   `../copy.ts`. Escape every string (`esc`).
 
@@ -90,7 +91,8 @@ export function render(locale: HomeLocale, copy: HomeCopy): string; // exactly o
   `"Hanken Grotesk SC"` 104.87 %, `"Hanken Grotesk JP"` 110.55 %, the same file, Hanken's line box kept); measure
   zh / ja widths on the built page, not by scaling en.
 - Phones switch at 720px (T1's plates, the paper inset); the nav gives its row to the menu button and its sheet up to
-  860px (the floating bar is 840px wide, the ja row needs 828); the stage pins from 901px wide and 680px tall.
+  860px (the floating bar is 840px wide, the ja row needs 828; 920 and 897 while the row carries GitHub's star
+  count, from 1024px); the stage pins from 901px wide and 680px tall.
 - Colour rules: no white text on lime, no lime text or lime hairlines on white, focus ring 2px ink (from the
   system), text contrast at least 4.5:1 under 24px and 3:1 from 24px.
 

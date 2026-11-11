@@ -40,11 +40,15 @@ export function plain(text: string): string {
   return text.replaceAll(BREAK, "");
 }
 
-/** The whole home body (inside #root): skip link, nav, the paper with the six sections, the footer. */
-export function renderHome(locale: HomeLocale): string {
+/**
+ * The whole home body (inside #root): skip link, nav, the paper with the six sections, the footer. stars is mosoo's
+ * GitHub star count for the bar, the page's one input from outside the repository (read once per build,
+ * scripts/github-stars.mjs); without one the bar shows GitHub's mark alone.
+ */
+export function renderHome(locale: HomeLocale, { stars = null }: { stars?: number | null } = {}): string {
   const copy = HOME_COPY[locale];
   return `<div class="v5" data-v5-home>
-${nav.render(locale, copy)}
+${nav.render(locale, copy, stars)}
 <div class="v5-paper">
 <main id="main" tabindex="-1">
 ${MAIN.map((section) => section.render(locale, copy)).join("\n")}

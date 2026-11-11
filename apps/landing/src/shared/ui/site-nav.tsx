@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { GithubMark } from "@/routes/login/github-mark";
 import { productHost, PRODUCTS } from "@/routes/login/products";
 import type { Product } from "@/routes/login/products";
+import { formatStars, starCount, starsLabel } from "@/shared/github-stars";
 import { t } from "@/shared/i18n";
 import { htmlLanguage, LOCALE_LABELS, LOCALES, locale, localeHref, rememberLocale } from "@/shared/locale";
 
@@ -26,10 +27,20 @@ import { LogoMark } from "./outline";
  * 860px the whole <nav> is itself the popover the menu button opens, a sheet
  * under the bar with the two panels inline, so every link is in the markup
  * once. The look is shared/styles/site-nav.css.
+ *
+ * GitHub carries mosoo's star count as the home's bar does (src/home/sections/
+ * nav.ts githubLink): the mark, a star and the short count (1.2k) in a pill,
+ * the whole count in the link's name; the mark alone without a count.
  */
 
 /** The current language on the bar's switch, as the home's bar shows it (copy/nav.json langShort). */
 const LANG_SHORT = { en: "EN", zh: "中文", ja: "日本語" } as const;
+
+/**
+ * mosoo's GitHub star count, read once when the site was built (scripts/github-stars.mjs; scripts/build-site.mjs
+ * hands it to this build as VITE_GITHUB_STARS). null when the build had none: the bar shows GitHub's mark alone.
+ */
+const STARS = starCount(Number(import.meta.env["VITE_GITHUB_STARS"]));
 
 /** Production's hero chip says New in every language (origin/main landing/hero.tsx L63-66); the home's panel too. */
 const NEW = "New";
@@ -52,6 +63,25 @@ function Chevron(): ReactElement {
       {...svgHidden}
     >
       <path d="M1 1l4 4 4-4" />
+    </svg>
+  );
+}
+
+/** The star before GitHub's count: five points in the page's line, as the home's bar draws it (nav.ts STAR). */
+function Star(): ReactElement {
+  return (
+    <svg
+      className="d-nav-star"
+      viewBox="0 0 12 12"
+      width="12"
+      height="12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+      {...svgHidden}
+    >
+      <path d="M6 1.1L7.47 4.48 11.14 4.83 8.38 7.27 9.17 10.87 6 9 2.83 10.87 3.62 7.27.86 4.83 4.53 4.48z" />
     </svg>
   );
 }
@@ -202,9 +232,24 @@ export function SiteNav({ active }: { active?: "use-cases" | undefined }): React
           <a className="d-nav-a" href={pathToUseCases()} aria-current={active === "use-cases" ? "page" : undefined}>
             {t("Use cases")}
           </a>
-          <a className="d-nav-a d-nav-gh" href={MOSOO_GITHUB_URL} translate="no">
+          <a
+            className={STARS === null ? "d-nav-a d-nav-gh" : "d-nav-a d-nav-gh d-nav-gh--stars"}
+            href={MOSOO_GITHUB_URL}
+            translate="no"
+            aria-label={STARS === null ? undefined : starsLabel(t("Star mosoo on GitHub, {count} stars"), STARS)}
+          >
             <GithubMark className="d-nav-ghm" width={18} height={18} focusable="false" />
             <span className="d-nav-gh-t">GitHub</span>
+            {STARS === null ? null : (
+              <>
+                {" "}
+                {/* The count is hidden from readers, who hear it whole in the link's name. */}
+                <span className="d-nav-stars" aria-hidden="true">
+                  <Star />
+                  {formatStars(STARS)}
+                </span>
+              </>
+            )}
           </a>
           <div className="d-nav-dd d-nav-dd--lang">
             <button

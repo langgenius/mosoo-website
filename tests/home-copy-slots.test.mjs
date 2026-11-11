@@ -34,7 +34,7 @@ const COPY = Object.fromEntries(
 // path (section.slot; * = every array item or object value) -> max characters (en)
 const BUDGETS = {
   // system: the bar's labels must fit the 840px floating bar next to the CTA (staging v5/polish/nav/NOTES.md: the
-  // widest row, ja with the CTA in, needs 828 at 24px gaps)
+  // widest row, ja with the CTA in, needs 828 at 24px gaps; 897 of 920 while it carries GitHub's star count, nav.css)
   "nav.skip": 24,
   "nav.home": 24,
   "nav.label": 24,
@@ -45,6 +45,7 @@ const BUDGETS = {
   "nav.docs": 14,
   "nav.useCases": 14,
   "nav.github": 14,
+  "nav.githubStars": 52, // aria-label of GitHub with mosoo's star count; {count} is the whole number (1,234)
   "nav.language": 14, // the language list's heading (shown in the phone sheet)
   "nav.languageButton": 24, // aria-label; {lang} is langShort
   "nav.langShort": 8, // EN / 中文 / 日本語 on the bar's switch
