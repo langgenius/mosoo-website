@@ -96,6 +96,24 @@ dist/
 The Cloudflare Worker uses strict 404 handling for `/blog/*` and SPA fallback
 behavior for landing-page routes.
 
+### GitHub star count in the nav
+
+The home and subpage bars show the
+[`langgenius/mosoo`](https://github.com/langgenius/mosoo) star count next to the
+GitHub mark (for example `166` or `1.2k`). `npm run build` reads it once from
+`https://api.github.com/repos/langgenius/mosoo` (`scripts/github-stars.mjs`)
+and bakes it into the pages; readers' browsers never call GitHub.
+
+- If the request fails (no answer within 5 seconds, a rate limit, an error
+  status, or a count of 0), the build still succeeds and the bars show the
+  GitHub mark alone. The build log says why.
+- The request is unauthenticated (60 requests an hour per IP address). If
+  `GITHUB_TOKEN` is set in the environment, it is sent for a higher limit. The
+  build doesn't need a token.
+- `VITE_GITHUB_STARS` skips the request: `VITE_GITHUB_STARS=1234 npm run build`
+  previews `1.2k`, and `VITE_GITHUB_STARS= npm run build` builds without a
+  count. In `npm run landing:dev`, set it to see the count in the dev server.
+
 The status page consumes Cloudflare invocation outcomes and mosoo's structured
 `session.run.terminal` business logs through a Tail Worker. It does not create
 Threads, invoke models, or require status secrets. Configuration and incident policy live in

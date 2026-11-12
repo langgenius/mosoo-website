@@ -11,9 +11,15 @@
 // /zh, /ja with hreflang). Up to 860px wide the whole <nav> is itself a popover, the sheet the menu button opens;
 // inside it the two panels show inline. One copy of every link in the HTML, so crawlers and readers without JS get
 // them all. Without JS the bar stays in the page at the top with the CTA shown (up to 860px: logo and menu button).
+//
+// GitHub carries mosoo's star count when the build could read it (the request of 2026-11-12 02:06, after
+// nod.n8n.io's header; the number comes in as render()'s third argument, ../../shared/github-stars.ts): the mark, a
+// star and the short count (1.2k) in a pill, the whole count in the link's name. Without a count the link is the mark
+// alone, as before.
 
+import { formatStars, starCount, starsLabel } from "../../shared/github-stars.ts";
 import { BRAND_LETTERS, BRAND_MARK } from "../../shared/ui/brand-v5.generated.ts";
-import type { HomeCopy, HomeLocale } from "../copy.ts";
+import type { HomeCopy, HomeLocale, NavCopy } from "../copy.ts";
 import { LANGUAGES, LINKS, localeLinks } from "../copy.ts";
 import { esc } from "../ui.ts";
 
@@ -48,6 +54,9 @@ const GLOBE = `<svg class="v5-nav-globe" viewBox="0 0 16 16" width="16" height="
 /** GitHub's mark (as production's routes/login/github-mark.tsx draws it), 18px in the bar. */
 const GITHUB_MARK = `<svg class="v5-nav-ghm" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" ${SVG}><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.01-.02-1.99-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.74-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.67.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>`;
 
+/** The star before GitHub's count: five points in the page's line (1.2px, round joins), as the globe and the check. */
+const STAR = `<svg class="v5-nav-star" viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" ${SVG}><path d="M6 1.1L7.47 4.48 11.14 4.83 8.38 7.27 9.17 10.87 6 9 2.83 10.87 3.62 7.27.86 4.83 4.53 4.48z"/></svg>`;
+
 /** The phone menu button's two lines; they cross into an x while the sheet is open (nav.css). */
 const MENU_LINES = `<svg class="v5-nav-burger" viewBox="0 0 18 18" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ${SVG}><path class="v5-nav-burger-a" d="M2 6.25h14"/><path class="v5-nav-burger-b" d="M2 11.75h14"/></svg>`;
 
@@ -78,7 +87,22 @@ function newChip(label: string): string {
 
 const host = (href: string): string => new URL(href).host;
 
-export function render(locale: HomeLocale, copy: HomeCopy): string {
+/** GitHub in the row: with a count, the pill (nav.css) and the whole count in the name; without one, the mark. */
+function githubLink(t: NavCopy, stars: number | null): string {
+  const count = starCount(stars);
+  const name = `<span class="v5-nav-gh-t">${esc(t.github)}</span>`;
+  if (count === null) {
+    return `<a class="v5-nav-a v5-nav-gh" href="${LINKS.github}" translate="no">${GITHUB_MARK}${name}</a>`;
+  }
+  // The space is the link's text between the name and the count (copy and paste, crawlers: "GitHub 1.2k"); the flex
+  // row drops it from the layout. The count is hidden from readers, who hear it whole in the aria-label.
+  return (
+    `<a class="v5-nav-a v5-nav-gh v5-nav-gh--stars" href="${LINKS.github}" translate="no" aria-label="${esc(starsLabel(t.githubStars, count))}">` +
+    `${GITHUB_MARK}${name} <span class="v5-nav-stars" aria-hidden="true">${STAR}${esc(formatStars(count))}</span></a>`
+  );
+}
+
+export function render(locale: HomeLocale, copy: HomeCopy, stars: number | null = null): string {
   const t = copy.nav;
   const p = t.products;
   const links = localeLinks(locale);
@@ -123,7 +147,7 @@ export function render(locale: HomeLocale, copy: HomeCopy): string {
 </div>
 <a class="v5-nav-a" href="${links.docs}">${esc(t.docs)}</a>
 <a class="v5-nav-a" href="${links.useCases}">${esc(t.useCases)}</a>
-<a class="v5-nav-a v5-nav-gh" href="${LINKS.github}" translate="no">${GITHUB_MARK}<span class="v5-nav-gh-t">${esc(t.github)}</span></a>
+${githubLink(t, stars)}
 <div class="v5-nav-dd v5-nav-dd--lang">
 <button type="button" class="v5-nav-tg" popovertarget="v5-nav-lang" aria-label="${esc(t.languageButton.replace("{lang}", t.langShort))}">${GLOBE}<span class="v5-nav-cur">${esc(t.langShort)}</span>${CHEVRON}</button>
 <div class="v5-nav-pop v5-nav-pop--lang" id="v5-nav-lang" popover>

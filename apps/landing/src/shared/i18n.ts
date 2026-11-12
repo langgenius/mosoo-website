@@ -8,7 +8,8 @@ import { locale } from "./locale";
 // shared/i18n.ts L4 / L32); "Language ({lang})" names the switch with the short
 // name it shows in place of {lang} (WCAG 2.5.3); the product lines are the
 // home's, the ja mosoo line in the home's shorter wording so it keeps to one
-// line in the 464px panel.
+// line in the 464px panel. "Star mosoo on GitHub, {count} stars" names GitHub
+// in the bar when it shows the star count (copy/nav.json githubStars).
 const ZH_MESSAGES = {
   "Skip to content": "跳到正文",
   "mosoo home": "mosoo 首页",
@@ -23,6 +24,7 @@ const ZH_MESSAGES = {
   "Language ({lang})": "语言（{lang}）",
   Menu: "菜单",
   "mosoo on GitHub": "mosoo 的 GitHub 主页",
+  "Star mosoo on GitHub, {count} stars": "在 GitHub 上为 mosoo 点 Star，已有 {count} 个 Star",
   "mosoo on X": "mosoo 的 X 主页",
   "Sign in": "登录",
   "Try mosoo": "试用 mosoo",
@@ -64,6 +66,7 @@ const JA_MESSAGES = {
   "Language ({lang})": "言語（{lang}）",
   Menu: "メニュー",
   "mosoo on GitHub": "mosoo の GitHub",
+  "Star mosoo on GitHub, {count} stars": "GitHub で mosoo に Star を付ける（Star 数 {count}）",
   "mosoo on X": "mosoo の X",
   "Sign in": "ログイン",
   "Try mosoo": "mosoo を試す",

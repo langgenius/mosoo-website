@@ -5,6 +5,7 @@
     "products": "Owner 2026-10-20 17:15: the Products entry is back (staging production/briefs/owner-notes.md, last section). Labels and the Computer line are production's (origin/main apps/landing/src/shared/i18n.ts L5 / L33 'Products'; L8 / L36 'A persistent cloud computer for agents.'; routes/login/products.ts L16-29). The mosoo line is not production's ('…for coding agents.' is retired narrative, tests/site-seo.test.mjs RETIRED_NARRATIVE): it is MAIN README L8 'An open-source, API-first managed Agent runtime for application backends.' in the page title's short form (scripts/landing-locales.mjs L20 / L30 / L40). Both product names are lowercase, as everywhere on this site: mosoo, and mosoo computer (owner 2026-10-20 21:57: 「mosoo computer 一律小写」; production and MAIN docs/SPEC.md L89 write 'Mosoo Computer'). Hosts and URLs keep their own spelling (computer.mosoo.ai).",
     "language": "Production's 'Language' label (origin/main shared/i18n.ts L4 / L32: 语言, 言語): the heading of the language list. languageButton is the switch's accessible name: it starts from the same word and keeps the visible short name ({lang} = langShort) in it (WCAG 2.5.3).",
     "langShort": "The current language's short name on the bar's switch: EN / 中文 / 日本語 (each locale names itself).",
+    "githubStars": "The GitHub link's accessible name when the bar shows mosoo's star count (the request of 2026-11-12 02:06: 'Star mosoo on GitHub, 1,234 stars'); {count} is the whole number with thousands separators, the bar itself shows the short form (1.2k). 'Star' stays GitHub's own word in zh and ja, as GitHub Docs write it (ja: 「Star を付ける」). Never shown without a count.",
     "menu": "The phone menu button's accessible name (the button shows two lines)."
   },
   "en": {
@@ -22,6 +23,7 @@
     "docs": "Docs",
     "useCases": "Use cases",
     "github": "GitHub",
+    "githubStars": "Star mosoo on GitHub, {count} stars",
     "language": "Language",
     "languageButton": "Language ({lang})",
     "langShort": "EN",
@@ -44,6 +46,7 @@
     "docs": "文档",
     "useCases": "用例",
     "github": "GitHub",
+    "githubStars": "在 GitHub 上为 mosoo 点 Star，已有 {count} 个 Star",
     "language": "语言",
     "languageButton": "语言（{lang}）",
     "langShort": "中文",
@@ -66,6 +69,7 @@
     "docs": "ドキュメント",
     "useCases": "ユースケース",
     "github": "GitHub",
+    "githubStars": "GitHub で mosoo に Star を付ける（Star 数 {count}）",
     "language": "言語",
     "languageButton": "言語（{lang}）",
     "langShort": "日本語",

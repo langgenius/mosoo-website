@@ -108,9 +108,9 @@ export function homePositioning(locale) {
   return META[locale].positioning;
 }
 
-export function renderHomeFallback(locale) {
+export function renderHomeFallback(locale, { stars = null } = {}) {
   copyFor(locale);
-  return renderHome(locale);
+  return renderHome(locale, { stars });
 }
 
 export function homeStructuredData(locale) {

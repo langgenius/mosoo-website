@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, rmSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { fetchGithubStars } from "./github-stars.mjs";
 import { buildLandingLocales } from "./landing-locales.mjs";
 import { writeRootSitemap } from "./sitemap.mjs";
 
@@ -22,10 +23,14 @@ function run(command, args, options = {}) {
 
 rmSync(DIST, { force: true, recursive: true });
 
-run("npm", ["run", "landing:build"]);
+// mosoo's GitHub star count for the bars, read once (scripts/github-stars.mjs): the subpages' bar gets it through the
+// landing build's environment, the home's static bar through the locale pages. null (no count) never fails the build.
+const stars = await fetchGithubStars();
+
+run("npm", ["run", "landing:build"], { env: { VITE_GITHUB_STARS: stars === null ? "" : String(stars) } });
 run("npm", ["run", "blog:build"]);
 
-await buildLandingLocales(join(ROOT, "apps", "landing", "dist"));
+await buildLandingLocales(join(ROOT, "apps", "landing", "dist"), { stars });
 
 cpSync(join(ROOT, "apps", "landing", "dist"), DIST, { recursive: true });
 cpSync(join(ROOT, "apps", "blog", "dist"), join(DIST, "blog"), { recursive: true });

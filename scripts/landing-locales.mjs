@@ -451,12 +451,14 @@ const DISPLAY_PRELOAD_EN =
 const DISPLAY_PRELOAD_CJK = DISPLAY_PRELOAD_EN.replace("-wght440-", "-wght400-");
 
 // Head copy is localized first, then the generated JSON-LD and static page go
-// into the markers, so the EN-to-locale replacements never touch them.
-export function renderLandingLocale(source, locale) {
+// into the markers, so the EN-to-locale replacements never touch them. stars is
+// mosoo's GitHub star count for the bar (scripts/github-stars.mjs); without one
+// the bar shows GitHub's mark alone.
+export function renderLandingLocale(source, locale, { stars = null } = {}) {
   if (!HOME_SEO[locale]) throw new Error(`Unsupported landing locale: ${locale}`);
   const preloaded = locale === "en" ? source : replaceRequired(source, DISPLAY_PRELOAD_EN, DISPLAY_PRELOAD_CJK);
   const head = fillMarker(localizeHomeHead(preloaded, locale), "home-head", renderHomeJsonLd(locale));
-  return fillMarker(head, "home-fallback", renderHomeFallback(locale));
+  return fillMarker(head, "home-fallback", renderHomeFallback(locale, { stars }));
 }
 
 export function renderPricingLocale(source, locale) {
@@ -517,7 +519,7 @@ export function renderUseCaseGhfindLocale(source, locale) {
   return localizeSubpageHtml(source, locale, USE_CASE_GHFIND_SEO, "/use-cases/ghfind");
 }
 
-export async function buildLandingLocales(landingDist) {
+export async function buildLandingLocales(landingDist, { stars = null } = {}) {
   const source = await readFile(join(landingDist, "index.html"), "utf8");
   const pricingSource = await readFile(join(landingDist, "pricing.html"), "utf8");
   const statusSource = await readFile(join(landingDist, "status.html"), "utf8");
@@ -532,11 +534,11 @@ export async function buildLandingLocales(landingDist) {
   );
 
   // dist/index.html keeps no unfilled markers if a host ever serves it directly.
-  await writeFile(join(landingDist, "index.html"), renderLandingLocale(source, "en"));
+  await writeFile(join(landingDist, "index.html"), renderLandingLocale(source, "en", { stars }));
 
   await Promise.all(
     Object.keys(HOME_SEO).map(async (locale) => {
-      await writeFile(join(landingDist, `${locale}.html`), renderLandingLocale(source, locale));
+      await writeFile(join(landingDist, `${locale}.html`), renderLandingLocale(source, locale, { stars }));
       await mkdir(join(landingDist, locale, "use-cases"), { recursive: true });
       await writeFile(
         join(landingDist, locale, "pricing.html"),

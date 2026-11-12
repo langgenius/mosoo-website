@@ -31,7 +31,8 @@
 [data-nav] {
   --p: var(--nav-p, 0);
   /* The floating bar's width: 720 in the v5 lock; 840 since it carries Products and the language switch. The widest
-     row (ja, CTA in, 24px gaps) needs 828 with the 24px logo gap (staging v5/polish/nav/NOTES.md §3); en 675, zh 618. */
+     row (ja, CTA in, 24px gaps) needs 828 with the 24px logo gap (staging v5/polish/nav/NOTES.md §3); en 675, zh 618.
+     920 while the row carries GitHub's star count (from 1024px: .v5-nav-gh--stars below). */
   --nav-float: 840px;
   --nav-gap: 24px;
   position: absolute; /* no JS / failed init: the loose bar stays in the page */
@@ -164,6 +165,70 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* GitHub with mosoo's star count (nav.ts githubLink, after nod.n8n.io's header capsule: a grey pill, no line, a shade
+   darker under the pointer). Here it is the hero's announcement pill (sections/hero.css .v5-hero-news: the frame's
+   fill, no line (O1), --frame-2 under the pointer; the transparent border draws it in forced-colors mode), 32px tall,
+   holding the mark, a star and the short count in the bar's face with tabular figures, ink-2 to ink like the links;
+   ::after keeps the row's 44px tap height. Over the lime glass the fill is ink at 6%: the frame's grey on lime read
+   as a hole. From 1024px only: below it the floating bar is the viewport less 32px and ja's row has no room for the
+   pill (861: 801 of 829), so GitHub is its mark there, its name still saying the count. The phone sheet shows the
+   count at the row's end (below). Without a count (the build could not read one) there is no pill anywhere. */
+.v5-nav-stars {
+  display: none;
+  align-items: center;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.v5-nav-star {
+  display: block;
+  flex: none;
+}
+
+@media (min-width: 1024px) {
+  /* The bar makes room for the pill: ja's row (CTA in) needs 897 with "166" (en 740, zh 685; measured at 1440) and
+     about 12px more with a count up to "99.9k", so the floating bar is 920 wide while it carries a count. Without one
+     it stays 840, and the bar is what it was before the count. */
+  [data-nav]:has(.v5-nav-gh--stars) {
+    --nav-float: 920px;
+  }
+
+  .v5-nav-gh--stars {
+    position: relative;
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px 0 8px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--frame);
+    transition:
+      color 0.15s var(--ease-theme),
+      background-color 0.15s var(--ease-theme);
+  }
+
+  .v5-nav-gh--stars::after {
+    content: "";
+    position: absolute;
+    inset: -6px 0;
+  }
+
+  .v5-nav-gh--stars:hover {
+    background: var(--frame-2);
+  }
+
+  [data-nav][data-nav-theme="accent"] .v5-nav-gh--stars {
+    background: rgb(22 24 21 / 0.06);
+  }
+
+  [data-nav][data-nav-theme="accent"] .v5-nav-gh--stars:hover {
+    background: rgb(22 24 21 / 0.1);
+  }
+
+  .v5-nav-stars {
+    display: inline-flex;
+  }
 }
 
 /* --------------------------------------------------------------------------------------- the two dropdowns */
@@ -460,7 +525,7 @@
 }
 
 /* Small desktops (861-1023px): the bar is the viewport less 32px, so the row tightens to 20px gaps (ja, CTA in: 800
-   of the 829 at 861). */
+   of the 829 at 861) and GitHub is its mark, without the count's pill (.v5-nav-gh--stars, from 1024px). */
 @media (max-width: 1023px) {
   [data-nav] {
     --nav-gap: 20px;
@@ -651,6 +716,14 @@
     clip-path: none;
   }
 
+  /* GitHub's count at the row's end, in ink-2 like a product's host: "GitHub ... ★ 1.2k". */
+  .v5-nav-stars {
+    display: inline-flex;
+    margin-left: auto;
+    color: var(--ink-2);
+    font: 500 14px/20px var(--font-sans);
+  }
+
   /* The language as three segments in one grey well, the current one raised on paper with its ring and small shadow
      (all three in sight); no line around the well (O1, as the footer's control: committee/MINUTES.md §2.4 item 7). */
   .v5-nav-langs {
@@ -756,6 +829,7 @@
   [data-nav-cta] *,
   .v5-nav-end,
   .v5-nav-a,
+  .v5-nav-gh--stars,
   .v5-nav-tg,
   .v5-nav-chev,
   .v5-nav-burger path,

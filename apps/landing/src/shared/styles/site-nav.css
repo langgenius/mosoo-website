@@ -95,6 +95,47 @@
   white-space: nowrap;
 }
 
+/* GitHub with mosoo's star count (site-nav.tsx), the home's pill (src/home/sections/nav.css .v5-nav-gh--stars: the
+   frame's fill, no line, --frame-2 under the pointer, 32px with a 44px tap height; the mark, a star and the short count
+   in tabular figures). From 861px: this bar has no CTA, so its row has room for the pill in every language at every
+   width (ja at 861: 734 of 829, measured). The phone sheet shows the count at the row's end (below). */
+.d-nav-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.d-nav-star {
+  display: block;
+  flex: none;
+}
+
+@media (min-width: 861px) {
+  .d-nav-gh--stars {
+    position: relative;
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px 0 8px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--d-frame);
+    transition:
+      color 0.15s var(--d-nav-ease-theme),
+      background-color 0.15s var(--d-nav-ease-theme);
+  }
+
+  .d-nav-gh--stars::after {
+    content: "";
+    position: absolute;
+    inset: -6px 0;
+  }
+
+  .d-nav-gh--stars:hover {
+    background: var(--d-frame-2);
+  }
+}
+
 /* ------------------------------------------------------------------------------------------- the two dropdowns */
 .d-nav-dd {
   display: flex;
@@ -520,6 +561,13 @@
     clip-path: none;
   }
 
+  /* GitHub's count at the row's end, in ink-2 like a product's host: "GitHub ... ★ 1.2k". */
+  .d-nav-stars {
+    margin-left: auto;
+    color: var(--d-ink-2);
+    font: 500 14px/20px var(--font-sans);
+  }
+
   /* The language as three segments in one grey well, the current one raised on paper with its ring and small shadow
      (all three in sight); no line around the well (O1, as the footer's control: committee/MINUTES.md §2.4 item 7). */
   .d-nav-langs {
@@ -620,6 +668,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .d-nav-a,
+  .d-nav-gh--stars,
   .d-nav-tg,
   .d-nav-chev,
   .d-nav-burger path,
